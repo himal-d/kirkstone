@@ -1,0 +1,49 @@
+From 0f3f2cf73298ac36a3a0506cef90c9b170e01c18 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Tue, 29 Aug 2023 08:18:39 +0000
+Subject: [PATCH] RDK-42832: Fix crash on missing protection scheme info
+
+In case of using aamp, qtdemxu marks clear stream as protected
+with CENC scheme that leads to a crash because of missing
+protection_scheme_info structure for this stream
+---
+ gst/isomp4/qtdemux.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 607595d..980487b 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -4485,7 +4485,8 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+     /* Sample grouping support */
+     if (stream != NULL && stream->protected
+         && (stream->protection_scheme_type == FOURCC_cenc
+-            || stream->protection_scheme_type == FOURCC_cbcs)) {
++            || stream->protection_scheme_type == FOURCC_cbcs)
++        && stream->protection_scheme_info) {
+       QtDemuxCencSampleSetInfo *info = stream->protection_scheme_info;
+       GNode *sgpd_node;
+       GstByteReader sgpd_data;
+@@ -6316,7 +6317,8 @@ gst_qtdemux_push_buffer (GstQTDemux * qtdemux, QtDemuxStream * stream,
+       GST_TIME_ARGS (GST_BUFFER_DURATION (buf)), GST_PAD_NAME (stream->pad));
+ 
+   if (stream->protected && (stream->protection_scheme_type == FOURCC_cenc
+-          || stream->protection_scheme_type == FOURCC_cbcs)) {
++          || stream->protection_scheme_type == FOURCC_cbcs)
++      && stream->protection_scheme_info) {
+     GstStructure *crypto_info;
+     QtDemuxCencSampleSetInfo *info =
+         (QtDemuxCencSampleSetInfo *) stream->protection_scheme_info;
+@@ -13466,7 +13468,8 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+ 
+   /* Sample grouping support */
+   if (stream->protected && (stream->protection_scheme_type == FOURCC_cenc
+-          || stream->protection_scheme_type == FOURCC_cbcs)) {
++          || stream->protection_scheme_type == FOURCC_cbcs)
++      && stream->protection_scheme_info) {
+     QtDemuxCencSampleSetInfo *info = stream->protection_scheme_info;
+     GNode *sgpd_node;
+     GstByteReader sgpd_data;
+-- 
+2.17.1
+

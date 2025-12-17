@@ -1,0 +1,84 @@
+From 240d4b74ced3fb9503fa181a3d0ef22fe8847d47 Mon Sep 17 00:00:00 2001
+From: 0x0916 <w@laoqinren.net>
+Date: Wed, 28 Jun 2017 16:14:14 +0800
+Subject: [PATCH] confile: rename lxc.limit to lxc.prlimit
+
+Signed-off-by: 0x0916 <w@laoqinren.net>
+---
+ src/lxc/conf.c                    |   7 +-
+ src/lxc/confile.c                 |  10 +++---
+ 2 files changed, 10 insertions(+), 7 deletions(-)
+
+
+Index: lxc-2.0.6/src/lxc/conf.c
+===================================================================
+--- lxc-2.0.6.orig/src/lxc/conf.c
++++ lxc-2.0.6/src/lxc/conf.c
+@@ -4201,10 +4201,13 @@ int lxc_clear_limits(struct lxc_conf *c,
+ 	bool all = false;
+ 	const char *k = NULL;
+ 
+-	if (strcmp(key, "lxc.limit") == 0)
++	if (strcmp(key, "lxc.limit") == 0
++       	    || strcmp(key, "lxc.prlimit"))
+ 		all = true;
+ 	else if (strncmp(key, "lxc.limit.", sizeof("lxc.limit.")-1) == 0)
+ 		k = key + sizeof("lxc.limit.")-1;
++	else if (strncmp(key, "lxc.prlimit.", sizeof("lxc.prlimit.")-1) == 0)
++		k = key + sizeof("lxc.prlimit.")-1;
+ 	else
+ 		return -1;
+ 
+@@ -4361,7 +4364,7 @@ void lxc_conf_free(struct lxc_conf *conf
+ 	lxc_clear_includes(conf);
+ 	lxc_clear_aliens(conf);
+ 	lxc_clear_environment(conf);
+-	lxc_clear_limits(conf, "lxc.limit");
++	lxc_clear_limits(conf, "lxc.prlimit");
+ 	free(conf);
+ }
+ 
+Index: lxc-2.0.6/src/lxc/confile.c
+===================================================================
+--- lxc-2.0.6.orig/src/lxc/confile.c
++++ lxc-2.0.6/src/lxc/confile.c
+@@ -112,7 +112,7 @@ static int config_init_cmd(const char *,
+ static int config_init_uid(const char *, const char *, struct lxc_conf *);
+ static int config_init_gid(const char *, const char *, struct lxc_conf *);
+ static int config_ephemeral(const char *, const char *, struct lxc_conf *);
+-static int config_limit(const char *, const char *, struct lxc_conf *);
++static int config_prlimit(const char *, const char *, struct lxc_conf *);
+ 
+ static struct lxc_config_t config[] = {
+ 
+@@ -185,7 +185,7 @@ static struct lxc_config_t config[] = {
+ 	{ "lxc.init_uid",             config_init_uid             },
+ 	{ "lxc.init_gid",             config_init_gid             },
+ 	{ "lxc.ephemeral",            config_ephemeral            },
+-	{ "lxc.limit",                config_limit                },
++	{ "lxc.prlimit",                config_prlimit                },
+ };
+ 
+ struct signame {
+@@ -1464,7 +1464,7 @@ static bool parse_limit_value(const char
+        return true;
+ }
+ 
+-static int config_limit(const char *key, const char *value,
++static int config_prlimit(const char *key, const char *value,
+                         struct lxc_conf *lxc_conf)
+ {
+        struct lxc_list *limlist = NULL;
+@@ -1476,10 +1476,10 @@ static int config_limit(const char *key,
+        if (!value || strlen(value) == 0)
+                return lxc_clear_limits(lxc_conf, key);
+ 
+-       if (strncmp(key, "lxc.limit.", sizeof("lxc.limit.")-1) != 0)
++       if (strncmp(key, "lxc.prlimit.", sizeof("lxc.prlimit.")-1) != 0)
+                return -1;
+ 
+-       key += sizeof("lxc.limit.")-1;
++       key += sizeof("lxc.prlimit.")-1;
+ 
+        /* soft limit comes first in the value */
+        if (!parse_limit_value(&value, &limit_value))

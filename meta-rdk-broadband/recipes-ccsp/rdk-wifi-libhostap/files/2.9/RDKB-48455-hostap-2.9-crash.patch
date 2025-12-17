@@ -1,0 +1,23 @@
+##########################################
+Date: Apr 13, 2023 10:47 PM
+From: Id663d4ba6524001759549b576809eddb666e0ddb
+Subject: fix oneWifi process crashes
+Source: SKY
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: Kathiravan Eswaran <kathiravan.eswaran@sky.uk>
+########################################## 
+diff --git a/source/hostap-2.9/src/ap/wpa_auth.c b/source/hostap-2.9/src/ap/wpa_auth.c
+index dd81b6e..dcb2bf5 100755
+--- a/source/hostap-2.9/src/ap/wpa_auth.c
++++ b/source/hostap-2.9/src/ap/wpa_auth.c
+@@ -618,6 +618,9 @@ wpa_auth_sta_init(struct wpa_authenticator *wpa_auth, const u8 *addr,
+ {
+ 	struct wpa_state_machine *sm;
+ 
++	if(!wpa_auth)
++		return NULL;
++
+ 	if (wpa_auth->group->wpa_group_state == WPA_GROUP_FATAL_FAILURE)
+ 		return NULL;
+ 

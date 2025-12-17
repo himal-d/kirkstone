@@ -1,0 +1,137 @@
+Changelog between rdkb-20200404 and rdkb-20200424
+
+
+
+project rdk/components/generic/crashupload/
+4f785d1 DELIA-41813 Xi-Clients - coredump utility to capture rmfstreamer logs
+c7a8eb4 RDKB-27000 : integrate RBUSCORE with mindump
+d158f14 RDK-25041: To fix libsyswrapper usage in RDKV components
+
+project rdk/components/generic/dca/
+5feeec2 RDK-25041: To fix libsyswrapper usage in RDKV components
+
+project rdk/components/generic/libSyscallWrapper/
+8ce7f3e RDK-24539 : system wrapper rewrite
+
+project rdk/components/generic/rfc/
+ea604a4 RDK-26256 : RFC Enabled By Default on fully deployed features
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+b2b1cb25 RDKB-27784 : Implemented support for DMCLI to access RBus Elements
+680982f8 RDKB-28178: Remove Migration Script from CommonLibrary
+3dfeac2e RDKB-27000 RDKB-28015 : integrate RBUSCORE with mindump
+
+project rdkb/components/opensource/ccsp/CcspEthAgent/
+14343c0 RDKB-27656 : Bridge Mode must not set to true using dmcli in ETHWAN mode
+2f89dbd TCCBR-3804 : [Field]CcspEthAgent is consuming high CPU uage.
+1d6f671 RDKB-23500: To fix libsyswrapper usage in RDKB components
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+82c6f3d RDKB-27441: LMLite Crash.
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+e2a444b RDKB-28070,RDKB-22615:Reset MoCA Interface-Code&UT
+ccbc483 RDKB-23500: To fix libsyswrapper usage in RDKB components
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+44452b8 Revert "RDKB-26038 : Instrument TAD component to use Telemetry 2.0"
+cf282db RDKB-27205: Observed "/etc/revert_redirect.sh: line 160: CR: command not found"
+492456c RDKB-27656 : Bridge Mode must not set to true using dmcli in ETHWAN mode
+5aa83b8 RDKB-27665 : Update NTP timeserver list for partner ID Comcast
+ea0ff64 RDKB-26038 : Instrument TAD component to use Telemetry 2.0
+bea308b RDKB-28127: Remove RabidFramework Enable TR-181
+7bc8d80 SKYH4-2477 :  No new clients could join the network - Ethernet/ Wi-Fi.
+e4d360c RDKBDEV-50 - Adding DSLite Functionality and related TR-181 DataModel Parameters
+a528d53 RDKB-27154: mTLS security for Loguploads
+2c331bf RDKB-26754: EasyConnect.Enable defaults to False.
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+2300986 RDKBSUP-384 : security issue.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+d201f8c CMXB7-1065 CMXB7-1016 RDKB-28437:
+0ededa1 RDKBDEV-50 - Adding DSLite Functionality and related TR-181 DataModel Parameters
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+4db29d0 RDKBSUP-384 : security issue.
+5e4aecc RDKBDEV-50 - Adding DSLite Functionality and related TR-181 DataModel Parameters
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+3868648 SKYH4-2065,RDKB-27949 : Harden CcspWifi for corrupted data structures
+cac893d RDKB-27958 Entering a blank DPP channel does not properly populate
+11ddd5e Revert "RDKB-26038 : Instrument TAD component to use Telemetry 2.0"
+398b343 RDKB-26038 : Instrument TAD component to use Telemetry 2.0
+866be1f RDKB-28734 : fix wifi tree parser breakage
+fc1b91b RDKB-27238 : Private SSID's are in open state after modifying
+c8025a4 RDKB-24466: Operational Tx Rates not set properly
+73916e6 RDKCOM-1222 RPI-B hostapd not starting with change 36786
+d04526b RDKB-26840: Certain DFS channels can be entered as DPP channels.
+d6f3073 CMXB7-1065 CMXB7-1016 RDKB-28437:
+3973eec RDKB-23500: To fix libsyswrapper usage in RDKB components
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+a92b152 RDKBDEV-50 - Adding DSLite Functionality and related TR-181 DataModel Parameters
+02fddce RDKB-23500: To fix libsyswrapper usage in RDKB components
+
+project rdkb/components/opensource/ccsp/GwProvApp-EthWan/
+6a35961 RDKB-27811: GwProvApp-EthWan is not reporting the correct Phy rate
+
+project rdkb/components/opensource/ccsp/MeshAgent/
+ef37231 Revert "RDKB-26026:Instrument mesh-agent component to use Telemetry 2.0"
+ca9a97d RDKB-26026:Instrument mesh-agent component to use Telemetry 2.0
+d4d4e8c RDKB-27921: Fixing BUG in cosa_mesh_apis.c as part of introduced in RDKB-19597.
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+b9abeba Revert "RDKB-26038 : Instrument TAD component to use Telemetry 2.0"
+c06fb14 RDKB-26038 : Instrument TAD component to use Telemetry 2.0
+1c6a3d6 RDKB-28128: Remove Legacy Agent from SelfHeal
+
+project rdkb/components/opensource/ccsp/Utopia/
+93e77177 RDKB-25503 : To accept SNMP connections with SHA256 certificates
+6d942f6b RDKB-24003: Open TCP port on WAN IPv6 interface
+115f2796 ARRISXB6-10892:Observed "/fss/gw/sbin/ulogd:No such file or directory" message.
+14142abd ARRISXB3-9840 :"Syseventd_crash" during reboot testing
+c88244a5 RDKB-27665 : Update NTP timeserver list for partner ID Comcast
+bafd4dde RDKB-27203 : Fix for unary operator error message in Console logs
+b6b69b37 RDKB-26160 [3.14p1s1] 200+ stale IPv6 entries for single client
+4fea5be4 RDKBDEV-50 - Adding DSLite Functionality and related TR-181 DataModel Parameters
+7ee276c3 RDKB-28210 : Pause/Unpause is not working as expected
+6be73013 RDKB-28129: Make RABID Syscfg default in Utopia
+3f6c7ed0 RDKB-27154: mTLS security for Loguploads
+5f42beb2 SKYH4-2671:Missing firewall rule for checksum off
+74bd0a0a RDKB-28008, RDKB-27587, RDKB-27237 : firewall locking issue
+25a1ab0c CISCOXB3-5905:Spike observed on SYS_ERROR_ReadOnlyFS marker
+3deba400 RDKALL-1853: To fix libsyswrapper usage in RDKB components
+
+project rdkb/components/opensource/ccsp/Xconf/
+b9b8249 RDKB-17741 : CPE sends reboot pending notification repeatedly each 5 min
+
+project rdkb/components/opensource/ccsp/halinterface/
+27be771 RDKB-26267: Common RDK Wi-Fi HAL for ANQP
+
+project rdkb/components/opensource/ccsp/sysint/
+a9092f3 RDKB-27900:systemctl: not found in ArmConsole Logs
+a79085c Revert "RDKB-26037:Instrument sysint-broadband component to use Telemetry 2.0"
+85e84bb RDKB-28434:TCXB6-8178:TCCBR-4044:logs are missing during unknown reboot
+a254a9e RDKB-26037:Instrument sysint-broadband component to use Telemetry 2.0
+b4c280f RDKB-27167 : Using systemd to stop parodus
+4caec58 RDKB-27342 : Error in return 0 from backupLogs.sh
+3edb658 TCXB6-8119 :Automatic device log uploads are not working
+1481b6f RDKB-27000 RDKB-28015 : Set LRR as Rbus_crash w.r.t return signal of rbus
+b79eb19 RDKB-27154: mTLS security for Loguploads
+73c848e RDKB-27511 : Log are getting stored in /tmp/log_upload/
+
+project rdkb/components/opensource/ccsp/webui/
+df0c130 ARRISXB3-10048 : Public SSID name is overlapping on other field
+615ccd9 RDKB-26565:status page wan ip address is not showing ipv6 address.
+2b1f6f3 RDKB-25144:Able to add more than 16 devices in the Wi-Fi Control List in GUI.
+fd9b15d RDKB-25619:Ipv6 address is not shown in port forwarding from connected device.
+64d96c4 RDKB-27639 : Content filtering rules splitted when time as "07:00PM"
+c0e7224 RDKB-28107:Captive portal GUI stuck after FR when CloudUI enabled .
+5a68a0f RDKB-24398: Secure XfinityWiFi connected devices to 2.4 GHZ are shown as 5 GHZ .
+
+project rdkb/devices/intel-x86-pc/emulator/sysint/
+58e5dc4 REFPLTB-563: Telemetry Support in Emulator
+
+project rdkb/devices/intel-x86-pc/emulator/tdkb/
+c3e8f99 TDKB-1058: Adding default Beacon period value in platfrom properties

@@ -1,0 +1,49 @@
+From ab440828dc05d831ba48ebed8285459cd55bf7f4 Mon Sep 17 00:00:00 2001
+From: Manoj Bhatta <manoj_bhatta@comcast.com>
+Date: Tue, 23 May 2023 11:14:03 +0200
+Subject: [PATCH] [GStreamer][Realtek] Enable 'lowdelay-mode' for realtek omx
+ decoder https://bugs.webkit.org/show_bug.cgi?id=257121
+
+Reviewed by Philippe Normand.
+
+Enabling low delay mode will force the video decoder to decode frames
+one by one without holding a reference frame.
+
+Original author: Manoj Bhatta <manoj_bhatta@comcast.com>
+See: WebPlatformForEmbedded/WPEWebKit#1087
+
+* Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+(WebCore::MediaPlayerPrivateGStreamer::configureElementPlatformQuirks): Enable 'lowdelay-mode' property
+
+Canonical link: https://commits.webkit.org/264325@main
+---
+ .../gstreamer/MediaPlayerPrivateGStreamer.cpp    | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index bd3d7c2c8e8a0..cbc1b644b2436 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -3981,11 +3981,17 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
+         g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
+ 
+ #if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
+-    if (m_streamPrivate != nullptr && g_object_class_find_property (G_OBJECT_GET_CLASS (element), "media-tunnel")) {
+-        GST_INFO("Enable 'immediate-output' in rtkaudiosink");
+-        g_object_set (G_OBJECT(element), "media-tunnel", FALSE, nullptr);
+-        g_object_set (G_OBJECT(element), "audio-service", TRUE, nullptr);
+-        g_object_set (G_OBJECT(element), "lowdelay-sync-mode", TRUE, nullptr);
++    if (m_streamPrivate != nullptr) {
++        if (g_object_class_find_property (G_OBJECT_GET_CLASS (element), "media-tunnel")) {
++            GST_INFO("Enable 'immediate-output' in rtkaudiosink");
++            g_object_set (G_OBJECT(element), "media-tunnel", FALSE, nullptr);
++            g_object_set (G_OBJECT(element), "audio-service", TRUE, nullptr);
++            g_object_set (G_OBJECT(element), "lowdelay-sync-mode", TRUE, nullptr);
++        }
++        if (g_object_class_find_property (G_OBJECT_GET_CLASS (element), "lowdelay-mode")) {
++            GST_INFO("Enable 'lowdelay-mode' in rtk omx decoder");
++            g_object_set (G_OBJECT(element), "lowdelay-mode", TRUE, nullptr);
++        }
+     }
+ #endif
+ }

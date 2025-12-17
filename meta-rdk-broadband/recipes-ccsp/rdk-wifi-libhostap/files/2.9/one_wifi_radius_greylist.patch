@@ -1,0 +1,65 @@
+##########################################
+Date: April 4 2022 10:47 PM
+From: c469f3c2954be67787915fead4f937843c33bb0e
+Subject: Hostapd handling for RadiusGreylist
+Source: Comcast
+Upstream-Status: Pending
+Signed-off-by: pjoshi <pjoshi020@comcast.com>
+##########################################
+--- a/source/hostap-2.9/src/ap/greylist.c	2022-05-25 03:31:58.762928634 +0000
++++ b/source/hostap-2.9/src/ap/greylist.c	2022-05-25 22:25:32.639236130 +0000
+@@ -42,7 +42,7 @@
+ static const char *greylist_file = "/nvram/greylist_mac.txt";
+ 
+ static void greylist_log_to_file(char *fmt, ...);
+-static int greylist_get_cmmac();
++int greylist_get_cmmac();
+ static size_t greylist_delete_line(char *buffer, size_t size, const char *txtaddr);
+ static void greylist_delete_from_file(struct hapd_interfaces *interfaces, const char *txtaddr);
+ static void greylist_timeout(void *eloop_ctx, void *timeout_ctx);
+@@ -148,7 +148,7 @@
+ /**
+  * greylist_get_cmmac - Call the script to get cm mac of the gateway
+  */
+-static int greylist_get_cmmac()
++int greylist_get_cmmac()
+ {
+ 	FILE *fp;
+ 	const char *cmd = "/usr/sbin/deviceinfo.sh -cmac";
+--- a/source/hostap-2.9/src/common/ieee802_11_defs.h	2022-05-25 03:31:42.590931858 +0000
++++ b/source/hostap-2.9/src/common/ieee802_11_defs.h	2022-05-27 17:37:15.592476794 +0000
+@@ -267,6 +267,7 @@
+ #define WLAN_REASON_MAC_ADDRESS_ALREADY_EXISTS_IN_MBSS 64
+ #define WLAN_REASON_MESH_CHANNEL_SWITCH_REGULATORY_REQ 65
+ #define WLAN_REASON_MESH_CHANNEL_SWITCH_UNSPECIFIED 66
++#define WLAN_RADIUS_GREYLIST_REJECT 100
+ 
+ 
+ /* Information Element IDs (IEEE Std 802.11-2016, 9.4.2.1, Table 9-77) */
+--- a/source/hostap-2.9/src/ap/ieee802_1x.c	2022-05-26 20:12:55.320400533 +0000
++++ b/source/hostap-2.9/src/ap/ieee802_1x.c	2022-05-27 17:55:01.736463212 +0000
+@@ -850,7 +850,7 @@
+ 
+ 		os_snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+ 		snr = greylist_get_client_snr(hapd, txtaddr);
+-
++		greylist_get_cmmac();
+ 		ap_vlan = hapd->conf->ap_vlan;
+ 
+ 		radius_msg_add_comcast(
+@@ -2109,12 +2109,12 @@
+ 						   "RADIUS server indicated GREYLIST in Access-Reject for "
+ 						   MACSTR, MAC2STR(sta->addr));
+ 					snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+-                                        greylist_add(hapd, txtaddr, TRUE);
+-
++                                        //greylist_add(hapd, txtaddr, TRUE);
++					sta->disconnect_reason_code = WLAN_RADIUS_GREYLIST_REJECT;
+ 					if (!hapd->conf->ieee802_1x) {
+ 						/* For the secure mode, EAPOL SM will handle the disconnect */
+ 						ap_sta_disconnect(hapd, sta, sta->addr,
+-								WLAN_REASON_UNSPECIFIED);
++								WLAN_RADIUS_GREYLIST_REJECT);
+ 					}
+ 				}
+ 			}

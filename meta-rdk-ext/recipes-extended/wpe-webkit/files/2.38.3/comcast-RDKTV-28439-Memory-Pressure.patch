@@ -1,0 +1,44 @@
+From a39437f526c319ad177c1723e21a15b36526992b Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Wed, 7 Feb 2024 14:21:04 +0100
+Subject: [PATCH] comcast - RDKTV-28439 - Memory Pressure
+
+1) Do critical and synchonous memory release when limit is exceeded
+and print log message.
+2) Increase default threshold for conservative and strict limits.
+
+Signed-off-by: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+---
+ Source/WTF/wtf/MemoryPressureHandler.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WTF/wtf/MemoryPressureHandler.cpp b/Source/WTF/wtf/MemoryPressureHandler.cpp
+index a7360a7c43b0..30b50ab49207 100644
+--- a/Source/WTF/wtf/MemoryPressureHandler.cpp
++++ b/Source/WTF/wtf/MemoryPressureHandler.cpp
+@@ -40,7 +40,7 @@ namespace WTF {
+ 
+ WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
+ 
+-#if PLATFORM(IOS_FAMILY)
++#if PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
+ static const double s_conservativeThresholdFraction = 0.5;
+ static const double s_strictThresholdFraction = 0.65;
+ #else
+@@ -303,6 +303,13 @@ void MemoryPressureHandler::measurementTimerFired()
+         releaseMemory(Critical::No, Synchronous::No);
+         break;
+     case MemoryUsagePolicy::Strict:
++        if (footprint > m_configuration.baseThreshold || footprintVideo > m_configuration.baseThresholdVideo) {
++            WTFLogAlways("MemoryPressure: Critical memory usage (PID=%d) [MB]: %zu (of %zu), video: %zu (of %zu)\n",
++                          getpid(), footprint / MB, m_configuration.baseThreshold / MB,
++                          footprintVideo / MB, m_configuration.baseThresholdVideo / MB);
++            releaseMemory(Critical::Yes, Synchronous::Yes);
++            break;
++        }
+         releaseMemory(Critical::Yes, Synchronous::No);
+         break;
+     }
+-- 
+2.25.1
+

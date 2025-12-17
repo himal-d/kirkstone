@@ -1,0 +1,94 @@
+Changelog between rdkb-20170410 and rdkb-20170424
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+1780c08 TDKB-122 : Moving TDK binaries to generic location
+8b010e5 RDKB-10795: echo_t: not found error in Console
+8e03c4a RDKB-10939 :Self heal does not restart hostapd
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+57a1bc7 RDKB-7708: The dmcli command to get Wifi SSID status fails intermittently
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+c5a5ca1 RDKB-10493:Minidumps are not generated for CcspHomeSecurity
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+627edeb Revert "CBC-56 : Enable MoCA when Xi5 device is present in connected devices."
+8533cf5 RDKB-10892 : Device.Hosts.Host.{i}.IPAddress is not getting updated
+b3ef7e2 Revert "CBC-63 : To restrict MoCA disable when after Xi5 device connected case."
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+62d26f7 ARRISXB6-3829 ARRISXB6-3838: MoCA COnfig Not Updating after SNMP Set
+5b097d4 Revert "CBC-63 : To restrict MoCA disable when after Xi5 device connected case."
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+b93f8b9 RDKB-9276: SNMP SET command response time for log upload is High
+4c73dbf RDKB-10154 : Identifying Command Injection in PAM process
+b076493 RDKB-10894 : "Device.Ethernet.Link.4.Status" should not return "Unknown".
+62309a8 RDKB-10800 : CM IP TR181 Parameter is not reporting correctly
+3c59861 RDKB-10893 : [erouter0] "Device.Ethernet.Link.3.Status" returned â€˜Unknown'.
+cc123af RDKB-10767 : CCSP Deadlock Happened from PAM Module Set:ErouterEnable/false.
+41ebdf5 RDKB-10195:User not receiving the newly created SSID/Password in SMS
+487e0c8 Revert "CBC-56 : Enable MoCA when Xi5 device is present in connected devices."
+b0dff59 RDKB-10669 : Parental Control table in RDKB having negative indices
+07f4b44 Revert "CBC-63 : To restrict MoCA disable when after Xi5 device connected case."
+c1668e2 RDKBEMU-389 : CcspPandM crashes when trying to add a rule for Port Triggering
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+a03a9c1 Revert "RDKB-9352 : Convert dhcp_server_start and its associated functions to C code"
+508a4c7 RDKB-9352 : Convert dhcp_server_start and its associated functions to C code
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+d213fb2 RDKB-10733 : Minidumps are not generated for CcspSnmpPa.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+15a276e RDKB-10988: Removed duplicate MESH notification
+678d2d6 RDKB-10857: Add Telemetry marker for Xfinity HotSpot SSID
+3afaef4 RDKB-10873 : CcspWifi does not send all sysevents to MeshAgent
+db2303e RDKB-10939 :Self heal does not restart hostapd
+c034ecf RDKB-10468 :Add telemetry marker to capture channel number and bandwidth
+55f4b11 RDKB-10909:Need to use wifi_reset instead of wifi_down/wifi_init
+0a478c5 RDKB-10910 : self heal interface down and acl disable
+
+project rdkb/components/opensource/ccsp/FirmwareSanity/
+3f4fad7 RDK-18886: Update file fscMonitor.c with Apache header
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+9b1089c TATAELXSI-317 : [RPI][PAM] Not getting IPv4 address to brlan0 and erouter0 interface
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+933f535 RDKB-10951, RDKB-10952  : [Selfheal] Syslog Message format varies .
+1981b94 RDKB-10930 : SelfHeal recovery mechanism when dnsmasq in a bad state.
+22a2a2c RDKB-10757 : Traceroute returns wrong DiagnosticsState with minimum MaxHopCount
+889750b RDKB-10797: setRebootreason, is not properly handled in selfheal.
+e64d150 ARRISXB6-39209: Self Heal FLow Down
+5c447ef ARRISXB6-3920 RDKB-10759: Self Heal FLow Down
+9e58346 CISCOXB3-2214 [2.5s2]Ping to both IPv4 and IPv6 Gateway Address failed
+e2ff968 TCCBR-1066: Adding wifi process into selfheal
+
+project rdkb/components/opensource/ccsp/Utopia/
+f0639c0 ARRISXB3-5369 : push-button reset to factory default does not disable MoCA.
+42d8b4a Revert "RDKB-10300:Convert lan_handler.sh, service_ipv4.sh scripts to C code."
+8ef1c48 RDKB-10751 : syseventd listening on all network interfaces
+418d5f6 RDKB-10300:Convert lan_handler.sh, service_ipv4.sh scripts to C code.
+3041968 ARRISXB3-5939 : LAN clients are not getting IP in factory reset case
+e2b2911 MESH-137: DHCP for MESH backhaul of non-xb3
+e744333 RDKB-10283: Secure ssid names are not changed.
+9f8fb00 RDKB-10454, CISCOXB3-2215 : High CPU usage by bzip2 and nvram is full.
+63299b3 MESH-127: DHCP for MESH backhaul of non-xb3
+
+project rdkb/components/opensource/ccsp/sysint/
+a74c657 RDKB-10897: Make sure MeshAgent logs are uploaded
+3d3677c RDKB-9208:Added iptables rules.
+
+project rdkb/components/opensource/ccsp/webui/
+0d072f8 ARRISXB6-3700: MSO GUI page shows no info about
+5bda07d RDKB-3354, RDKB-9010, RDKB-9185: disable GUI pages in bridge mode
+c4c6f16 RDKB-10003: SI Related Copy Changes in Local Admin Portal
+28545e5 RDKB-10954: [systemd] [Wi-Fi] Radio disable in MSO provides
+51d27ce RDKB-10003: SI Related Copy Changes in Local Admin Portal
+77776e7 RDKB-10747: Captive Portal not auto-sizing to fit mobile device
+
+project rdkb/devices/raspberrypi/hal/
+6a4a6db TATAELXSI-313 : [RPI][WIFI] WEB GUI shows contradictory security mode for both 2.4 and 5GHZ

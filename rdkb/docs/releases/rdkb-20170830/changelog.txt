@@ -1,0 +1,196 @@
+Changelog between rdkb-20170803 and rdkb-20170830
+
+
+project rdk/components/generic/crashupload/
+90647a5 RDKB-13699 : tlsv1.2 connection not used for minidump upload
+a608089 RDK-19891: Using rebootNow.sh instead of reboot.
+7fbfd84 RDKB-7918 : Secure Connection for Logging/Telemetry
+874ef50 RDKB-13617: Invalid mac address in XB devices (onlt from ATOM)
+51ab00f Revert "RDKB-7918 : Secure Connection for Logging/Telemetry"
+946c9e4 RDKB-7918 : Secure Connection for Logging/Telemetry
+
+project rdk/components/generic/rdk_logger/
+259f139 RDK-19983- Enabling parodus logging
+da67123 RDKC-1059 RDKC-1073 RDKC-1287 RDKC-1288 RDKC-1289 RDKC-1290: XCV Implementation
+e1dba05 RDKB-13185 : Implementation of logging for GW PROV app
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+d271d97 RDKB-13012 : Converted Image Name does not print "_signed"
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+cfb656d2 RDKB-13474: Bring MoCA VLAN during bootup if feature is enabled
+f1bed06c RDKB-13659: WiFi Security mode changes from local UI is not reflecting in xFi
+3e552e1a RDKB-13286: Call dmcli to set last rebootreason as CR_crash when systemd
+cdc9d8d6 RDKB-11176, RDKB-12057: SECVULN CcspTr069pa- TLS and WAN binding
+1010af82 RDKB-13240 : Restrict lease file sync to only mesh enabled devices.
+3c7235c3 RDKBCMF-99 Fix 'Out-of-bounds write' in CcspCommonLibrary
+6957d466 RDKBCMF-81 Fix 'Missing return statement' in CcspCommonLibrary
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+d72aaaa RDKBCMF-107: Fix 'Unbounded source buffer' in CcspDmCli
+
+project rdkb/components/opensource/ccsp/CcspEPONAgent/
+1ac4bcf RDKBCMF-96: Fix 'Out-of-bounds read' in CcspEPONAgent
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+a807ffa RDKBEMU-504,RDKBEMU-505 : [TAD][LMLite]Device.Hosts.
+64e07e2 ARRISXB3-6477: Fix crash in LMLite
+0290dd8 RDKB-13175:Capture timestamp when client devices connect to the gateway
+0909dc7 RDKB-13320: Fix multple connect messages to Webpa
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+a9a6baf RDKB-13642,RDKB-13473 : Sync during upgrade from webpa release to parodus
+953e05b RDKCMF-5857 Add RPi support for parodus components
+857a804 RDKBCMF-108: Fix 'Unbounded source buffer' in CcspMisc
+586df65 RDKBCMF-82 Fix 'Missing return statement' in CcspMisc
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+dbe7dbe RDKB-11169: Develop Code- MoCA VLAN creation and routing
+1c934a4 RDKB-13409: Disallow MoCA disable if VideoService Flag is Enabled
+ae4432e RDKB-13291: CcspMoCA crash in Rack Testing
+8dd9d1c TCXB6-2191:Incorrect Mac Address generated for a MoCA Device
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+617dbf1 RDKBCMF-85 Fix 'Missing return statement' in CcspMtaAgent
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+5e0d09f RDKBEMU-528 : TR-181 parameters of PandM module are missing
+225f0a1 XF3-2486 : RDKB-7665 Collect network latency and metadata.
+bf7e807 RDKB-12306 : CcspPandM ife_print6 redesign
+786a397 RDKB-13472: Implement Tr181 parameter to enable/disable the feature
+43a1a3b RDKB-13381: Implement VideoService Object in PandM
+fc8bb81 RDKB-11520 : TR-181 parameter implementation for Reverse SSH
+0ec53e1 RDKB-13319:[Field][Logging] [Telemetry ] Additional MoCA Parameters Logging
+bb4cac5 TCXB6-1926,TCCBR-1659 : TR-181 parameter not triggering XCONF CDL
+0eff32f TCCBR-1595: Country Code is US/888 on V2.1 Hardware
+0eaca97 RDKB-13179,RDKB-13180:Log when the device goes in/out WiFi Personalization
+d48b5a0 RDKB-13177,RDKB-13178 : Log timestamp on enter/exit of Activation captive mode
+c932db1 RDKB-12908 : SET/GET of "IPv6Forwarding.{i}.Interface" is throwing error
+767a44e RDKBCMF-98 Fix 'Out-of-bounds write' in CcspPandM
+35161ad RDKBCMF-103 Fix 'Memset buffer size of 0' in CcspPandM
+1fea4c9 RDKBCMF-93: Fix 'Out-of-bounds read' in CcspPandM
+4f5575d RDKBCMF-94: Fix 'Out-of-bounds read' in CcspPandM
+81cfdc3 RDKBCMF-78 Fix 'Missing return statement' in CcspPandM
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+c4d0e78 RDKB-13638 :Remove bbhm_def_cfg_arm_parodus.xml and modify bbhm_def_cfg_arm.xml
+36f2ccc RDKB-11169: Develop Code- MoCA VLAN creation and routing
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+fce5a5d RDKB-13637: Snmp Phy rate setting error Reason for change: snmp mapping issue
+742d2c7 RDKB-10386:snmp_subagent not running/crash
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+01af6c0 RDKB-13472: Implement Tr181 parameter to enable/disable the feature
+a50a3b5 RDKB-11176, RDKB-12057: SECVULN CcspTr069pa- TLS and WAN binding
+af3c2f5 RDKB-13266:TR069 Consistent Crash
+441d587 RDKBCMF-105: Fix 'Use after free' in CcspTr069Pa
+80da977 RDKBCMF-83 Fix 'Missing return statement' in CcspTr069Pa
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+8c44bbd RDKB-13410:With preferPrivate enabled, xfinitywifi macfilter is still
+c64fb1a RDKBEMU-527,RDKBEMU-519 : Radio.2.Status not updating as Down
+460c3bf RDKB-10739 : [Field] Ccsp_wifi component not registered with CR
+f7c014a RDKB-13689:  telemetry logs for disconnect scenarios
+fc0ed84 RDKB-12106:  telemetry logs for disconnect scenarios
+9c7ecb8 RDKB-13619: add log for ManagementFramePowerControl
+7671ae8 ARRISXB6-4935: Integrate WiFi Daily Stats Telemetry
+f39352e RDKBEMU-520 : [TDK][WiFi]Cannot disable WiFi 5GHz Radio.Enable
+7d86c4e RDKBEMU-510 : [TDK] [WIFI] WIFI crashes after setting Device.WiFi.
+ef1d688 RDKB-12441, ARRISXB3-6432 : rpcserver doesn't always start on the ARM side
+2fa095e RDKB-13176,RDKB-13181:Log time when WiFi is broadcasted and default SSID change
+ff14f92 RDKB-13268: fix ACL inconsistency
+7e732ea RDKB-10386:snmp_subagent not running/crash
+3f55759 RDKB-12187: Develop Code for enable PreferPrivate feature by default.
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+0b796cf RDKB-13185 : Implementation of logging for GW PROV app
+ff1961c RDKBCMF-104: Fix 'Memset buffer size of 0' in GwProvApp
+230a737 RDKBCMF-101 Fix 'Out-of-bounds write' in GwProvApp
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+ca9d930 XF3-2486 : RDKB-7665 Collect network latency and metadata.
+2c76e4b RDKB-13329,RDKB-7667 : RDKB-7665 Collect network latency and metadata.
+1e173d9 RDKB-13465  : Revert maintenance window restart of snmp_subagent
+31007f7 RDKBEMU-501 : [TDK] [TandD] [Master] Device.IP.Diagnostics.TraceRoute.
+bbf11ff RDKBEMU-503 : [TDK][TAD]Fails to set the value of Device.DNS.
+bcf1283 RDKB-13453 : Enhance logging for brlan0/brlan1 not up scenarios.
+fcf397e RDKB-12441, ARRISXB3-6432 : rpcserver doesn't always start on the ARM side
+8497bd0 RDKB-13292 : ti_udhcpc not running
+fa7ecfd TCCBR-1023: Adding dhcp clients to selfheal
+7e4dcff RDKB-13190 : Add selfheal for dnsmasq in bridgemode
+e1d9ca5 RDKBCMF-102: Fix 'Memset buffer size of 0' in TestAndDiagnostics
+994bcae RDKBCMF-77 Fix 'Missing return statement' in TestAndDiagnostic
+
+project rdkb/components/opensource/ccsp/Utopia/
+dd8c1e7 ARRISXB6-5119 : Change Host0 IP from 192.168.100.10 to 192.168.147.10
+4b01d22 CISCOXB3-2930 : No v6 addr on erouter0, ti_dhcp6c process not running
+791b6d9 RDKB-11169: Develop Code- MoCA VLAN creation and routing
+5d50f96 ARRISXB6-5086: CVR4Xi - pair camera failed - touchstone error when examin the camera
+d12f794 ARRISXB6-5127: Cannot access admin webUI after switching from bridge to router.
+982cd61 Revert "RDKBCMF-123 Resolve Comcast/CMF differences."
+da51216 RDKB-12298 : Utopia ife_print6 function redesign
+5258c76 TCXB6-2262: In ipv6 mode,Xg1 is not able to communicate with XB6,Xi5
+2e00147 RDKB-13261 : brlan0 is not up
+d34e5d7 ARRISXB6-4980 Set larger MTU automatically for MESH VAPs
+2302267 Revert "TCXB6-2178: Removing dhcp server from 'pmon'"
+751046b ARRISXB6-5085 : log_handle.sh failing due to which /nvram/log getting flooded
+1c2a65d RDKB-13391: Device in Captive Portal mode, but ConfigureWiFi is "false"
+98efe51 RDKB-12441, ARRISXB3-6432 : rpcserver doesn't always start on the ARM side
+eb81927 ARRISXB6-5094: [RDKB Flow Down] Unknown Reboot Reason for GUI Reboot
+f5aef9a RDKB-13173,RDKB-13174:Capture start and end timestamp for eRouter WAN/LAN init
+031ead0 ARRISXB6-5082: Fix webUI access under bridge mode.
+1ce4911 ARRISXB3-6461 : Ping IPv6 is not working in one device
+39bc246 XF3-2421 : Fix http(s)://10.0.0.1/ access when in bridge mode
+51e1dd9 TCXB6-2178: Removing dhcp server from 'pmon'
+4319ac0 ARRISXB6-5051: No default gw erouter0 entry after boot in bridge mode
+7d98bbb RDKB-13240 : Restrict lease file sync to only mesh enabled devices.
+6016bd6 CISCOXB3-2862: Migration checks are failing in dhcp service
+d6c4b3c RDKB-13275 : lock dnsmasq.leases file while syncing from ARM to ATOM
+06e26b2 TCXB6-2059: Added dnsmasq update for XB6 mesh
+2e93521 RDKBCMF-106 Fix 'Destination buffer too small' in Utopia
+cfd32b7 RDKBCMF-76 Fix 'Missing return statement' in Utopia.
+
+project rdkb/components/opensource/ccsp/Xconf/
+0b0be9e TCXB6-2241: Making sure that device contacts Prod conf in all cases
+4fd5b0c ARRISXB6-5087 : Partner ID in XCONF for CDL is not displayed
+
+project rdkb/components/opensource/ccsp/hal/
+f73616a RDKBEMU-511 : Implementated restarting of 5G support in hal-wifi
+
+project rdkb/components/opensource/ccsp/sysint/
+5e04ae0 RDKB-7918 : Secure Connection for Logging/Telemetry
+3d89fbb RDKB-11520 : Include utils for Reverse SSH
+9e9f5fb RDKB-12106:  telemetry logs for disconnect scenarios
+1bef749 RDKB-7918 : Secure Connection for Logging/Telemetry
+270d922 RDKB-13185 : Implementation of logging for GW PROV app
+
+project rdkb/components/opensource/ccsp/webpa-broadband/
+9066ee9 TCXB6-1785: Fix rpc issue between xsmart and webpa-broadband
+9554d96 RDKB-13109:Hostname in Node Notification in old webpa to support all platforms
+
+project rdkb/components/opensource/ccsp/webui/
+7aad2fb RDKB-13681: Prevent 192.168.147.x for Lan configuration
+d44ffb3 RDKB-13380: Local UI changes to handle VideoService Enable
+d2e83d7 ARRISXB6-5137: WiFi mode AC is missing in Web GUI
+3682dc1 ARRISXB6-5166: Typo on wireless_network Configuration page on XB6
+f158f8f RDKB-12382: Typo on pop up window for "Restore Default Settings"
+79db9da RDKB-10911: HighestVersion is returning values across platforms
+55b89f6 RDKB-13386: After factory reset, MSO GUI is not accessible
+ae16508 RDKB-12598: text update for pause-block screen
+bb66bf2 ARRISXB6-5103:[RDKB Flow Down] Remove XHS and XfinityWiFi SSID pages from GUI
+11e97f1 RDKB-13179,RDKB-13180:Log when the device goes in/out WiFi Personalization
+7600155 RDKB-9925: Remove XHS and XfinityWiFi SSID pages from GUI
+9f74a42 ARRISXB6-5084: [RDKB Flow Down] Bandsteering RSSI setting for 5g
+e2160ba RDKB-13279: GUI - WiFi Reset Router reports multiple reboots
+7863720 RDKB-12508: Bandsteering RSSI setting 5g via gui doesn't take effect
+101c299 ARRISXB6-5024: Non-uniform channel greying in MSO and Admin
+0de7ef9 ARRISXB6-5047: PreferPrivate functionality in the Local admin GUI
+3ecfab7 RDKB-13098: PreferPrivate functionality in the Local admin GUI
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+cd677ad RDKBEMU-524 : Modified build_ccsp-dev script to support parodus
+4b254b6 RDKBEMU-512 : Modified BridgeMode,RouterMode scripts to support
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+28d4a6f RDKBEMU-514 : Modified connected device PHP file to display

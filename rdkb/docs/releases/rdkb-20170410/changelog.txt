@@ -1,0 +1,124 @@
+Changelog between rdkb-20170327 and rdkb-20170410
+
+
+project rdk/components/generic/crashupload/
+13a7128 Limit TLS attempt to yocto
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+f272f80 RDKB-10492 : Minidumps are not generated for CcspCMAgentSsp
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+881f3a2 RDKB-10698 : nslookup failing on ATOM
+e4fef76 CISCOXB3-2151, RDKB-16072, TCCBR-1042: default apisolation change-bug fix
+76ea6d2 TCXB6-1139 : CcspLMLite crash observed on all units
+18c17b8 WEBPA-1903 : two webpa processes running
+55b1cc0 RDKB-8200: [systemd][SNMP] Service should launch binary not script
+8322e86 RDKB-9883 : Start dcmrfc service during boot up from cosa_start script
+91e7b76 ARRISXB3-5861: Change initialization location of CcspCMAgent
+b119724 RDKB-10633:[systemd] Log Agent should wait for CR before intializing
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+2f8fd64 RDKB-10740 : IPv6 Filter using server-cache.xml entries for optimization
+9e8a7c0 CBC-63 : To restrict MoCA disable when after Xi5 device connected case.
+b1b8e92 WEBPA-1963 : Update CcspLMLite Make file
+97fde30 WEBPA-1956 :Log libparodus error message using libparodus_strerror()
+88f5c1a RDKB-10740 : IPv6 Filter using server-cache.xml entries for optimization
+319ebf0 RDKB-10697 : [Field] LMLite crash with signature free.
+16db7cb WEBPA-1803 : LMLite: Support for libparodus error codes and cimplog
+0ec01eb CBC-56 : Enable MoCA when Xi5 device is present in connected devices.
+072de95 RDKBCMF-55 : CcspLMLite memory corruption issue
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+ff8c42f CBC-63 : To restrict MoCA disable when after Xi5 device connected case.
+ce6ab59 RDKB-10496:Minidumps are not generated for CcspMoCA
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+54d721b RDKB-10491:Minidumps are not generated for CcspMtaAgentSsp
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+219766e CBC-63 : To restrict MoCA disable when after Xi5 device connected case.
+decdc0a RDKB-8932 : Log timestamp for network communication failure
+306439e RDKB-10663:Mandatory AAA parameters not seen in Radius packets.
+3e359b8 RDKB-8931 : Log timestamp when device enters in/out Activation captive mode
+d0d028f RDKBEMU-342 : Allows to configure invalid IP address as Internal Client IP
+8f24fe9 RDKB-8016 : Saved and Restore of user Configuration is not working
+6655d53 RDKBEMU-389 : CcspPandM crashes when trying to add a rule for Port Triggering
+359b27f RDKB-10663:Mandatory AAA parameters not seen in Radius packets.
+4b4b03c MESH-90: Add notification for subnet change to mesh components
+553ed83 CBC-56 : Enable MoCA when Xi5 device is present in connected devices.
+bab28d5 TATAELXSI-301 : [RPI][Broadband] Fails to set any valid range of values for LAN subnet mask
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+3d41b1c RDKB-10837,CSCOXB3-2151: Apisolation oid value should be 1 by default.
+6c768aa RDKB-16072: default ipisolation change-bug fix
+4b0d08f RDKB-16072: default ipisolation change
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+9b8257b RDKB-10834: Fix security mode in sysevent
+d8bf3ef RDKB-8742:Log timestamp when WiFi is broadcasted-along with ssid name
+67c37d8 RDKB-10353: Make arping_to_arm generic for RDKB
+6f22872 RDKB-10762:Changing SSID cause the hostapd down
+3a816ca MESH-111: Need to add sysevent handle for wifi agent.
+c126fa7 TCCBR-830: Adding CBR flag for security mode
+599b22f RDKB-10678: radio missing tracking for telemetry
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+59bc8c6 RDKB-4751 : XB3 coming up in bridged mode with stage2 boot time changes
+
+project rdkb/components/opensource/ccsp/GwProvApp-ePON/
+9570bff XF3-2019 : Time Offset Should Include DST
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+f9d2c01 RDKB-10371:SelfHeal reboot needed for devices with very high load average
+fcdc896 RDKB-10494 : Minidumps are not generated for CcspTandDSsp
+1fb752b RDKB-10683 : Need selfheal for dibbler and zebra.
+177e08b RDKB-8200: [systemd][SNMP] Service should launch binary not script
+af7f785 TCCBR-798: cbr selfheal scripts
+ee270e5 TCCBR-798: selfheal scripts for cbr
+2ede0b8 TCCBR-916,TCCBR-796 : TCCBR self Heal
+17271cf CISCOXB3-2044: Segmentation Fault | No DHCP Advertise received
+
+project rdkb/components/opensource/ccsp/Utopia/
+046be75 ARRISXB6-3896:Ethernet Port mapping
+c79c083 RDKB-10371:SelfHeal reboot needed for devices with very high load average
+8d50745 ARRISXB6-3890:sometimes conntrack -D not working on XB6
+52d7fc3 TCCBR-907: Disabling TR069 in CBR
+12d9692 RDKB-9352 : Convert dhcp_server_start and its associated functions to C code
+5ad8304 RDKB-10673:AtomConsolelog is flooded with prints "Server recieved command echo"
+869673e RDKB-10413 : No ipv6 address on Mobile Clients connecetd to ArrisXB3
+2d25db1 RDKB-10738 : mldproxy and igmpproxy not running from bootup
+f1f2523 RDKB-8735,RDKB-8736:Log start and end timestamp for eRouter WAN/LAN init
+1029393 RDKB-10728,RDKB-10727 : IPv6 configuration for mldproxy and zebra.
+b89aa3e RDKB-8733:Log timestamp when device starts initialization-with firmware name
+4a60059 RDKB-9680 :  Parental Control Report is not generated for Managed Devices.
+84a9ab2 MESH-114:keep mesh backhaul on
+493bcba RDKB-10698 : nslookup failing on ATOM
+746681c RDKB-10684 : Request to add logging for ATOM initiated reboot.
+62ed93f RDKB-10665: Block page is not showing up for blocked device
+e4b7881 ARRISXB6-3792: IPv6 Broken on Master
+95f1e21 CBC-56 : Enable MoCA when Xi5 device is present in connected devices.
+
+project rdkb/components/opensource/ccsp/halinterface/
+6ef23d9 RDKB-5987: Convert file types to ASCII text
+
+project rdkb/components/opensource/ccsp/sysint/
+7ec266e RDKB-10794 : Correcting regression from RDKB_9428
+9f92ac0 TCXB6-1167: rdkbLogMonitor.sh exits after uploading twice after reboot
+651b81f CISCOXB3-2183 : Box indefintely retries to upload logs if response is 401.
+0746577 WEBPA-1821 : Handle log upload for parodus inside logFiles.properties
+467af3c RDKB-10384: auto channel status for telemetry
+cb7715e RDKB-10477 : [Field] Telemetry not parsing SelfHealBootUp.txt.0 file
+
+project rdkb/components/opensource/ccsp/utilities/
+9368407 RDKB-10574: RDK-B utilities component contains various open source patches
+
+project rdkb/components/opensource/ccsp/webui/
+67a2dfc RDKB-10823: getting IPv6 Addr from Host Table needs to be modified
+17bd4a2 RDKB-6809: Redundant GUI pages need to be removed for XB3
+43bbf78 RDKB-10218: Radio disable in MSO provides option to enable SSID
+a655b5c RDKB-8016 : Saved and Restore of user Configuration is not working
+40ebda6 BLDK-443 Update LICENSE, NOTICE and COPYING files for webui component.
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+fe78ae0 RDKBEMU-404 : updated Emulator developers script in RDKB
+2de77dc RDKBEMU-400 : Added ccsp components devolpment script for dev image

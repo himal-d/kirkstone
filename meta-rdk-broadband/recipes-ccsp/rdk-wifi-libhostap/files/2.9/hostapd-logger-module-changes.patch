@@ -1,0 +1,165 @@
+##########################################
+Date: Oct 8, 2021 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: Hostapd logger module update
+Source: Comcast
+Upstream-Status: Pending
+Signed-off-by: Manish_Dharanenthiran <Manish_Dharanenthiran@Comcast.com>
+##########################################
+Index: git/source/hostap-2.9/src/Makefile.am
+===================================================================
+--- git.orig/source/hostap-2.9/src/Makefile.am
++++ git/source/hostap-2.9/src/Makefile.am
+@@ -286,7 +286,7 @@ AM_CFLAGS += -DCONFIG_SHA384
+ AM_CFLAGS += -DCONFIG_HMAC_SHA384_KDF
+ AM_CFLAGS += -DCONFIG_INTERNAL_SHA384
+ ##endif
+-AM_CFLAGS += -DLINUX_PORT -DRDK_PORT -DCONFIG_CRYPTO_INTERNAL -DCONFIG_DEBUG_FILE -DCONFIG_DEBUG_LINUX_TRACING -DCONFIG_WPS
++AM_CFLAGS += -DLINUX_PORT -DRDK_PORT -DCONFIG_CRYPTO_INTERNAL -DCONFIG_DEBUG_LINUX_TRACING -DCONFIG_WPS -DCONFIG_IEEE80211AC -DCONFIG_IEEE80211AX -DCONFIG_IEEE80211N
+ #AM_CFLAGS += -DCONFIG_WPS -DCONFIG_CTRL_IFACE -DCONFIG_CTRL_IFACE_UNIX -DCONFIG_INTERNAL_LIBTOMMATH //master
+ #AM_CFLAGS += -DLINUX_PORT -DCONFIG_IEEE80211N -DCONFIG_IEEE80211AC -DCONFIG_WPS -DCONFIG_WEP
+ #AM_CFLAGS += -DCONFIG_EAP -DCONFIG_EAP_MD5 -DCONFIG_EAP_TLS -DCONFIG_EAP_MSCHAPV2 -DCONFIG_EAP_PEAP -DCONFIG_EAP_GTC -DCONFIG_EAP_TTLS
+@@ -336,6 +336,10 @@ AM_CFLAGS += -DCONFIG_CRYPTO_INTERNAL
+ AM_CFLAGS += -DCONFIG_TLSV11
+ AM_CFLAGS += -DCONFIG_TLSV12
+ 
++#Logger compilation
++AM_CFLAGS += -DCONFIG_DEBUG_FILE
++
++
+ #Needed to compile
+ #AM_CFLAGS += -DCONFIG_ECC
+ 
+diff --git a/source/hostap-2.9/src/ap/accounting.c b/source/hostap-2.9/src/ap/accounting.c
+index 9fc1886..5a8974e 100755
+--- a/source/hostap-2.9/src/ap/accounting.c
++++ b/source/hostap-2.9/src/ap/accounting.c
+@@ -185,6 +185,8 @@ static int accounting_sta_update_stats(struct hostapd_data *hapd,
+ 		sta->last_tx_bytes_lo = data->tx_bytes;
+ 	}
+ 
++#if 0
++//Disabling the below print temporarily as stats features are not completely implemented and below print reports incorrect value
+ 	hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_RADIUS,
+ 		       HOSTAPD_LEVEL_DEBUG,
+ 		       "updated TX/RX stats: rx_bytes=%llu [%u:%u] tx_bytes=%llu [%u:%u] bytes_64bit=%d",
+@@ -193,6 +195,7 @@ static int accounting_sta_update_stats(struct hostapd_data *hapd,
+ 		       data->tx_bytes, sta->last_tx_bytes_hi,
+ 		       sta->last_tx_bytes_lo,
+ 		       data->bytes_64bit);
++#endif
+ 
+ 	return 0;
+ }
+diff --git a/source/hostap-2.9/src/utils/wpa_debug.c b/source/hostap-2.9/src/utils/wpa_debug.c
+index c336e53..2a0f5ba 100755
+--- a/source/hostap-2.9/src/utils/wpa_debug.c
++++ b/source/hostap-2.9/src/utils/wpa_debug.c
+@@ -209,6 +209,21 @@ void wpa_debug_close_linux_tracing(void)
+ void wpa_printf(int level, const char *fmt, ...)
+ {
+ 	va_list ap;
++	FILE *fpg = NULL;
++
++	if ((access("/nvram/wifiLibhostapDbg", R_OK)) == 0) {
++		fpg = fopen("/tmp/wifilibhostap", "a+");
++		if (fpg == NULL) {
++			return;
++		}
++
++		va_start(ap, fmt);
++	        vfprintf(fpg, fmt, ap);
++	        va_end(ap);
++	        fprintf(fpg, "\n");
++		fflush(fpg);
++	        fclose(fpg);
++	}
+ 
+ 	va_start(ap, fmt);
+ 	if (level >= wpa_debug_level) {
+@@ -223,6 +238,10 @@ void wpa_printf(int level, const char *fmt, ...)
+ #endif /* CONFIG_DEBUG_SYSLOG */
+ 		wpa_debug_print_timestamp();
+ #ifdef CONFIG_DEBUG_FILE
++		if ((access("/nvram/wifiHostapDbg", R_OK)) != 0 &&
++			(access("/nvram/wifiHostapDbg2", R_OK)) != 0) {
++			return;
++		}
+ 		if (out_file) {
+ 			vfprintf(out_file, fmt, ap);
+ 			fprintf(out_file, "\n");
+@@ -257,6 +276,28 @@ static void _wpa_hexdump(int level, const char *title, const u8 *buf,
+ 			 size_t len, int show)
+ {
+ 	size_t i;
++	static FILE *fpg = NULL;
++
++	if ((access("/nvram/wifiLibhostapDbg", R_OK)) == 0) {
++		if (fpg == NULL) {
++			fpg = fopen("/tmp/wifilibhostap", "a+");
++			if (fpg == NULL) {
++				return;
++			}
++	    	}
++
++	    	fprintf(fpg, "%s - hexdump(len=%lu):", title, (unsigned long) len);
++
++	    	if (buf == NULL) {
++			fprintf(fpg, " [NULL]");
++	    	} else {
++			for (i = 0; i < len; i++)
++		    	fprintf(fpg, " %02x", buf[i]);
++	    	}
++
++	    	fprintf(fpg, "\n");
++	    	fflush(fpg);
++	}
+ 
+ #ifdef CONFIG_DEBUG_LINUX_TRACING
+ 	if (wpa_debug_tracing_file != NULL) {
+@@ -350,6 +391,10 @@ static void _wpa_hexdump(int level, const char *title, const u8 *buf,
+ #endif /* CONFIG_DEBUG_SYSLOG */
+ 	wpa_debug_print_timestamp();
+ #ifdef CONFIG_DEBUG_FILE
++	if ((access("/nvram/wifiHostapDbg", R_OK) != 0) &&
++		(access("/nvram/wifiHostapDbg2", R_OK)) != 0) {
++		return;
++	}
+ 	if (out_file) {
+ 		fprintf(out_file, "%s - hexdump(len=%lu):",
+ 			title, (unsigned long) len);
+@@ -512,7 +557,6 @@ void wpa_hexdump_ascii(int level, const char *title, const void *buf,
+ 	_wpa_hexdump_ascii(level, title, buf, len, 1);
+ }
+ 
+-
+ void wpa_hexdump_ascii_key(int level, const char *title, const void *buf,
+ 			   size_t len)
+ {
+@@ -550,6 +594,13 @@ int wpa_debug_reopen_file(void)
+ int wpa_debug_open_file(const char *path)
+ {
+ #ifdef CONFIG_DEBUG_FILE
++	wpa_debug_timestamp++;
++
++	if ((access("/nvram/wifiHostapDbg", R_OK)) == 0)
++		wpa_debug_level = MSG_DEBUG;
++	else if ((access("/nvram/wifiHostapDbg2", R_OK)) == 0)
++		wpa_debug_level = MSG_EXCESSIVE;
++
+ 	int out_fd;
+ 
+ 	if (!path)
+@@ -845,10 +896,10 @@ void hostapd_logger(void *ctx, const u8 *addr, unsigned int module, int level,
+ 	if (hostapd_logger_cb)
+ 		hostapd_logger_cb(ctx, addr, module, level, buf, len);
+ 	else if (addr)
+-		wpa_printf(MSG_DEBUG, "hostapd_logger: STA " MACSTR " - %s",
++		wpa_printf(MSG_INFO, "hostapd_logger: STA " MACSTR " - %s",
+ 			   MAC2STR(addr), buf);
+ 	else
+-		wpa_printf(MSG_DEBUG, "hostapd_logger: %s", buf);
++		wpa_printf(MSG_INFO, "hostapd_logger: %s", buf);
+ 	bin_clear_free(buf, buflen);
+ }
+ #endif /* CONFIG_NO_HOSTAPD_LOGGER */

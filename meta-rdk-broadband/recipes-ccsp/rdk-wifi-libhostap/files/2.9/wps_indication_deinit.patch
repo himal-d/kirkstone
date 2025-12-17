@@ -1,0 +1,48 @@
+diff --git a/source/hostap-2.9/src/wps/wps_registrar.c b/source/hostap-2.9/src/wps/wps_registrar.c
+index e0fad4f..c0a09fe 100755
+--- a/source/hostap-2.9/src/wps/wps_registrar.c
++++ b/source/hostap-2.9/src/wps/wps_registrar.c
+@@ -229,6 +229,8 @@ static void wps_registrar_set_selected_timeout(void *eloop_ctx,
+ static void wps_registrar_remove_pin(struct wps_registrar *reg,
+ 				     struct wps_uuid_pin *pin);
+ 
++static void wps_registrar_pbc_completed(struct wps_registrar *reg);
++static void wps_registrar_pin_completed(struct wps_registrar *reg);
+ 
+ static void wps_registrar_add_authorized_mac(struct wps_registrar *reg,
+ 					     const u8 *addr)
+@@ -747,6 +749,16 @@ void wps_registrar_deinit(struct wps_registrar *reg)
+ {
+ 	if (reg == NULL)
+ 		return;
++
++	wpa_printf(MSG_DEBUG, "WPS: Deinit registar: PBC: %d", reg->pbc);
++
++	// Make ensure that all WPS sessions were terminated
++	if (reg->pbc) {
++		wps_registrar_pbc_completed(reg);
++	} else if (reg->selected_registrar) {
++		wps_registrar_pin_completed(reg);
++	}
++
+ 	eloop_cancel_timeout(wps_registrar_pbc_timeout, reg, NULL);
+ 	eloop_cancel_timeout(wps_registrar_set_selected_timeout, reg, NULL);
+ 	wps_registrar_flush(reg);
+@@ -1074,7 +1086,7 @@ int wps_registrar_button_pushed(struct wps_registrar *reg,
+ }
+ 
+ 
+-static void wps_registrar_pbc_completed(struct wps_registrar *reg)
++void wps_registrar_pbc_completed(struct wps_registrar *reg)
+ {
+ 	wpa_printf(MSG_DEBUG, "WPS: PBC completed - stopping PBC mode");
+ 	eloop_cancel_timeout(wps_registrar_pbc_timeout, reg, NULL);
+@@ -1083,7 +1095,7 @@ static void wps_registrar_pbc_completed(struct wps_registrar *reg)
+ }
+ 
+ 
+-static void wps_registrar_pin_completed(struct wps_registrar *reg)
++void wps_registrar_pin_completed(struct wps_registrar *reg)
+ {
+ 	wpa_printf(MSG_DEBUG, "WPS: PIN completed using internal Registrar");
+ 	eloop_cancel_timeout(wps_registrar_set_selected_timeout, reg, NULL);

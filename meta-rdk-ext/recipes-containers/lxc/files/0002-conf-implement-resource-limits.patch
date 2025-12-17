@@ -1,0 +1,229 @@
+From c6d09e15c5a25fc1a16859e498af2af17b5dfb2f Mon Sep 17 00:00:00 2001
+From: Wolfgang Bumiller <w.bumiller@proxmox.com>
+Date: Fri, 4 Nov 2016 10:19:07 +0100
+Subject: [PATCH] conf: implement resource limits
+
+This adds lxc.limit.<name> options consisting of one or two
+colon separated numerical values (soft and optional hard
+limit). If only one number is specified it'll be used for
+both soft and hard limit. Additionally the word 'unlimited'
+can be used instead of numbers.
+
+Eg.
+  lxc.limit.nofile = 30000:32768
+  lxc.limit.stack = unlimited
+
+Signed-off-by: Wolfgang Bumiller <w.bumiller@proxmox.com>
+---
+ src/lxc/conf.h    |  23 ++++++++
+ src/lxc/confile.c | 105 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 128 insertions(+)
+
+
+Index: lxc-2.0.6/src/lxc/conf.h
+===================================================================
+--- lxc-2.0.6.orig/src/lxc/conf.h
++++ lxc-2.0.6/src/lxc/conf.h
+@@ -30,6 +30,9 @@
+ #include <net/if.h>
+ #include <sys/param.h>
+ #include <sys/types.h>
++#if HAVE_SYS_RESOURCE_H
++#include <sys/resource.h>
++#endif
+ #include <stdbool.h>
+ 
+ #include "list.h"
+@@ -149,6 +152,24 @@ struct lxc_cgroup {
+ 	char *value;
+ };
+ 
++
++#if !HAVE_SYS_RESOURCE_H
++# define RLIM_INFINITY ((unsigned long)-1)
++struct rlimit {
++       unsigned long rlim_cur;
++       unsigned long rlim_max;
++};
++#endif
++/*
++ * Defines a structure to configure resource limits to set via setrlimit().
++ * @resource : the resource name in lowercase without the RLIMIT_ prefix
++ * @limit    : the limit to set
++ */
++struct lxc_limit {
++       char *resource;
++       struct rlimit limit;
++};
++
+ enum idtype {
+ 	ID_TYPE_UID,
+ 	ID_TYPE_GID
+@@ -378,6 +399,10 @@ struct lxc_conf {
+ 
+ 	/* indicator if the container will be destroyed on shutdown */
+ 	unsigned int ephemeral;
++
++       /* RLIMIT_* limits */
++       struct lxc_list limits;
++
+ };
+ 
+ #ifdef HAVE_TLS
+@@ -421,6 +446,7 @@ extern int lxc_clear_hooks(struct lxc_co
+ extern int lxc_clear_idmaps(struct lxc_conf *c);
+ extern int lxc_clear_groups(struct lxc_conf *c);
+ extern int lxc_clear_environment(struct lxc_conf *c);
++extern int lxc_clear_limits(struct lxc_conf *c, const char *key);
+ extern int lxc_delete_autodev(struct lxc_handler *handler);
+ 
+ extern int do_rootfs_setup(struct lxc_conf *conf, const char *name,
+@@ -432,6 +458,7 @@ extern int do_rootfs_setup(struct lxc_co
+ 
+ struct cgroup_process_info;
+ extern int lxc_setup(struct lxc_handler *handler);
++extern int setup_resource_limits(struct lxc_list *limits, pid_t pid);
+ 
+ extern void lxc_restore_phys_nics_to_netns(int netnsfd, struct lxc_conf *conf);
+ 
+Index: lxc-2.0.6/src/lxc/confile.c
+===================================================================
+--- lxc-2.0.6.orig/src/lxc/confile.c
++++ lxc-2.0.6/src/lxc/confile.c
+@@ -112,6 +112,7 @@ static int config_init_cmd(const char *,
+ static int config_init_uid(const char *, const char *, struct lxc_conf *);
+ static int config_init_gid(const char *, const char *, struct lxc_conf *);
+ static int config_ephemeral(const char *, const char *, struct lxc_conf *);
++static int config_limit(const char *, const char *, struct lxc_conf *);
+ 
+ static struct lxc_config_t config[] = {
+ 
+@@ -184,6 +185,7 @@ static struct lxc_config_t config[] = {
+ 	{ "lxc.init_uid",             config_init_uid             },
+ 	{ "lxc.init_gid",             config_init_gid             },
+ 	{ "lxc.ephemeral",            config_ephemeral            },
++	{ "lxc.limit",                config_limit                },
+ };
+ 
+ struct signame {
+@@ -1444,6 +1446,110 @@ static int sig_parse(const char *signame
+ 	return -1;
+ }
+ 
++static bool parse_limit_value(const char **value, unsigned long *res) {
++       char *endptr = NULL;
++
++       if (strncmp(*value, "unlimited", sizeof("unlimited")-1) == 0) {
++               *res = RLIM_INFINITY;
++               *value += sizeof("unlimited")-1;
++               return true;
++       }
++
++       errno = 0;
++       *res = strtoul(*value, &endptr, 10);
++       if (errno || !endptr)
++               return false;
++       *value = endptr;
++
++       return true;
++}
++
++static int config_limit(const char *key, const char *value,
++                        struct lxc_conf *lxc_conf)
++{
++       struct lxc_list *limlist = NULL;
++       struct lxc_limit *limelem = NULL;
++       struct lxc_list *iter;
++       struct rlimit limit;
++       unsigned long limit_value;
++
++       if (!value || strlen(value) == 0)
++               return lxc_clear_limits(lxc_conf, key);
++
++       if (strncmp(key, "lxc.limit.", sizeof("lxc.limit.")-1) != 0)
++               return -1;
++
++       key += sizeof("lxc.limit.")-1;
++
++       /* soft limit comes first in the value */
++       if (!parse_limit_value(&value, &limit_value))
++               return -1;
++       limit.rlim_cur = limit_value;
++
++       /* skip spaces and a colon */
++       while (isspace(*value))
++               ++value;
++       if (*value == ':')
++               ++value;
++       else if (*value) /* any other character is an error here */
++               return -1;
++       while (isspace(*value))
++               ++value;
++
++       /* optional hard limit */
++       if (*value) {
++               if (!parse_limit_value(&value, &limit_value))
++                       return -1;
++               limit.rlim_max = limit_value;
++               /* check for trailing garbage */
++               while (isspace(*value))
++                       ++value;
++               if (*value)
++                       return -1;
++       } else {
++               /* a single value sets both hard and soft limit */
++               limit.rlim_max = limit.rlim_cur;
++       }
++
++       /* find existing list element */
++       lxc_list_for_each(iter, &lxc_conf->limits) {
++               limelem = iter->elem;
++               if (!strcmp(key, limelem->resource)) {
++                       limelem->limit = limit;
++                       return 0;
++               }
++       }
++
++       /* allocate list element */
++       limlist = malloc(sizeof(*limlist));
++       if (!limlist)
++               goto out;
++
++       limelem = malloc(sizeof(*limelem));
++       if (!limelem)
++               goto out;
++       memset(limelem, 0, sizeof(*limelem));
++
++       limelem->resource = strdup(key);
++       if (!limelem->resource)
++               goto out;
++       limelem->limit = limit;
++
++       limlist->elem = limelem;
++
++       lxc_list_add_tail(&lxc_conf->limits, limlist);
++
++       return 0;
++
++out:
++       free(limlist);
++       if (limelem) {
++               free(limelem->resource);
++               free(limelem);
++       }
++       return -1;
++}
++
+ static int config_haltsignal(const char *key, const char *value,
+ 			     struct lxc_conf *lxc_conf)
+ {
+@@ -2666,6 +2777,9 @@ int lxc_clear_config_item(struct lxc_con
+ 		return lxc_clear_environment(c);
+ 	else if (strncmp(key, "lxc.id_map", 10) == 0)
+ 		return lxc_clear_idmaps(c);
++        else if (strncmp(key, "lxc.limit", 9) == 0)
++                return lxc_clear_limits(c, key);
++
+ 	return -1;
+ }
+ 

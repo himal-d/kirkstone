@@ -1,0 +1,67 @@
+From b8204b4aeac0278b95005ade8e59f1ec83181f22 Mon Sep 17 00:00:00 2001
+From: Tarun Saha <tsaha@libertyglobal.com>
+Date: Wed, 27 Jan 2021 16:35:48 -0800
+Subject: [PATCH] rfc3315: fix unicast request and client IANA options
+
+---
+ ClntOptions/ClntOptIA_NA.cpp | 25 +++++++++++++------------
+ SrvTransMgr/SrvTransMgr.cpp  |  6 ++++--
+ 2 files changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/ClntOptions/ClntOptIA_NA.cpp b/ClntOptions/ClntOptIA_NA.cpp
+index 0f40e5bd..2134b3b8 100644
+--- a/ClntOptions/ClntOptIA_NA.cpp
++++ b/ClntOptions/ClntOptIA_NA.cpp
+@@ -241,19 +241,20 @@ bool TClntOptIA_NA::doDuties() {
+                 ptrIA->delAddr(ptrOptAddr->getAddr());
+                 // delete address from IfaceMgr
+                 ptrIface->delAddr(ptrOptAddr->getAddr(), ptrIface->getPrefixLength());
+-                break; // analyze next option OPTION_IA_NA
++            /* Loop through all the IA_NA received from the server */
++            } else {
++
++                // set up new options in IfaceMgr
++                SPtr<TIfaceIface> ptrIface = ClntIfaceMgr().getIfaceByID(Iface_);
++                if (ptrIface)
++                    ptrIface->updateAddr(ptrOptAddr->getAddr(),
++                            ptrOptAddr->getPref(),
++                            ptrOptAddr->getValid());
++                // set up new options in addrDB
++                ptrAddrAddr->setPref(ptrOptAddr->getPref());
++                ptrAddrAddr->setValid(ptrOptAddr->getValid());
++                ptrAddrAddr->setTimestamp();
+             }
+-
+-            // set up new options in IfaceMgr
+-            SPtr<TIfaceIface> ptrIface = ClntIfaceMgr().getIfaceByID(Iface_);
+-            if (ptrIface)
+-                ptrIface->updateAddr(ptrOptAddr->getAddr(),
+-                        ptrOptAddr->getPref(),
+-                        ptrOptAddr->getValid());
+-            // set up new options in addrDB
+-            ptrAddrAddr->setPref(ptrOptAddr->getPref());
+-            ptrAddrAddr->setValid(ptrOptAddr->getValid());
+-            ptrAddrAddr->setTimestamp();
+         }
+     }
+     SPtr<TClntCfgIA> ptrCfgIA;
+diff --git a/SrvTransMgr/SrvTransMgr.cpp b/SrvTransMgr/SrvTransMgr.cpp
+index b65ae7df..fdc2e6dd 100644
+--- a/SrvTransMgr/SrvTransMgr.cpp
++++ b/SrvTransMgr/SrvTransMgr.cpp
+@@ -465,8 +465,10 @@ bool TSrvTransMgr::unicastCheck(SPtr<TSrvMsg> msg) {
+                                          + msg->getLocalAddr()->getPlain(), NULL));
+     options.push_back(status);
+ 
+-    // Message will be sent in the constructor
+-    TSrvMsgReply(msg, options);
++    SPtr<TSrvMsg> msgReply = new TSrvMsgReply(msg, options);
++
++    // Send the packet here with 'use multicast' option
++    sendPacket(msgReply);
+ 
+     return false;
+ }
+-- 
+2.24.0
+

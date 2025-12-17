@@ -1,0 +1,15 @@
+Source: Backport from later version of opensync
+
+diff --git a/kconfig/Kconfig.libs b/kconfig/Kconfig.libs
+index f25c3e8..4cb3eb5 100644
+--- a/kconfig/Kconfig.libs
++++ b/kconfig/Kconfig.libs
+@@ -7,6 +7,8 @@ source "src/lib/log/kconfig/Kconfig.libs"
+ source "src/lib/mdnsd/kconfig/Kconfig.libs"
+ source "src/lib/gatekeeper_cache/kconfig/Kconfig.libs"
+ source "src/lib/gatekeeper_plugin/kconfig/Kconfig.libs"
++source "src/lib/osw/kconfig/Kconfig.libs"
++source "src/lib/ow/kconfig/Kconfig.libs"
+ source "src/lib/dhcp_relay/kconfig/Kconfig.libs"
+ source "src/lib/fsm_dpi_upnp/kconfig/Kconfig.libs"
+ source "src/lib/imc/kconfig/Kconfig.libs"

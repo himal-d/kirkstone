@@ -1,0 +1,45 @@
+From ad2c748f617298a3613565454c2cdbddb57f4f25 Mon Sep 17 00:00:00 2001
+From: Hemanth kumar Nadanamoorthy <hemanthkumar.nadanamoorthy@sky.uk>
+Date: Fri, 18 Nov 2022 14:42:50 +0000
+Subject: [PATCH] RDKB-45694 : Libhostap changes to support Onewifi Sharman
+
+Reason for change: To support OneWifi in Sharman
+Test Procedure: 1. Load the firmware.
+		2. Check wifi status.
+		3. In Extender mode, verify if Sharman is able to connect to external gateway.
+		4. Switch to Gateway mode and verify if private vaps are up.
+		5. Verify client connections on private vaps.
+                6. Run all tests of wifi_webconfig_consumer.
+Risks: Low
+
+Change-Id: I4f344e1cd5c16ce14187b5124282f5923eaa4b29
+Signed-off-by: Hemanth kumar Nadanamoorthy <hemanthkumar.nadanamoorthy@sky.uk>
+(cherry picked from commit 39664031ad9e72397f6f0c75fac6ba88353e30c2)
+---
+
+diff --git a/source/hostap-2.10/src/common/ieee802_11_common.c b/source/hostap-2.10/src/common/ieee802_11_common.c
+index 9e348a2..3dfe375 100644
+--- a/source/hostap-2.10/src/common/ieee802_11_common.c
++++ b/source/hostap-2.10/src/common/ieee802_11_common.c
+@@ -1179,7 +1179,7 @@
+ 	"AL", "AM", "AT", "AZ", "BA", "BE", "BG", "BY", "CH", "CY", "CZ", "DE",
+ 	"DK", "EE", "EL", "ES", "FI", "FR", "GE", "HR", "HU", "IE", "IS", "IT",
+ 	"LI", "LT", "LU", "LV", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT",
+-	"RO", "RS", "RU", "SE", "SI", "SK", "TR", "UA", "UK", NULL
++	"RO", "RS", "RU", "SE", "SI", "SK", "TR", "UA", "UK", "GB", NULL
+ };
+ 
+ static const char *const jp_op_class_cc[] = {
+diff --git a/source/hostap-2.9/src/common/ieee802_11_common.c b/source/hostap-2.9/src/common/ieee802_11_common.c
+index a081f87..22a0bea 100755
+--- a/source/hostap-2.9/src/common/ieee802_11_common.c
++++ b/source/hostap-2.9/src/common/ieee802_11_common.c
+@@ -929,7 +929,7 @@
+ 	"AL", "AM", "AT", "AZ", "BA", "BE", "BG", "BY", "CH", "CY", "CZ", "DE",
+ 	"DK", "EE", "EL", "ES", "FI", "FR", "GE", "HR", "HU", "IE", "IS", "IT",
+ 	"LI", "LT", "LU", "LV", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT",
+-	"RO", "RS", "RU", "SE", "SI", "SK", "TR", "UA", "UK", NULL
++	"RO", "RS", "RU", "SE", "SI", "SK", "TR", "UA", "UK", "GB", NULL
+ };
+ 
+ static const char *const jp_op_class_cc[] = {

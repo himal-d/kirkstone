@@ -1,0 +1,19 @@
+Update to work with autoconf 2.71
+
+The script needs CPP so add the appropriate macro.
+
+Upstream-Status: Inappropriate [needed for old GPLv2 version only]
+RP - 2021/1/28
+
+Index: grep-2.5.1a/configure.in
+===================================================================
+--- grep-2.5.1a.orig/configure.in
++++ grep-2.5.1a/configure.in
+@@ -27,6 +27,7 @@ AC_PROG_AWK
+ AC_PROG_CC
+ AC_PROG_INSTALL
+ AC_PROG_RANLIB
++AC_PROG_CPP
+ 
+ dnl Checks for typedefs, structures, and compiler characteristics.
+ AC_SYS_LARGEFILE

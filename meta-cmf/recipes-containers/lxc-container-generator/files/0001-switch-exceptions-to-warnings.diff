@@ -1,0 +1,70 @@
+From 1aa41727c8b80959b7184a481418e52fa0119445 Mon Sep 17 00:00:00 2001
+From: Stefan Verkoyen <sverkoyen.contractor@libertyglobal.com>
+Date: Tue, 9 Jan 2024 11:28:43 +0100
+Subject: [PATCH 2/2] 0001-switch-exceptions-to-warnings.diff
+
+Change-Id: I9761d37c09bc0aa16c5626ed301a39c04a618c46
+---
+ src/lib/config.py       | 6 ++++--
+ src/lib/rootfs.py       | 3 ++-
+ src/lib/sanity_check.py | 6 +++++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/src/lib/config.py b/src/lib/config.py
+index 0c9ce8f..62b7e4d 100644
+--- a/src/lib/config.py
++++ b/src/lib/config.py
+@@ -347,7 +347,8 @@ class cConfig(object):
+                     self.rootfs.createMountPointForFile(li)
+                     self.addRequiredLibs(li, indent = indent + "    ")
+                 else:
+-                    raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (li))
++                    #raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (li))
++                    print("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (li))
+ 
+     def scanDir(self, path):
+         for root, dirs, files in os.walk(self.rootfs.getRootfsPath() + "/" + str(path)):
+@@ -589,7 +590,8 @@ class cConfig(object):
+                                 self.rootfs.removeFileFromHost(source)
+                             self.rootfs.createHardlinkForFile(source)
+                         else:
+-                            raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (source))
++                            #raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (source))
++                            print("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (source))
+ 
+     def generateDirsAndFiles(self, dirsAndFilesNode):
+         if dirsAndFilesNode is not None:
+diff --git a/src/lib/rootfs.py b/src/lib/rootfs.py
+index 489a106..c96911e 100644
+--- a/src/lib/rootfs.py
++++ b/src/lib/rootfs.py
+@@ -299,7 +299,8 @@ class cRootfs(object):
+                         lib.append(val["path"])
+ 
+         if not lib:
+-            raise Exception("[!!! FIND  !!!] Rootfs does not contain (%s) - No such file or directory" % (libName))
++            #raise Exception("[!!! FIND  !!!] Rootfs does not contain (%s) - No such file or directory" % (libName))
++            print("[!!! FIND  !!!] Rootfs does not contain (%s) - No such file or directory" % (libName))
+ 
+         return lib
+ 
+diff --git a/src/lib/sanity_check.py b/src/lib/sanity_check.py
+index 416abd8..9a5dd35 100644
+--- a/src/lib/sanity_check.py
++++ b/src/lib/sanity_check.py
+@@ -299,7 +299,11 @@ class cSanityCheck(object):
+ 
+     def validateMountBind(self, mountBind, options):
+         if (self.isWritable(mountBind) and (options.find("optional") == -1) and not self.pathExist(mountBind)):
+-            raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (mountBind))
++            #raise Exception("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (mountBind))
++            print("[!!! ERROR !!!] Rootfs does not contain (%s) - No such file or directory" % (mountBind))
++            return False
++        else:
++            return True
+ 
+     def addDir(self, dir):
+         self.dirList.append(dir)
+-- 
+2.41.0
+

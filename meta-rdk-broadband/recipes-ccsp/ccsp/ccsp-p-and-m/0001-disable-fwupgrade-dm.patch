@@ -1,0 +1,39 @@
+##########################################
+Date: Nov 6, 2018 1:41 AM
+From: ebecd56aaa2727b6305d39c69951fbdc8740f800 Oct 31, 2018 11:56 PM
+Subject: PandM Data Model Patch
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: RDK User <kulvendra.singh@sky.uk>
+##########################################
+Index: generic/config-arm/TR181-USGv2.XML
+===================================================================
+--- generic.orig/config-arm/TR181-USGv2.XML
++++ generic/config-arm/TR181-USGv2.XML
+@@ -984,13 +984,6 @@
+ 			<type>boolean</type>
+ 			<syntax>bool</syntax>
+ 		</parameter>
+-                <parameter>
+-                        <name>X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset</name>
+-                        <type>int</type>
+-                        <syntax>int</syntax>
+-                        <writable>true</writable>
+-                </parameter>
+-
+ 	<parameter>
+             <name>X_RDKCENTRAL-COM_OnBoarding_State</name>
+             <type>string(64)</type>
+@@ -1554,12 +1547,6 @@
+                   <writable>true</writable>
+                 </parameter>			  
+                 <parameter>
+-                  <name>DeferFWDownloadReboot</name>
+-                  <type>unsignedInt</type>
+-                  <syntax>uint32</syntax>
+-                  <writable>true</writable>
+-                </parameter>
+-                <parameter>
+                   <name>RebootDevice</name>
+                   <type>string</type>
+                   <syntax>string</syntax>

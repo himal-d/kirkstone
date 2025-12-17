@@ -1,0 +1,46 @@
+##########################################
+Date: Apr 5, 2022 1:41 AM
+From:  bad2a0e586b9c09b73ed7b8e22ecc1c11b1ff20e Apr 1, 2022 11:56 PM
+Subject: To add the VM stats detail for stress-ng processes
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Sindhuja <Sindhuja_Muthukrishnan@comcast.com>
+##########################################
+
+Index: stress-ng-0.11.21/stress-ng.c
+===================================================================
+--- stress-ng-0.11.21.orig/stress-ng.c
++++ stress-ng-0.11.21/stress-ng.c
+@@ -2968,6 +2968,21 @@ static inline void stress_mlock_executab
+ #endif
+ }
+ 
++void stressor_get_memory(int* peakMem,int* RealMem) {
++	char buffer[1024] = "";
++	FILE* file = fopen("/proc/self/status", "r");
++	if ( file != NULL ) {
++	   while (fscanf(file, " %1023s", buffer) == 1) {
++               if (strcmp(buffer, "VmRSS:") == 0) {
++	          fscanf(file, " %d", RealMem);
++	       }
++	       if (strcmp(buffer, "VmPeak:") == 0) {
++		   fscanf(file, " %d", peakMem);
++	       }
++	   }
++	}
++}
++
+ int main(int argc, char **argv, char **envp)
+ {
+ 	double duration = 0.0;			/* stressor run time in secs */
+@@ -3237,6 +3252,10 @@ int main(int argc, char **argv, char **e
+ 	if (g_opt_flags & OPT_FLAGS_THRASH)
+ 		stress_thrash_stop();
+ 
++	int peakMem=0,curMem=0;
++	stressor_get_memory(&peakMem,&curMem);
++	pr_inf("Vmpeak:%d and RSS:%d\n",peakMem,curMem);
++
+ 	pr_inf("%s run completed in %.2fs%s\n",
+ 		success ? "successful" : "unsuccessful",
+ 		duration, stress_duration_to_str(duration));

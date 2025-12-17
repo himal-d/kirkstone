@@ -1,0 +1,149 @@
+From d5875de1089cf90a90772835bc8668729b43574d Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Thu, 24 Aug 2023 10:18:01 +0000
+Subject: [PATCH] qtdemux: Bring back sgpd and sbgp dumps
+
+Bring back sgpd and sbgp dumping from original patch:
+0041-qtdemux-Parsing-sgpd-sbgp-box-to-support-per-sample.patch
+X From 433297b0745fe1ac078c694321f81c24c9786235 Mon Sep 17 00:00:00 2001
+X From: aahmed878 <Alsameema_Ahmedansar@comcast.com>
+X Date: Tue, 14 Mar 2023 05:19:47 +0000
+X Subject: [PATCH 1/3] qtdemux: Parsing sgpd/sbgp box to support per sample
+X  group encryption
+---
+ gst/isomp4/qtdemux_dump.c  | 87 ++++++++++++++++++++++++++++++++++++++
+ gst/isomp4/qtdemux_dump.h  |  4 ++
+ gst/isomp4/qtdemux_types.c |  4 +-
+ 3 files changed, 93 insertions(+), 2 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux_dump.c b/gst/isomp4/qtdemux_dump.c
+index 25921df..a7ea88d 100644
+--- a/gst/isomp4/qtdemux_dump.c
++++ b/gst/isomp4/qtdemux_dump.c
+@@ -1032,6 +1032,93 @@ qtdemux_dump_gmin (GstQTDemux * qtdemux, GstByteReader * data, int depth)
+   return TRUE;
+ }
+ 
++gboolean
++qtdemux_dump_sbgp (GstQTDemux * qtdemux, GstByteReader * data, int depth)
++{
++  guint32 version;
++  guint32 grouping_type;
++  guint32 entry_count;
++  guint i;
++
++  if (!gst_byte_reader_get_uint32_be (data, &version))
++    return FALSE;
++
++  GST_LOG ("%*s  version/flags: %08x", depth, "", version);
++
++  if (!gst_byte_reader_get_uint32_le (data, &grouping_type))
++    return FALSE;
++
++  GST_LOG ("%*s  grouping type: %" GST_FOURCC_FORMAT, depth, "",
++      GST_FOURCC_ARGS (grouping_type));
++
++  if ((version >> 24) == 1) {
++    guint32 grouping_type_parm;
++    if (!gst_byte_reader_get_uint32_be (data, &grouping_type_parm))
++      return FALSE;
++    GST_LOG ("%*s  grouping type parameter: %" G_GUINT32_FORMAT, depth, "",
++        grouping_type_parm);
++  }
++
++  if (!gst_byte_reader_get_uint32_be (data, &entry_count))
++    return FALSE;
++
++  GST_LOG ("%*s  entry count: %" G_GUINT32_FORMAT, depth, "", entry_count);
++
++  for (i = 0; i < entry_count; i++) {
++    guint32 sample_count;
++    guint32 group_description_idx;
++    if (!gst_byte_reader_get_uint32_be (data, &sample_count))
++      return FALSE;
++    if (!gst_byte_reader_get_uint32_be (data, &group_description_idx))
++      return FALSE;
++    GST_LOG ("%*s     sample_count: %" G_GUINT32_FORMAT, depth, "",
++        sample_count);
++    GST_LOG ("%*s     group_description_idx: %d", depth, "",
++        group_description_idx);
++  }
++
++  return TRUE;
++}
++
++gboolean
++qtdemux_dump_sgpd (GstQTDemux * qtdemux, GstByteReader * data, int depth)
++{
++  guint32 version;
++  guint32 grouping_type;
++  guint32 entry_count;
++  guint32 default_length_or_sample;
++
++
++  if (!gst_byte_reader_get_uint32_be (data, &version))
++    return FALSE;
++
++  GST_LOG ("%*s  version/flags: %08x", depth, "", version);
++
++  if (!gst_byte_reader_get_uint32_le (data, &grouping_type))
++    return FALSE;
++
++  GST_LOG ("%*s  grouping type: %" GST_FOURCC_FORMAT, depth, "",
++      GST_FOURCC_ARGS (grouping_type));
++
++  if (!gst_byte_reader_get_uint32_be (data, &default_length_or_sample))
++    return FALSE;
++
++  if ((version >> 24) == 1) {
++    GST_LOG ("%*s  default length: %" G_GUINT32_FORMAT, depth, "",
++        default_length_or_sample);
++  } else if ((version >> 24) >= 2) {
++    GST_LOG ("%*s  default sample description index: %" G_GUINT32_FORMAT, depth,
++        "", default_length_or_sample);
++  }
++
++  if (!gst_byte_reader_get_uint32_be (data, &entry_count))
++    return FALSE;
++
++  GST_LOG ("%*s  entry count: %" G_GUINT32_FORMAT, depth, "", entry_count);
++
++  return TRUE;
++}
++
+ gboolean
+ qtdemux_dump_unknown (GstQTDemux * qtdemux, GstByteReader * data, int depth)
+ {
+diff --git a/gst/isomp4/qtdemux_dump.h b/gst/isomp4/qtdemux_dump.h
+index 45dcd3f..2bdf6b2 100644
+--- a/gst/isomp4/qtdemux_dump.h
++++ b/gst/isomp4/qtdemux_dump.h
+@@ -89,6 +89,10 @@ gboolean qtdemux_dump_dfLa (GstQTDemux * qtdemux, GstByteReader * data,
+     int depth);
+ gboolean qtdemux_dump_fLaC (GstQTDemux * qtdemux, GstByteReader * data,
+     int depth);
++gboolean qtdemux_dump_sbgp (GstQTDemux * qtdemux, GstByteReader * data,
++    int depth);
++gboolean qtdemux_dump_sgpd (GstQTDemux * qtdemux, GstByteReader * data,
++    int depth);
+ gboolean qtdemux_dump_gmin (GstQTDemux * qtdemux, GstByteReader * data,
+     int depth);
+ 
+diff --git a/gst/isomp4/qtdemux_types.c b/gst/isomp4/qtdemux_types.c
+index 7e504fc..2e2fbf2 100644
+--- a/gst/isomp4/qtdemux_types.c
++++ b/gst/isomp4/qtdemux_types.c
+@@ -219,8 +219,8 @@ static const QtNodeType qt_node_types[] = {
+   {FOURCC_schi, "scheme information", QT_FLAG_CONTAINER},
+   {FOURCC_pssh, "protection system specific header", 0},
+   {FOURCC_tenc, "track encryption", 0},
+-  {FOURCC_sgpd, "sample group description", 0},
+-  {FOURCC_sbgp, "sample to group", 0},
++  {FOURCC_sgpd, "sample group description", 0, qtdemux_dump_sgpd},
++  {FOURCC_sbgp, "sample to group", 0, qtdemux_dump_sbgp},
+   {FOURCC_stpp, "XML subtitle sample entry", 0},
+   {FOURCC_senc, "sample encryption box", 0},
+   {FOURCC_clcp, "Closed Caption", 0},
+-- 
+2.17.1
+

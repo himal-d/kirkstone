@@ -1,0 +1,41 @@
+From d4dd66c2e13c84e3d2b36bdfe8e8384fd0855ba7 Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Wed, 6 Mar 2024 16:37:08 +0000
+Subject: [PATCH] Allow GST_EVENT_CUSTOM_DOWNSTREAM_OOB to propagate when not
+ handled
+
+We may wish to use GST_EVENT_CUSTOM_DOWNSTREAM_OOB event for use
+cases beyond signaling an "attempt-to-decrypt".
+---
+ .../WebKitCommonEncryptionDecryptorGStreamer.cpp  | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+index cf662afcf6d1..d3138f71db03 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+@@ -435,11 +435,16 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
+     // handled in here.
+     switch (GST_EVENT_TYPE(event)) {
+     case GST_EVENT_CUSTOM_DOWNSTREAM_OOB: {
+-        ASSERT(gst_event_has_name(event, "attempt-to-decrypt"));
+-        GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
+-        gboolean result = installCDMProxyIfNotAvailable(self);
+-        gst_event_unref(event);
+-        return result;
++        GST_DEBUG_OBJECT(self, "Custom Downstream OOB %" GST_PTR_FORMAT, event);
++
++        if(gst_event_has_name(event, "attempt-to-decrypt")){ 
++            GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
++            gboolean result = installCDMProxyIfNotAvailable(self);
++            gst_event_unref(event);
++            return result;
++        } 
++        // Let event propagate
++        break;
+     }
+     case GST_EVENT_FLUSH_START:
+         GST_DEBUG_OBJECT(self, "Flush-start");
+-- 
+2.43.0
+

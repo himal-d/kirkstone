@@ -1,0 +1,504 @@
+From ba2060b8803f431d23d7c7db55e0b1f3695f5822 Mon Sep 17 00:00:00 2001
+From: Ryan Reno <rreno@apple.com>
+Date: Sun, 7 May 2023 05:25:26 -0700
+Subject: [PATCH 1/2] HTMLCanvasElement is orphaned causing a HTMLDocument leak
+ on YouTube video pages https://bugs.webkit.org/show_bug.cgi?id=256262
+ rdar://108845985
+
+Reviewed by Darin Adler.
+
+CanvasRenderingContext2DBase has a State stack for setting up drawing
+state. Two of the fields - strokeStyle and fillStyle - each hold CanvasStyle
+objects. These objects may be set with colors or images or gradients. In
+the case of a CanvasGradient, the gradient has a strong reference
+to the context which creates a reference cycle.
+
+CanvasRenderingContext2DBase -> State -> CanvasStyle -> CanvasGradient -> CanvasRenderingContext(2DBase)
+
+What makes this cycle dangerous is the CanvasRenderingContext will
+increase the ref count of an HTMLCanvasElement which, being a Node, will
+increment the referencingNodeCount of a Document object. So if a
+gradient is set on the context's fillStyle or strokeStyle we can cause a
+Document leak if the state is never cleared like on YouTube video pages.
+
+This patch changes the CanvasGradient object to hold a weak reference to
+the CanvasRenderingContext instead of a strong reference which breaks the cycle.
+
+* LayoutTests/fast/canvas
+    Add tests to verify the now-decoupled lifetimes of gradient and
+    context do not cause crashes.
+* LayoutTests/fast/canvas/canvas-gradient-can-outlive-context-expected.txt: Added.
+* LayoutTests/fast/canvas/canvas-gradient-can-outlive-context.html: Added.
+* LayoutTests/fast/canvas/canvas-state-stack-gradient-expected.txt: Added.
+* LayoutTests/fast/canvas/canvas-state-stack-gradient.html: Added.
+
+* LayoutTests/http/tests/canvas
+    Add a test to verify that setting the style of a 2D canvas context
+    does not leak Documents.
+* LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak-expected.txt: Added.
+* LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html: Added.
+* LayoutTests/http/tests/canvas/resources/background.png: Added.
+* LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-color.html: Added.
+* LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-gradient.html: Added.
+* LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-pattern.html: Added.
+
+* Source/WebCore/html/canvas/CanvasGradient.cpp:
+(WebCore::CanvasGradient::addColorStop):
+* Source/WebCore/html/canvas/CanvasGradient.h:
+* Source/WebCore/html/canvas/CanvasStyle.cpp:
+(WebCore::parseColor):
+    Since the gradient can outlive the context that created it, we need
+    to be able to parse colors without having a CSSParserContext
+    reference. This overload calls CSSParser::parseColorWithoutContext
+    in that case.
+* Source/WebCore/html/canvas/CanvasStyle.h:
+(WebCore::CanvasStyle::canvasGradient const):
+
+Canonical link: https://commits.webkit.org/263774@main
+---
+ ...-gradient-can-outlive-context-expected.txt |   9 +++
+ .../canvas-gradient-can-outlive-context.html  |  52 +++++++++++++++
+ .../canvas-state-stack-gradient-expected.txt  |   9 +++
+ .../canvas/canvas-state-stack-gradient.html   |  59 ++++++++++++++++++
+ ...canvas-style-no-document-leak-expected.txt |  13 ++++
+ .../ctx.2d-canvas-style-no-document-leak.html |  58 +++++++++++++++++
+ .../tests/canvas/resources/background.png     | Bin 0 -> 86 bytes
+ .../resources/ctx.2d-fillStyle-color.html     |  19 ++++++
+ .../resources/ctx.2d-fillStyle-gradient.html  |  25 ++++++++
+ .../resources/ctx.2d-fillStyle-pattern.html   |  23 +++++++
+ Source/WebCore/html/canvas/CanvasGradient.cpp |   9 ++-
+ Source/WebCore/html/canvas/CanvasGradient.h   |   2 +-
+ Source/WebCore/html/canvas/CanvasStyle.cpp    |   8 +++
+ Source/WebCore/html/canvas/CanvasStyle.h      |   1 +
+ 14 files changed, 285 insertions(+), 2 deletions(-)
+ create mode 100644 LayoutTests/fast/canvas/canvas-gradient-can-outlive-context-expected.txt
+ create mode 100644 LayoutTests/fast/canvas/canvas-gradient-can-outlive-context.html
+ create mode 100644 LayoutTests/fast/canvas/canvas-state-stack-gradient-expected.txt
+ create mode 100644 LayoutTests/fast/canvas/canvas-state-stack-gradient.html
+ create mode 100644 LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak-expected.txt
+ create mode 100644 LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html
+ create mode 100644 LayoutTests/http/tests/canvas/resources/background.png
+ create mode 100644 LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-color.html
+ create mode 100644 LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-gradient.html
+ create mode 100644 LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-pattern.html
+
+diff --git a/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context-expected.txt b/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context-expected.txt
+new file mode 100644
+index 0000000000000..4c7eff885fb97
+--- /dev/null
++++ b/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context-expected.txt
+@@ -0,0 +1,9 @@
++Test that a gradient can outlive a context. Test passes if it doesn't crash.
++
++On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
++
++
++PASS successfullyParsed is true
++
++TEST COMPLETE
++
+diff --git a/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context.html b/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context.html
+new file mode 100644
+index 0000000000000..b6b896ee2b59e
+--- /dev/null
++++ b/LayoutTests/fast/canvas/canvas-gradient-can-outlive-context.html
+@@ -0,0 +1,52 @@
++<!DOCTYPE html>
++<body>
++<script src='../../resources/js-test.js'></script>
++<script>
++description("Test that a gradient can outlive a context. Test passes if it doesn't crash.");
++jsTestIsAsync = true;
++var gradient;
++window.onload = function() {
++    let context = document.createElement('canvas').getContext('2d');
++    gradient = context.createLinearGradient(0, 0, 100, 100);
++    gradient.addColorStop(0, 'red');
++    gradient.addColorStop(0.25, 'white');
++    gradient.addColorStop(0.67, 'white');
++    gradient.addColorStop(1, 'aquamarine');
++    context.scale(2,2);
++    context.beginPath();
++    context.rect(0,0,75,75);
++    context.clip();
++    context.fillStyle = gradient;
++    context.fillRect(0,0,30,30);
++    context.fillRect(50,50,30,30);
++    context.save();
++    context.scale(0.5,0.5);
++    context.beginPath();
++    context.rect(0,0,5,5);
++    context.clip();
++    requestAnimationFrame(() => forceGCThenModifyGradient());
++};
++
++function forceGCThenModifyGradient() {
++  count = 0;
++  handle = setInterval(() => {
++      gc();
++      count++;
++      if (count > 500) {
++        clearInterval(handle);
++        modifyGradient();
++      }
++  }, 10);
++}
++
++// Create a new context but use the old gradient.
++function modifyGradient() {
++    let context = document.createElement('canvas').getContext('2d');
++    gradient.addColorStop(0.75, 'aquamarine');
++    gradient.addColorStop(0.8, 'white');
++    gradient.addColorStop(0.9, 'orange');
++    if (window.testRunner)
++        finishJSTest("PASS");
++}
++</script>
++</body>
+diff --git a/LayoutTests/fast/canvas/canvas-state-stack-gradient-expected.txt b/LayoutTests/fast/canvas/canvas-state-stack-gradient-expected.txt
+new file mode 100644
+index 0000000000000..a194968199a67
+--- /dev/null
++++ b/LayoutTests/fast/canvas/canvas-state-stack-gradient-expected.txt
+@@ -0,0 +1,9 @@
++Test a gradient stored on the state stack does not get garbage collected. Test passes if it does not crash.
++
++On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
++
++
++PASS successfullyParsed is true
++
++TEST COMPLETE
++
+diff --git a/LayoutTests/fast/canvas/canvas-state-stack-gradient.html b/LayoutTests/fast/canvas/canvas-state-stack-gradient.html
+new file mode 100644
+index 0000000000000..f6668368dfb13
+--- /dev/null
++++ b/LayoutTests/fast/canvas/canvas-state-stack-gradient.html
+@@ -0,0 +1,59 @@
++<!DOCTYPE html>
++<body>
++<script src='../../resources/js-test.js'></script>
++<script>
++description("Test a gradient stored on the state stack does not get garbage collected. Test passes if it does not crash.");
++jsTestIsAsync = true;
++window.onload = function() {
++    let context = document.getElementById('c').getContext('2d');
++    if (true) {
++        let gradient = context.createLinearGradient(0, 0, 75, 75);
++        gradient.addColorStop(0, 'red');
++        gradient.addColorStop(0.33, 'white');
++        gradient.addColorStop(0.67, 'white');
++        gradient.addColorStop(1, 'blue');
++        context.scale(2,2);
++        context.beginPath();
++        context.rect(0,0,75,75);
++        context.clip();
++        context.fillStyle = gradient;
++        context.fillRect(0,0,30,30);
++        context.fillRect(50,50,30,30);
++        context.save();
++    }
++    context.fillStyle = 'green';
++    context.scale(0.5,0.5);
++    context.beginPath();
++    context.rect(0,0,5,5);
++    context.clip();
++    requestAnimationFrame(() => forceGC(context));
++};
++
++function forceGC(ctx) {
++  count = 0;
++  handle = setInterval(() => {
++      gc();
++      count++;
++      if (count > 500) {
++        clearInterval(handle);
++        drawSecondFrame(ctx);
++      }
++  }, 10);
++}
++
++function drawSecondFrame(ctx) {
++    ctx.restore();
++    let gradient = ctx.fillStyle;
++    // colors are type string, gradients and patterns are objects
++    if (typeof gradient !== typeof {})
++        testFailed("Should have restored a gradient from the state stack.");
++
++    ctx.fillRect(0,0,30,30);
++    ctx.fillRect(75,75,30,30);
++    if (window.testRunner) {
++        finishJSTest("PASS");
++    }
++}
++</script>
++<canvas id="c" width="300" height="300"></canvas>
++</body>
+diff --git a/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak-expected.txt b/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak-expected.txt
+new file mode 100644
+index 0000000000000..11de91b2438ae
+--- /dev/null
++++ b/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak-expected.txt
+@@ -0,0 +1,13 @@
++Tests that canvas context fillStyle does not leak documents.
++
++On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
++
++
++PASS internals.isDocumentAlive(frameDocumentID) is true
++PASS internals.isDocumentAlive(frameDocumentID) is true
++PASS internals.isDocumentAlive(frameDocumentID) is true
++PASS The iframe document didn't leak.
++PASS successfullyParsed is true
++
++TEST COMPLETE
++
+diff --git a/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html b/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html
+new file mode 100644
+index 0000000000000..18105a0ce5fd8
+--- /dev/null
++++ b/LayoutTests/http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html
+@@ -0,0 +1,58 @@
++<!DOCTYPE html>
++<html>
++<body>
++<iframe id="iframe"></iframe>
++<script src="../resources/js-test-pre.js"></script>
++<script>
++description("Tests that canvas context fillStyle does not leak documents.");
++
++jsTestIsAsync = true;
++frameDocumentID = 0;
++checkCount = 0;
++
++function iframeLoaded(frameDocument) {
++    frameDocumentID = internals.documentIdentifier(frameDocument);
++    shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
++
++    iframe.addEventListener("load", () => {
++        handle = setInterval(() => {
++            gc();
++            if (!internals.isDocumentAlive(frameDocumentID)) {
++                clearInterval(handle);
++                testPassed("The iframe document didn't leak.");
++                finishJSTest();
++            }
++            checkCount++;
++            if (checkCount > 500) {
++                clearInterval(handle);
++                testFailed("The iframe document leaked.");
++                finishJSTest();
++            }
++        }, 10);
++    }, {once: true});
++
++    iframe.src = "about:blank";
++}
++
++function test() {
++    ["color", "gradient", "pattern"].forEach(variant => {
++        window.addEventListener("message", (message) => {
++            if (message.data === "frameLoaded")
++                iframeLoaded(iframe.contentWindow.document);
++        }, {once: true});
++
++        iframe.src = `resources/ctx.2d-fillStyle-${variant}.html`;
++    });
++}
++
++onload = () => {
++    if (!window.testRunner || !window.internals)
++        testFailed("Test requires internals.");
++
++    test();
++};
++
++</script>
++<script src="../resources/js-test-post.js"></script>
++</body>
++</html>
+diff --git a/LayoutTests/http/tests/canvas/resources/background.png b/LayoutTests/http/tests/canvas/resources/background.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..6db6c6b1b9d851c7a85b93ddc9e5ddf368ac0a7e
+GIT binary patch
+literal 86
+zcmeAS@N?(olHy`uVBq!ia0vp^3Lwk@BpAX3RW*Q=tfz}(h{fq-iw3rTiy7MjS(UvQ
+dcQNdOFc<=K>hx~uHmid)c)I$ztaD0e0sy7L60!gQ
+
+literal 0
+HcmV?d00001
+
+diff --git a/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-color.html b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-color.html
+new file mode 100644
+index 0000000000000..64b75fe56ee26
+--- /dev/null
++++ b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-color.html
+@@ -0,0 +1,19 @@
++<!DOCTYPE html>
++<html>
++<body>
++<script>
++onload = () => {
++    var canvas = document.createElement('canvas');
++    canvas.setAttribute('width', '640');
++    canvas.setAttribute('height', '480');
++    var ctx = canvas.getContext('2d');
++    ctx.fillStyle = "aquamarine";
++    ctx.fillRect(50, 50, 100, 100);
++
++    document.body.style.backgroundImage = `url(${canvas.toDataURL()})`;
++
++    parent.postMessage("frameLoaded");
++};
++</script>
++</body>
++</html>
+diff --git a/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-gradient.html b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-gradient.html
+new file mode 100644
+index 0000000000000..2fe36b4f4cef3
+--- /dev/null
++++ b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-gradient.html
+@@ -0,0 +1,25 @@
++<!DOCTYPE html>
++<html>
++<body>
++<script>
++onload = () => {
++    var canvas = document.createElement('canvas');
++    canvas.setAttribute('width', '640');
++    canvas.setAttribute('height', '480');
++    var ctx = canvas.getContext('2d');
++    var gradient = ctx.createLinearGradient(0, 0, 400, 400);
++
++    gradient.addColorStop(0, 'red');
++    gradient.addColorStop(0.5, 'green');
++    gradient.addColorStop(1, 'blue');
++
++    ctx.fillStyle = gradient;
++    ctx.fillRect(50, 50, 100, 100);
++
++    document.body.style.backgroundImage = `url(${canvas.toDataURL()})`;
++
++    parent.postMessage("frameLoaded");
++};
++</script>
++</body>
++</html>
+diff --git a/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-pattern.html b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-pattern.html
+new file mode 100644
+index 0000000000000..0cd3c01d489d8
+--- /dev/null
++++ b/LayoutTests/http/tests/canvas/resources/ctx.2d-fillStyle-pattern.html
+@@ -0,0 +1,23 @@
++<!DOCTYPE html>
++<html>
++<body>
++<script>
++onload = () => {
++    var img = new Image();
++    img.onload = () => {
++        var canvas = document.createElement('canvas');
++        canvas.setAttribute('width', '640');
++        canvas.setAttribute('height', '480');
++        var ctx = canvas.getContext('2d');
++        ctx.fillStyle = ctx.createPattern(img, "repeat");
++        ctx.fillRect(50, 50, 100, 100);
++
++        document.body.style.backgroundImage = `url(${canvas.toDataURL()})`;
++
++        parent.postMessage("frameLoaded");
++    };
++    img.src = "background.png";
++};
++</script>
++</body>
++</html>
+diff --git a/Source/WebCore/html/canvas/CanvasGradient.cpp b/Source/WebCore/html/canvas/CanvasGradient.cpp
+index e1530de8075f8..5fda18f5e6e7f 100644
+--- a/Source/WebCore/html/canvas/CanvasGradient.cpp
++++ b/Source/WebCore/html/canvas/CanvasGradient.cpp
+@@ -74,7 +74,14 @@ ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& color
+         return Exception { IndexSizeError };
+ 
+     // Treat currentColor as black, as required by the standard.
+-    Color color = isCurrentColorString(colorString) ? Color::black : parseColor(colorString, m_context->canvasBase());
++    Color color;
++    if (isCurrentColorString(colorString))
++        color = Color::black;
++    else if (m_context)
++        color = parseColor(colorString, m_context->canvasBase());
++    else
++        color = parseColor(colorString);
++
+     if (!color.isValid())
+         return Exception { SyntaxError };
+ 
+diff --git a/Source/WebCore/html/canvas/CanvasGradient.h b/Source/WebCore/html/canvas/CanvasGradient.h
+index 618ff539ba08c..ae40291531c80 100644
+--- a/Source/WebCore/html/canvas/CanvasGradient.h
++++ b/Source/WebCore/html/canvas/CanvasGradient.h
+@@ -52,7 +52,7 @@ class CanvasGradient : public RefCounted<CanvasGradient> {
+     CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
+ 
+     Ref<Gradient> m_gradient;
+-    Ref<CanvasRenderingContext> m_context;
++    WeakPtr<CanvasRenderingContext> m_context;
+ };
+ 
+ }
+diff --git a/Source/WebCore/html/canvas/CanvasStyle.cpp b/Source/WebCore/html/canvas/CanvasStyle.cpp
+index 8f416875db671..ba592408478e0 100644
+--- a/Source/WebCore/html/canvas/CanvasStyle.cpp
++++ b/Source/WebCore/html/canvas/CanvasStyle.cpp
+@@ -69,6 +69,14 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
+     return CSSParser::parseSystemColor(colorString);
+ }
+ 
++Color parseColor(const String& colorString)
++{
++    Color color = CSSParser::parseColorWithoutContext(colorString);
++    if (color.isValid())
++        return color;
++    return CSSParser::parseSystemColor(colorString);
++}
++
+ Color currentColor(CanvasBase& canvasBase)
+ {
+     if (!is<HTMLCanvasElement>(canvasBase))
+diff --git a/Source/WebCore/html/canvas/CanvasStyle.h b/Source/WebCore/html/canvas/CanvasStyle.h
+index 106db045f8474..ae89805682e57 100644
+--- a/Source/WebCore/html/canvas/CanvasStyle.h
++++ b/Source/WebCore/html/canvas/CanvasStyle.h
+@@ -79,6 +79,7 @@ bool isCurrentColorString(const String& colorString);
+ 
+ Color currentColor(CanvasBase&);
+ Color parseColor(const String& colorString, CanvasBase&);
++Color parseColor(const String& colorString);
+ Color parseColorOrCurrentColor(const String& colorString, CanvasBase&);
+ 
+ inline CanvasStyle::CanvasStyle()
+
+From 681db8899d47a6779e1c7d9ff5ae02e02a0de5c4 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Fri, 30 Aug 2024 11:42:11 -0400
+Subject: [PATCH 2/2] [Canvas] Add CanMakeWeakPtr to CanvasRenderingContext
+
+Part of https://github.com/WebKit/WebKit/commit/e233ab4568b25c084d63488de1ea116928aadc13
+---
+ Source/WebCore/html/canvas/CanvasRenderingContext.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/html/canvas/CanvasRenderingContext.h b/Source/WebCore/html/canvas/CanvasRenderingContext.h
+index 5a3bf179e8624..6f7e451e3acf1 100644
+--- a/Source/WebCore/html/canvas/CanvasRenderingContext.h
++++ b/Source/WebCore/html/canvas/CanvasRenderingContext.h
+@@ -46,7 +46,7 @@ class CSSStyleImageValue;
+ class WebGLObject;
+ enum class PixelFormat : uint8_t;
+ 
+-class CanvasRenderingContext : public ScriptWrappable {
++class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext> {
+     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext);
+     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext);
+ public:

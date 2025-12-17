@@ -1,0 +1,77 @@
+From 86f1ded379bbb31c5668efb5796087c6b0fd0778 Mon Sep 17 00:00:00 2001
+From: Yuriy Masechko <Yuriy_Masechko@comcast.com>
+Date: Thu, 12 Jan 2023 14:05:26 +0100
+Subject: [PATCH] RDKB-44454: Store assoc request in sta struct
+
+Reason for change: store assoc sta assoc req for steering handling
+Test Procedure:
+Risks: Low
+Priority: P1
+
+Change-Id: Ib9c1ebaaffc8c3eb9de7b14c27cb6fd43f88d53d
+Signed-off-by: Yuriy Masechko <Yuriy_Masechko@comcast.com>
+(cherry picked from commit e57f5e2ca6370d511cfb0cde26b994d9061c83bc)
+(cherry picked from commit 3396217ce9f7cac65367b0e7f729b812eb37419e)
+(cherry picked from commit 71ae8ad6105135b88d72bc3e3c6e51671a5739a5)
+---
+ source/hostap-2.10/src/ap/sta_info.c | 2 ++
+ source/hostap-2.10/src/ap/sta_info.h | 2 ++
+ source/hostap-2.9/src/ap/sta_info.c  | 2 ++
+ source/hostap-2.9/src/ap/sta_info.h  | 2 ++
+ 4 files changed, 8 insertions(+)
+
+diff --git a/source/hostap-2.10/src/ap/sta_info.c b/source/hostap-2.10/src/ap/sta_info.c
+index c541926..883a755 100644
+--- a/source/hostap-2.10/src/ap/sta_info.c
++++ b/source/hostap-2.10/src/ap/sta_info.c
+@@ -414,6 +414,8 @@ void ap_free_sta(struct hostapd_data *hapd, struct sta_info *sta)
+ 	forced_memzero(sta->last_tk, WPA_TK_MAX_LEN);
+ #endif /* CONFIG_TESTING_OPTIONS */
+ 
++	os_free(sta->assoc_req);
++
+ 	os_free(sta);
+ }
+ 
+diff --git a/source/hostap-2.10/src/ap/sta_info.h b/source/hostap-2.10/src/ap/sta_info.h
+index af8f171..3e1af86 100644
+--- a/source/hostap-2.10/src/ap/sta_info.h
++++ b/source/hostap-2.10/src/ap/sta_info.h
+@@ -333,6 +333,8 @@ struct sta_info {
+ #ifdef CONFIG_PASN
+ 	struct pasn_data *pasn;
+ #endif /* CONFIG_PASN */
++	u8 *assoc_req;
++	size_t assoc_req_len;
+ };
+ 
+ 
+diff --git a/source/hostap-2.9/src/ap/sta_info.c b/source/hostap-2.9/src/ap/sta_info.c
+index 51d7884..63d9736 100755
+--- a/source/hostap-2.9/src/ap/sta_info.c
++++ b/source/hostap-2.9/src/ap/sta_info.c
+@@ -377,6 +377,8 @@ void ap_free_sta(struct hostapd_data *hapd, struct sta_info *sta)
+ 
+ 	os_free(sta->ifname_wds);
+ 
++	os_free(sta->assoc_req);
++
+ 	os_free(sta);
+ }
+ 
+diff --git a/source/hostap-2.9/src/ap/sta_info.h b/source/hostap-2.9/src/ap/sta_info.h
+index 5456a63..40e3f6a 100755
+--- a/source/hostap-2.9/src/ap/sta_info.h
++++ b/source/hostap-2.9/src/ap/sta_info.h
+@@ -283,6 +283,8 @@ struct sta_info {
+ 	unsigned int airtime_weight;
+ 	struct os_reltime backlogged_until;
+ #endif /* CONFIG_AIRTIME_POLICY */
++	u8 *assoc_req;
++	size_t assoc_req_len;
+ };
+ 
+ 
+-- 
+2.17.1
+

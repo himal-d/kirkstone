@@ -1,0 +1,238 @@
+##########################################
+Date: Jun 11, 2021 8:30 PM
+From:  <Nil>
+Subject: to support webui in Jst
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: kkumar564 <kishore_kumar2@cable.comcast.com>
+##########################################
+diff --git a/source/Styles/xb3/jst/software.jst b/source/Styles/xb3/jst/software.jst
+index aa7015af..921b3bab 100644
+--- a/source/Styles/xb3/jst/software.jst
++++ b/source/Styles/xb3/jst/software.jst
+@@ -40,6 +40,73 @@
+ <script type="text/javascript">
+ $(document).ready(function() {
+     comcast.page.init("Gateway > Software", "nav-software");
++
++function saveMaintenanceWindow(starthr,startmin,startsec,endhr,endmin,endsec)
++{
++    var token = "<?% echo(  $_SESSION['Csrf_token'] );?>";
++
++    $.ajax({
++        type: 'POST',
++        url: 'actionHandler/ajax_maintenance_window_conf.jst',
++        data: {
++            start_hr: starthr,
++            start_min: startmin,
++            start_sec: startsec,
++            end_hr: endhr,
++            end_min: endmin,
++            end_sec: endsec,
++            csrfp_token: token
++        },
++        dataType: 'json',
++        success: function (data) {
++            jHide();
++            if (data.status != 'success') {
++                var str = 'Failed to update maintenance window !!';
++                if (data.msg) {
++                    str += '\nMessage: ' + data.msg;
++                }
++                jAlert(str);
++                $('#popup_ok').bind('click',function(){
++                    window.location.reload();
++                });
++                return;
++            }
++            else {
++                jAlert('Maintenance window updated successfully !!');
++                $('#popup_ok').bind('click',function(){
++                    window.location.reload();
++                });
++            }
++        },
++        error: function () {
++            jHide();
++            jAlert('Failure, please try again.');
++            $('#popup_ok').bind('click',function(){
++                window.location.reload();
++            });
++        }
++    });
++}
++
++$('#restore-default-settings-maintenancewindow').click(function () {
++
++    saveMaintenanceWindow('0','0','0','3','0','0');
++
++});
++
++$('#submit_maintenancewindow').click(function () {
++
++    var starthr=$('#start_hr').val();
++    var startmin=$('#start_min').val();
++    var startsec=$('#start_sec').val();
++    var endhr=$('#end_hr').val();
++    var endmin=$('#end_min').val();
++    var endsec=$('#end_sec').val();
++
++    saveMaintenanceWindow(starthr,startmin,startsec,endhr,endmin,endsec);
++
++});
++
+ });
+ </script>
+ <?%
+@@ -57,6 +124,8 @@ $(document).ready(function() {
+ 	<div id="educational-tip">
+ 		<p class="tip">View details about the Gateway's software.</p>
+ 		<p class="hidden">You may need this information if you contact Comcast for troubleshooting assistance.</p>
++        <p class="hidden"><strong>Firmware Upgrade Start Time:</strong>Enter the start time for firmware upgrade window (Time has to be entered in 24 hour format)</p>
++        <p class="hidden"><strong>Firmware Upgrade End Time:</strong>Enter the end time for firmware upgrade window (Time has to be entered in 24 hour format)</p>
+ 	</div>
+ 	<div class="module forms">
+ 		<h2>System Software Version</h2>
+@@ -81,7 +150,142 @@ $(document).ready(function() {
+                         <?% echo( getStr("Device.X_CISCO_COM_MTA.PCVersion")); ?></span>
+ 		</div>
+ 	</div> <!-- end .module -->
++
++	<div class="module forms">
++		<h2>Maintenance Window Configuration</h2>
++
++		<?%
++			$startTime = Number(getStr('Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeStartTime'));
++			$startTimetemp = $startTime;
++			$startSec = $startTime % 60;
++			$startTime = $startTime / 60;
++			$startMin = $startTime % 60;
++			$startTime = $startTime / 60;
++			$startHr = $startTime % 60;
++
++			$endTime = Number(getStr('Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeEndTime'));
++			$endTimetemp = $endTime;
++			$endSec = $endTime % 60;
++			$endTime = $endTime / 60;
++			$endMin = $endTime % 60;
++			$endTime = $endTime / 60;
++			$endHr = $endTime % 60;
++		?>
++
++		<div class="form-row ">
++		<label for="start_hr">Firmware Upgrade Start Time (Hr:Min:Sec)</label>
++		<select style="width:40px;" name="start_hr" id="start_hr" type="number">
++		<?%
++			$html="";
++			for ($i = 0; $i <= 23; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($startHr)) {
++					$html += "<option selected='selected' value='"+ $i +"'>" + $j + "</option>";
++				} else {
++					$html += "<option value='" + $i + "'>" + $j + "</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select> :
++
++		<select style="width:40px;" name="start_min" id="start_min" min="0" max="23">
++		<?%
++			$html="";
++			for ($i = 0; $i <= 59; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($startMin)) {
++					$html += "<option selected='selected' value='"+ $i +"'>"+ $j +"</option>";
++				} else {
++					$html += "<option value='" + $i + "'>" + $j + "</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select> :
++
++		<select style="width:40px;" name="start_sec" id="start_sec">
++		<?%
++			$html="";
++			for ($i = 0; $i <= 59; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($startSec)) {
++					$html += "<option selected='selected' value='"+ $i +"'>"+ $j +"</option>";
++				} else {
++					$html += "<option value='"+ $i +"'>"+ $j +"</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select>
++	</div>
++
++	<div class="form-row odd">
++		<label for="end_hr">Firmware Upgrade End Time (Hr:Min:Sec)</label>
++		<select style="width:40px;" name="end_hr" id="end_hr">
++		<?%
++			$html="";
++			for ($i = 0; $i <= 23; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($endHr)) {
++					$html += "<option selected='selected' value='"+ $i +"'>"+ $j +"</option>";
++				} else {
++					$html += "<option value='"+ $i +"'>"+ $j +"</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select> :
++
++		<select style="width:40px;" name="end_min" id="end_min">
++		<?%
++			$html="";
++			for ($i = 0; $i <= 59; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($endMin)) {
++					$html += "<option selected='selected' value='"+ $i +"'>"+ $j +"</option>";
++				} else {
++					$html += "<option value='"+ $i +"'>"+ $j +"</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select> :
++
++		<select style="width:40px;" name="end_sec" id="end_sec">
++		<?%
++			$html="";
++			for ($i= 0; $i<= 59; $i++) {
++				$i = parseInt($i);
++                               $j = $i;
++                               if($i < 10) $j =  "0"+$i;
++				if ($i == parseInt($endSec)) {
++					$html += "<option selected='selected' value='"+ $i +"'>"+ $j +"</option>";
++				} else {
++					$html += "<option value='"+ $i +"'>"+ $j +"</option>";
++				}
++			}
++			echo( $html);
++		?>
++		</select>
++	</div>
++
++	<div class="form-btn">
++		<input id="submit_maintenancewindow" type="button" value="Save" class="btn"/>
++		<input id="restore-default-settings-maintenancewindow" type="button" value="Restore Default Settings" class="btn alt" />
++	</div>
+ </div><!-- end #content -->
+ 
+ 
+ <?% include('includes/footer.jst'); ?>
++

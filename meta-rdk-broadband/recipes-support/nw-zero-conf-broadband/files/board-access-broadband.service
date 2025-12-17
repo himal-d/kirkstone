@@ -1,0 +1,10 @@
+[Unit]
+Description=board access service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=sh -c '/lib/rdk/board_access-broadband.sh'
+
+[Install]
+WantedBy=multi-user.target

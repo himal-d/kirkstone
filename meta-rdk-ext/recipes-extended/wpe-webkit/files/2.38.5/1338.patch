@@ -1,0 +1,36 @@
+From 5e882cbdeceefaebff6bccd022a2269f5240ecb9 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Thu, 16 May 2024 18:09:29 +0000
+Subject: [PATCH] [MSE][GStreamer] allow fallback to seeked position on seek
+ finish
+
+MediaPlayerPrivateGStreamer may report incorrect position (last
+cached) immediately after seek. This can happen when didPreroll is
+called on async-done with pipeline still in async transition to playing
+state: current: PAUSED, pending: PLAYING, result:
+ASYNC. 40cfa6a6170658709d2eafdc10657bc67a6ec207 disables querying
+position from the sinks in this case resulting in last cached
+value (before seek) to be returned. Which confuses some tests from
+YouTube WV SFR/HFR suite, and makes it trigger multiple seeks one
+after another.
+
+The proposed change works around the problem by allowing fall back to
+last seeked position until pipeline preroll completes. Similar to
+ MediaPlayerPrivateGStreamer::finishSeek().
+---
+ .../graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp   | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index de6dbfc6d59c..9645c1d18d22 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -374,6 +374,8 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
+ 
+     if (m_isSeeking) {
+         m_isSeeking = false;
++        m_canFallBackToLastFinishedSeekPosition = true;
++        invalidateCachedPosition();
+         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
+         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
+         m_player->timeChanged();

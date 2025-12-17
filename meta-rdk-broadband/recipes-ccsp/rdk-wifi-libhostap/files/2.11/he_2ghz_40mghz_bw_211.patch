@@ -1,0 +1,47 @@
+##########################################
+Date: Apr 16, 2024 1:00 PM
+From: 
+Subject: Add HE 2.4GHz 40MHz bandwidth allowed parameter
+Source: Comcast
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: Bogdan Bogush <bogdan.bogush@comcast.com>
+##########################################
+diff --git a/source/hostap-2.11/src/ap/ap_config.c b/source/hostap-2.11/src/ap/ap_config.c
+index f760e34..07468cb 100644
+--- a/source/hostap-2.11/src/ap/ap_config.c
++++ b/source/hostap-2.11/src/ap/ap_config.c
+@@ -286,6 +286,7 @@ struct hostapd_config * hostapd_config_defaults(void)
+ 	conf->reg_def_cli_eirp_psd = -1;
+ 	conf->reg_sub_cli_eirp_psd = -1;
+ 	conf->reg_def_cli_eirp = -1;
++	conf->he_2ghz_40mhz_width_allowed = 1;
+ #endif /* CONFIG_IEEE80211AX */
+ 
+ 	/* The third octet of the country string uses an ASCII space character
+diff --git a/source/hostap-2.11/src/ap/ap_config.h b/source/hostap-2.11/src/ap/ap_config.h
+index de02dda..6f5e109 100644
+--- a/source/hostap-2.11/src/ap/ap_config.h
++++ b/source/hostap-2.11/src/ap/ap_config.h
+@@ -1166,6 +1166,7 @@ struct hostapd_config {
+ 	 * of the AP’s BSS.
+ 	 */
+ 	int reg_def_cli_eirp;
++	u8 he_2ghz_40mhz_width_allowed;
+ 
+ 	bool require_he;
+ #endif /* CONFIG_IEEE80211AX */
+diff --git a/source/hostap-2.11/src/ap/ieee802_11_he.c b/source/hostap-2.11/src/ap/ieee802_11_he.c
+index 4b693a7..800fd79 100644
+--- a/source/hostap-2.11/src/ap/ieee802_11_he.c
++++ b/source/hostap-2.11/src/ap/ieee802_11_he.c
+@@ -120,6 +120,9 @@ u8 * hostapd_eid_he_capab(struct hostapd_data *hapd, u8 *eid,
+ 		break;
+ 	}
+ 
++	if (!hapd->iface->conf->he_2ghz_40mhz_width_allowed)
++		he_oper_chwidth &= ~HE_PHYCAP_CHANNEL_WIDTH_SET_40MHZ_IN_2G;
++
+ 	ie_size += mcs_nss_size + ppet_size;
+ 
+ 	*pos++ = WLAN_EID_EXTENSION;

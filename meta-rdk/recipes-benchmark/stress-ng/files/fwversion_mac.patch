@@ -1,0 +1,58 @@
+##########################################
+Date: May 20, 2022 1:41 AM
+From: dab354377b15d409e69445efacb289f41e325341 Apr 1, 2022 11:56 PM
+Subject: To add Fwversion and MAC details in yaml
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Sindhuja <Sindhuja_Muthukrishnan@comcast.com>
+#########################################
+Index: stress-ng-0.11.21/core-helper.c
+===================================================================
+--- stress-ng-0.11.21.orig/core-helper.c
++++ stress-ng-0.11.21/core-helper.c
+@@ -867,6 +867,27 @@ void stress_strnrnd(char *str, const siz
+ 	*str = '\0';
+ }
+ 
++void get_img_version(char *img) {
++	char buffer[100];
++	system("cat /version.txt | grep imagename | cut -d ':' -f2 >> /tmp/img.txt");
++	FILE* fp= fopen("/tmp/img.txt","r");
++	if (fp != NULL) {
++		while ( fgets(buffer,sizeof(buffer),fp)) {
++			strcpy(img,buffer);
++		}
++	}
++}
++
++void get_ethernet_mac( char *eth_mac) {
++	char buffer[100];
++	system("ifconfig eth0 | grep eth0 | tr -s ' ' | cut -d ' ' -f5  >> /tmp/mac.txt");
++	FILE* fp= fopen("/tmp/mac.txt","r");
++	if (fp != NULL) {
++		while ( fgets(buffer,sizeof(buffer),fp)) {
++			strcpy(eth_mac,buffer);
++		}
++	}
++}
+ /*
+  *  pr_yaml_runinfo()
+  *	log info about the system we are running stress-ng on
+@@ -883,11 +904,17 @@ void pr_yaml_runinfo(FILE *yaml)
+ 	struct tm *tm = NULL;
+ 	char hostname[128];
+ 	const char *user = shim_getlogin();
++	char img[100],eth_mac[100];
+ 
+ 	pr_yaml(yaml, "system-info:\n");
+ 	if (time(&t) != ((time_t)-1))
+ 		tm = localtime(&t);
+ 
++	get_img_version(img);
++	get_ethernet_mac(eth_mac);
++
++	pr_yaml(yaml, "      imagename: %s",img);
++	pr_yaml(yaml, "      ethernet_MAC: %s",eth_mac);
+ 	pr_yaml(yaml, "      stress-ng-version: " VERSION "\n");
+ 	pr_yaml(yaml, "      run-by: %s\n", user ? user : "unknown");
+ 	if (tm) {

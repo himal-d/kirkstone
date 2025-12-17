@@ -1,0 +1,196 @@
+###################################################################
+Date: <Aug 3rd 2022>
+Source: Deutsche Telekom AG
+Changes copyright 2022-2023 Deutsche Telekom AG
+###################################################################
+
+Index: dnsmasq-2.83/src/rfc2131.c
+===================================================================
+--- dnsmasq-2.83.orig/src/rfc2131.c
++++ dnsmasq-2.83/src/rfc2131.c
+@@ -16,6 +16,9 @@
+ 
+ #include "dnsmasq.h"
+ #include <mqueue.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/types.h>
+ 
+ #ifdef HAVE_DHCP
+ 
+@@ -28,6 +31,7 @@
+ #define MAX_SIZE_PRESENCE    512
+ #define MSG_TYPE_DNSMASQ  6
+ #define MSG_TYPE_DNS_PRESENCE 7
++#define DNSMASQ_VENDORCLASS     "/nvram/dnsmasq.vendorclass"
+ 
+ #define CHECK(x) \
+     do { \
+@@ -227,6 +231,16 @@ static void add_client   (char *mac,
+                           char *prod_class);
+ static void del_client (char *mac);
+ 
++int vendor_class_init(void)
++{
++
++    daemon->vendor_stream=fopen(DNSMASQ_VENDORCLASS, "a+");
++    if (!daemon->vendor_stream)
++       return 1;
++    read_vendor_file();
++    return 0;
++}
++
+ size_t dhcp_reply(struct dhcp_context *context, char *iface_name, int int_index,
+ 		  size_t sz, time_t now, int unicast_dest, int loopback,
+ 		  int *is_inform, int pxe, struct in_addr fallback, time_t recvtime)
+@@ -722,15 +736,16 @@ size_t dhcp_reply(struct dhcp_context *c
+      save client-supplied vendor class */
+   if ((opt = option_find(mess, sz, OPTION_VENDOR_ID, 1)))
+     {
++      memset(daemon->dhcp_buff3,0,DHCP_BUFF_SZ);
+       memcpy(daemon->dhcp_buff3, option_ptr(opt, 0), option_len(opt));
+       vendor_class_len = option_len(opt);
+     }
+   match_vendor_opts(opt, daemon->dhcp_opts);
+-  
+   if (option_bool(OPT_LOG_OPTS))
+     {
+-      if (sanitise(opt, daemon->namebuff))
++      if (sanitise(opt, daemon->namebuff)){
+ 	my_syslog(MS_DHCP | LOG_INFO, _("%u vendor class: %s"), ntohl(mess->xid), daemon->namebuff);
++      }
+       if (sanitise(option_find(mess, sz, OPTION_USER_CLASS, 1), daemon->namebuff))
+ 	my_syslog(MS_DHCP | LOG_INFO, _("%u user class: %s"), ntohl(mess->xid), daemon->namebuff);
+     }
+@@ -1732,6 +1747,11 @@ size_t dhcp_reply(struct dhcp_context *c
+ 	  else
+ 	    override = lease->override;
+ 
++          if ((opt = option_find(mess, sz, OPTION_VENDOR_ID, 1)))
++          {
++            memset(lease->vendorclassid,0,VENDOR_CLASS_MAX);
++             memcpy(lease->vendorclassid, option_ptr(opt, 0), option_len(opt));
++          }
+ 	  daemon->metrics[METRIC_DHCPACK]++;
+ 	  log_packet("DHCPACK", &mess->yiaddr, emac, emac_len, iface_name, hostname, NULL, mess->xid);  
+ 
+Index: dnsmasq-2.83/src/dnsmasq.c
+===================================================================
+--- dnsmasq-2.83.orig/src/dnsmasq.c
++++ dnsmasq-2.83/src/dnsmasq.c
+@@ -290,7 +290,10 @@ int main (int argc, char **argv)
+       if (daemon->dhcp || daemon->doing_dhcp6)
+ 	lease_init(now);
+     }
+-  
++  //vendor-class stream
++  if (daemon->dhcp || daemon->doing_dhcp6)
++	vendor_class_init();
++
+   if (daemon->dhcp || daemon->relay4)
+     {
+       dhcp_init();
+Index: dnsmasq-2.83/src/dnsmasq.h
+===================================================================
+--- dnsmasq-2.83.orig/src/dnsmasq.h
++++ dnsmasq-2.83/src/dnsmasq.h
+@@ -738,6 +738,7 @@ struct frec {
+ #define LEASE_TA            64  /* IPv6 temporary lease */
+ #define LEASE_HAVE_HWADDR  128  /* Have set hwaddress */
+ #define LEASE_EXP_CHANGED  256  /* Lease expiry time changed */
++#define VENDOR_CLASS_MAX 255
+ 
+ struct dhcp_lease {
+   int clid_len;          /* length of client identifier */
+@@ -769,6 +770,7 @@ struct dhcp_lease {
+   } *slaac_address;
+   int vendorclass_count;
+ #endif
++  char vendorclassid[VENDOR_CLASS_MAX];
+   struct dhcp_lease *next;
+ };
+ 
+@@ -1201,6 +1203,7 @@ extern struct daemon {
+   /* file for packet dumps. */
+   int dumpfd;
+ #endif
++  FILE *vendor_stream;
+ } *daemon;
+ 
+ /* cache.c */
+Index: dnsmasq-2.83/src/lease.c
+===================================================================
+--- dnsmasq-2.83.orig/src/lease.c
++++ dnsmasq-2.83/src/lease.c
+@@ -16,6 +16,9 @@
+ 
+ #include "dnsmasq.h"
+ 
++#define BUFFER_SIZE 1024
++#define INITIAL_HWADDRLEN 256
++
+ #ifdef HAVE_DHCP
+ 
+ static struct dhcp_lease *leases = NULL, *old_leases = NULL;
+@@ -318,7 +321,7 @@ void lease_update_file(time_t now)
+ 	  else
+ 	    ourprintf(&err, "*\n");	  
+ 	}
+-      
++	update_vendorclass();
+ #ifdef HAVE_DHCP6  
+       if (daemon->duid)
+ 	{
+@@ -406,6 +409,52 @@ void lease_update_file(time_t now)
+   send_alarm(next_event, now);
+ }
+ 
++void read_vendor_file(void)
++{
++    struct dhcp_lease *lease;
++    char buffer[BUFFER_SIZE],*tmp_vendor;
++    while (fgets(buffer,BUFFER_SIZE,daemon->vendor_stream) != NULL)
++    {
++          sscanf(buffer,"%s",daemon->dhcp_buff3);
++          tmp_vendor=strstr(buffer," ");
++          strtok(tmp_vendor,"\n");
++          tmp_vendor++;
++          strncpy(daemon->dhcp_buff2,tmp_vendor,DHCP_BUFF_SZ);
++          parse_hex(daemon->dhcp_buff3, (unsigned char *)daemon->dhcp_buff3, DHCP_CHADDR_MAX, NULL, NULL);
++          for (lease = leases; lease; lease = lease->next)
++          {
++              if(memcmp(lease->hwaddr, daemon->dhcp_buff3, lease->hwaddr_len) == 0)
++                 memcpy(lease->vendorclassid, daemon->dhcp_buff2, VENDOR_CLASS_MAX);
++          }
++          memset(daemon->dhcp_buff2,0,DHCP_BUFF_SZ);
++          memset(daemon->dhcp_buff3,0,DHCP_BUFF_SZ);
++    }
++}
++
++void update_vendorclass (void)
++{
++    char buffer[BUFFER_SIZE];
++    struct dhcp_lease *lease;
++    if (!daemon->vendor_stream)
++       return;
++    rewind(daemon->vendor_stream);
++    ftruncate(fileno(daemon->vendor_stream), 0);
++    for (lease = leases; lease; lease = lease->next)
++    {
++/*hwaddr_len is initialised to 256, on receiving new MAC address, hwaddr_len value will be updated */
++        if( lease->hwaddr_len == INITIAL_HWADDRLEN ) continue;
++        for (int index = 0; index < lease->hwaddr_len; index++)
++        {
++            fprintf(daemon->vendor_stream, "%.2x", lease->hwaddr[index]);
++            if (index != lease->hwaddr_len - 1)
++                fprintf(daemon->vendor_stream, ":");
++        }
++        snprintf(buffer, BUFFER_SIZE, " %s \n", lease->vendorclassid);
++        fputs(buffer,daemon->vendor_stream);
++    }
++    fflush(daemon->vendor_stream);
++    fsync(fileno(daemon->vendor_stream));
++}
+ 
+ static int find_interface_v4(struct in_addr local, int if_index, char *label,
+ 			     struct in_addr netmask, struct in_addr broadcast, void *vparam)

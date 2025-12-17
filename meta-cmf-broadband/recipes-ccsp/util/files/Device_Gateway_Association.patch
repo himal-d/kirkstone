@@ -1,0 +1,35 @@
+From 59ab77c612569d9f34e2384a5b8c48cf192cb060 Mon Sep 17 00:00:00 2001
+From: Karthika A B <karthika.a@tataelxsi.co.in>
+Date: Mon, 21 Dec 2020 10:55:32 +0000
+Subject: [PATCH] RDKBDEV-83: Adding Device-Gateway Association feature to RDKB
+
+Reason for change:To include the DHCP option 125 (Encapsulated Vendor-Specific Option-Data fields related to gateway) in dnsmasq configuration. The sub-options 4, 5, 6 are used for GatewayManufacturerOUI, GatewaySerialNumber and GatewayProductClass respectively.The changes realised with Device_Gateway_Association.patch
+
+Source: Liberty Global
+Upstream-Status: Pending
+Signed-off-by: Karthika A B <karthika.a@tataelxsi.co.in>
+---
+diff --git a/source/scripts/init/service.d/service_dhcp_server/dhcp_server_functions.sh b/source/scripts/init/service.d/service_dhcp_server/dhcp_server_functions.sh
+index 825c6530..5a3b15f0 100755
+--- a/source/scripts/init/service.d/service_dhcp_server/dhcp_server_functions.sh
++++ b/source/scripts/init/service.d/service_dhcp_server/dhcp_server_functions.sh
+@@ -877,7 +877,15 @@ fi
+    else
+        echo "no-resolv" >> $LOCAL_DHCP_CONF
+    fi
+-
++   
++   # DHCP option 125 vendor specific data for Device gateway association
++   MFR_OUI=`dmcli eRT getv Device.DeviceInfo.ManufacturerOUI | grep value | awk '{print $5}'`
++   SERIAL_NUM=`dmcli eRT getv Device.DeviceInfo.SerialNumber | grep value | awk '{print $5}'`
++   PROD_CLASS=`dmcli eRT getv Device.DeviceInfo.ProductClass | grep value | awk '{print $5}'`
++   echo "dhcp-option=cpewan-id,vi-encap:3561,6,\"$PROD_CLASS\"
++dhcp-option=cpewan-id,vi-encap:3561,5,\"$SERIAL_NUM\"
++dhcp-option=cpewan-id,vi-encap:3561,4,\"$MFR_OUI\"" >> $LOCAL_DHCP_CONF
++   
+    #echo "interface=$LAN_IFNAME" >> $LOCAL_DHCP_CONF
+    echo "expand-hosts" >> $LOCAL_DHCP_CONF
+ 
+-- 
+2.24.0
+

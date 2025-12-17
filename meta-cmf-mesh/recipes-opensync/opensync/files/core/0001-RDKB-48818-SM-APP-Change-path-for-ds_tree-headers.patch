@@ -1,0 +1,76 @@
+From 5543e5bc381f81c5d0dffe34135950cfebede390 Mon Sep 17 00:00:00 2001
+From: Tetiana Ohnieva <tetiana_ohnieva@comcast.com>
+Date: Thu, 6 Jul 2023 00:40:27 +0300
+Subject: [PATCH] RDKB-48818: [SM APP] Change path for ds_tree headers
+
+Reason for change: Fix compilation errors
+Test Procedure: Check build does not fail
+Risks: Medium
+
+Change-Id: I112152cc13626ee26e4fff9a3493bf447fcdd234
+Signed-off-by: Tetiana Ohnieva <tetiana_ohnieva@comcast.com>
+(cherry picked from commit 56a4a19196f18ecfb8f1c8e27667111d6a283354)
+---
+ src/lib/ds/{src => inc}/ds_dlist.c.h | 0
+ src/lib/ds/inc/ds_dlist.h            | 2 +-
+ src/lib/ds/{src => inc}/ds_list.c.h  | 0
+ src/lib/ds/inc/ds_list.h             | 2 +-
+ src/lib/ds/{src => inc}/ds_tree.c.h  | 0
+ src/lib/ds/inc/ds_tree.h             | 2 +-
+ 6 files changed, 3 insertions(+), 3 deletions(-)
+ rename src/lib/ds/{src => inc}/ds_dlist.c.h (100%)
+ rename src/lib/ds/{src => inc}/ds_list.c.h (100%)
+ rename src/lib/ds/{src => inc}/ds_tree.c.h (100%)
+
+diff --git a/src/lib/ds/src/ds_dlist.c.h b/src/lib/ds/inc/ds_dlist.c.h
+similarity index 100%
+rename from src/lib/ds/src/ds_dlist.c.h
+rename to src/lib/ds/inc/ds_dlist.c.h
+diff --git a/src/lib/ds/inc/ds_dlist.h b/src/lib/ds/inc/ds_dlist.h
+index 2202364..cefb6d8 100644
+--- a/src/lib/ds/inc/ds_dlist.h
++++ b/src/lib/ds/inc/ds_dlist.h
+@@ -117,7 +117,7 @@ static inline void  *ds_dlist_iinsert(ds_dlist_iter_t *iter, void *data);
+ static inline void  *ds_dlist_inext(ds_dlist_iter_t *iter);
+ static inline void  *ds_dlist_iremove(ds_dlist_iter_t* iter);
+ 
+-#include "../src/ds_dlist.c.h"
++#include "ds_dlist.c.h"
+ 
+ extern int ds_dlist_check(ds_dlist_t* list);
+ 
+diff --git a/src/lib/ds/src/ds_list.c.h b/src/lib/ds/inc/ds_list.c.h
+similarity index 100%
+rename from src/lib/ds/src/ds_list.c.h
+rename to src/lib/ds/inc/ds_list.c.h
+diff --git a/src/lib/ds/inc/ds_list.h b/src/lib/ds/inc/ds_list.h
+index 891b569..c0cd070 100644
+--- a/src/lib/ds/inc/ds_list.h
++++ b/src/lib/ds/inc/ds_list.h
+@@ -107,6 +107,6 @@ static inline void  *ds_list_inext(ds_list_iter_t* iter);
+ static inline void  *ds_list_iinsert(ds_list_iter_t *iter, void *data);
+ static inline void  *ds_list_iremove(ds_list_iter_t* iter);
+ 
+-#include "../src/ds_list.c.h"
++#include "ds_list.c.h"
+ 
+ #endif /* DS_LIST_H_INCLUDED */
+diff --git a/src/lib/ds/src/ds_tree.c.h b/src/lib/ds/inc/ds_tree.c.h
+similarity index 100%
+rename from src/lib/ds/src/ds_tree.c.h
+rename to src/lib/ds/inc/ds_tree.c.h
+diff --git a/src/lib/ds/inc/ds_tree.h b/src/lib/ds/inc/ds_tree.h
+index cf0df96..aeaec6d 100644
+--- a/src/lib/ds/inc/ds_tree.h
++++ b/src/lib/ds/inc/ds_tree.h
+@@ -127,6 +127,6 @@ extern void         __ds_tree_init(ds_tree_t* root, ds_key_cmp_t *cmp_fn, size_t
+ extern int          ds_tree_check(ds_tree_t* root);
+ extern void         ds_tree_graphviz(ds_tree_t* root, FILE* fdot);
+ 
+-#include "../src/ds_tree.c.h"
++#include "ds_tree.c.h"
+ 
+ #endif /* DS_TREE_H_INCLUDED */
+-- 
+2.17.1
+

@@ -1,0 +1,78 @@
+From cf14ad9dc8e5165ba1fb670e9c23297a3adb9fe1 Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@sky.uk>
+Date: Mon, 28 Aug 2023 15:31:44 +0000
+Subject: [PATCH] Expose API for sending memory pressure events
+
+---
+ Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp | 7 +++++++
+ Source/WebKit/UIProcess/API/wpe/WebKitWebView.h    | 4 ++++
+ Source/WebKit/UIProcess/WebPageProxy.cpp           | 6 ++++++
+ Source/WebKit/UIProcess/WebPageProxy.h             | 2 ++
+ 4 files changed, 19 insertions(+)
+
+diff --git a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
+index a129012a685c..cb76ce127fb0 100644
+--- a/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
++++ b/Source/WebKit/UIProcess/API/glib/WebKitWebView.cpp
+@@ -4619,6 +4619,13 @@ void webkit_web_view_show(WebKitWebView *webView)
+     webView->priv->view->setViewState(viewStateFlags);
+ }
+ 
++void webkit_web_view_send_memory_pressure_event(WebKitWebView *webView, gboolean critical)
++{
++    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
++
++    getPage(webView).sendMemoryPressureEvent(critical);
++}
++
+ void webkitWebViewSetIsWebProcessResponsive(WebKitWebView* webView, bool isResponsive)
+ {
+     if (webView->priv->isWebProcessResponsive == isResponsive)
+diff --git a/Source/WebKit/UIProcess/API/wpe/WebKitWebView.h b/Source/WebKit/UIProcess/API/wpe/WebKitWebView.h
+index 5c97055269fa..83099bf39677 100644
+--- a/Source/WebKit/UIProcess/API/wpe/WebKitWebView.h
++++ b/Source/WebKit/UIProcess/API/wpe/WebKitWebView.h
+@@ -571,6 +571,10 @@ webkit_web_view_hide                                 (WebKitWebView
+ WEBKIT_API void
+ webkit_web_view_show                                 (WebKitWebView               *web_view);
+ 
++WEBKIT_API void
++webkit_web_view_send_memory_pressure_event           (WebKitWebView               *web_view,
++                                                      gboolean                    critical);
++
+ WEBKIT_API gboolean
+ webkit_web_view_get_is_web_process_responsive        (WebKitWebView             *web_view);
+ 
+diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
+index aa072d792c2e..8556d4193bfe 100644
+--- a/Source/WebKit/UIProcess/WebPageProxy.cpp
++++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
+@@ -2670,6 +2670,12 @@ const NativeWebKeyboardEvent& WebPageProxy::firstQueuedKeyEvent() const
+     return m_keyEventQueue.first();
+ }
+ 
++void WebPageProxy::sendMemoryPressureEvent(bool critical) const
++{
++    for (auto* processPool : WebProcessPool::allProcessPools())
++        processPool->sendMemoryPressureEvent(critical);
++}
++
+ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
+ {
+     if (!hasRunningProcess())
+diff --git a/Source/WebKit/UIProcess/WebPageProxy.h b/Source/WebKit/UIProcess/WebPageProxy.h
+index 891987387721..7f91a4e74ea7 100644
+--- a/Source/WebKit/UIProcess/WebPageProxy.h
++++ b/Source/WebKit/UIProcess/WebPageProxy.h
+@@ -1689,6 +1689,8 @@ public:
+     void revokeAccessToAssetServices();
+ #endif
+ 
++    void sendMemoryPressureEvent(bool critical) const;
++
+ private:
+     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
+     void platformInitialize();
+-- 
+2.39.1
+

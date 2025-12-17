@@ -1,0 +1,156 @@
+From 39d190f5f2739dfc5074cbe41516cb20fee95f28 Mon Sep 17 00:00:00 2001
+From: skakko494 <Shibu_KV@cable.comcast.com>
+Date: Thu, 21 Apr 2022 02:34:13 +0000
+Subject: [PATCH] RDK-36342 : Include CPU idle time to perf metrics
+Source: COMCAST
+Upstream-Status: Pending
+Reason for change: Include CPU idle time to perf metrics
+Test Procedure: Run stress NG cpu stressor with perf options
+   and ensure CPU idle times in jiffie units are captured in yaml
+Risks: None
+
+Signed-off-by: skakko494 <Shibu_KV@cable.comcast.com>
+---
+ core-perf.c |  1 -
+ stress-ng.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 2 deletions(-)
+
+diff --git a/core-perf.c b/core-perf.c
+index 640bc38..c040ffd 100644
+--- a/core-perf.c
++++ b/core-perf.c
+@@ -684,7 +684,6 @@ void stress_perf_stat_dump(FILE *yaml, stress_stressor_t *stressors_list, const
+ 					yaml_label, (double)ct / duration);
+ 			}
+ 		}
+-		pr_yaml(yaml, "\n");
+ 	}
+ 	if (no_perf_stats) {
+ 		if (geteuid() != 0) {
+diff --git a/stress-ng.c b/stress-ng.c
+index c38b240..88e79df 100644
+--- a/stress-ng.c
++++ b/stress-ng.c
+@@ -994,6 +994,85 @@ static const stress_help_t help_generic[] = {
+ 	{ NULL,		NULL,			NULL }
+ };
+ 
++#define MAX_CPU_SUPPORTED 10
++
++typedef struct __CPU_IDLE_INFO__ {
++
++    int numCpu;
++    unsigned long int aggregatedCpuIdleTime;
++    unsigned long int idleTimePerCpu[MAX_CPU_SUPPORTED];
++
++} CPU_IDLE_INFO;
++
++/**
++ *   These are the description of data from /proc/stat interface
++ *
++ *   |Col 0|       |Col 1|           |Col 2|   |Col 3|       |Col 4|          |Col 5|       |Col 6|                               |Col 7|    |Col 8|                 |Col 9|   |Col 10|
++ *   |Attri|        |user mode|  |niced|   |system|    |idle|            |I/O wait|   |irq: servicing interupts|  |softirq|  |steal:invol wait| |guest|  |guest_nice|
++ *    cpu            2255             34          2290        22625563    6290            127                                   456       0                         0                0
++ */
++int get_cpu_idle_time(CPU_IDLE_INFO* outCpuIdleInfo) {
++
++    int ret = -1;
++
++    char str[128];
++    int i = 0;
++    unsigned long int col[10] = { 0 };
++
++    if(!outCpuIdleInfo) {
++        printf("NULL pointer for input argument. Return without computing idle times \n");
++        return ret;
++    }
++
++    FILE* fp = fopen("/proc/stat", "r");
++    if(fp == NULL) {
++        printf("Unable to open file .. Returning ... \n");
++        return ret;
++
++    }
++
++    i = 0 ;
++    while(fscanf(fp, "%s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu", str, &col[0], &col[1], &col[2], &col[3], &col[4], &col[5], &col[6], &col[7],
++            &col[8], &col[9]) != EOF) {
++
++        // Print lines which starts with cpu . Rest of the lines are of no interest & can be ignored.
++        if(strncmp(str, "cpu", 3) != 0) {
++            break;
++        }else {
++            ret = 0 ;
++            outCpuIdleInfo->numCpu = i;
++            if(i == 0) {
++                outCpuIdleInfo->aggregatedCpuIdleTime = col[3];
++            }else {
++                outCpuIdleInfo->idleTimePerCpu[i - 1] = col[3];
++            }
++        }
++        i++;
++    }
++    fclose(fp);
++
++    return ret;
++
++}
++
++void print_cpu_idle_time(FILE* yaml, CPU_IDLE_INFO cpuIdleInfoStart, CPU_IDLE_INFO cpuIdleInfoEnd) {
++
++    int i = 0;
++    unsigned long int idleTime = cpuIdleInfoEnd.aggregatedCpuIdleTime - cpuIdleInfoStart.aggregatedCpuIdleTime;
++
++    pr_yaml(yaml, "      cpu-idle-HZ: %lu \n", idleTime);
++    for( i = 0; i < cpuIdleInfoEnd.numCpu; ++i ) {
++        int idleCputimeDelta = 0;
++        idleCputimeDelta = cpuIdleInfoEnd.idleTimePerCpu[i] - cpuIdleInfoStart.idleTimePerCpu[i];
++        pr_yaml(yaml, "      cpu%d-idle-HZ: %d \n", i, idleCputimeDelta);
++    }
++
++}
++
++
++
++
++
+ /*
+  *  stress_hash_checksum()
+  *	generate a hash of the checksum data
+@@ -2998,6 +3077,7 @@ int main(int argc, char **argv, char **envp)
+ 	const uint32_t cpus_online = stress_get_processors_online();
+ 	const uint32_t cpus_configured = stress_get_processors_configured();
+ 	int ret;
++	CPU_IDLE_INFO cpuIdleInfoStart = { 0 }, cpuIdleInfoEnd = { 0 };
+ 
+ 	stress_set_proc_name_init(argc, argv, envp);
+ 
+@@ -3108,6 +3188,7 @@ int main(int argc, char **argv, char **envp)
+ 	if (stress_exclude() < 0)
+ 		exit(EXIT_FAILURE);
+ 
++	get_cpu_idle_time(&cpuIdleInfoStart);
+ 	/*
+ 	 *  Setup random stressors if requested
+ 	 */
+@@ -3257,6 +3338,8 @@ int main(int argc, char **argv, char **envp)
+ 		success ? "successful" : "unsuccessful",
+ 		duration, stress_duration_to_str(duration));
+ 
++	get_cpu_idle_time(&cpuIdleInfoEnd);
++
+ 	/*
+ 	 *  Save results to YAML file
+ 	 */
+@@ -3281,8 +3364,10 @@ int main(int argc, char **argv, char **envp)
+ 	/*
+ 	 *  Dump perf statistics
+ 	 */
+-	if (g_opt_flags & OPT_FLAGS_PERF_STATS)
++	if (g_opt_flags & OPT_FLAGS_PERF_STATS){
+ 		stress_perf_stat_dump(yaml, stressors_head, duration);
++		print_cpu_idle_time(yaml, cpuIdleInfoStart, cpuIdleInfoEnd);
++	}
+ #endif
+ 
+ #if defined(STRESS_THERMAL_ZONES)

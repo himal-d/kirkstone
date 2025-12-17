@@ -1,0 +1,48 @@
+From 516fbcab93d8228feb41a4a3dbaa7a46f077f30b Mon Sep 17 00:00:00 2001
+From: Manoj Bhatta <manoj_bhatta@comcast.com>
+Date: Wed, 15 Mar 2023 20:14:18 +0000
+Subject: [PATCH] map key menu back as btn
+
+---
+ src/manette-device.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/src/manette-device.c b/src/manette-device.c
+index d2b9603..d028210 100644
+--- a/src/manette-device.c
++++ b/src/manette-device.c
+@@ -417,9 +417,20 @@ on_evdev_event (ManetteDevice      *self,
+     manette_event.any.type = evdev_event->value ?
+       MANETTE_EVENT_BUTTON_PRESS :
+       MANETTE_EVENT_BUTTON_RELEASE;
++    //Some controller send KEY_  (ex MENU, BACK, HOMEPAGE) for  BUTTON_
++    if (evdev_event->code == KEY_MENU || evdev_event->code == KEY_HOMEPAGE) {
++      manette_event.button.hardware_index = self->key_map[BTN_MODE - BTN_MISC];
++      manette_event.button.button = BTN_MODE;
++    }
++    else if (evdev_event->code == KEY_BACK) {
++      manette_event.button.hardware_index = self->key_map[BTN_SELECT - BTN_MISC];
++      manette_event.button.button = BTN_SELECT;
++    }
++    else {
+     manette_event.button.hardware_index =
+       self->key_map[evdev_event->code - BTN_MISC];
+     manette_event.button.button = evdev_event->code;
++    }
+ 
+     break;
+   case EV_ABS:
+@@ -560,6 +571,13 @@ manette_device_new (const gchar  *filename,
+       self->key_map[i - BTN_MISC] = (guint8) buttons_number;
+       buttons_number++;
+     }
++  if (has_key (self->evdev_device, KEY_MENU)||
++      has_key (self->evdev_device, KEY_HOMEPAGE)) {
++      self->key_map[BTN_MODE - BTN_MISC ] = buttons_number++;
++   }
++  if (has_key (self->evdev_device, KEY_BACK)) {
++      self->key_map[BTN_SELECT - BTN_MISC ] = buttons_number++;
++    }
+   for (i = BTN_MISC; i < BTN_JOYSTICK; i++)
+     if (has_key (self->evdev_device, i)) {
+       self->key_map[i - BTN_MISC] = (guint8) buttons_number;

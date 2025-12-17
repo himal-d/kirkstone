@@ -1,0 +1,20 @@
+Date: Sat, 12 Oct 2019 17:06:56 +0000
+From 954565d7b35fe7c947bdf4057466324b2aa8f444 Mon Sep 17 00:00:00 2001
+From: sshett799 <sanath_shettyb@comcast.com>
+Subject: [PATCH] RDKB-23803 : integration of safe c lib in RDK-B build
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: sshett799 <sanath_shettyb@comcast.com>
+
+--- safeclib/configure.ac       2019-06-04 07:55:38.000000000 +0000
++++ safeclib_copy/configure.ac  2019-11-12 10:42:44.217898410 +0000
+@@ -634,7 +634,8 @@
+    fi
+ fi
+
+-AC_CHECK_PROGS([DOXYGEN], [doxygen])
++#Documentation of each api is not required on platform box
++#AC_CHECK_PROGS([DOXYGEN], [doxygen])
+ if test -z "$DOXYGEN";
+    then AC_MSG_WARN([doxygen not found - continuing without doxygen support])
+ fi

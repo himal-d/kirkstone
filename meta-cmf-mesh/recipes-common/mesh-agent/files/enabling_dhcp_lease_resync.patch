@@ -1,0 +1,61 @@
+From f7dd24927e90157c296825c00c8f1c9c119a98c8 Mon Sep 17 00:00:00 2001
+From: Simon Chung <simon.chung@rdkcentral.com>
+Date: Mon, 19 Jun 2023 11:30:57 +0100
+Subject: [PATCH] enabling_dhcp_lease_resync.patch
+
+Change-Id: Iae1c9e8c319fe6e47125a5df4e6102f7f395c09c
+---
+ source/MeshAgentSsp/cosa_mesh_apis.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/source/MeshAgentSsp/cosa_mesh_apis.c b/source/MeshAgentSsp/cosa_mesh_apis.c
+index 25a2621..1e86bab 100644
+--- a/source/MeshAgentSsp/cosa_mesh_apis.c
++++ b/source/MeshAgentSsp/cosa_mesh_apis.c
+@@ -4830,6 +4830,9 @@ static void *Mesh_sysevent_handler(void *data)
+     bool wfo_mode = false;
+ #endif
+ 
++#if defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
++    async_id_t lease_resync_asyncid;
++#endif
+     sysevent_set_options(sysevent_fd,     sysevent_token, meshSyncMsgArr[MESH_WIFI_RESET].sysStr,                     TUPLE_FLAG_EVENT);
+     sysevent_setnotification(sysevent_fd, sysevent_token, meshSyncMsgArr[MESH_WIFI_RESET].sysStr,                     &wifi_init_asyncid);
+     sysevent_set_options(sysevent_fd,     sysevent_token, meshSyncMsgArr[MESH_WIFI_SSID_NAME].sysStr,                 TUPLE_FLAG_EVENT);
+@@ -4884,6 +4887,11 @@ static void *Mesh_sysevent_handler(void *data)
+     sysevent_setnotification(sysevent_fd, sysevent_token, meshSyncMsgArr[MESH_WFO_ENABLED].sysStr,                     &mesh_wfo_enabled_asyncid);
+ #endif
+ 
++#if defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
++    sysevent_set_options(sysevent_fd,     sysevent_token, meshSyncMsgArr[MESH_DHCP_RESYNC_LEASES].sysStr,                   TUPLE_FLAG_EVENT);
++    sysevent_setnotification(sysevent_fd, sysevent_token, meshSyncMsgArr[MESH_DHCP_RESYNC_LEASES].sysStr,                   &lease_resync_asyncid);
++#endif
++
+     for (;;)
+     {
+         unsigned char name[64], val[256];
+@@ -6351,6 +6359,13 @@ static void *Mesh_sysevent_handler(void *data)
+ 
+             }
+ #endif //WAN_FAILOVER_SUPPORTED
++#if defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
++            else if (strcmp(name, meshSyncMsgArr[MESH_DHCP_RESYNC_LEASES].sysStr)==0)
++            {
++                //This will handle sending lease information to plume for every new connection, without restarting the MeshAgent
++                Mesh_sendDhcpLeaseSync();
++            }
++#endif
+             else
+             {
+                 MeshWarning("undefined event %s \n",name);
+@@ -6433,7 +6448,6 @@ static void Mesh_InitClientList(void)
+     }
+ }
+ 
+-
+ /**
+  *  @brief Mesh Agent Initialize code
+  *
+-- 
+2.37.2
+

@@ -1,0 +1,50 @@
+Date: Dec 14 11:24:28 2022
+
+Subject: To fix SIZE_T_MAX undefined reference error with kirkstone 
+         Ref - https://github.com/curl/curl/commit/c1366571b609407cf0d4d9f4a2769d29e1313151
+
+Source: Upstream
+
+Signed-off-by: Rakhil P E <Rakhil_PuthiyaveettilEdachena@comcast.com>
+---
+
+Index: curl-7.59.0/lib/curl_ntlm_core.c
+===================================================================
+--- curl-7.59.0.orig/lib/curl_ntlm_core.c
++++ curl-7.59.0/lib/curl_ntlm_core.c
+@@ -649,15 +649,6 @@ CURLcode Curl_hmac_md5(const unsigned ch
+   return CURLE_OK;
+ }
+ 
+-#ifndef SIZE_T_MAX
+-/* some limits.h headers have this defined, some don't */
+-#if defined(SIZEOF_SIZE_T) && (SIZEOF_SIZE_T > 4)
+-#define SIZE_T_MAX 18446744073709551615U
+-#else
+-#define SIZE_T_MAX 4294967295U
+-#endif
+-#endif
+-
+ /* This creates the NTLMv2 hash by using NTLM hash as the key and Unicode
+  * (uppercase UserName + Domain) as the data
+  */
+Index: curl-7.59.0/lib/curl_setup.h
+===================================================================
+--- curl-7.59.0.orig/lib/curl_setup.h
++++ curl-7.59.0/lib/curl_setup.h
+@@ -447,6 +447,15 @@
+ #  endif
+ #endif
+ 
++#ifndef SIZE_T_MAX
++/* some limits.h headers have this defined, some don't */
++#if defined(SIZEOF_SIZE_T) && (SIZEOF_SIZE_T > 4)
++#define SIZE_T_MAX 18446744073709551615U
++#else
++#define SIZE_T_MAX 4294967295U
++#endif
++#endif
++
+ /*
+  * Arg 2 type for gethostname in case it hasn't been defined in config file.
+  */

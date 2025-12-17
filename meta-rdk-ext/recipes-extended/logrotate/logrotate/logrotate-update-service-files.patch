@@ -1,0 +1,97 @@
+From: None
+
+Subject: [PATCH] logrotate-update-service-files.patch: Used to copy the created service files to the module
+Service file will be copied to system path and execute accordingly
+
+Source: https://github.com/logrotate/logrotate/
+License: GPL-2.0-only
+Upstream-Status: Pending
+Signed-off-by: Anbukannadhasan <anbukannadasan.kar@sky.uk>
+
+diff -Naur logrotate-3.21.0.orig/logrotate_hdd.conf logrotate-3.21.0/logrotate_hdd.conf
+--- logrotate-3.21.0.orig/logrotate_hdd.conf	1970-01-01 00:00:00.000000000 +0000
++++ logrotate-3.21.0/logrotate_hdd.conf	2023-09-27 14:00:29.061376936 +0000
+@@ -0,0 +1,8 @@
++/opt/logs/*.txt
++/opt/logs/*.log
++/opt/logs/*.txt.0{
++size 22020096
++rotate 1
++copytruncate
++missingok
++}
+diff -Naur logrotate-3.21.0.orig/logrotate_nohdd.conf logrotate-3.21.0/logrotate_nohdd.conf
+--- logrotate-3.21.0.orig/logrotate_nohdd.conf	1970-01-01 00:00:00.000000000 +0000
++++ logrotate-3.21.0/logrotate_nohdd.conf	2023-09-27 14:00:20.373550095 +0000
+@@ -0,0 +1,8 @@
++/opt/logs/*.txt
++/opt/logs/*.log
++/opt/logs/*.txt.0{
++size 10485760
++rotate 1
++copytruncate
++missingok
++}
+diff -Naur logrotate-3.21.0.orig/logrotate.service logrotate-3.21.0/logrotate.service
+--- logrotate-3.21.0.orig/logrotate.service	1970-01-01 00:00:00.000000000 +0000
++++ logrotate-3.21.0/logrotate.service	2023-09-27 14:00:03.673882936 +0000
+@@ -0,0 +1,27 @@
++##############################################################################
++# If not stated otherwise in this file or this component's LICENSE file the
++# following copyright and licenses apply:
++#
++# Copyright 2020 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##############################################################################
++
++[Unit]
++Description=Logrotate Service
++
++[Service]
++Type=forking
++SyslogIdentifier=logrotate
++ExecStart=/usr/sbin/logrotate -s /tmp/logrotatedata.status /etc/logrotatedata.conf
++Restart=always
+diff -Naur logrotate-3.21.0.orig/logrotate.timer logrotate-3.21.0/logrotate.timer
+--- logrotate-3.21.0.orig/logrotate.timer	1970-01-01 00:00:00.000000000 +0000
++++ logrotate-3.21.0/logrotate.timer	2023-09-27 14:00:11.857719823 +0000
+@@ -0,0 +1,28 @@
++##############################################################################
++# If not stated otherwise in this file or this component's LICENSE file the
++# following copyright and licenses apply:
++#
++# Copyright 2020 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##############################################################################
++
++[Unit]
++Description=Log Rotation Timer
++
++[Timer]
++OnBootSec=2min
++Unit=logrotate.service
++
++[Install]
++WantedBy=multi-user.target

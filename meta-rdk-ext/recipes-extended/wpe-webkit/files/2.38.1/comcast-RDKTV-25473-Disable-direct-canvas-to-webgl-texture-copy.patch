@@ -1,0 +1,41 @@
+From 0b2ec60f9ab5b5aa7ac8ac3cc1ba6cf38acf472f Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Thu, 19 Oct 2023 12:38:49 +0200
+Subject: [PATCH] comcast - RDKTV-25473 - Disable direct canvas to webgl
+ texture copy
+
+Disable copy of accelerated canvas texture directly into webgl texture.
+This will force slower path to be used that contains:
+1) Copy accelerated CairoGLSurface into unaccelerated CairoImageSurface
+2) Get pixel data from unaccelerated CairoImageSurface
+3) Draw raw pixels
+
+Original issue:
+Closed captions in Xumo app (VOD part) are rendered as solid black rectangles
+on Amlogic and Realtek devices
+
+Steps to reproduce:
+1) Open Xumo app
+2) Navigate to "Free movies" secton
+3) Play any video and enable ClosedCaptions
+---
+ .../graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp        | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp b/Source/WebCore/platform/graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp
+index 07cb94bbaa2d..cfdfedcc0bcf 100644
+--- a/Source/WebCore/platform/graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp
++++ b/Source/WebCore/platform/graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp
+@@ -147,6 +147,9 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferCairoGLSurfaceBackend::l
+ 
+ bool ImageBufferCairoGLSurfaceBackend::copyToPlatformTexture(GraphicsContextGL&, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalFormat, bool premultiplyAlpha, bool flipY) const
+ {
++    // Disabled because of rendering issues - see RDKTV-25473
++    return false;
++
+     if (!premultiplyAlpha || flipY)
+         return false;
+ 
+-- 
+2.25.1
+

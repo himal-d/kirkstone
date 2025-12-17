@@ -1,0 +1,1333 @@
+From e8a4202341cc913a0ace37902579496025b2275d Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@sky.uk>
+Date: Fri, 2 Feb 2024 17:24:53 +0100
+Subject: [PATCH] Fix public/private strings in logs
+
+---
+ .../JavaScriptCore/runtime/JSGlobalObject.cpp |  4 +-
+ .../ARDBroadcastSampleHandler.m               |  2 +-
+ Source/WTF/wtf/Assertions.cpp                 |  4 +-
+ Source/WTF/wtf/Logger.h                       |  4 +-
+ Source/WTF/wtf/OSLogPrintStream.cpp           |  2 +-
+ Source/WTF/wtf/cocoa/MachSendRight.cpp        |  4 +-
+ Source/WebCore/dom/ScriptElement.cpp          |  2 +-
+ Source/WebCore/platform/ProcessIdentity.cpp   |  2 +-
+ .../objc/LocalSampleBufferDisplayLayer.mm     | 10 ++---
+ .../ios/AVAudioSessionCaptureDeviceManager.mm |  4 +-
+ .../mediastream/mac/CoreAudioSharedUnit.cpp   |  2 +-
+ .../WebCore/workers/shared/SharedWorker.cpp   |  4 +-
+ .../shared/SharedWorkerObjectConnection.cpp   |  8 ++--
+ .../NetworkProcess/NetworkResourceLoader.cpp  | 44 +++++++++----------
+ .../PrivateClickMeasurementManager.cpp        |  8 ++--
+ .../SharedWorker/WebSharedWorkerServer.cpp    |  8 ++--
+ .../WebSharedWorkerServerConnection.cpp       | 14 +++---
+ ...bSharedWorkerServerToContextConnection.cpp |  4 +-
+ .../cocoa/NetworkDataTaskCocoa.mm             |  4 +-
+ .../cocoa/NetworkSessionCocoa.mm              |  2 +-
+ .../storage/OriginStorageManager.cpp          |  4 +-
+ .../webrtc/NetworkRTCProvider.cpp             |  4 +-
+ Source/WebKit/Platform/IPC/Connection.cpp     |  6 +--
+ .../Platform/cocoa/ImageAnalysisUtilities.mm  | 20 ++++-----
+ .../Platform/cocoa/SharedMemoryCocoa.cpp      | 18 ++++----
+ .../Shared/API/Cocoa/WKRemoteObjectCoder.mm   |  2 +-
+ .../Cocoa/XPCService/XPCServiceMain.mm        |  6 +--
+ .../UIProcess/ApplicationStateTracker.mm      |  6 +--
+ .../WebKit/UIProcess/EndowmentStateTracker.mm |  2 +-
+ .../WebKit/UIProcess/GPU/GPUProcessProxy.cpp  |  2 +-
+ .../UIProcess/Network/NetworkProcessProxy.cpp |  4 +-
+ Source/WebKit/UIProcess/WebPageProxy.cpp      |  4 +-
+ Source/WebKit/UIProcess/WebProcessPool.cpp    |  6 +--
+ Source/WebKit/UIProcess/WebProcessProxy.cpp   | 16 +++----
+ .../UIProcess/ios/ProcessAssertionIOS.mm      | 10 ++---
+ .../WebSharedWorkerObjectConnection.cpp       |  8 ++--
+ .../WebCoreSupport/WebFrameLoaderClient.cpp   |  2 +-
+ .../WebResourceLoadObserver.cpp               |  4 +-
+ .../WebPage/MomentumEventDispatcher.cpp       |  2 +-
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp  |  2 +-
+ .../WebProcess/cocoa/WebProcessCocoa.mm       |  2 +-
+ Source/WebKit/webpushd/PushService.mm         | 28 ++++++------
+ Source/WebKit/webpushd/WebPushDaemon.mm       |  4 +-
+ 43 files changed, 149 insertions(+), 149 deletions(-)
+
+diff --git a/Source/JavaScriptCore/runtime/JSGlobalObject.cpp b/Source/JavaScriptCore/runtime/JSGlobalObject.cpp
+index 045461a221b0..904e0c09def1 100644
+--- a/Source/JavaScriptCore/runtime/JSGlobalObject.cpp
++++ b/Source/JavaScriptCore/runtime/JSGlobalObject.cpp
+@@ -509,7 +509,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame
+     auto message = asSignpostString(globalObject, callFrame->argument(0));
+     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+ 
+-    WTFBeginSignpost(globalObject, "JSGlobalObject signpost", "%{public}s", message.ascii().data());
++    WTFBeginSignpost(globalObject, "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING "", message.ascii().data());
+ 
+     return JSValue::encode(jsUndefined());
+ }
+@@ -522,7 +522,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame*
+     auto message = asSignpostString(globalObject, callFrame->argument(0));
+     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+ 
+-    WTFEndSignpost(globalObject, "JSGlobalObject signpost", "%{public}s", message.ascii().data());
++    WTFEndSignpost(globalObject, "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING "", message.ascii().data());
+ 
+     return JSValue::encode(jsUndefined());
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/ios/broadcast_extension/ARDBroadcastSampleHandler.m b/Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/ios/broadcast_extension/ARDBroadcastSampleHandler.m
+index 1c276d965f72..62c38c3833ee 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/ios/broadcast_extension/ARDBroadcastSampleHandler.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/ios/broadcast_extension/ARDBroadcastSampleHandler.m
+@@ -30,7 +30,7 @@ - (instancetype)init {
+     _callbackLogger = [[RTC_OBJC_TYPE(RTCCallbackLogger) alloc] init];
+     os_log_t rtc_os_log = os_log_create("com.google.AppRTCMobile", "RTCLog");
+     [_callbackLogger start:^(NSString *logMessage) {
+-      os_log(rtc_os_log, "%{public}s", [logMessage cStringUsingEncoding:NSUTF8StringEncoding]);
++      os_log(rtc_os_log, "%" PUBLIC_LOG_STRING "", [logMessage cStringUsingEncoding:NSUTF8StringEncoding]);
+     }];
+   }
+   return self;
+diff --git a/Source/WTF/wtf/Assertions.cpp b/Source/WTF/wtf/Assertions.cpp
+index d56584889093..3fdd8e9ed681 100644
+--- a/Source/WTF/wtf/Assertions.cpp
++++ b/Source/WTF/wtf/Assertions.cpp
+@@ -607,9 +607,9 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
+             auto demangled = WTF::StackTrace::demangle(stackFrame);
+ #if USE(OS_LOG)
+             if (demangled && demangled->demangledName())
+-                os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->demangledName());
++                os_log(channel->osLogChannel, "%-3d %p %" PUBLIC_LOG_STRING "", frameNumber, stackFrame, demangled->demangledName());
+             else if (demangled && demangled->mangledName())
+-                os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->mangledName());
++                os_log(channel->osLogChannel, "%-3d %p %" PUBLIC_LOG_STRING "", frameNumber, stackFrame, demangled->mangledName());
+             else
+                 os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
+ #else
+diff --git a/Source/WTF/wtf/Logger.h b/Source/WTF/wtf/Logger.h
+index 0c0848236fc6..c5dcb20bf156 100644
+--- a/Source/WTF/wtf/Logger.h
++++ b/Source/WTF/wtf/Logger.h
+@@ -313,7 +313,7 @@ private:
+ #if RELEASE_LOG_DISABLED
+         WTFLog(&channel, "%s", logMessage.utf8().data());
+ #elif USE(OS_LOG)
+-        os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
++        os_log(channel.osLogChannel, "%" PUBLIC_LOG_STRING "", logMessage.utf8().data());
+ #elif ENABLE(JOURNALD_LOG)
+         sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel.subsystem, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
+ #else
+@@ -339,7 +339,7 @@ private:
+ #if RELEASE_LOG_DISABLED
+         WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());
+ #elif USE(OS_LOG)
+-        os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
++        os_log(channel.osLogChannel, "%" PUBLIC_LOG_STRING "", logMessage.utf8().data());
+         UNUSED_PARAM(file);
+         UNUSED_PARAM(line);
+         UNUSED_PARAM(function);
+diff --git a/Source/WTF/wtf/OSLogPrintStream.cpp b/Source/WTF/wtf/OSLogPrintStream.cpp
+index f1f15440e4cb..17edcebff0a0 100644
+--- a/Source/WTF/wtf/OSLogPrintStream.cpp
++++ b/Source/WTF/wtf/OSLogPrintStream.cpp
+@@ -69,7 +69,7 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
+         if (buffer[offset] == '\n') {
+             // Set the new line to a null character so os_log stops copying there.
+             buffer[offset] = '\0';
+-            os_log_with_type(m_log, m_logType, "%{public}s", buffer);
++            os_log_with_type(m_log, m_logType, "%" PUBLIC_LOG_STRING "", buffer);
+             buffer += offset + 1;
+             newOffset -= offset + 1;
+             offset = 0;
+diff --git a/Source/WTF/wtf/cocoa/MachSendRight.cpp b/Source/WTF/wtf/cocoa/MachSendRight.cpp
+index 69a0a713f168..cadc8b5df22d 100644
+--- a/Source/WTF/wtf/cocoa/MachSendRight.cpp
++++ b/Source/WTF/wtf/cocoa/MachSendRight.cpp
+@@ -67,7 +67,7 @@ void deallocateSendRightSafely(mach_port_t port)
+     if (kr == KERN_SUCCESS)
+         return;
+ 
+-    RELEASE_LOG_ERROR(Process, "mach_port_deallocate error for port %d: %{private}s (%#x)", port, mach_error_string(kr), kr);
++    RELEASE_LOG_ERROR(Process, "mach_port_deallocate error for port %d: %" PRIVATE_LOG_STRING " (%#x)", port, mach_error_string(kr), kr);
+     if (kr == KERN_INVALID_RIGHT || kr == KERN_INVALID_NAME)
+         CRASH();
+ }
+@@ -85,7 +85,7 @@ static void assertSendRight(mach_port_t port)
+     if (kr == KERN_SUCCESS && count > 0)
+         return;
+ 
+-    RELEASE_LOG_ERROR(Process, "mach_port_get_refs error for port %d: %{private}s (%#x)", port, mach_error_string(kr), kr);
++    RELEASE_LOG_ERROR(Process, "mach_port_get_refs error for port %d: %" PRIVATE_LOG_STRING " (%#x)", port, mach_error_string(kr), kr);
+     CRASH();
+ }
+ 
+diff --git a/Source/WebCore/dom/ScriptElement.cpp b/Source/WebCore/dom/ScriptElement.cpp
+index cc6b05f179a0..fd0121e3aad2 100644
+--- a/Source/WebCore/dom/ScriptElement.cpp
++++ b/Source/WebCore/dom/ScriptElement.cpp
+@@ -396,7 +396,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
+     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
+     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
+ 
+-    WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %{public}s async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
++    WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %" PUBLIC_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
+     frame->script().evaluateIgnoringException(sourceCode);
+     WTFEndSignpost(this, "Execute Script Element");
+ }
+diff --git a/Source/WebCore/platform/ProcessIdentity.cpp b/Source/WebCore/platform/ProcessIdentity.cpp
+index de8d32ab4ee2..dd45c7d11611 100644
+--- a/Source/WebCore/platform/ProcessIdentity.cpp
++++ b/Source/WebCore/platform/ProcessIdentity.cpp
+@@ -42,7 +42,7 @@ ProcessIdentity::ProcessIdentity(CurrentProcessTag)
+     if (kr == KERN_SUCCESS)
+         m_taskIdToken = MachSendRight::adopt(identityToken);
+     else
+-        RELEASE_LOG_ERROR(Process, "task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(Process, "task_create_identity_token() failed: %" PRIVATE_LOG_STRING " (%x)", mach_error_string(kr), kr);
+ #endif
+ }
+ 
+diff --git a/Source/WebCore/platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm b/Source/WebCore/platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
+index fe0d7ce36825..aef930c65b56 100644
+--- a/Source/WebCore/platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
++++ b/Source/WebCore/platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
+@@ -214,7 +214,7 @@ void LocalSampleBufferDisplayLayer::layerStatusDidChange()
+ {
+     ASSERT(isMainThread());
+     if (m_client && m_sampleBufferDisplayLayer.get().status == AVQueuedSampleBufferRenderingStatusFailed) {
+-        RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerStatusDidChange going to failed status (%{public}s) ", m_logIdentifier.utf8().data());
++        RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerStatusDidChange going to failed status (%" PUBLIC_LOG_STRING ") ", m_logIdentifier.utf8().data());
+         if (!m_didFail) {
+             m_didFail = true;
+             m_client->sampleBufferDisplayLayerStatusDidFail();
+@@ -225,7 +225,7 @@ void LocalSampleBufferDisplayLayer::layerStatusDidChange()
+ void LocalSampleBufferDisplayLayer::layerErrorDidChange()
+ {
+     ASSERT(isMainThread());
+-    RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerErrorDidChange (%{public}s) ", m_logIdentifier.utf8().data());
++    RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerErrorDidChange (%" PUBLIC_LOG_STRING ") ", m_logIdentifier.utf8().data());
+     if (!m_client || m_didFail)
+         return;
+     m_didFail = true;
+@@ -344,7 +344,7 @@ void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
+ 
+     m_processingQueue->dispatch([this, videoFrame = Ref { videoFrame }]() mutable {
+         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+-            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSample (%{public}s) not ready for more media data", m_logIdentifier.utf8().data());
++            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSample (%" PUBLIC_LOG_STRING ") not ready for more media data", m_logIdentifier.utf8().data());
+             addVideoFrameToPendingQueue(WTFMove(videoFrame));
+             requestNotificationWhenReadyForVideoData();
+             return;
+@@ -377,7 +377,7 @@ void LocalSampleBufferDisplayLayer::enqueueBuffer(CVPixelBufferRef pixelBuffer,
+     constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
+     if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
+         if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
+-            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoFrameQueue.size());
++            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%" PUBLIC_LOG_STRING ") metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoFrameQueue.size());
+     }
+     m_frameRateMonitor.update();
+ #endif
+@@ -389,7 +389,7 @@ void LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification(MonotonicTi
+     callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = WeakPtr { *this }] {
+         if (!weakThis)
+             return;
+-        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueVideoFrame (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
++        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueVideoFrame (%" PUBLIC_LOG_STRING ") at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
+     });
+ }
+ #endif
+diff --git a/Source/WebCore/platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm b/Source/WebCore/platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm
+index eb6f9affae78..82c4e98110bc 100644
+--- a/Source/WebCore/platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm
++++ b/Source/WebCore/platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm
+@@ -169,13 +169,13 @@ bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceUIDIntern
+     }
+ 
+     if (!preferredPort) {
+-        RELEASE_LOG_ERROR(WebRTC, "failed to find preferred input '%{public}s'", deviceUID.ascii().data());
++        RELEASE_LOG_ERROR(WebRTC, "failed to find preferred input '%" PUBLIC_LOG_STRING "'", deviceUID.ascii().data());
+         return false;
+     }
+ 
+     NSError *error = nil;
+     if (![[PAL::getAVAudioSessionClass() sharedInstance] setPreferredInput:preferredPort error:&error]) {
+-        RELEASE_LOG_ERROR(WebRTC, "failed to set preferred input to '%{public}s' with error: %@", deviceUID.ascii().data(), error.localizedDescription);
++        RELEASE_LOG_ERROR(WebRTC, "failed to set preferred input to '%" PUBLIC_LOG_STRING "' with error: %@", deviceUID.ascii().data(), error.localizedDescription);
+         return false;
+     }
+ 
+diff --git a/Source/WebCore/platform/mediastream/mac/CoreAudioSharedUnit.cpp b/Source/WebCore/platform/mediastream/mac/CoreAudioSharedUnit.cpp
+index b4a3254115b7..c7575e1e8072 100644
+--- a/Source/WebCore/platform/mediastream/mac/CoreAudioSharedUnit.cpp
++++ b/Source/WebCore/platform/mediastream/mac/CoreAudioSharedUnit.cpp
+@@ -94,7 +94,7 @@ Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioShared
+     if (name) {
+         String ioUnitName = name;
+         CFRelease(name);
+-        RELEASE_LOG(WebRTC, "CoreAudioSharedInternalUnit created \"%{private}s\" component", ioUnitName.utf8().data());
++        RELEASE_LOG(WebRTC, "CoreAudioSharedInternalUnit created \"%" PRIVATE_LOG_STRING "\" component", ioUnitName.utf8().data());
+     }
+ #endif
+ 
+diff --git a/Source/WebCore/workers/shared/SharedWorker.cpp b/Source/WebCore/workers/shared/SharedWorker.cpp
+index bcda322c0b6c..5f84a8830a2e 100644
+--- a/Source/WebCore/workers/shared/SharedWorker.cpp
++++ b/Source/WebCore/workers/shared/SharedWorker.cpp
+@@ -45,8 +45,8 @@ namespace WebCore {
+ 
+ WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
+ 
+-#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+-#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
++#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
++#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+ 
+ static HashMap<SharedWorkerObjectIdentifier, SharedWorker*>& allSharedWorkers()
+ {
+diff --git a/Source/WebCore/workers/shared/SharedWorkerObjectConnection.cpp b/Source/WebCore/workers/shared/SharedWorkerObjectConnection.cpp
+index b04b769c14d1..a4d8f79bf65f 100644
+--- a/Source/WebCore/workers/shared/SharedWorkerObjectConnection.cpp
++++ b/Source/WebCore/workers/shared/SharedWorkerObjectConnection.cpp
+@@ -52,7 +52,7 @@ void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::Share
+     ASSERT(isMainThread());
+ 
+     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
+-    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%{public}s, worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
++    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+     if (!workerObject)
+         return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }), { });
+ 
+@@ -74,9 +74,9 @@ void SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion(WebCore::S
+     ASSERT(isMainThread());
+     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
+     if (error.isNull())
+-        CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load succeeded", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
++        CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, load succeeded", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+     else
+-        CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load failed", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
++        CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, load failed", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+     if (workerObject)
+         workerObject->didFinishLoading(error);
+ }
+@@ -85,7 +85,7 @@ void SharedWorkerObjectConnection::postExceptionToWorkerObject(SharedWorkerObjec
+ {
+     ASSERT(isMainThread());
+     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
+-    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%{public}s, worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
++    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+     if (workerObject)
+         ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::DOMManipulation, ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { }));
+ }
+diff --git a/Source/WebKit/NetworkProcess/NetworkResourceLoader.cpp b/Source/WebKit/NetworkProcess/NetworkResourceLoader.cpp
+index 4b27752243a9..bc36e48ffb18 100644
+--- a/Source/WebKit/NetworkProcess/NetworkResourceLoader.cpp
++++ b/Source/WebKit/NetworkProcess/NetworkResourceLoader.cpp
+@@ -1662,12 +1662,12 @@ static void logBlockedCookieInformation(NetworkConnectionToWebProcess& connectio
+ #define LOCAL_LOG(str, ...) \
+     LOCAL_LOG_IF_ALLOWED("logCookieInformation: BLOCKED cookie access for webPageID=%s, frameID=%s, resourceID=%s, firstParty=%s: " str, escapedPageID.utf8().data(), escapedFrameID.utf8().data(), escapedIdentifier.utf8().data(), escapedFirstParty.utf8().data(), ##__VA_ARGS__)
+ 
+-    LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+-    LOCAL_LOG(R"(  "partition": "%{public}s",)", "BLOCKED");
+-    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", "false");
+-    LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
+-    LOCAL_LOG(R"(  "isSameSite": "%{public}s",)", sameSiteInfo.isSameSite ? "true" : "false");
+-    LOCAL_LOG(R"(  "isTopSite": "%{public}s",)", sameSiteInfo.isTopSite ? "true" : "false");
++    LOCAL_LOG(R"({ "url": "%" PUBLIC_LOG_STRING "",)", escapedURL.utf8().data());
++    LOCAL_LOG(R"(  "partition": "%" PUBLIC_LOG_STRING "",)", "BLOCKED");
++    LOCAL_LOG(R"(  "hasStorageAccess": %" PUBLIC_LOG_STRING ",)", "false");
++    LOCAL_LOG(R"(  "referer": "%" PUBLIC_LOG_STRING "",)", escapedReferrer.utf8().data());
++    LOCAL_LOG(R"(  "isSameSite": "%" PUBLIC_LOG_STRING "",)", sameSiteInfo.isSameSite ? "true" : "false");
++    LOCAL_LOG(R"(  "isTopSite": "%" PUBLIC_LOG_STRING "",)", sameSiteInfo.isTopSite ? "true" : "false");
+     LOCAL_LOG(R"(  "cookies": [])");
+     LOCAL_LOG(R"(  })");
+ #undef LOCAL_LOG
+@@ -1694,12 +1694,12 @@ static void logCookieInformationInternal(NetworkConnectionToWebProcess& connecti
+ #define LOCAL_LOG(str, ...) \
+     LOCAL_LOG_IF_ALLOWED("logCookieInformation: webPageID=%s, frameID=%s, resourceID=%s: " str, escapedPageID.utf8().data(), escapedFrameID.utf8().data(), escapedIdentifier.utf8().data(), ##__VA_ARGS__)
+ 
+-    LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+-    LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
+-    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccess ? "true" : "false");
+-    LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
+-    LOCAL_LOG(R"(  "isSameSite": "%{public}s",)", sameSiteInfo.isSameSite ? "true" : "false");
+-    LOCAL_LOG(R"(  "isTopSite": "%{public}s",)", sameSiteInfo.isTopSite ? "true" : "false");
++    LOCAL_LOG(R"({ "url": "%" PUBLIC_LOG_STRING "",)", escapedURL.utf8().data());
++    LOCAL_LOG(R"(  "partition": "%" PUBLIC_LOG_STRING "",)", escapedPartition.utf8().data());
++    LOCAL_LOG(R"(  "hasStorageAccess": %" PUBLIC_LOG_STRING ",)", hasStorageAccess ? "true" : "false");
++    LOCAL_LOG(R"(  "referer": "%" PUBLIC_LOG_STRING "",)", escapedReferrer.utf8().data());
++    LOCAL_LOG(R"(  "isSameSite": "%" PUBLIC_LOG_STRING "",)", sameSiteInfo.isSameSite ? "true" : "false");
++    LOCAL_LOG(R"(  "isTopSite": "%" PUBLIC_LOG_STRING "",)", sameSiteInfo.isTopSite ? "true" : "false");
+     LOCAL_LOG(R"(  "cookies": [)");
+ 
+     auto size = cookies.size();
+@@ -1717,18 +1717,18 @@ static void logCookieInformationInternal(NetworkConnectionToWebProcess& connecti
+         auto escapedCommentURL = escapeForJSON(cookie.commentURL.string());
+         // FIXME: Log Same-Site policy for each cookie. See <https://bugs.webkit.org/show_bug.cgi?id=184894>.
+ 
+-        LOCAL_LOG(R"(  { "name": "%{public}s",)", escapedName.utf8().data());
+-        LOCAL_LOG(R"(    "value": "%{public}s",)", escapedValue.utf8().data());
+-        LOCAL_LOG(R"(    "domain": "%{public}s",)", escapedDomain.utf8().data());
+-        LOCAL_LOG(R"(    "path": "%{public}s",)", escapedPath.utf8().data());
++        LOCAL_LOG(R"(  { "name": "%" PUBLIC_LOG_STRING "",)", escapedName.utf8().data());
++        LOCAL_LOG(R"(    "value": "%" PUBLIC_LOG_STRING "",)", escapedValue.utf8().data());
++        LOCAL_LOG(R"(    "domain": "%" PUBLIC_LOG_STRING "",)", escapedDomain.utf8().data());
++        LOCAL_LOG(R"(    "path": "%" PUBLIC_LOG_STRING "",)", escapedPath.utf8().data());
+         LOCAL_LOG(R"(    "created": %f,)", cookie.created);
+         LOCAL_LOG(R"(    "expires": %f,)", cookie.expires.value_or(0));
+-        LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
+-        LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
+-        LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");
+-        LOCAL_LOG(R"(    "comment": "%{public}s",)", escapedComment.utf8().data());
+-        LOCAL_LOG(R"(    "commentURL": "%{public}s")", escapedCommentURL.utf8().data());
+-        LOCAL_LOG(R"(  }%{public}s)", trailingComma);
++        LOCAL_LOG(R"(    "httpOnly": %" PUBLIC_LOG_STRING ",)", cookie.httpOnly ? "true" : "false");
++        LOCAL_LOG(R"(    "secure": %" PUBLIC_LOG_STRING ",)", cookie.secure ? "true" : "false");
++        LOCAL_LOG(R"(    "session": %" PUBLIC_LOG_STRING ",)", cookie.session ? "true" : "false");
++        LOCAL_LOG(R"(    "comment": "%" PUBLIC_LOG_STRING "",)", escapedComment.utf8().data());
++        LOCAL_LOG(R"(    "commentURL": "%" PUBLIC_LOG_STRING "")", escapedCommentURL.utf8().data());
++        LOCAL_LOG(R"(  }%" PUBLIC_LOG_STRING ")", trailingComma);
+     }
+     LOCAL_LOG(R"(]})");
+ #undef LOCAL_LOG
+diff --git a/Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp b/Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
+index 4479c664279f..19b6b2c111aa 100644
+--- a/Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
++++ b/Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
+@@ -95,7 +95,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
+ #if PLATFORM(COCOA)
+             else {
+                 if (auto errorMessage = measurement.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL)) {
+-                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%{public}s", errorMessage->utf8().data());
++                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%" PUBLIC_LOG_STRING "", errorMessage->utf8().data());
+                     m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
+                     return;
+                 }
+@@ -274,7 +274,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
+ #if PLATFORM(COCOA)
+         } else {
+             if (auto errorMessage = measurement.calculateAndUpdateSourceSecretToken(*signatureBase64URL)) {
+-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%{public}s", errorMessage->utf8().data());
++                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "", errorMessage->utf8().data());
+                 m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
+                 return;
+             }
+@@ -321,7 +321,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
+             auto result = PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(*signatureBase64URL, *attributionTriggerData.destinationUnlinkableToken);
+             if (!result) {
+                 auto errorMessage = result.error().isEmpty() ? "Unknown"_s : result.error();
+-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%{public}s", errorMessage.utf8().data());
++                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "", errorMessage.utf8().data());
+                 m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, errorMessage));
+                 return;
+             }
+@@ -405,7 +405,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&&
+                 }
+ 
+                 auto errorMessage = result.error().isEmpty() ? "Unknown"_s : result.error();
+-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateDestinationUnlinkableToken(): '%{public}s", errorMessage.utf8().data());
++                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateDestinationUnlinkableToken(): '%" PUBLIC_LOG_STRING "", errorMessage.utf8().data());
+                 m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, errorMessage));
+                 return;
+             }
+diff --git a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
+index 2f51676fb2c7..8ce114122148 100644
+--- a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
++++ b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
+@@ -56,7 +56,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
+     auto& sharedWorker = m_sharedWorkers.ensure(sharedWorkerKey, [&] {
+         return makeUnique<WebSharedWorker>(*this, sharedWorkerKey, workerOptions);
+     }).iterator->value;
+-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: sharedWorkerObjectIdentifier=%{private}s, sharedWorkerIdentifier=%" PRIu64, sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker->identifier().toUInt64());
++    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: sharedWorkerObjectIdentifier=%" PRIVATE_LOG_STRING ", sharedWorkerIdentifier=%" PRIu64, sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker->identifier().toUInt64());
+ 
+     if (sharedWorker->workerOptions().type != workerOptions.type || sharedWorker->workerOptions().credentials != workerOptions.credentials) {
+         RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A worker already exists with this name but has different type / credentials");
+@@ -192,7 +192,7 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
+ void WebSharedWorkerServer::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     auto* sharedWorker = m_sharedWorkers.get(sharedWorkerKey);
+-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%{public}s, sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
++    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
+     if (!sharedWorker)
+         return;
+ 
+@@ -206,7 +206,7 @@ void WebSharedWorkerServer::sharedWorkerObjectIsGoingAway(const WebCore::SharedW
+ void WebSharedWorkerServer::suspendForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     auto* sharedWorker = m_sharedWorkers.get(sharedWorkerKey);
+-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s, sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
++    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
+     if (!sharedWorker)
+         return;
+ 
+@@ -216,7 +216,7 @@ void WebSharedWorkerServer::suspendForBackForwardCache(const WebCore::SharedWork
+ void WebSharedWorkerServer::resumeForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     auto* sharedWorker = m_sharedWorkers.get(sharedWorkerKey);
+-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s, sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
++    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
+     if (!sharedWorker)
+         return;
+ 
+diff --git a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
+index 12f35f55e951..f846d0401bfe 100644
+--- a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
++++ b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
+@@ -85,7 +85,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
+ {
+     CONNECTION_MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
+     CONNECTION_MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
+-    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     if (auto* session = this->session())
+         session->ensureSharedWorkerServer().requestSharedWorker(WTFMove(sharedWorkerKey), sharedWorkerObjectIdentifier, WTFMove(port), WTFMove(workerOptions));
+ }
+@@ -93,7 +93,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
+ void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     CONNECTION_MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
+-    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     if (auto* session = this->session())
+         session->ensureSharedWorkerServer().sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
+ }
+@@ -101,7 +101,7 @@ void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::Sha
+ void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     CONNECTION_MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
+-    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     if (auto* session = this->session())
+         session->ensureSharedWorkerServer().suspendForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
+ }
+@@ -109,26 +109,26 @@ void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::Shared
+ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+     CONNECTION_MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
+-    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     if (auto* session = this->session())
+         session->ensureSharedWorkerServer().resumeForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
+ }
+ 
+ void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
+ {
+-    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTFMove(completionHandler));
+ }
+ 
+ void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)
+ {
+-    CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, success=%d", sharedWorkerObjectIdentifier.toString().utf8().data(), error.isNull());
++    CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", success=%d", sharedWorkerObjectIdentifier.toString().utf8().data(), error.isNull());
+     send(Messages::WebSharedWorkerObjectConnection::NotifyWorkerObjectOfLoadCompletion { sharedWorkerObjectIdentifier, error });
+ }
+ 
+ void WebSharedWorkerServerConnection::postExceptionToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
+ {
+-    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     send(Messages::WebSharedWorkerObjectConnection::PostExceptionToWorkerObject { sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL });
+ }
+ 
+diff --git a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
+index 8720413082f0..b5f06e1b588b 100644
+--- a/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
++++ b/Source/WebKit/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
+@@ -148,7 +148,7 @@ void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSh
+ 
+ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+-    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     auto& sharedWorkerObjects = m_sharedWorkerObjects.ensure(sharedWorkerObjectIdentifier.processIdentifier(), [] { return HashSet<WebCore::SharedWorkerObjectIdentifier> { }; }).iterator->value;
+     ASSERT(!sharedWorkerObjects.contains(sharedWorkerObjectIdentifier));
+     sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
+@@ -161,7 +161,7 @@ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::Sh
+ 
+ void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+-    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     auto it = m_sharedWorkerObjects.find(sharedWorkerObjectIdentifier.processIdentifier());
+     ASSERT(it != m_sharedWorkerObjects.end());
+     if (it == m_sharedWorkerObjects.end())
+diff --git a/Source/WebKit/NetworkProcess/cocoa/NetworkDataTaskCocoa.mm b/Source/WebKit/NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
+index 6b28fa51842d..234f0faeda97 100644
+--- a/Source/WebKit/NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
++++ b/Source/WebKit/NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
+@@ -211,7 +211,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking(const Web
+                 cookie = WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCapForCNAMECloakedCookies);
+                 [cappedCookies addObject:cookie];
+                 if (debugLoggingEnabled)
+-                    RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party CNAME cloaked cookie named %{public}s.", [[cookie name] UTF8String]);
++                    RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party CNAME cloaked cookie named %" PUBLIC_LOG_STRING ".", [[cookie name] UTF8String]);
+             }
+             return cappedCookies;
+         }
+@@ -384,7 +384,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
+         break;
+     };
+ 
+-    WTFBeginSignpost(m_task.get(), "DataTask", "%{public}s pri: %.2f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
++    WTFBeginSignpost(m_task.get(), "DataTask", "%" PUBLIC_LOG_STRING " pri: %.2f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+ 
+     RELEASE_ASSERT(!m_sessionWrapper->dataTaskMap.contains([m_task taskIdentifier]));
+     m_sessionWrapper->dataTaskMap.add([m_task taskIdentifier], this);
+diff --git a/Source/WebKit/NetworkProcess/cocoa/NetworkSessionCocoa.mm b/Source/WebKit/NetworkProcess/cocoa/NetworkSessionCocoa.mm
+index b373a26e20a2..d8e2ac26466a 100644
+--- a/Source/WebKit/NetworkProcess/cocoa/NetworkSessionCocoa.mm
++++ b/Source/WebKit/NetworkProcess/cocoa/NetworkSessionCocoa.mm
+@@ -1104,7 +1104,7 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
+     auto setLoggingPrivacyLevel = NSSelectorFromString(@"set_loggingPrivacyLevel:");
+     if ([configuration respondsToSelector:setLoggingPrivacyLevel]) {
+         wtfObjCMsgSend<void>(configuration, setLoggingPrivacyLevel, loggingPrivacyLevel);
+-        RELEASE_LOG(NetworkSession, "Setting logging level for %{public}s session %" PRIu64 " to %{public}s", session.isEphemeral() ? "Ephemeral" : "Regular", session.toUInt64(), loggingPrivacyLevel == nw_context_privacy_level_silent ? "silent" : "sensitive");
++        RELEASE_LOG(NetworkSession, "Setting logging level for %" PUBLIC_LOG_STRING " session %" PRIu64 " to %" PUBLIC_LOG_STRING "", session.isEphemeral() ? "Ephemeral" : "Regular", session.toUInt64(), loggingPrivacyLevel == nw_context_privacy_level_silent ? "silent" : "sensitive");
+     }
+ #elif HAVE(ALLOWS_SENSITIVE_LOGGING)
+ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+diff --git a/Source/WebKit/NetworkProcess/storage/OriginStorageManager.cpp b/Source/WebKit/NetworkProcess/storage/OriginStorageManager.cpp
+index 86f177bcf878..a474c19400f2 100644
+--- a/Source/WebKit/NetworkProcess/storage/OriginStorageManager.cpp
++++ b/Source/WebKit/NetworkProcess/storage/OriginStorageManager.cpp
+@@ -391,7 +391,7 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
+         auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
+         auto localStoragePath = LocalStorageManager::localStorageFilePath(localStorageDirectory);
+         if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath) && FileSystem::fileExists(m_customLocalStoragePath)) {
+-            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedLocalStoragePath New path '%{public}s'", this, localStoragePath.utf8().data());
++            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedLocalStoragePath New path '%" PUBLIC_LOG_STRING "'", this, localStoragePath.utf8().data());
+             FileSystem::makeAllDirectories(localStorageDirectory);
+             auto moved = WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
+             if (!moved && !FileSystem::fileExists(localStoragePath))
+@@ -417,7 +417,7 @@ String OriginStorageManager::StorageBucket::resolvedIDBStoragePath()
+         m_resolvedIDBStoragePath = m_customIDBStoragePath;
+     } else {
+         auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
+-        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%{public}s'", this, idbStoragePath.utf8().data());
++        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%" PUBLIC_LOG_STRING "'", this, idbStoragePath.utf8().data());
+         auto moved = IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
+         if (!moved && FileSystem::fileExists(idbStoragePath)) {
+             auto fileNames = FileSystem::listDirectory(m_customIDBStoragePath);
+diff --git a/Source/WebKit/NetworkProcess/webrtc/NetworkRTCProvider.cpp b/Source/WebKit/NetworkProcess/webrtc/NetworkRTCProvider.cpp
+index 48346baa7b14..f80337afc9fc 100644
+--- a/Source/WebKit/NetworkProcess/webrtc/NetworkRTCProvider.cpp
++++ b/Source/WebKit/NetworkProcess/webrtc/NetworkRTCProvider.cpp
+@@ -76,9 +76,9 @@ static rtc::Thread& rtcNetworkThread()
+ static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
+ {
+     if (severity == rtc::LS_ERROR)
+-        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC error: %{public}s", message);
++        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC error: %" PUBLIC_LOG_STRING "", message);
+     else
+-        RELEASE_LOG(WebRTC, "LibWebRTC message: %{public}s", message);
++        RELEASE_LOG(WebRTC, "LibWebRTC message: %" PUBLIC_LOG_STRING "", message);
+ }
+ #endif
+ 
+diff --git a/Source/WebKit/Platform/IPC/Connection.cpp b/Source/WebKit/Platform/IPC/Connection.cpp
+index bb8556052005..1be5135f4620 100644
+--- a/Source/WebKit/Platform/IPC/Connection.cpp
++++ b/Source/WebKit/Platform/IPC/Connection.cpp
+@@ -598,7 +598,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
+         }
+ 
+         if (UNLIKELY(m_inDispatchSyncMessageCount && !timeout.isInfinity())) {
+-            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%{public}s): Exiting immediately, since we're handling a sync message already", description(messageName));
++            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName));
+             m_waitingForMessage = nullptr;
+             break;
+         }
+@@ -726,7 +726,7 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
+     }
+ 
+ #if OS(DARWIN)
+-    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %{public}s from process %d, id=%" PRIu64, description(messageName), remoteProcessID(), syncRequestID.toUInt64());
++    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %" PUBLIC_LOG_STRING " from process %d, id=%" PRIu64, description(messageName), remoteProcessID(), syncRequestID.toUInt64());
+ #else
+     RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName), syncRequestID.toUInt64());
+ #endif
+@@ -1241,7 +1241,7 @@ void Connection::dispatchIncomingMessages()
+         if (messagesToProcess < m_incomingMessages.size()) {
+             RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: IPC throttling was triggered (has %zu pending incoming messages, will only process %zu before yielding)", this, m_incomingMessages.size(), messagesToProcess);
+ #if PLATFORM(COCOA)
+-            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %{public}s", this, description(message->messageName()));
++            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %" PUBLIC_LOG_STRING "", this, description(message->messageName()));
+ #endif
+         }
+ 
+diff --git a/Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.mm b/Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.mm
+index ff7604726da4..6045e54b90ee 100644
+--- a/Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.mm
++++ b/Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.mm
+@@ -183,7 +183,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
+ 
+     for (VKCTranslatedParagraph *paragraph in paragraphs) {
+         if (!paragraph.text.length) {
+-            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8().data());
++            RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Skipping empty translation paragraph", transactionID.loggingString().utf8().data());
+             continue;
+         }
+ 
+@@ -222,20 +222,20 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
+     static TransactionID imageAnalysisRequestID;
+     auto currentRequestID = imageAnalysisRequestID.increment();
+     if (shouldLogFullImageTranslationResults())
+-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", currentRequestID.loggingString().utf8().data(), imageURL);
++        RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation started for %{private}@", currentRequestID.loggingString().utf8().data(), imageURL);
+     else
+-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8().data());
++        RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation started", currentRequestID.loggingString().utf8().data());
+     auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
+     [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), sourceLocale, targetLocale, currentRequestID, startTime] (CocoaImageAnalysis *analysis, NSError *analysisError) mutable {
+         callOnMainRunLoop([completion = WTFMove(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
+             auto imageAnalysisDelay = MonotonicTime::now() - startTime;
+             if (!analysis) {
+-                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), analysisError.get());
++                RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), analysisError.get());
+                 return completion({ });
+             }
+ 
+             if (![analysis hasResultsForAnalysisTypes:VKAnalysisTypeText]) {
+-                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds());
++                RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation completed in %.3f sec. (no text)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds());
+                 return completion({ });
+             }
+ 
+@@ -249,15 +249,15 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
+                     stringToLog.append(String { info.string });
+                     firstLine = false;
+                 }
+-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count, stringToLog.toString().utf8().data());
++                RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation recognized text in %.3f sec. (line count: %zu): \"%" PRIVATE_LOG_STRING "\"", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count, stringToLog.toString().utf8().data());
+             } else
+-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count);
++                RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count);
+ 
+             auto translationStartTime = MonotonicTime::now();
+             auto completionBlock = makeBlockPtr([completion = WTFMove(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
+                 auto translationDelay = MonotonicTime::now() - translationStartTime;
+                 if (error) {
+-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), error);
++                    RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), error);
+                     return completion({ });
+                 }
+ 
+@@ -270,9 +270,9 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
+                         stringToLog.append(String { paragraph.text });
+                         firstLine = false;
+                     }
+-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count, stringToLog.toString().utf8().data());
++                    RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation completed in %.3f sec. (paragraph count: %zu): \"%" PRIVATE_LOG_STRING "\"", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count, stringToLog.toString().utf8().data());
+                 } else
+-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count);
++                    RELEASE_LOG(Translation, "[#%" PUBLIC_LOG_STRING "] Image translation completed in %.3f sec. (paragraph count: %zu)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count);
+ 
+                 completion(makeTextRecognitionResult(translation, currentRequestID));
+             });
+diff --git a/Source/WebKit/Platform/cocoa/SharedMemoryCocoa.cpp b/Source/WebKit/Platform/cocoa/SharedMemoryCocoa.cpp
+index ea9829873263..da146cc8ea4f 100644
+--- a/Source/WebKit/Platform/cocoa/SharedMemoryCocoa.cpp
++++ b/Source/WebKit/Platform/cocoa/SharedMemoryCocoa.cpp
+@@ -105,7 +105,7 @@ void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) cons
+     kern_return_t kr = mach_memory_entry_ownership(m_port, mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
+ 
+     if (kr != KERN_SUCCESS)
+-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+ #else
+     UNUSED_PARAM(memoryLedger);
+ #endif
+@@ -120,7 +120,7 @@ void SharedMemory::Handle::setOwnershipOfMemory(const ProcessIdentity& processId
+     kern_return_t kr = mach_memory_entry_ownership(m_port, processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);
+ 
+     if (kr != KERN_SUCCESS)
+-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+ #else
+     UNUSED_PARAM(memoryLedger);
+     UNUSED_PARAM(processIdentity);
+@@ -196,7 +196,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
+ #if RELEASE_LOG_DISABLED
+         LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr);
+ #else
+-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %{public}s (%x)", nullptr, size, mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", nullptr, size, mach_error_string(kr), kr);
+ #endif
+         return nullptr;
+     }
+@@ -240,7 +240,7 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
+ #if RELEASE_LOG_DISABLED
+         LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+ #else
+-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+ #endif
+         return { };
+     }
+@@ -248,13 +248,13 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
+     // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
+     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK, &port, parentEntry);
+     if (kr != KERN_SUCCESS) {
+-        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
++        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+         kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+         if (kr != KERN_SUCCESS) {
+ #if RELEASE_LOG_DISABLED
+             LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+ #else
+-            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
++            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+ #endif
+             return { };
+         }
+@@ -301,7 +301,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
+         return nullptr;
+ #else
+     if (kr != KERN_SUCCESS) {
+-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %{public}s (%x)", nullptr, mach_error_string(kr), kr);
++        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %" PUBLIC_LOG_STRING " (%x)", nullptr, mach_error_string(kr), kr);
+         return nullptr;
+     }
+ #endif
+@@ -329,7 +329,7 @@ SharedMemory::~SharedMemory()
+         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+ #else
+         if (kr != KERN_SUCCESS) {
+-            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %{public}s (%x)", this, mach_error_string(kr), kr);
++            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %" PUBLIC_LOG_STRING " (%x)", this, mach_error_string(kr), kr);
+             ASSERT_NOT_REACHED();
+         }
+ #endif
+@@ -341,7 +341,7 @@ SharedMemory::~SharedMemory()
+         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+ #else
+         if (kr != KERN_SUCCESS) {
+-            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate port. %{public}s (%x)", this, mach_error_string(kr), kr);
++            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate port. %" PUBLIC_LOG_STRING " (%x)", this, mach_error_string(kr), kr);
+             ASSERT_NOT_REACHED();
+         }
+ #endif
+diff --git a/Source/WebKit/Shared/API/Cocoa/WKRemoteObjectCoder.mm b/Source/WebKit/Shared/API/Cocoa/WKRemoteObjectCoder.mm
+index 59278d451222..76b623ccdd36 100644
+--- a/Source/WebKit/Shared/API/Cocoa/WKRemoteObjectCoder.mm
++++ b/Source/WebKit/Shared/API/Cocoa/WKRemoteObjectCoder.mm
+@@ -454,7 +454,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
+         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
+ 
+     if (encoder->_objectsBeingEncoded.contains(object)) {
+-        RELEASE_LOG_FAULT(IPC, "WKRemoteObjectCode::encodeObject: Object of type '%{private}s' contains a cycle", class_getName(object_getClass(object)));
++        RELEASE_LOG_FAULT(IPC, "WKRemoteObjectCode::encodeObject: Object of type '%" PRIVATE_LOG_STRING "' contains a cycle", class_getName(object_getClass(object)));
+         [NSException raise:NSInvalidArgumentException format:@"Object of type '%s' contains a cycle", class_getName(object_getClass(object))];
+         return;
+     }
+diff --git a/Source/WebKit/Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm b/Source/WebKit/Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
+index fc51626b1a7d..3a84d3b54837 100644
+--- a/Source/WebKit/Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
++++ b/Source/WebKit/Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
+@@ -72,10 +72,10 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
+     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
+         xpc_type_t type = xpc_get_type(event);
+         if (type != XPC_TYPE_DICTIONARY) {
+-            RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Received unexpected XPC event type: %{public}s", xpc_type_get_name(type));
++            RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Received unexpected XPC event type: %" PUBLIC_LOG_STRING "", xpc_type_get_name(type));
+             if (type == XPC_TYPE_ERROR) {
+                 if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
+-                    RELEASE_LOG_ERROR(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
++                    RELEASE_LOG_ERROR(IPC, "Exiting: Received XPC event type: %" PUBLIC_LOG_STRING "", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
+                     // FIXME: Handle this case more gracefully.
+                     [[NSRunLoop mainRunLoop] performBlock:^{
+                         exit(EXIT_FAILURE);
+@@ -104,7 +104,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
+             else if (!strcmp(serviceName, "com.apple.WebKit.GPU"))
+                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(GPU_SERVICE_INITIALIZER));
+             else {
+-                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName);
++                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %" PUBLIC_LOG_STRING "", serviceName);
+                 return;
+             }
+ 
+diff --git a/Source/WebKit/UIProcess/ApplicationStateTracker.mm b/Source/WebKit/UIProcess/ApplicationStateTracker.mm
+index ddcf7390fe9a..1fa940552bd6 100644
+--- a/Source/WebKit/UIProcess/ApplicationStateTracker.mm
++++ b/Source/WebKit/UIProcess/ApplicationStateTracker.mm
+@@ -170,14 +170,14 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
+         if ([serviceViewController._hostApplicationBundleIdentifier isEqualToString:@"com.apple.ios.StoreKitUIService"])
+             m_isInBackground = false;
+ 
+-        RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, isInBackground=%d", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID, m_isInBackground);
++        RELEASE_LOG(ProcessSuspension, "%" PUBLIC_LOG_STRING " has PID %d, host application PID=%d, isInBackground=%d", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID, m_isInBackground);
+ 
+         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:viewServiceBackgroundNotificationName object:serviceViewController queue:nil usingBlock:[this, applicationPID](NSNotification *) {
+-            RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, didEnterBackground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
++            RELEASE_LOG(ProcessSuspension, "%" PUBLIC_LOG_STRING " has PID %d, host application PID=%d, didEnterBackground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
+             applicationDidEnterBackground();
+         }];
+         m_willEnterForegroundObserver = [notificationCenter addObserverForName:viewServiceForegroundNotificationName object:serviceViewController queue:nil usingBlock:[this, applicationPID](NSNotification *) {
+-            RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, willEnterForeground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
++            RELEASE_LOG(ProcessSuspension, "%" PUBLIC_LOG_STRING " has PID %d, host application PID=%d, willEnterForeground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
+             applicationWillEnterForeground();
+         }];
+ 
+diff --git a/Source/WebKit/UIProcess/EndowmentStateTracker.mm b/Source/WebKit/UIProcess/EndowmentStateTracker.mm
+index 14f4d33c89ca..3543b5560f09 100644
+--- a/Source/WebKit/UIProcess/EndowmentStateTracker.mm
++++ b/Source/WebKit/UIProcess/EndowmentStateTracker.mm
+@@ -139,7 +139,7 @@ void EndowmentStateTracker::setState(State&& state)
+ 
+     m_state = WTFMove(state);
+ 
+-    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setState() isUserFacing: %{public}s isVisible: %{public}s", this, m_state->isUserFacing ? "true" : "false", m_state->isVisible ? "true" : "false");
++    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setState() isUserFacing: %" PUBLIC_LOG_STRING " isVisible: %" PUBLIC_LOG_STRING "", this, m_state->isUserFacing ? "true" : "false", m_state->isVisible ? "true" : "false");
+ 
+     for (auto& client : copyToVector(m_clients)) {
+         if (isUserFacingChanged && client)
+diff --git a/Source/WebKit/UIProcess/GPU/GPUProcessProxy.cpp b/Source/WebKit/UIProcess/GPU/GPUProcessProxy.cpp
+index deb33b53af28..afa8957f7e3a 100644
+--- a/Source/WebKit/UIProcess/GPU/GPUProcessProxy.cpp
++++ b/Source/WebKit/UIProcess/GPU/GPUProcessProxy.cpp
+@@ -414,7 +414,7 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
+     case ProcessTerminationReason::IdleExit:
+     case ProcessTerminationReason::Unresponsive:
+     case ProcessTerminationReason::Crash:
+-        RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=%{public}s", this, processTerminationReasonToString(reason));
++        RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=%" PUBLIC_LOG_STRING "", this, processTerminationReasonToString(reason));
+         break;
+     case ProcessTerminationReason::ExceededProcessCountLimit:
+     case ProcessTerminationReason::NavigationSwap:
+diff --git a/Source/WebKit/UIProcess/Network/NetworkProcessProxy.cpp b/Source/WebKit/UIProcess/Network/NetworkProcessProxy.cpp
+index 61c9caffdf4b..22c1ed7572d6 100644
+--- a/Source/WebKit/UIProcess/Network/NetworkProcessProxy.cpp
++++ b/Source/WebKit/UIProcess/Network/NetworkProcessProxy.cpp
+@@ -1449,7 +1449,7 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
+ 
+ void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
+ {
+-    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
++    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
+     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
+     if (!clientWebProcess || !remoteWorkerProcess) {
+@@ -1462,7 +1462,7 @@ void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType wor
+ 
+ void NetworkProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
+ {
+-    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
++    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
+     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
+     if (!clientWebProcess || !remoteWorkerProcess) {
+diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
+index 641cff85d709..b49bc250793a 100644
+--- a/Source/WebKit/UIProcess/WebPageProxy.cpp
++++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
+@@ -8104,7 +8104,7 @@ URL WebPageProxy::currentResourceDirectoryURL() const
+ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason reason)
+ {
+     if (reason != ProcessTerminationReason::NavigationSwap)
+-        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminate: (pid %d), reason=%{public}s", processIdentifier(), processTerminationReasonToString(reason));
++        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminate: (pid %d), reason=%" PUBLIC_LOG_STRING "", processIdentifier(), processTerminationReasonToString(reason));
+ 
+     ASSERT(m_hasRunningProcess);
+ 
+@@ -8162,7 +8162,7 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
+ 
+ void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
+ {
+-    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%{public}s", processTerminationReasonToString(reason));
++    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%" PUBLIC_LOG_STRING "", processTerminationReasonToString(reason));
+ 
+     bool handledByClient = false;
+     if (m_loaderClient)
+diff --git a/Source/WebKit/UIProcess/WebProcessPool.cpp b/Source/WebKit/UIProcess/WebProcessPool.cpp
+index 94f0eddb0f82..bfa17aeb4755 100644
+--- a/Source/WebKit/UIProcess/WebProcessPool.cpp
++++ b/Source/WebKit/UIProcess/WebProcessPool.cpp
+@@ -473,7 +473,7 @@ void WebProcessPool::gpuProcessDidFinishLaunching(ProcessID)
+ 
+ void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationReason reason)
+ {
+-    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%{public}s", identifier, processTerminationReasonToString(reason));
++    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%" PUBLIC_LOG_STRING "", identifier, processTerminationReasonToString(reason));
+     m_gpuProcess = nullptr;
+ 
+     if (shouldReportAuxiliaryProcessCrash(reason))
+@@ -558,7 +558,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
+ 
+             useProcessForRemoteWorkers(process);
+ 
+-            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, workerType=%{public}s, PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
++            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
+             break;
+         }
+     }
+@@ -567,7 +567,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
+         auto newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
+         remoteWorkerProcessProxy = newProcessProxy.ptr();
+ 
+-        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%{public}s, PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
++        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
+ 
+         processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore);
+         processPool->m_processes.append(WTFMove(newProcessProxy));
+diff --git a/Source/WebKit/UIProcess/WebProcessProxy.cpp b/Source/WebKit/UIProcess/WebProcessProxy.cpp
+index 94978cdcb023..e445ce33f40a 100644
+--- a/Source/WebKit/UIProcess/WebProcessProxy.cpp
++++ b/Source/WebKit/UIProcess/WebProcessProxy.cpp
+@@ -813,7 +813,7 @@ void WebProcessProxy::gpuProcessDidFinishLaunching()
+ 
+ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
+ {
+-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%{public}s", processTerminationReasonToString(reason));
++    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%" PUBLIC_LOG_STRING "", processTerminationReasonToString(reason));
+ 
+     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
+         page->gpuProcessExited(reason);
+@@ -871,7 +871,7 @@ void WebProcessProxy::didClose(IPC::Connection& connection)
+ 
+ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReason reason)
+ {
+-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%{public}s", processTerminationReasonToString(reason));
++    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%" PUBLIC_LOG_STRING "", processTerminationReasonToString(reason));
+ 
+     // Protect ourselves, as the call to shutDown() below may otherwise cause us
+     // to be deleted before we can finish our work.
+@@ -1848,12 +1848,12 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
+ 
+ void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+ {
+-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
++    WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+     markProcessAsRecentlyUsed();
+     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
+     sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
+         if (weakThis)
+-            WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Finished (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
++            WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Finished (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+         completionHandler();
+     }, 0);
+ }
+@@ -1885,7 +1885,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
+     if (!workerInformation)
+         return;
+ 
+-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%{public}s", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
++    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%" PUBLIC_LOG_STRING "", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
+ 
+     bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
+         return &process != this && !!process.m_foregroundToken;
+@@ -1921,7 +1921,7 @@ void WebProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerT
+     if (!workerInformation)
+         return;
+ 
+-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%{public}s, clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
++    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+     workerInformation->clientProcesses.add(proxy);
+     updateRemoteWorkerProcessAssertion(workerType);
+ }
+@@ -1932,7 +1932,7 @@ void WebProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType worke
+     if (!workerInformation)
+         return;
+ 
+-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%{public}s, clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
++    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+     workerInformation->clientProcesses.remove(proxy);
+     updateRemoteWorkerProcessAssertion(workerType);
+ }
+@@ -1982,7 +1982,7 @@ void WebProcessProxy::disableRemoteWorkers(RemoteWorkerType workerType)
+ #endif
+     remoteWorkerInformation = { };
+ 
+-    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
++    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+ 
+     updateBackgroundResponsivenessTimer();
+ 
+diff --git a/Source/WebKit/UIProcess/ios/ProcessAssertionIOS.mm b/Source/WebKit/UIProcess/ios/ProcessAssertionIOS.mm
+index 4f97c5968ca7..87642b16fcf5 100644
+--- a/Source/WebKit/UIProcess/ios/ProcessAssertionIOS.mm
++++ b/Source/WebKit/UIProcess/ios/ProcessAssertionIOS.mm
+@@ -353,7 +353,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
+     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
+     ASSERT(runningBoardAssertionName);
+     if (pid <= 0) {
+-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName, reason.utf8().data(), pid);
++        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%" PUBLIC_LOG_STRING "' for process because PID %d is invalid", this, runningBoardAssertionName, reason.utf8().data(), pid);
+         m_wasInvalidated = true;
+         return;
+     }
+@@ -405,22 +405,22 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
+ 
+ void ProcessAssertion::acquireSync()
+ {
+-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
++    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%" PUBLIC_LOG_STRING "' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
+ 
+     NSError *acquisitionError = nil;
+     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
+-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
++        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%" PUBLIC_LOG_STRING "' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
+         RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+             if (weakThis)
+                 weakThis->processAssertionWasInvalidated();
+         });
+     } else
+-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
++        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%" PUBLIC_LOG_STRING "' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
+ }
+ 
+ ProcessAssertion::~ProcessAssertion()
+ {
+-    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
++    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%" PUBLIC_LOG_STRING "' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
+ 
+     if (m_rbsAssertion) {
+         m_delegate.get().invalidationCallback = nil;
+diff --git a/Source/WebKit/WebProcess/Storage/WebSharedWorkerObjectConnection.cpp b/Source/WebKit/WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
+index 1e9c040dc362..d9ae6959d524 100644
+--- a/Source/WebKit/WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
++++ b/Source/WebKit/WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
+@@ -55,25 +55,25 @@ IPC::Connection* WebSharedWorkerObjectConnection::messageSenderConnection() cons
+ 
+ void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, const WebCore::WorkerOptions& workerOptions)
+ {
+-    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTFMove(port), workerOptions });
+ }
+ 
+ void WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+-    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     send(Messages::WebSharedWorkerServerConnection::SharedWorkerObjectIsGoingAway { sharedWorkerKey, sharedWorkerObjectIdentifier });
+ }
+ 
+ void WebSharedWorkerObjectConnection::suspendForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+-    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     send(Messages::WebSharedWorkerServerConnection::SuspendForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
+ }
+ 
+ void WebSharedWorkerObjectConnection::resumeForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+ {
+-    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
++    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING "", sharedWorkerObjectIdentifier.toString().utf8().data());
+     send(Messages::WebSharedWorkerServerConnection::ResumeForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
+ }
+ 
+diff --git a/Source/WebKit/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp b/Source/WebKit/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
+index d92ad1323385..c492d0a99fe9 100644
+--- a/Source/WebKit/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
++++ b/Source/WebKit/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
+@@ -741,7 +741,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
+     addIfSet(DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
+     addIfSet(DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
+ 
+-    WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%{public}s)", builder.toString().utf8().data());
++    WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%" PUBLIC_LOG_STRING ")", builder.toString().utf8().data());
+ #endif
+ 
+     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
+diff --git a/Source/WebKit/WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp b/Source/WebKit/WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
+index 8ccbba123ee6..3dee1bd836e5 100644
+--- a/Source/WebKit/WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
++++ b/Source/WebKit/WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
+@@ -392,8 +392,8 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const
+         auto escapedURL = escapeForJSON(url.string());
+         auto escapedDomain = escapeForJSON(topFrameDomain.string());
+ 
+-        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+-        LOCAL_LOG(R"(  "domain" : "%{public}s",)", escapedDomain.utf8().data());
++        LOCAL_LOG(R"({ "url": "%" PUBLIC_LOG_STRING "",)", escapedURL.utf8().data());
++        LOCAL_LOG(R"(  "domain" : "%" PUBLIC_LOG_STRING "",)", escapedDomain.utf8().data());
+         LOCAL_LOG(R"(  "until" : %f })", newTime.secondsSinceEpoch().seconds());
+ 
+ #undef LOCAL_LOG
+diff --git a/Source/WebKit/WebProcess/WebPage/MomentumEventDispatcher.cpp b/Source/WebKit/WebProcess/WebPage/MomentumEventDispatcher.cpp
+index 958a0baafa3c..dae885c6a5a5 100644
+--- a/Source/WebKit/WebProcess/WebPage/MomentumEventDispatcher.cpp
++++ b/Source/WebKit/WebProcess/WebPage/MomentumEventDispatcher.cpp
+@@ -266,7 +266,7 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
+ #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+     WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine);
+     stream << curve;
+-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %{public}s", stream.release().utf8().data());
++    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %" PUBLIC_LOG_STRING "", stream.release().utf8().data());
+ #endif
+ }
+ 
+diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+index 540cd69c45a7..3c11fc99cc08 100644
+--- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
++++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+@@ -3914,7 +3914,7 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
+ 
+     runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
+         if (exception)
+-            WEBPAGE_RELEASE_LOG_ERROR(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %{private}s", exception->message.utf8().data());
++            WEBPAGE_RELEASE_LOG_ERROR(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %" PRIVATE_LOG_STRING "", exception->message.utf8().data());
+         else
+             WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript succeeded");
+         completionHandler(result, exception);
+diff --git a/Source/WebKit/WebProcess/cocoa/WebProcessCocoa.mm b/Source/WebKit/WebProcess/cocoa/WebProcessCocoa.mm
+index ccf4c5a16201..72fddb2314f3 100644
+--- a/Source/WebKit/WebProcess/cocoa/WebProcessCocoa.mm
++++ b/Source/WebKit/WebProcess/cocoa/WebProcessCocoa.mm
+@@ -511,7 +511,7 @@ std::optional<audit_token_t> WebProcess::auditTokenForSelf()
+     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+     kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+     if (kr != KERN_SUCCESS) {
+-        WEBPROCESS_RELEASE_LOG_ERROR(Process, "Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
++        WEBPROCESS_RELEASE_LOG_ERROR(Process, "Unable to get audit token for self. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+         return std::nullopt;
+     }
+     return auditToken;
+diff --git a/Source/WebKit/webpushd/PushService.mm b/Source/WebKit/webpushd/PushService.mm
+index f0b3627c5087..378d35504201 100644
+--- a/Source/WebKit/webpushd/PushService.mm
++++ b/Source/WebKit/webpushd/PushService.mm
+@@ -189,7 +189,7 @@ public:
+         String transactionDescription = String("com.apple.webkit.webpushd:"_s) + description() + ":"_s + m_bundleIdentifier + ":"_s + m_scope;
+         m_transaction = adoptOSObject(os_transaction_create(transactionDescription.utf8().data()));
+ 
+-        RELEASE_LOG(Push, "Started pushServiceRequest %{public}s (%p) for bundleID = %{public}s, scope = %{private}s", description().characters(), this, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
++        RELEASE_LOG(Push, "Started pushServiceRequest %" PUBLIC_LOG_STRING " (%p) for bundleID = %" PUBLIC_LOG_STRING ", scope = %" PRIVATE_LOG_STRING "", description().characters(), this, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
+         startInternal();
+     }
+ 
+@@ -211,7 +211,7 @@ protected:
+         if constexpr (std::is_constructible_v<bool, ResultType>)
+             hasResult = static_cast<bool>(result);
+ 
+-        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with result (hasResult: %d) for bundleID = %{public}s, scope = %{private}s", description().characters(), this, hasResult, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
++        RELEASE_LOG(Push, "Finished pushServiceRequest %" PUBLIC_LOG_STRING " (%p) with result (hasResult: %d) for bundleID = %" PUBLIC_LOG_STRING ", scope = %" PRIVATE_LOG_STRING "", description().characters(), this, hasResult, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
+ 
+         m_resultHandler(WTFMove(result));
+         finish();
+@@ -219,7 +219,7 @@ protected:
+ 
+     void reject(WebCore::ExceptionData&& data)
+     {
+-        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with exception for bundleID = %{public}s, scope = %{private}s", description().characters(), this, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
++        RELEASE_LOG(Push, "Finished pushServiceRequest %" PUBLIC_LOG_STRING " (%p) with exception for bundleID = %" PUBLIC_LOG_STRING ", scope = %" PRIVATE_LOG_STRING "", description().characters(), this, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
+ 
+         m_resultHandler(makeUnexpected(WTFMove(data)));
+         finish();
+@@ -307,7 +307,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
+                 }
+ #endif
+ 
+-                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(bundleID: %{public}s, scope: %{private}s) failed with domain: %{public}s code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
++                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(bundleID: %" PUBLIC_LOG_STRING ", scope: %" PRIVATE_LOG_STRING ") failed with domain: %" PUBLIC_LOG_STRING " code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
+                 reject(WebCore::ExceptionData { WebCore::AbortError, "Failed due to internal service error"_s });
+                 return;
+             }
+@@ -326,7 +326,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
+ 
+             m_database.insertRecord(record, [this](auto&& result) mutable {
+                 if (!result) {
+-                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(bundleID: %{public}s, scope: %{private}s) failed with database error", m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
++                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(bundleID: %" PUBLIC_LOG_STRING ", scope: %" PRIVATE_LOG_STRING ") failed with database error", m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
+                     reject(WebCore::ExceptionData { WebCore::AbortError, "Failed due to internal database error"_s });
+                     return;
+                 }
+@@ -403,7 +403,7 @@ void UnsubscribeRequest::startInternal()
+ 
+             auto topic = makePushTopic(m_bundleIdentifier, m_scope);
+             m_connection.unsubscribe(topic, serverVAPIDPublicKey, [this](bool unsubscribed, NSError *error) mutable {
+-                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(bundleID: %{public}s, scope: %{private}s) failed with domain: %{public}s code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
++                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(bundleID: %" PUBLIC_LOG_STRING ", scope: %" PRIVATE_LOG_STRING ") failed with domain: %" PUBLIC_LOG_STRING " code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+             });
+         });
+     });
+@@ -520,7 +520,7 @@ void PushService::incrementSilentPushCount(const String& bundleIdentifier, const
+             return;
+         }
+ 
+-        RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{private}s since it processed %u silent pushes", bundleIdentifier.utf8().data(), securityOrigin.utf8().data(), silentPushCount);
++        RELEASE_LOG(Push, "Removing all subscriptions associated with %" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " since it processed %u silent pushes", bundleIdentifier.utf8().data(), securityOrigin.utf8().data(), silentPushCount);
+ 
+         removeRecordsImpl(bundleIdentifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
+             handler(silentPushCount);
+@@ -544,13 +544,13 @@ void PushService::setPushesEnabledForBundleIdentifierAndOrigin(const String& bun
+ 
+ void PushService::removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&& handler)
+ {
+-    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s", bundleIdentifier.utf8().data());
++    RELEASE_LOG(Push, "Removing push subscriptions associated with %" PUBLIC_LOG_STRING "", bundleIdentifier.utf8().data());
+     removeRecordsImpl(bundleIdentifier, std::nullopt, WTFMove(handler));
+ }
+ 
+ void PushService::removeRecordsForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
+ {
+-    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s %{private}s", bundleIdentifier.utf8().data(), securityOrigin.utf8().data());
++    RELEASE_LOG(Push, "Removing push subscriptions associated with %" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING "", bundleIdentifier.utf8().data(), securityOrigin.utf8().data());
+     removeRecordsImpl(bundleIdentifier, securityOrigin, WTFMove(handler));
+ }
+ 
+@@ -565,7 +565,7 @@ void PushService::removeRecordsImpl(const String& bundleIdentifier, const std::o
+     auto removedRecordsHandler = [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
+         for (auto& record : removedRecords) {
+             m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+-                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{private}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
++                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %" PRIVATE_LOG_STRING ": %" PUBLIC_LOG_STRING " code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+             });
+         }
+ 
+@@ -635,7 +635,7 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
+             message.serverPublicKey = WTFMove(*serverPublicKey);
+             message.salt = WTFMove(*salt);
+         } else {
+-            RELEASE_LOG_ERROR(Push, "Dropping push with unknown content encoding: %{public}s", contentEncoding.UTF8String);
++            RELEASE_LOG_ERROR(Push, "Dropping push with unknown content encoding: %" PUBLIC_LOG_STRING "", contentEncoding.UTF8String);
+             return std::nullopt;
+         }
+ 
+@@ -678,7 +678,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
+ 
+     m_database->getRecordByTopic(topic, [this, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
+         if (!recordResult) {
+-            RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %{private}s", message.topic.utf8().data());
++            RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %" PRIVATE_LOG_STRING "", message.topic.utf8().data());
+             completionHandler();
+             return;
+         }
+@@ -702,12 +702,12 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
+             decryptedPayload = decryptAESGCMPayload(clientKeys, message.serverPublicKey, message.salt, message.encryptedPayload);
+ 
+         if (!decryptedPayload) {
+-            RELEASE_LOG_ERROR(Push, "Dropping incoming push due to decryption error for topic %{private}s", message.topic.utf8().data());
++            RELEASE_LOG_ERROR(Push, "Dropping incoming push due to decryption error for topic %" PRIVATE_LOG_STRING "", message.topic.utf8().data());
+             completionHandler();
+             return;
+         }
+ 
+-        RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{private}s", record.bundleID.utf8().data(), record.scope.utf8().data());
++        RELEASE_LOG(Push, "Decoded incoming push message for %" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING "", record.bundleID.utf8().data(), record.scope.utf8().data());
+ 
+         m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL { record.scope } });
+ 
+diff --git a/Source/WebKit/webpushd/WebPushDaemon.mm b/Source/WebKit/webpushd/WebPushDaemon.mm
+index d12db156be2d..aac48525235b 100644
+--- a/Source/WebKit/webpushd/WebPushDaemon.mm
++++ b/Source/WebKit/webpushd/WebPushDaemon.mm
+@@ -714,7 +714,7 @@ void Daemon::handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushM
+ 
+ void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier)
+ {
+-    RELEASE_LOG(Push, "Launching %{public}s in response to push", clientCodeSigningIdentifier.utf8().data());
++    RELEASE_LOG(Push, "Launching %" PUBLIC_LOG_STRING " in response to push", clientCodeSigningIdentifier.utf8().data());
+ 
+ #if PLATFORM(MAC)
+     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
+@@ -761,7 +761,7 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
+         m_testingPushMessages.remove(iterator);
+     }
+ 
+-    RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), hostAppCodeSigningIdentifier.utf8().data());
++    RELEASE_LOG(Push, "Fetched %zu pending push messages for %" PUBLIC_LOG_STRING "", resultMessages.size(), hostAppCodeSigningIdentifier.utf8().data());
+     connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
+ 
+     replySender(WTFMove(resultMessages));
+-- 
+2.25.1
+

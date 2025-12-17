@@ -1,0 +1,126 @@
+From b89ff8b2ba87444620c6e145dea8427750866337 Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Wed, 27 Sep 2023 11:39:08 -0400
+Subject: [PATCH] Tune memory pressure settings for rapid mem usage changes
+
+When playing an asset with video, frequent seek/jump operations within
+a short period may cause rapid memory increases. The current pressure
+settings may not allow (enough) memory release in time to avoid an
+app running in a container to be killed due it reaching the memory
+limits. To allow sufficient, in time, memory release, the release
+needs to happen with the "synchrounous" flag set to true, allowing
+full garbage collection cycle when reaching critical limits.
+
+Furthermore, the critical threshold needs to be lowered as well
+considering that the release is not instantaneous and on embedded
+devices the 95% original threshold does not allow enough room for
+mem release on apps with lower allowed memory usage limits.
+
+Two changes in MemoryRelease.cpp from wpe-2.28 related with garbage
+collection where included as well
+---
+ Source/WTF/wtf/MemoryPressureHandler.cpp                | 6 +++++-
+ Source/WTF/wtf/unix/MemoryPressureHandlerUnix.cpp       | 9 ++++++++-
+ Source/WebCore/page/MemoryRelease.cpp                   | 6 +++++-
+ Source/WebKit/UIProcess/linux/MemoryPressureMonitor.cpp | 5 +++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/Source/WTF/wtf/MemoryPressureHandler.cpp b/Source/WTF/wtf/MemoryPressureHandler.cpp
+index a7360a7c43b0..e65e57de96ff 100644
+--- a/Source/WTF/wtf/MemoryPressureHandler.cpp
++++ b/Source/WTF/wtf/MemoryPressureHandler.cpp
+@@ -40,7 +40,7 @@ namespace WTF {
+ 
+ WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
+ 
+-#if PLATFORM(IOS_FAMILY)
++#if PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
+ static const double s_conservativeThresholdFraction = 0.5;
+ static const double s_strictThresholdFraction = 0.65;
+ #else
+@@ -303,7 +303,11 @@ void MemoryPressureHandler::measurementTimerFired()
+         releaseMemory(Critical::No, Synchronous::No);
+         break;
+     case MemoryUsagePolicy::Strict:
++#if PLATFORM(WPE)
++        releaseMemory(Critical::Yes, (footprint > m_configuration.baseThreshold) ? Synchronous::Yes : Synchronous::No);
++#else
+         releaseMemory(Critical::Yes, Synchronous::No);
++#endif
+         break;
+     }
+ 
+diff --git a/Source/WTF/wtf/unix/MemoryPressureHandlerUnix.cpp b/Source/WTF/wtf/unix/MemoryPressureHandlerUnix.cpp
+index 85a3ea06c667..82abf9cc5d5e 100644
+--- a/Source/WTF/wtf/unix/MemoryPressureHandlerUnix.cpp
++++ b/Source/WTF/wtf/unix/MemoryPressureHandlerUnix.cpp
+@@ -53,8 +53,13 @@ namespace WTF {
+ // we wait longer to try again (s_maximumHoldOffTime).
+ // These value seems reasonable and testing verifies that it throttles frequent
+ // low memory events, greatly reducing CPU usage.
++#if PLATFORM(WPE)
++static const Seconds s_minimumHoldOffTime { 1_s };
++static const Seconds s_maximumHoldOffTime { 1_s };
++#else
+ static const Seconds s_minimumHoldOffTime { 5_s };
+ static const Seconds s_maximumHoldOffTime { 30_s };
++#endif
+ static const size_t s_minimumBytesFreedToUseMinimumHoldOffTime = 1 * MB;
+ static const unsigned s_holdOffMultiplier = 20;
+ 
+@@ -69,7 +74,9 @@ void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical)
+     setMemoryPressureStatus(MemoryPressureStatus::SystemCritical);
+ 
+     ensureOnMainThread([this, isCritical] {
+-        respondToMemoryPressure(isCritical ? Critical::Yes : Critical::No);
++        // When memory usage reaches the critical state, we may not release enough memory in time if we use the
++        // async mode, so use synchrounous mode in such case
++        respondToMemoryPressure(isCritical ? Critical::Yes : Critical::No, isCritical ? Synchronous::Yes : Synchronous::No);
+     });
+ 
+     if (ReliefLogger::loggingEnabled() && isUnderMemoryPressure())
+diff --git a/Source/WebCore/page/MemoryRelease.cpp b/Source/WebCore/page/MemoryRelease.cpp
+index f13783a3f7c3..7d1bbc6b4f3f 100644
+--- a/Source/WebCore/page/MemoryRelease.cpp
++++ b/Source/WebCore/page/MemoryRelease.cpp
+@@ -88,6 +88,10 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
+ 
+     InlineStyleSheetOwner::clearCache();
+     HTMLNameCache::clear();
++
++#if PLATFORM(WPE)
++     GCController::singleton().garbageCollectSoon();
++#endif
+ }
+ 
+ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCache maintainBackForwardCache, MaintainMemoryCache maintainMemoryCache)
+@@ -126,7 +130,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
+         GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
+         GCController::singleton().garbageCollectNow();
+     } else {
+-#if PLATFORM(IOS_FAMILY)
++#if PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
+         GCController::singleton().garbageCollectNowIfNotDoneRecently();
+ #else
+         GCController::singleton().garbageCollectSoon();
+diff --git a/Source/WebKit/UIProcess/linux/MemoryPressureMonitor.cpp b/Source/WebKit/UIProcess/linux/MemoryPressureMonitor.cpp
+index a0d81d5ac3ed..5cd88a00dd89 100644
+--- a/Source/WebKit/UIProcess/linux/MemoryPressureMonitor.cpp
++++ b/Source/WebKit/UIProcess/linux/MemoryPressureMonitor.cpp
+@@ -48,8 +48,13 @@ static const Seconds s_minPollingInterval { 1_s };
+ static const Seconds s_maxPollingInterval { 5_s };
+ static const double s_minUsedMemoryPercentageForPolling = 50;
+ static const double s_maxUsedMemoryPercentageForPolling = 85;
++#if PLATFORM(WPE)
++static const int s_memoryPresurePercentageThreshold = 80;
++static const int s_memoryPresurePercentageThresholdCritical = 85;
++#else
+ static const int s_memoryPresurePercentageThreshold = 90;
+ static const int s_memoryPresurePercentageThresholdCritical = 95;
++#endif
+ // cgroups.7: The usual place for such mounts is under a tmpfs(5)
+ // filesystem mounted at /sys/fs/cgroup.
+ static const char* s_cgroupMemoryPath = "/sys/fs/cgroup/%s/%s/%s";
+-- 
+2.41.0
+

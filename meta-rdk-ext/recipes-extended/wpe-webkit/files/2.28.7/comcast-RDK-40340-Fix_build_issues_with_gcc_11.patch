@@ -1,0 +1,210 @@
+Date:   Thu Mar 2 08:15:34 2023 +0000
+Source: Upstream
+Subject: RDK-40794: wpe-webkit - Build Failure with kirkstone
+
+Reference Upstream Commits :
+https://github.com/WebPlatformForEmbedded/WPEWebKit/commit/9e24e7973d0a24c4f7890149ad3f67ef8d4e2002
+https://github.com/WebPlatformForEmbedded/WPEWebKit/commit/b83958928838b8a997c12a8de06f89377df0a903
+https://github.com/WebPlatformForEmbedded/WPEWebKit/commit/786e7036ff95fecccbd5ec1aae8a39a523227f1e
+
+Signed-off-by: Rakhil P E <Rakhil_PuthiyaveettilEdachena@comcast.com>
+
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/audio/transport_feedback_packet_loss_tracker.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/audio/transport_feedback_packet_loss_tracker.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/audio/transport_feedback_packet_loss_tracker.h
+@@ -11,6 +11,7 @@
+ #ifndef AUDIO_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
+ #define AUDIO_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
+ 
++#include <cstdint>
+ #include <map>
+ #include <vector>
+ 
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/call/rtx_receive_stream.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/call/rtx_receive_stream.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/call/rtx_receive_stream.h
+@@ -13,6 +13,7 @@
+ 
+ #include <map>
+ 
++#include <cstdint>
+ #include "call/rtp_packet_sink_interface.h"
+ 
+ namespace webrtc {
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/pps_parser.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/pps_parser.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/pps_parser.h
+@@ -11,6 +11,7 @@
+ #ifndef COMMON_VIDEO_H264_PPS_PARSER_H_
+ #define COMMON_VIDEO_H264_PPS_PARSER_H_
+ 
++#include <cstdint>
+ #include "absl/types/optional.h"
+ 
+ namespace rtc {
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/sps_parser.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/sps_parser.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h264/sps_parser.h
+@@ -11,6 +11,7 @@
+ #ifndef COMMON_VIDEO_H264_SPS_PARSER_H_
+ #define COMMON_VIDEO_H264_SPS_PARSER_H_
+ 
++#include <cstdint>
+ #include "absl/types/optional.h"
+ 
+ namespace rtc {
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.h
+@@ -12,6 +12,7 @@
+ #define MODULES_AUDIO_PROCESSING_AEC3_CLOCKDRIFT_DETECTOR_H_
+ 
+ #include <array>
++#include <cstddef>
+ 
+ namespace webrtc {
+ 
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module_common_types_public.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module_common_types_public.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module_common_types_public.h
+@@ -13,6 +13,7 @@
+ 
+ #include <limits>
+ 
++#include <cstdint>
+ #include "absl/types/optional.h"
+ 
+ namespace webrtc {
+Index: git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/decoding_state.h
+===================================================================
+--- git.orig/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/decoding_state.h
++++ git/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/decoding_state.h
+@@ -14,6 +14,7 @@
+ #include <map>
+ #include <set>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace webrtc {
+ 
+Index: git/Source/WTF/wtf/text/icu/UTextProvider.h
+===================================================================
+--- git.orig/Source/WTF/wtf/text/icu/UTextProvider.h
++++ git/Source/WTF/wtf/text/icu/UTextProvider.h
+@@ -79,12 +79,12 @@ inline bool uTextAccessInChunkOrOutOfRan
+             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
+             ASSERT(offset < std::numeric_limits<int32_t>::max());
+             text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+-            isAccessible = TRUE;
++            isAccessible = true;
+             return true;
+         }
+         if (nativeIndex >= nativeLength && text->chunkNativeLimit == nativeLength) {
+             text->chunkOffset = text->chunkLength;
+-            isAccessible = FALSE;
++            isAccessible = false;
+             return true;
+         }
+     } else {
+@@ -93,12 +93,12 @@ inline bool uTextAccessInChunkOrOutOfRan
+             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
+             ASSERT(offset < std::numeric_limits<int32_t>::max());
+             text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+-            isAccessible = TRUE;
++            isAccessible = true;
+             return true;
+         }
+         if (nativeIndex <= 0 && !text->chunkNativeStart) {
+             text->chunkOffset = 0;
+-            isAccessible = FALSE;
++            isAccessible = false;
+             return true;
+         }
+     }
+Index: git/Source/WTF/wtf/text/icu/UTextProviderLatin1.cpp
+===================================================================
+--- git.orig/Source/WTF/wtf/text/icu/UTextProviderLatin1.cpp
++++ git/Source/WTF/wtf/text/icu/UTextProviderLatin1.cpp
+@@ -100,23 +100,23 @@ static UBool uTextLatin1Access(UText* uT
+         if (index < uText->chunkNativeLimit && index >= uText->chunkNativeStart) {
+             // Already inside the buffer. Set the new offset.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return TRUE;
++            return true;
+         }
+         if (index >= length && uText->chunkNativeLimit == length) {
+             // Off the end of the buffer, but we can't get it.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return FALSE;
++            return false;
+         }
+     } else {
+         if (index <= uText->chunkNativeLimit && index > uText->chunkNativeStart) {
+             // Already inside the buffer. Set the new offset.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return TRUE;
++            return true;
+         }
+         if (!index && !uText->chunkNativeStart) {
+             // Already at the beginning; can't go any farther.
+             uText->chunkOffset = 0;
+-            return FALSE;
++            return false;
+         }
+     }
+     
+@@ -144,7 +144,7 @@ static UBool uTextLatin1Access(UText* uT
+ 
+     uText->nativeIndexingLimit = uText->chunkLength;
+ 
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UChar* dest, int32_t destCapacity, UErrorCode* status)
+@@ -337,7 +337,7 @@ static int64_t uTextLatin1ContextAwareNa
+ static UBool uTextLatin1ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+ {
+     if (!text->context)
+-        return FALSE;
++        return false;
+     int64_t nativeLength = uTextLatin1ContextAwareNativeLength(text);
+     UBool isAccessible;
+     if (uTextAccessInChunkOrOutOfRange(text, nativeIndex, nativeLength, forward, isAccessible))
+@@ -357,7 +357,7 @@ static UBool uTextLatin1ContextAwareAcce
+         ASSERT(newContext == UTextProviderContext::PriorContext);
+         textLatin1ContextAwareSwitchToPriorContext(text, nativeIndex, nativeLength, forward);
+     }
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextLatin1ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode* errorCode)
+Index: git/Source/WTF/wtf/text/icu/UTextProviderUTF16.cpp
+===================================================================
+--- git.orig/Source/WTF/wtf/text/icu/UTextProviderUTF16.cpp
++++ git/Source/WTF/wtf/text/icu/UTextProviderUTF16.cpp
+@@ -126,7 +126,7 @@ static inline int64_t uTextUTF16ContextA
+ static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+ {
+     if (!text->context)
+-        return FALSE;
++        return false;
+     int64_t nativeLength = uTextUTF16ContextAwareNativeLength(text);
+     UBool isAccessible;
+     if (uTextAccessInChunkOrOutOfRange(text, nativeIndex, nativeLength, forward, isAccessible))
+@@ -146,7 +146,7 @@ static UBool uTextUTF16ContextAwareAcces
+         ASSERT(newContext == UTextProviderContext::PriorContext);
+         textUTF16ContextAwareSwitchToPriorContext(text, nativeIndex, nativeLength, forward);
+     }
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode* errorCode)

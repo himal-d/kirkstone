@@ -1,0 +1,99 @@
+Changelog between rdkb-2.1-20161219 and rdkb-20170116
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+b5ff64c5 RDKB-9703 : Frequent logging from PAM and PSM after bootup
+50eca730 RDKB-9632 : Run sshd from utopia_init.sh.
+2093a7be RDKB-9665 : DCM service is not restarted after ATOM only reboot
+8f4e6809 RDKB-9633 : Trigger cosa_start_rem.sh from cron if not started 10m of uptime.
+49ece17a RDKB-9489:Sync 23 error while syncing log from Atom side
+2873a801 RDKB-9495 : Device continuously reboots due to self heal
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+4d7eddd RDKB-9780 : Unnecessary malloc for CcspLMLite log
+8575e49 RDKB-9754 CcspLMLite free not reqd for Cosa_GetParamValues error.
+d126b79 RDKB-9692 : [WiFi] Offline devices are showing as online web page.
+9ea6223 RDKB-9440 : Connected Devices, DHCP/Reserved IP functionality is broken
+5e6037d RDKB-9690 : Licensing issue in LMLite.
+318d1b1 RDKB-9626 : WiFi Offline clients are not listed in connected client page.
+b78f949 RDKB-9622: Device Reports sending NULL mac if Ccsp Component is not ready
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+b38cde2 RDKB-8636 : Implement Device.MoCA.Interface.{i}.LinkUpTime TR181 object
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+f84618e RDKBEMU-337 : Implementation of Device Information Details in ccsp-p-and-m.
+da2585d RDKB-9703 : Frequent logging from PAM and PSM after bootup
+bd23f2a RDKB-9577: User able to surf web before captive portal after activation
+42a96f2 RDKB-9675 : Removed the typos in the binary name "snmp_subagent"
+1de6585 RDKBEMU-328 : Implementation of Bridge Details in ccsp-p-and-m.
+45e05a0 RDKBEMU-320 : Implementation of Ethernet Interface details
+16e4234 RDKBEMU-326 : Implementation of GRE Interface in ccsp-p-and-m.
+139ac9c RDKB-9577: User able to browse after activation for 2 minutes
+42d3847 RDKCOM-34 RaspberryPi HAL support
+ac475f6 RDKBEMU-313 : Added PSM Deletion support to Static Address Feature.
+4b84563 ARRISXB6-1865 RDKB-9219 : erouter0 fails to get an IP in case of IPv6 only mode.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+1cc621f RDKB-9675 : Removed the typos in the binary name "snmp_subagent"
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+e5a7734 RDKB-9793: Reset the Blacklist when Private SSID/password is changed
+6642327 RDKB-9768: Removing unnecessary malloc
+243e142 RDKB-8208: removing 'ath' from the source
+63836d5 RDKB-9717 : self heal if wifi config is corrupt
+41770eb RDKB-9664 : Sometimes rpc is not triggered ccsp_restart.sh on atom only reboot
+13efb8e RDKB-7153 : Develop Code - Add ATM Tr181 into wifi agent
+b2f958b RDKBEMU-324 : Implementation of Wireless Interface in CcspWifiAgent.
+5f4400f RDKCOM-36 Do not wait for brlan1 creation on Raspberry Pi platform.
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+3533603 RDKB-9495 : Device continuously reboots due to self heal
+f2610be RDKB-9670: lighttpd restart not happening
+3ff32ec RDKB-9675 : Removed the typos in the binary name "snmp_subagent"
+39a5ef6 RDKB-9633 : Trigger cosa_start_rem.sh from cron if not started 10m of uptime.
+36eaa7f ARRISXB3-5491 : Device stuck at boot after booting up.
+638a7c7 RDKB-9430: Lot of devices reporting "No IPv6 Gateway Address detectedâ€
+7ae9c75 RDKB-9607 : To do corrective option (eRouter reboot only) when DNS test fail.
+
+project rdkb/components/opensource/ccsp/Utopia/
+556968a RDKB-9495 : Device continuously reboots due to self heal
+23d3dd9 ARRISXB3-5491 : Device stuck at boot after booting up.
+a51d638 RDKB-9632 : Run sshd from utopia_init.sh.
+1a02d2c RDKB-9664 : Sometimes rpc is not triggered ccsp_restart.sh on atom only reboot
+3f9bb27 RDKB-9633 : Trigger cosa_start_rem.sh from cron if not started 10m of uptime.
+355c2c5 RDKB-9629 : Set Multicast MAC address as part of brlan1 initialization
+1a8d647 RDKB-9495 : Device continuously reboots due to self heal
+7a829ce ARRISXB6-3106: Factory reset reason not handled properly
+
+project rdkb/components/opensource/ccsp/hal/
+69150a3 RDKBEMU-336 : Implementation of Device information details in Hal.
+a0416ba RDKB-6640,RDKB-8707,RDKB-7150,RDKB-9372,RDKB-6282: HAL 2.3.0
+06ed706 RDKBEMU-319 : Implementation of Ethernet Interface details in Hal.
+d51f8d8 RDKBEMU-325 : Implementation of Wireless Interface in HAL.
+55be8ad RDKB-8652 : [MoCA Hal] HAL implementation for MoCA status and config table
+
+project rdkb/components/opensource/ccsp/webui/
+354dbf3 RDKB-9482, RDKB-9506: Cross-Site Scripting in Wi-Fi & Captive Portal
+6db0142 ARRISXB3-5197: Battery Installed field is incorrect in the GUI page.
+3a685e0 RDKB-4005: Develop Code - MoCA disgnose page on Admin GUI
+d3c2f82 RDKB-4005: Develop Code - MoCA disgnose page on Admin GUI
+69a7c77 RDKB-9617: [Field] GUI Gateway > Software page is empty
+19c8230 RDKB-9667: Not able to add Manage Services of same start & end port
+9252544 ARRISXB6-3085 : Handle battery-disconnected state
+591a757 RDKB-9556: MacFilter entry in lowercase is causing issue
+0aa2cf4 RDKB-8495 : Add button to re-establish zigbee network with XBB1
+
+project rdkb/devices/raspberrypi/hal/
+149a329 RDKCMF-5339: Hal changes related to operating Channel Bandwidth and Single Access Point
+cd29c08 Add CONTRIBUTING.md file to repository
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+39193a8 RDKBEMU-339 : Updated PSM XML files to support Device information
+f5e64c4 RDKBEMU-329 : Updated COSAXCalibur.XML to support Bridge details
+09544b3 RDKBEMU-327 : Updated COSAXCalibur.XML to support GRE Interface
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+2a65e65 RDKBEMU-321 : Modified PHP files with support of Ethernet Interface
+2fc6d5f RDKBEMU-315 : Modified PHP file to support Reserved IP.

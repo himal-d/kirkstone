@@ -1,0 +1,55 @@
+Upstream-Status: pending
+Date: Feb 4, 2020 9:11 AM
+Source: nopoll
+Subject: nopoll patch
+Signed-off-by: Dave Wolaver <David_Wolaver@cable.comcast.com>
+From: Dave Wolaver <David_Wolaver@cable.comcast.com>
+---
+
+diff --git a/src/nopoll_conn.c b/src/nopoll_conn.c
+index 9612df4..4070817 100644
+--- a/src/nopoll_conn.c
++++ b/src/nopoll_conn.c
+@@ -1388,6 +1388,22 @@ noPollConn * nopoll_conn_new_opts (noPollCtx       * ctx,
+ 					 get_url, protocols, origin);
+ }
+ 
++noPollConn * nopoll_conn_new_opts6 (noPollCtx       * ctx,
++               noPollConnOpts  * opts,
++               const char      * host_ip,
++               const char      * host_port,
++               const char      * host_name,
++               const char      * get_url,
++               const char      * protocols,
++               const char      * origin)
++{
++   /* call common implementation */
++   return __nopoll_conn_new_common (ctx, opts, NOPOLL_TRANSPORT_IPV6, nopoll_false,
++                NOPOLL_INVALID_SOCKET,
++                host_ip, host_port, host_name,
++                get_url, protocols, origin);
++}
++
+ /**
+  * @brief Creates a new Websocket connection using a socket
+  * with a preestablished connection.
+diff --git a/src/nopoll_conn.h b/src/nopoll_conn.h
+index cb67356..91fafea 100644
+--- a/src/nopoll_conn.h
++++ b/src/nopoll_conn.h
+@@ -68,6 +68,15 @@ noPollConn * nopoll_conn_new_opts (noPollCtx       * ctx,
+ 				   const char      * protocols,
+ 				   const char      * origin);
+ 
++noPollConn * nopoll_conn_new_opts6 (noPollCtx       * ctx,
++               noPollConnOpts  * opts,
++               const char      * host_ip,
++               const char      * host_port,
++               const char      * host_name,
++               const char      * get_url,
++               const char      * protocols,
++               const char      * origin);
++
+ noPollConn * nopoll_conn_new_with_socket (noPollCtx  * ctx,
+ 			      noPollConnOpts  * opts,
+ 			      int          socket,

@@ -1,0 +1,68 @@
+Reworked for asterisk 18.5.0
+Signed-off-by: Bogdan Bogush <bogdan.bogush@globallogic.com>
+
+Subject: [PATCH 2/2] Use pkgconfig to find libxml2
+Organization: O.S. Systems Software LTDA.
+
+Signed-off-by: Fabio Berton <fabio.berton@ossystems.com.br>
+---
+
+diff --git a/configure.ac b/configure.ac
+index 4fb75f29e0..6992457f8c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -699,17 +699,6 @@ fi
+ # See if clock_gettime is in librt
+ AST_EXT_LIB_CHECK([RT], [rt], [clock_gettime], [])
+ 
+-AST_EXT_TOOL_CHECK([LIBXML2], [xml2-config], , ,
+-        [#include <libxml/tree.h>
+-        #include <libxml/parser.h>],
+-        [LIBXML_TEST_VERSION])
+-
+-if test "${PBX_LIBXML2}" != 1; then
+-	AC_MSG_NOTICE(*** The Asterisk menuselect tool requires the 'libxml2' development package.)
+-	AC_MSG_NOTICE(*** Please install the 'libxml2' development package.)
+-	exit 1
+-fi
+-
+ AST_EXT_LIB_CHECK([URIPARSER], [uriparser], [uriParseUriA], [uriparser/Uri.h])
+ 
+ # Another mandatory item (unless it's explicitly disabled)
+@@ -1550,6 +1539,8 @@ fi
+ 
+ # do the package library checks now
+ 
++AST_PKG_CONFIG_CHECK([LIBXML2], [libxml-2.0])
++
+ AST_EXT_LIB_CHECK([ALSA], [asound], [snd_pcm_open], [alsa/asoundlib.h])
+ 
+ AST_EXT_LIB_CHECK([BFD], [bfd], [bfd_openr], [bfd.h])
+diff --git a/menuselect/configure.ac b/menuselect/configure.ac
+index 4629d52786..2bed6ce0c2 100644
+--- a/menuselect/configure.ac
++++ b/menuselect/configure.ac
+@@ -90,20 +90,14 @@ else
+   AST_EXT_LIB_CHECK([TINFO], [tinfo], [keypad], [curses.h])
+ fi
+ 
+-AST_EXT_TOOL_CHECK([LIBXML2], [xml2-config], , ,
+-        [#include <libxml/tree.h>
+-        #include <libxml/parser.h>],
+-        [LIBXML_TEST_VERSION])
+-
+-if test "${PBX_LIBXML2}" != 1; then
+-  AC_MSG_ERROR([Could not find required 'Libxml2' development package])
+-fi
+-
+ AST_PKG_CONFIG_CHECK([GTK2], [gtk+-2.0])
+ AC_SUBST(PBX_GTK2)
+ AC_SUBST(GTK2_INCLUDE)
+ AC_SUBST(GTK2_LIB)
+ 
++PKG_PROG_PKG_CONFIG()
++AST_PKG_CONFIG_CHECK([LIBXML2], [libxml-2.0])
++
+ test "$silent"=yes && ac_sub_configure_args="${ac_sub_configure_args} --silent"
+ 
+ AC_CONFIG_FILES([makeopts])

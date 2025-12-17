@@ -1,0 +1,23 @@
+Subject: REFPLTB-2951: Crashupload support to RDK-B.
+
+Reason for change: Adding crashupload support for rpi on RDK-B side.
+Risks: None
+
+Change-Id: I79387f8b4d0f830fd1ad1428df20ae7630829701
+Signed-off-by: Prabhudas Gannavarapu <prabhudas_gannavarapu@comcast.com>
+
+Index: git/uploadDumps.sh
+===================================================================
+diff --git a/uploadDumps.sh b/uploadDumps.sh
+index c19e0e4..0f4832b 100755
+--- a/uploadDumps.sh
++++ b/uploadDumps.sh
+@@ -102,7 +102,7 @@ if [ -f /lib/rdk/uploadDumpsUtilsDevice.sh ];then
+      . /lib/rdk/uploadDumpsUtilsDevice.sh
+ fi
+ 
+-if [ "$DEVICE_TYPE" != "mediaclient" ] && [ -f $RDK_PATH/commonUtils.sh ]; then
++if [ "$DEVICE_TYPE" != "broadband" ] && [ "$DEVICE_TYPE" != "mediaclient" ] && [ -f $RDK_PATH/commonUtils.sh ]; then
+      . $RDK_PATH/commonUtils.sh
+ fi
+ 

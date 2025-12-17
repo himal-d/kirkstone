@@ -1,0 +1,35 @@
+From 88899c46a753800a7f6f9b227bc9a6bd2a0f0300 Mon Sep 17 00:00:00 2001
+From: apatel599 <aniketnarshibhai_patel@comcast.com>
+Date: Fri, 20 Jan 2023 05:05:22 +0000
+Subject: [PATCH] TCXB7-5608:[Field][DA]Observing onewifi crash with signature wpa_receive
+
+Reason for change: Added callback function pointer NULL validation
+                   on "wpa_auth_set_eapol" and "wpa_auth_vlogger" function.
+Test Procedure: 1. Load OneWifi Image.
+                2. Connect client with private_vap_2g/5g.
+                3. Connect/disconnect client.
+
+Risks: Low
+Priority: P1
+
+Change-Id: Ie27ffdb5af1614e742fc04816734180eb61ff467
+Signed-off-by: apatel599@cable.comcast.com
+(cherry picked from commit 48d2540f994e3afa42566859459bcaef69c47a4c)
+---
+
+diff --git a/source/hostap-2.9/src/ap/wpa_auth.c b/source/hostap-2.9/src/ap/wpa_auth.c
+index e048e8b..dd81b6e 100755
+--- a/source/hostap-2.9/src/ap/wpa_auth.c
++++ b/source/hostap-2.9/src/ap/wpa_auth.c
+@@ -219,6 +219,12 @@
+ 	int maxlen;
+ 	va_list ap;
+ 
++#ifdef RDK_ONEWIFI
++	if (wpa_auth == NULL)
++                return;
++	if (wpa_auth->cb == NULL)
++                return;
++#endif //RDK_ONEWIFI
+ 	if (wpa_auth->cb->logger == NULL)
+ 		return;

@@ -1,0 +1,67 @@
+Tasks to specialize the USP protocol agent (ccsp-usp-pa) for a particular
+deployment:
+
+1. In 'usp_factory_reset.conf' (the factory reset settings for ccsp-usp-pa), 
+you must specify the controller with the  data model parameters:
+
+Device.LocalAgent.Controller.1.EndpointID
+Device.STOMP.Connection.1.Host
+Device.STOMP.Connection.1.Username
+Device.STOMP.Connection.1.Password
+
+2. The ManufacturerOUI and SerialNumber should be set correctly by the usual
+mechanisms in RDK. In the default RDK build, they may contain invalid values.
+
+3. If "Device.LocalAgent.EndpointID" has been overridden in 
+'usp_factory_reset.conf', before deployment, this should be removed, in order
+that each device has a unique EndpointID (defined by ManufacturerOUI and 
+SerialNumber).
+
+4. In usp_truststore.conf put all PEM formatted certificates of the Certificate
+Authorities that are used to validate the controller certificates.
+
+5. In ccsp-usp-pa.service, the amount of debug logging to syslog may be altered
+using the '-p' and '-v' flags.
+
+6. The data model provider components must be specified in usp_dm_comps.conf.
+This file has 3 columns:
+(a) Short name for the component (for reference by the other data model config
+    files)
+(b) Component name of the component
+(c) D-Bus path name of the component
+
+7. The data model objects (from provider components) accessible over USP must
+be specified in usp_dm_objs.conf. This file has 3 columns:
+(a) Data model path for the object
+(b) Short name of the component providing this object
+(c) Whether the object is writable ('RW') or read-only ('RO'). Writable objects
+allow a USP contrller to add or delete instances. Read-only objects have 
+instances which are controlled only by the device.
+
+8. The data model parameters (from provider components) accessible over USP must
+be specified in usp_dm_params.conf. This file has 4 columns:
+(a) Data model path for the parameter
+(b) Short name of the component providing this parameter
+(c) Type of the parameter. Example: STRING, BOOL, INT, UINT, ULONG, DATETIME
+(d) Whether the parameter is writable ('RW') or read-only ('RO').
+
+9. If some parameters or objects in the data model config files are spelt 
+incorrectly or do not exist anymore this may cause other parameters obtained
+in a group with the same provider component to fail. 
+To discover and update the supported data model config files, first delete
+the config files on the device, then restart the USP protocol agent. When 
+starting, the USP protocol agent will discover the supported data model and 
+write the config files. This process takes appproximately a minute and is 
+quite processor intensive, so it is recommended to deploy with pre-defined
+config files.
+
+10. Passwords may be specified either in usp_factory_reset.conf, and
+obfuscated in the database using the PASSWORD_OBFUSCATION_KEY in vendor_defs.h,
+or programmatically by registering a callback in vendor.c. It is recommended
+to use a callback and store passwords in a device-specific, secure way.
+
+For more information on using, integrating and specializing the USP agent see:
+  https://github.com/BroadbandForum/obuspa/blob/master/QUICK_START_GUIDE.md
+
+
+

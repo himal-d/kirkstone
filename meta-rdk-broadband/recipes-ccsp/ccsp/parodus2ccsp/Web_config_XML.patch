@@ -1,0 +1,84 @@
+Date: Apr 20, 2020 1:30 PM
+From: 1.0.3 release Apr 20, 2020 1:30 PM
+Subject: [PATCH] RDKB-22331: Add Device.X_RDK_WebConfig.ConfigFile.[i]. dynamic table
+To add Device.X_RDK_WebConfig.ConfigFile.[i]. dynamic table.
+Source: COMCAST 
+Upstream-Status: Pending
+Signed-off-by: shilpa_seshadri@cable.comcast.com
+---
+
+diff --git a/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml b/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml
+--- a/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml
++++ b/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml
+@@ -127,5 +127,71 @@
+                 </object>
+             </objects>
+         </object>	    
++        <object>
++            <name>X_RDK_WebConfig</name>
++            <objectType>object</objectType>
++            <functions>
++                <func_GetParamBoolValue>X_RDK_WebConfig_GetParamBoolValue</func_GetParamBoolValue>
++                <func_SetParamBoolValue>X_RDK_WebConfig_SetParamBoolValue</func_SetParamBoolValue>
++                <func_SetParamStringValue>X_RDK_WebConfig_SetParamStringValue</func_SetParamStringValue>
++                <func_GetParamStringValue>X_RDK_WebConfig_GetParamStringValue</func_GetParamStringValue>
++            </functions>
++            <parameters>
++                <parameter>
++                    <name>RfcEnable</name>
++                    <type>boolean</type>
++                    <syntax>bool</syntax>
++                    <writable>true</writable>
++                </parameter>
++                <parameter>
++                    <name>ForceSync</name>
++                    <type>string(256)</type>
++                    <syntax>string</syntax>
++                    <writable>true</writable>
++                </parameter>
++                <parameter>
++                    <name>Data</name>
++                    <type>string</type>
++                    <syntax>string</syntax>
++                    <writable>false</writable>
++                </parameter>
++                <parameter>
++                    <name>URL</name>
++                    <type>string(256)</type>
++                    <syntax>string</syntax>
++                    <writable>true</writable>
++                </parameter>
++                <parameter>
++                    <name>SupportedDocs</name>
++                    <type>string</type>
++                    <syntax>string</syntax>
++                    <writable>false</writable>
++                </parameter>
++                <parameter>
++                    <name>SupportedSchemaVersion</name>
++                    <type>string</type>
++                    <syntax>string</syntax>
++                    <writable>false</writable>
++                </parameter>
++            </parameters>
++                <objects>
++                    <object>
++                        <name>SupplementaryServiceUrls</name>
++                        <objectType>object</objectType>
++                        <functions>
++                            <func_SetParamStringValue>Supplementary_Service_Urls_SetParamStringValue</func_SetParamStringValue>
++                            <func_GetParamStringValue>Supplementary_Service_Urls_GetParamStringValue</func_GetParamStringValue>
++                        </functions>
++		        <parameters>
++                            <parameter>
++                                <name>Telemetry</name>
++                                <type>string(256)</type>
++                                <syntax>string</syntax>
++                                <writable>true</writable>
++                            </parameter>
++                        </parameters>
++                    </object>
++		</objects>
++        </object>
+     </objects>
+ </dataModelInfo>

@@ -1,0 +1,56 @@
+Date: Sep 29, 2014 12:50 PM
+
+From: 9cf95fcb3d99a6ba3b9d35fc937eff7cf14b6229 Sep 29, 2014 12:50 PM
+
+Subject: [PATCH] RDKSYSINTSW-1296: Fix building out of tree 
+
+	Use pkg-config for pcre dependency instead of -config script.
+	
+Source: COMCAST
+
+Upstream-Status: Pending 
+
+Signed-off-by: Khem Raj <khem_raj@cable.comcast.com>
+---
+
+Index: lighttpd-1.5.0/configure.ac
+===================================================================
+--- lighttpd-1.5.0.orig/configure.ac	2014-09-28 23:54:52.965409216 -0700
++++ lighttpd-1.5.0/configure.ac	2014-09-29 00:00:09.053409216 -0700
+@@ -298,23 +298,22 @@
+ AC_MSG_RESULT([$WITH_PCRE])
+ 
+ if test "$WITH_PCRE" != "no"; then
+-  AC_PATH_PROG(PCRECONFIG, pcre-config)
++  PKG_CHECK_MODULES(PCREPKG, [libpcre], [
++  PCRE_LIB=${PCREPKG_LIBS}
++  CPPFLAGS="$CPPFLAGS ${PCREPKG_CFLAGS}"
+ 
+-  if test x"$PCRECONFIG" != x; then 
+-    PCRE_LIB=`$PCRECONFIG --libs`
+-    CPPFLAGS="$CPPFLAGS `$PCRECONFIG --cflags`"
+-    OLDLIBS="$LIBS"
+-    LIBS="$LIBS $PCRE_LIB"
+-    AC_CHECK_LIB(pcre, pcre_compile, [
+-      AC_CHECK_HEADERS([pcre.h], [
+-        AC_DEFINE([HAVE_LIBPCRE], [1], [libpcre])
+-        AC_DEFINE([HAVE_PCRE_H], [1])
+-      ])
++  OLDLIBS="$LIBS"
++  LIBS="$LIBS $PCRE_LIB"
++  AC_CHECK_LIB(pcre, pcre_compile, [
++    AC_CHECK_HEADERS([pcre.h], [
++      AC_DEFINE([HAVE_LIBPCRE], [1], [libpcre])
++      AC_DEFINE([HAVE_PCRE_H], [1])
+     ])
+-    LIBS="$OLDLIBS"
+-  else
++  ])
++  LIBS="$OLDLIBS"
++  ], [
+     AC_MSG_ERROR([pcre-config wasn't found. Either install pcre and its headers or re-run with --without-pcre])
+-  fi
++  ])
+ fi
+ 
+ AC_SUBST(PCRE_LIB)

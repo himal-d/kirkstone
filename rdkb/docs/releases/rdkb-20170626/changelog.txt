@@ -1,0 +1,230 @@
+Changelog between rdkb-20170523 and rdkb-20170626
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+cf3d3516 ARRISXB3-6212: Need to setup xhome v2 ssid
+c3ff8342 RDKB-12182:Unable to connect secure ssid on older Firmwares.
+70354865 RDKB-12105 : Disable avahi-daemon service
+cd8f66c5 ARRISXB6-4540: Remove CcspWecbController initialization from
+597469b1 RDKB-12072, RDKB-12074, RDKB-11211 : parodus2snmp module start
+123acf74 ARRISXB3-6170: Mesh syslog parser was only running once an hour
+d646a32d RDKB-12102 : Disable webc_master and wecb controller service.
+4a764c1b RDKB-11176, RDKB-12057: SECVULN CcspTr069pa- TLS and WAN binding
+9c7135ff RDKB-11971: Develop Code - Monitor the CPU utilization every 30 min
+efb08512 ARRISXB3-6159: Need to enable SSID 4 (XH 5G) by default.
+c2f328dd RDKB-11971: Develop Code - Monitor the CPU utilization every 30 min
+7f0fee99 CISCOXB3-2450: Request to set port number MIb to 1812 by default
+12bbfd37 RDKB-11970: Lock eth0 to CPU1 on ATOM
+1d3bde25 RDKB-12019: Double free found by static code analysis
+b8958f57 RDKB-11928 : Use inotify to sync dhcp lease on ATOM side.
+bed222d8 RDKB-11814 :Modify parodus start up using C application instead of start script
+90df1d6c RDKB-11864 : Clean up drop bear initialization sequence on CM interface.
+42011183 RDKB-11630: Delay Mesh VLAN creation
+4c47ca70 RDKB-11771 : Use harvester full component path for tracing
+
+project rdkb/components/opensource/ccsp/CcspCr/
+bd62a68 RDKB-12296: CR systemReady is not received due to wecb not registered
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+5876f63 RDKB-9490:Invalid macro definitionin CcspPandM
+3044742 RDKB-11759: ethernet client going online/offline every few seconds
+44e7c48 RDKB-11759: ethernet client going online/offline every few seconds
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+a7ffcfc ARRISXB3-6165 : "boot_to_WEBPA_READY_uptime" is missing in BootTime.log file
+b813eda RDKB-12241: Remove notify lease compilation from paradous enable flag.
+e54ea11 RDKB-12173 : DHCP config corruption
+3d9a9e1 RDKB-12153 : Discrepancy in parodus command line values and WebPA/dmcli(TR-181)
+53f731e RDKB-11996 : Build notify_lease only for XB3 platform.
+2d48b94 CISCOXB3-2498 : Getting Device not found error for WEBPA request
+d0ab705 RDKB-11991, RDKB-11502: Integrate parodus with seshat.
+f76dbc2 RDKB-11928 : Use inotify to sync dhcp lease on ATOM side.
+ed77932 RDKB-11715 : Parodus start up C code implementation for boot time improvement
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+4b197d5 RDKB-11810,RDKB-11811 : RxBcastPowerLevel and RxSNR inconsistent between nodes
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+b6e2f16 RDKB-12369: [PROCESS CRASH] Observed WECB process crash on the device
+b0dbe5a RDKBEMU-419 : [Port Triggering] Allowing user to create duplicate
+109d584 ARRISXB6-4593 : dmcli statistics error
+d8db933 RDKBEMU-470 : Added LastRebootReason parameter Implementation in pandm
+5e665cb RDKB-11354 : Unknown Reboot Reason for GUI Reboot
+4a180b3 RDKBEMU-420 : [Port Forwarding] Allows user to add duplicate
+5c29a6f TCXB6-1714:captive portal page did not appear after factory reset from WEBPA
+7621088 RDKBEMU-406 : [PAM] Default value of Device.IP.Interface.1.MaxMTUSize
+84a6de1 RDKB-12194 : Implement xconfCheckNow to trigger firmware download check
+c77ff5a Revert "RDKB-9471: Enable MoCA post device activation and WiFi personalization"
+4c30e52 TCCBR-1262: Unable to set port forwarding rule in GUI for CBR master and stable.
+2636166 TCCBR-1124: Adding TR181 parameter for XDNS in PAM bci xml
+8bdbbc5 RDKB-12194 : Implement xconfCheckNow to trigger firmware download check
+e4a6f15 RDKB-11934,RDKB-11938:xOpsDMLogsUploadStatus should show <state> <timestamp>
+7a37292 RDKB-10830 : Identifying Command Injection in PAM process
+124ef71 RDKB-11934,RDKB-11938:xOpsDMLogsUploadStatus should show <state> <timestamp>
+27d19fe RDKB-9490:Invalid macro definitionin CcspPandM
+8b3356a RDKB-11709 : PandM crashes when PSM is hanged
+f52c85f RDKB-11351 : Implement xOpsDMUploadLogsNow parameter to upload logs
+1e7ce3b TCXB6-1492: Adding TR181 parameter for XDNS in PAM xml
+bb3f8d7 TCCBR-1164: Factory reset from UI doesn't reset CM settings
+2fe321c TCXB6-1222: Changing network byte order for ip address
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+7ab9d6c RDKB-12372:Need to remove ath14 and ath15 from bbhm-Track 2.
+29efe50 RDKB-12182:Unable to connect secure ssid on older Firmwares.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+727ab15 RDKB-10392: Not able to set wifi passphrase longer than 32 characters using snmp
+570981e TCCBR-1253: SNMP for static IPv6 address is returning IPv4 address.
+3bf18b1 RDKB-11851 : snmp_subagent crash at scalarGroupCacheFree
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+aeb1f24 RDKB-12220 : [REBOOT REASON] reboot reason is unknown for TR69 reboot.
+ea2d598 RDKB-11176, RDKB-12057: SECVULN CcspTr069pa- TLS and WAN binding
+6a65d39 RDKB-10871: Develop Code-ManagementFramePowercontrol(per SSID)Tr181 development
+853f68f RDKB-11828 : Expose X_RDKCENTRAL-COM_ConfigureWiFi via tr69
+91e1bff RDKB-10526: Develop Code - TX Rate Tr181 implementation
+d9e9a0b RDKB-11587 : Invalid TR69_DEFAULT_URL_FILE
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+48e18a6 CISCOXB3-2450: Request to set port number MIb to 1812 by default
+f79eec1 RDKB-12254: telemetry fix for cisco wifi_api issues
+a130e61 RDKB-11532 : - Tr181 implementation for Active Band Steering
+f790ccb RDKB-11532 : - Tr181 implementation for Active Band Steering
+5d4bab8 RDKB-12108 : ntpd binding on all interfaces.
+cd59c7c RDKB-11744: WIFI_BANDUTILIZATION field in telemetry marker shows value 0
+f2aafb6 MESH-223: Disable U-APSD on Mesh Backhaul VAPs
+26ad939 RDKB-10871: Develop Code-ManagementFramePowercontrol(per SSID)Tr181 development
+81cee96 Revert "Revert "TCCBR-1266: wifi process crash seen in latest master""
+35e962d CISCOXB3-2450: Request to set port number MIb to 1812 by default
+6347dfa CISCOXB3-2450: Request to set port number MIb to 1812 by default
+b01141e Revert "TCCBR-1266: wifi process crash seen in latest master"
+ca73d4d ARRISXB3-6055, ARRISXB3-6056 : Continuous PAM restart, wifi hang
+e1177f1 MESH-172:Need TxRate synchronization message From wifiagent.
+dff38f1 TCCBR-1266: wifi process crash seen in latest master
+26ace12 RDKB-10394: passphrase should longer than 8
+c84eb0e RDKB-10526: Develop Code - TX Rate Tr181 implementation
+b7aa554 RDKB-11786: Host table is not showing host as active even though it's active
+42880cb ARRISXB6-3918: "Device.WiFi" not returning all child objects
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+7ec2b8a RDKB-12419 : Typo in rxtx_lan script for traffic count
+4337813 RDKB-12196 : Fails to set the value of NSLookupDiag as Requested.
+e229190 RDKB-11870: Self heal logs message does not display the device model and MAC
+c597844 RDKB-12102 : Disable webc_master and wecb controller service.
+842d586 RDKB-12183 : [FIELD]CPU usage reporting on RDKB devices is not accurate
+0dba49d RDKB-12174 : dnsmasq not running with Zombie_dnsmasq
+a2128af RDKB-11913: Dropbear process is not restarted from pmon
+0bebbb8 RDKB-10829 : SECVULN: TestAndDiagnostic- Command Injection
+6b574d9 RDKB-11901 : Change self heal mechanism of parodus to use parodusStart tool
+f5deda2 RDKB-11693: "is" word is printing twice in the log
+186fd13 RDKB-11739: [PING TEST] erouter0 IPv6 address is not mentioned in self heal logs
+cc8bc5c RDKB-11865 : Change the pid file name for dropbear running on l2sd0 in selfheal.
+bcb6857 RDKB-8606 : Speed Test (all broadband gateways)
+64f9a81 RDKB-11716: RDKB Flow Down - SelfHeal recovery mechanism
+
+project rdkb/components/opensource/ccsp/Utopia/
+5fddc56 ARRISXB6-4622: Fixed missing VAPs and bridge issue
+00e3151 RDKB-12099: Added extra option to fix startup failures.
+e4705b4 RDKB-12099 :  dnsmasq binding on all interfaces
+e8e38a1 RDKB-11354 : Unknown Reboot Reason for GUI Reboot
+b9c90bb RDKB-12160,RDKB-12295 : not changing clients from dhcp to static ip
+54fba3a ARRISXB6-4553: Added dnsmasq update for XB6 mesh
+1e72dce RDKB-12112: rpcserver binding on all interfaces
+2c064af ARRISXB6-4553: Update dnsmasq for XB6 mesh
+31ddf60 RDKB-12305 : Limit TR69 firewall rules only to comcast devices
+c25cecd RDKB-12108 : ntpd binding on all interfaces.
+5ecedc3 RDKB-12101, RDKB-12104: IGD and zebra binding on all interfaces
+360c0e4 RDKB-11411 : DHCP, Subnet mask change is not reflected in IPCONFIG
+204c123 ARRISXB6-4411 Add access points and vlans required for Mesh Wifi
+3e062a0 RDKB-12001,RDKB-11682,ARRISXB3-6088 : Not able to access admin UI in bridge mode
+81f0c33 ARRISXB6-4268 : Xi5 unable to connect to XRE even though it discovers gateway.
+06531ea Revert "ARRISXB6-4411 Add access points and vlans required for Mesh Wifi"
+fa0c6b9 ARRISXB6-4411 Add access points and vlans required for Mesh Wifi
+b2c88bc RDKB-12173 : DHCP config corruption
+7472767 RDKB-12034 : Fix double free error found by Coverity.
+f29301e RDKB-11913: Dropbear process is not restarted from pmon
+ebd0781 RDKB-12001,RDKB-11682,ARRISXB3-6088 : Not able to access admin UI in bridge mode
+705318a TCXB6-1610,TCXB6-1652: Adding condition to use shell script for dhcp server
+6df1f71 TCXB6-1610,TCXB6-1652: Adding condition to use shell script for dhcp server
+6e65877 RDKB-11928 : Use inotify to sync dhcp lease on ATOM side.
+7afe5ab RDKB-11175 : Add firewall rules to restrict TR-069 connections
+23c24e4 RDKB-11864 : Clean up drop bear initialization sequence on CM interface.
+51fa206 RDKB-11629,RDKB-11630: Use swctl C library for Radius, IPC and Mesh Vlans
+93872a1 RDKB-10455,RDKB-11738 : Increase dynamic port mapping lease update to 1 hour.
+376b322 RDKB-10455,CISCOXB3-2174,RDKB-11493 : Duplicate port mapping rules found.
+3f3735a RDKB-11838, RDKB-11839 : dnsmasq is not restarting from pmon.
+be2f7ac ARRISXB6-4268: Xi5 unable to connect to XRE even though it discovers gateway
+52e97c1 RDKB-11496:Both tunnels are down,secure ssid keeps broadcasting.
+739997f RDKB-4628: DMZ should have higher precedence than firewall.
+bf62a45 ARRISXB6-4309: Mesh Telemetry for the Arris XB6
+
+project rdkb/components/opensource/ccsp/Xconf/
+3c65a88 CBC-38,CBC-40 : Send Partner ID to Xconf
+
+project rdkb/components/opensource/ccsp/hal/
+d4ce947 RDKBEMU-379 : [TDK][WiFi][Master] Extra spaces are seen in Wifi
+ce2f4c4 RDKBEMU-474 : Modified setup.sh to support rtl8192eu kernel module in
+f5b201e RDKB-10871: Develop Code-ManagementFramePowercontrol(per SSID)Tr181 development
+9399351 RDKBEMU-460 : Modified setup.sh to support webpa feature in Emulator.
+494e46f RDKB-10526: Develop Code - TX Rate Tr181 implementation
+ad2505b RDKBCMF-73 Add foreign option to AM_INIT_AUTOMAKE in configure.ac
+
+project rdkb/components/opensource/ccsp/halinterface/
+b6a095b RDKB-12321 : Need to check in stub Wifi HAL for Active Band Steering
+2d2d89d RDKB-10871: Develop Code-ManagementFramePowercontrol(per SSID)Tr181 development
+a1301dd TCCBR-1320: [RDK-B] Remove Broadcom local CCSP WIFI HAL headers
+8ffcb2f RDKB-11866 : adding missing changes to moca_hal.h
+926d5d6 RDKB-10526: Develop Code - TX Rate Tr181 implementation
+fd2a018 RDKB-5987: Add missing wifi_hal changes
+fd541a2 RDKCOM-75 : Add foreign option to AM_INIT_AUTOMAKE in configure.ac
+93ae422 RDKB-11810,RDKB-11811 : RxBcastPowerLevel and RxSNR inconsistent between nodes
+8e2d572 RDKBEMU-450 : Added vlan header file in halinterface repo
+
+project rdkb/components/opensource/ccsp/sysint/
+4b8f394 RDKB-12111 : portmap binding on all interfaces
+7392b29 RDKB-10344 : Develop Code - Add RDKB Profile to Telemetry
+5fcb8b2 RDKB-11742 : dca_utility.sh is allowing multiple execution
+949c329 RDKB-11934,RDKB-11938:xOpsDMLogsUploadStatus should show <state> <timestamp>
+3eac62f RDKB-11763 : RDKB_SYSDESCR in Armconsole logs showing wrong value
+bfcb392 RDKB-11903 : Ret always gives 0 when DCM RFC curl fails
+553aedf RDKB-11769 : Move havester log file creation to ATOM
+307b3cd RDKSYSINTSW-3517 : TLS Fallback telemetry for XCONF
+9b9bb01 CISCOXB3-2395 : Telemetry Strings for Factory Reset are not coming
+
+project rdkb/components/opensource/ccsp/webui/
+745abb0 RDKB-12004: Improper Cookie flags
+88d1e37 RDKB-11354 : Unknown Reboot Reason for GUI Reboot
+6781120 TCXB6-1647: Including 255.255.0.0 subnet mask for for classB network
+0b08a8f ARRISXB6-3680:[WiFi]Unable to set "n" only mode for 2.4GHz WiFi radio
+c2250af RDKB-12184: [GUI] MoCA tab is missing when Bridge Mode is enabled
+711b1b8 RDKB-12011: UI Dev Debug Security Vulnerability in XB6
+1d831f7 RDKB-11346: UI Dev mode Security Vulnerability
+5933f5c RDKB-11860: UI Dev Debug Security Vulnerability in Connected Devices
+4900899 RDKB-11347: UI Dev Debug Security Vulnerability in Wi-Fi pages
+3aaceb0 RDKB-11861: UI DevDebug Security Vulnerability in Advanced tab pages
+1039855 RDKB-11862: UI Dev Debug Security Vulnerability in library files
+21f2b7b RDKB-11863: UI Dev Debug Security Vulnerability in Parental Control
+12b7359 ARRISXB6-4236 : Observed lighttpd process crash during Reboot Test
+99ee520 RDKB-11336: Update the Pause Block Page in RDKB for ALL XB3s and XB6
+7272756 ARRISXB6-4348: Bridge Mode Support on XB6
+92eb3b3 CISCOXB3-2363 : After factory reset captive portal appears after 10mins
+af26fed ARRISXB6-4236,ARRISXB6-4357 : lighttpd not running
+5f3ac5c RDKB-11698: Port Forwarding add page, Connected device popup
+5b6fb38 RDKB-11768: Wi-Fi page is blank on disabling Wi-Fi Radio from MSO page
+faf82cb ARRISXB6-4236 : Observed lighttpd process crash during Reboot Test
+e85db25 CBC-72, CBC-97, CBC-98: Full MESH mode changes for Wi-Fi
+
+project rdkb/devices/raspberrypi/hal/
+3def22b RPI-35 :[RPI-B] Smoke testing regression (wifi iface down, hostapd not starting)
+ed668c6 RPI-27: [WiFi] 2.4GHZ's SSID and Radio status are returned as down even though  2.4GHZ is enabled and is up RPI-28: [WiFi]WiFi 5GHZ's SSID and Radio status values are returned as Down  when queried, even though 5GHZ is enabled and is up
+d242b56 RPI-32: [RPI-B] hostapd not starting
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+6f4c931 RDKBEMU-472 : Added kernel module to support TP-Link in Emulator
+065d491 RDKBEMU-472 : Added kernel module to support TP-Link in Emulator
+88eebc0 RDKBEMU-469 : Added LastRebootReason Scripts and Systemd support
+7f2ac5e RDKBEMU-465 : Modified PSM XML to support Layering of IP Interfaces.
+fccda9d RDKBEMU-464 : Resolved DMZ Issue
+f3051f9 RDKBEMU-462 : Modified BridgeMode,RouterMode scripts
+9bf3af8 RDKBEMU-457 : Added systemd and PSM support in webpa.

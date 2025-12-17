@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ If not stated otherwise in this file or this component's LICENSE file the
+ following copyright and licenses apply:
+
+ Copyright 2021 Liberty Global B.V.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<node name="/com/lgi/onemw/omi1">
+
+<!--
+com.lgi.onemw.omi1:
+@short_description: OCI Bundle Mount D-Bus API.
+Implements methods and signals which allows to mount and umount Crypted OCI Bundles
+-->
+<interface name="com.lgi.onemw.omi1">
+ 
+<!--
+Mount:
+@id: Container ID, reverse domain name notation according to RFC 1035
+@rootfs_path: absolute PATH to encrypted OCI Bundle rootfs
+@config_json_path: absolute PATH to OCI encrypted and signed config.json.jwt
+@container_path: absolute PATH to final container config.json
+D-Bus error reply is used to signify failure of an operation triggered by a method call.
+-->
+<method name="Mount">
+    <arg type="s" name="id" direction="in"/>
+    <arg type="s" name="rootfs_path" direction="in"/>
+    <arg type="s" name="config_json_path" direction="in"/>
+    <arg type="s" name="container_path" direction="out"/>
+</method>
+ 
+<!--
+Umount:
+@id: Container ID, reverse domain name notation according to RFC 1035
+D-Bus error reply is used to signify failure of an operation triggered by a method call.
+-->
+<method name="Umount">
+    <arg type="s" name="id" direction="in"/>
+</method>
+ 
+<!--
+VerityFailed:
+@id: Container ID of encrypted OCI Bundle that failed during dm_verity check
+-->
+<signal name="VerityFailed">
+    <arg name="id" direction="out" type="s"/>
+</signal>
+ 
+</interface>
+
+</node>
+

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?><xml>
+  <module testGroup="Component" name="HAL_Platform">
+    <primitiveTests>
+      <primitiveTest name="platform_stub_hal_GetModelName" id="" version="1">
+        <function>platform_stub_hal_GetModelName</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_DocsisParamsDBInit" id="" version="1">
+        <function>platform_stub_hal_DocsisParamsDBInit</function>
+        <parameters/>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetBaseMacAddress" id="" version="1">
+        <function>platform_stub_hal_GetBaseMacAddress</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetBootLoaderVersion" id="" version="1">
+        <function>platform_stub_hal_GetBootLoaderVersion</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetDeviceConfigStatus" id="" version="1">
+        <function>platform_stub_hal_GetDeviceConfigStatus</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetFirmwareName" id="" version="1">
+        <function>platform_stub_hal_GetFirmwareName</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetFreeMemorySize" id="" version="1">
+        <function>platform_stub_hal_GetFreeMemorySize</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetHardware" id="" version="1">
+        <function>platform_stub_hal_GetHardware</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetHardwareFree" id="" version="1">
+        <function>platform_stub_hal_GetHardwareFree</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetHardwareMemUsed" id="" version="1">
+        <function>platform_stub_hal_GetHardwareMemUsed</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetHardwareVersion" id="" version="1">
+        <function>platform_stub_hal_GetHardwareVersion</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetSerialNumber" id="" version="1">
+        <function>platform_stub_hal_GetSerialNumber</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetTelnetEnable" id="" version="1">
+        <function>platform_stub_hal_GetTelnetEnable</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetTotalMemorySize" id="" version="1">
+        <function>platform_stub_hal_GetTotalMemorySize</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetUsedMemorySize" id="" version="1">
+        <function>platform_stub_hal_GetUsedMemorySize</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetWebUITimeout" id="" version="1">
+        <function>platform_stub_hal_GetWebUITimeout</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_PandMDBInit" id="" version="1">
+        <function>platform_stub_hal_PandMDBInit</function>
+        <parameters/>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetSSHEnable" id=" " version="1">
+        <function>platform_stub_hal_SetSSHEnable</function>
+        <parameters>
+          <parameter name="index" value="1"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetWebUITimeout" id=" " version="1">
+        <function>platform_stub_hal_SetWebUITimeout</function>
+        <parameters>
+          <parameter name="index" value="30"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetSSHEnable" id="" version="1">
+        <function>platform_stub_hal_GetSSHEnable</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetSNMPEnable" id="" version="1">
+        <function>platform_stub_hal_GetSNMPEnable</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetSoftwareVersion" id="" version="1">
+        <function>platform_stub_hal_GetSoftwareVersion</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetTelnetEnable" id=" " version="1">
+        <function>platform_stub_hal_SetTelnetEnable</function>
+        <parameters>
+          <parameter name="index" value="1"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetSNMPEnable" id=" " version="1">
+        <function>platform_stub_hal_SetSNMPEnable</function>
+        <parameters>
+          <parameter name="index" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetFactoryResetCount" id=" " version="1">
+        <function>platform_stub_hal_GetFactoryResetCount</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_ClearResetCount" id=" " version="1">
+        <function>platform_stub_hal_ClearResetCount</function>
+        <parameters>
+          <parameter name="index" value="1"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetTimeOffSet" id=" " version="1">
+        <function>platform_stub_hal_GetTimeOffSet</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetCMTSMac" id=" " version="1">
+        <function>platform_stub_hal_GetCMTSMac</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetChipTemperature" id=" " version="2">
+        <function>platform_stub_hal_GetChipTemperature</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+          <parameter name="chipIndex" value="1"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetFanSpeed" id=" " version="3">
+        <function>platform_stub_hal_GetFanSpeed</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetFanSpeed" id=" " version="2">
+        <function>platform_stub_hal_SetFanSpeed</function>
+        <parameters>
+          <parameter name="index" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_getFactoryPartnerId" id=" " version="1">
+        <function>platform_stub_hal_getFactoryPartnerId</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetMACsecEnable" id=" " version="3">
+        <function>platform_stub_hal_SetMACsecEnable</function>
+        <parameters>
+          <parameter name="ethPort" value="0"/>
+          <parameter name="index" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetMACsecEnable" id=" " version="6">
+        <function>platform_stub_hal_GetMACsecEnable</function>
+        <parameters>
+          <parameter name="ethPort" value="0"/>
+          <parameter name="index" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetMACsecOperationalStatus" id=" " version="4">
+        <function>platform_stub_hal_GetMACsecOperationalStatus</function>
+        <parameters>
+          <parameter name="ethPort" value="0"/>
+          <parameter name="index" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_getRPM" id="" version="1">
+        <function>platform_stub_hal_getRPM</function>
+        <parameters/>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_getRotorLock" id="" version="1">
+        <function>platform_stub_hal_getRotorLock</function>
+        <parameters/>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_getFanStatus" id="" version="1">
+        <function>platform_stub_hal_getFanStatus</function>
+        <parameters/>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_setFanMaxOverride" id=" " version="1">
+        <function>platform_stub_hal_setFanMaxOverride</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+          <parameter name="fanIndex" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_getFactoryCmVariant" id="" version="1">
+        <function>platform_stub_hal_getFactoryCmVariant</function>
+        <parameters>
+          <parameter name="flag" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_setFactoryCmVariant" id=" " version="3">
+        <function>platform_stub_hal_setFactoryCmVariant</function>
+        <parameters>
+          <parameter name="CmVarient" value=" "/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetSNMPOnboardRebootEnable" id=" " version="3">
+        <function>platform_stub_hal_SetSNMPOnboardRebootEnable</function>
+        <parameters>
+          <parameter name="SNMPonboard" value="  "/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetRouterRegion" id=" " version="1">
+        <function>platform_stub_hal_GetRouterRegion</function>
+        <parameters>
+          <parameter name="flag" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetWebAccessLevel" id=" " version="1">
+        <function>platform_stub_hal_GetWebAccessLevel</function>
+        <parameters>
+          <parameter name="flag" value="0"/>
+          <parameter name="ifIndex" value="0"/>
+          <parameter name="userIndex" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetMemoryPaths" id=" " version="1">
+        <function>platform_stub_hal_GetMemoryPaths</function>
+        <parameters>
+          <parameter name="cpus" value="0"/>
+          <parameter name="flag" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetLowPowerModeState" id=" " version="1">
+        <function>platform_stub_hal_SetLowPowerModeState</function>
+        <parameters>
+          <parameter name="state" value="1"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_StartMACsec" id=" " version="1">
+        <function>platform_stub_hal_StartMACsec</function>
+        <parameters>
+          <parameter name="ethPort" value="0"/>
+          <parameter name="timeoutSec" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_StopMACsec" id=" " version="1">
+        <function>platform_stub_hal_StopMACsec</function>
+        <parameters>
+          <parameter name="ethPort" value="0"/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_SetDscp" id=" " version="1">
+        <function>platform_stub_hal_SetDscp</function>
+        <parameters>
+          <parameter name="cmd" value=""/>
+          <parameter name="dscpVal" value=""/>
+          <parameter name="interfaceType" value=""/>
+          <parameter name="isDscpValNull" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_ResetDscpCounts" id=" " version="1">
+        <function>platform_stub_hal_ResetDscpCounts</function>
+        <parameters>
+          <parameter name="interfaceType" value=""/>
+        </parameters>
+      </primitiveTest>
+      <primitiveTest name="platform_stub_hal_GetDscpClientList" id=" " version="5">
+        <function>platform_stub_hal_GetDscpClientList</function>
+        <parameters>
+          <parameter name="interfaceType" value=""/>
+          <parameter name="isClientListNull" value=""/>
+        </parameters>
+      </primitiveTest>
+    </primitiveTests>
+  </module>
+</xml>

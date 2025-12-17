@@ -1,0 +1,76 @@
+Source: Backport from later version of opensync
+
+--- /src/lib/osn/src/linux/strongswan.c	2023-07-28 14:02:56.502290723 +0000
++++ /src/lib/osn/src/linux/strongswan.c	2022-12-01 03:40:00.000000000 +0000
+@@ -1299,7 +1299,7 @@
+             break;
+         }
+     } /* while (we're reading lines from the "ipsec status <tunnel_name>" output */
+-    fclose(f);
++    pclose(f);
+     f = NULL;
+ 
+     if (!status_obtained)
+--- /src/lib/ow/src/ow_steer_policy_ut.c	2023-07-28 14:04:19.133184895 +0000
++++ /src/lib/ow/src/ow_steer_policy_ut.c	2022-12-01 03:40:00.000000000 +0000
+@@ -16,7 +16,7 @@
+     const unsigned int priority = 14;
+     const struct osw_hwaddr sta_addr = { .octet = { 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA }, };
+     const struct osw_hwaddr bssid = { .octet = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB }, };
+-    const struct ow_steer_policy_ops ops;
++    const struct ow_steer_policy_ops ops={0};
+     unsigned int stack_recalc_cnt = 0;
+     void *priv = NULL;
+     struct ow_steer_policy *policy = NULL;
+--- /build/flags.mk	2023-07-28 13:58:10.798155198 +0000
++++ /build/flags.mk	2023-07-28 13:40:13.582454015 +0000
+@@ -27,6 +27,7 @@
+ CFLAGS   += -Wno-unused-parameter
+ CFLAGS   += -Wno-unused-label
+ CFLAGS   += -Wno-strict-aliasing
++CFLAGS   += -Wno-error=deprecated-declarations
+ CFLAGS   += -fasynchronous-unwind-tables
+ 
+ DEBUGFLAGS := -g
+--- /src/lib/ow/src/ow_stats_conf.c	2023-07-28 14:32:24.479155427 +0000
++++ /src/lib/ow/src/ow_stats_conf.c	2023-07-28 14:36:18.500451370 +0000
+@@ -172,6 +172,20 @@
+     return RADIO_TYPE_NONE;
+ }
+ 
++static enum ow_stats_conf_radio_type
++ow_stats_conf_dpp_to_radio_type(const radio_type_t t)
++{
++	switch (t) {
++		case RADIO_TYPE_NONE: return OW_STATS_CONF_RADIO_TYPE_UNSPEC;
++		case RADIO_TYPE_2G: return OW_STATS_CONF_RADIO_TYPE_2G;
++		case RADIO_TYPE_5G: return OW_STATS_CONF_RADIO_TYPE_5G;
++		case RADIO_TYPE_5GL: return OW_STATS_CONF_RADIO_TYPE_5GL;
++		case RADIO_TYPE_5GU: return OW_STATS_CONF_RADIO_TYPE_5GU;
++		case RADIO_TYPE_6G: return OW_STATS_CONF_RADIO_TYPE_6G;
++	}
++	return OW_STATS_CONF_RADIO_TYPE_UNSPEC;
++}
++
+ static radio_chanwidth_t
+ ow_stats_conf_width_to_dpp(const uint32_t mhz)
+ {
+@@ -685,7 +699,7 @@
+     sta->connected_at = 0;
+     sta->disconnected_at = 0;
+ 
+-    r->info.type = e->params.radio_type;
++    r->info.type = ow_stats_conf_radio_type_to_dpp(e->params.radio_type);
+     memcpy(r->info.mac, &id.addr.octet, 6);
+ 
+     const struct osw_tlv_hdr *tx_bytes = tb[OSW_STATS_STA_TX_BYTES];
+@@ -1710,7 +1724,8 @@
+                        bool removing)
+ {
+     struct ow_stats_conf *c = container_of(self, struct ow_stats_conf, state_obs);
+-    const radio_type_t t = removing ? 0 : ow_stats_conf_phy_to_type(phy);
++    const radio_type_t dpp_t = removing ? 0 : ow_stats_conf_phy_to_type(phy);
++    const enum ow_stats_conf_radio_type t = ow_stats_conf_dpp_to_radio_type(dpp_t);
+     ow_stats_conf_band_set__(c, phy->phy_name, t);
+ }
+ 

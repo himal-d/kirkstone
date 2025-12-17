@@ -1,0 +1,2847 @@
+##########################################
+Date: Apr 22, 2022 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: BRCM driver support for hostapd-2.10
+Source: Broadcom & Sky
+Upstream-Status: Pending
+Signed-off-by: Damiano Barone <damiano.barone@sky.uk>
+##########################################
+diff --git a/source/hostap-2.10/hostapd/Makefile b/source/hostap-2.10/hostapd/Makefile
+index 3325937..a5571ad 100644
+--- a/source/hostap-2.10/hostapd/Makefile
++++ b/source/hostap-2.10/hostapd/Makefile
+@@ -276,6 +276,10 @@ CFLAGS += -DCONFIG_OCV
+ OBJS += ../src/common/ocv.o
+ endif
+ 
++ifdef CONFIG_DRIVER_BRCM
++CFLAGS += -DCONFIG_DRIVER_BRCM
++endif
++
+ ifdef CONFIG_IEEE80211R
+ CFLAGS += -DCONFIG_IEEE80211R -DCONFIG_IEEE80211R_AP
+ OBJS += ../src/ap/wpa_auth_ft.o
+@@ -522,6 +526,9 @@ NEED_AES_UNWRAP=y
+ endif
+ 
+ ifdef CONFIG_WPS
++ifdef CONFIG_DRIVER_BRCM_MAP
++CFLAGS += -DCONFIG_DRIVER_BRCM_MAP
++endif
+ CFLAGS += -DCONFIG_WPS -DEAP_SERVER_WSC
+ OBJS += ../src/utils/uuid.o
+ OBJS += ../src/ap/wps_hostapd.o
+diff --git a/source/hostap-2.10/hostapd/config_file.c b/source/hostap-2.10/hostapd/config_file.c
+index d79fc90..03a3047 100644
+--- a/source/hostap-2.10/hostapd/config_file.c
++++ b/source/hostap-2.10/hostapd/config_file.c
+@@ -2423,6 +2423,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 	} else if (os_strcmp(buf, "skip_inactivity_poll") == 0) {
+ 		bss->skip_inactivity_poll = atoi(pos);
+ 	} else if (os_strcmp(buf, "country_code") == 0) {
++#ifndef CONFIG_DRIVER_BRCM
+ 		if (pos[0] < 'A' || pos[0] > 'Z' ||
+ 		    pos[1] < 'A' || pos[1] > 'Z') {
+ 			wpa_printf(MSG_ERROR,
+@@ -2430,6 +2431,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 				   line, pos);
+ 			return 1;
+ 		}
++#endif /* CONFIG_DRIVER_BRCM */
+ 		os_memcpy(conf->country, pos, 2);
+ 	} else if (os_strcmp(buf, "country3") == 0) {
+ 		conf->country[2] = strtol(pos, NULL, 16);
+@@ -4553,6 +4555,42 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		conf->rssi_ignore_probe_request = atoi(pos);
+ 	} else if (os_strcmp(buf, "pbss") == 0) {
+ 		bss->pbss = atoi(pos);
++#ifdef CONFIG_DRIVER_BRCM_MAP
++	} else if (os_strcmp(buf, "map") == 0) {
++		bss->map = atoi(pos);
++	} else if (os_strcmp(buf, "map_bh_ssid") == 0) {
++		size_t bh_ssid_len = os_strlen(pos);
++		if (bh_ssid_len < 1 || bh_ssid_len > SSID_MAX_LEN) {
++			wpa_printf(MSG_ERROR,
++				"Line %d: Invalid invalid map backhaul ssid '%s'", line, pos);
++			return 1;
++		}
++		bss->map_bh_ssid_len = bh_ssid_len;
++		os_memcpy(bss->map_bh_ssid, pos, bh_ssid_len);
++	} else if (os_strcmp(buf, "map_bh_auth") == 0) {
++		bss->map_bh_auth = atoi(pos);
++	} else if (os_strcmp(buf, "map_bh_encr") == 0) {
++		bss->map_bh_encr = atoi(pos);
++	} else if (os_strcmp(buf, "map_bh_psk") == 0) {
++		size_t bh_psk_len = os_strlen(pos);
++		if (bh_psk_len < 8 || bh_psk_len > PMK_LEN_MAX) {
++			wpa_printf(MSG_ERROR,
++				"Line %d: Invalid invalid map backhaul psk '%s'", line, pos);
++			return 1;
++		}
++		bss->map_bh_psk_len = bh_psk_len;
++		os_memcpy(bss->map_bh_psk, pos, bh_psk_len);
++	} else if (os_strcmp(buf, "ft_rrb_lo_sock") == 0) {
++		int val = atoi(pos);
++
++		if (val < 0 || val > 1) {
++			wpa_printf(MSG_ERROR,
++				"Line %d: Invalid ft_rrb_lo_sock value",
++				line);
++			return 1;
++		}
++		conf->ft_rrb_lo_sock = val;
++#endif	/* CONFIG_DRIVER_BRCM_MAP */
+ 	} else if (os_strcmp(buf, "transition_disable") == 0) {
+ 		bss->transition_disable = strtol(pos, NULL, 16);
+ #ifdef CONFIG_AIRTIME_POLICY
+@@ -4715,6 +4753,10 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 			return 1;
+ 	} else if (os_strcmp(buf, "rnr") == 0) {
+ 		bss->rnr = atoi(pos);
++#ifdef CONFIG_DRIVER_BRCM
++	} else if (os_strcmp(buf, "spp_amsdu") == 0) {
++		bss->spp_amsdu = atoi(pos);
++#endif /* CONFIG_DRIVER_BRCM */
+ #ifdef CONFIG_IEEE80211BE
+ 	} else if (os_strcmp(buf, "ieee80211be") == 0) {
+ 		conf->ieee80211be = atoi(pos);
+diff --git a/source/hostap-2.10/hostapd/ctrl_iface.c b/source/hostap-2.10/hostapd/ctrl_iface.c
+index 68b09de..50d189c 100644
+--- a/source/hostap-2.10/hostapd/ctrl_iface.c
++++ b/source/hostap-2.10/hostapd/ctrl_iface.c
+@@ -445,6 +445,42 @@ static int hostapd_ctrl_iface_nfc_report_handover(struct hostapd_data *hapd,
+ 
+ #endif /* CONFIG_WPS_NFC */
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++static int hostapd_ctrl_iface_wps_map_bh_creds(struct hostapd_data *hapd, char *txt,
++                                         char *buf, size_t buflen)
++{
++        char *pos;
++        char *ssid, *auth = NULL, *encr = NULL, *key = NULL;
++        int ret = -1;
++
++        if (!hapd->wps)
++                return -1;
++
++        ssid = txt;
++        pos = os_strchr(txt, ' ');
++        if (!pos)
++                return -1;
++        *pos++ = '\0';
++
++        auth = pos;
++        pos = os_strchr(pos, ' ');
++        if (pos) {
++                *pos++ = '\0';
++                encr = pos;
++                pos = os_strchr(pos, ' ');
++                if (pos) {
++                        *pos++ = '\0';
++                        key = pos;
++                }
++        }
++
++        if (hostapd_wps_config_map_bh(hapd, ssid, auth, encr, key) < 0) {
++                return os_snprintf(buf, buflen, "FAILED\n");
++        }
++
++        return os_snprintf(buf, buflen, "OK\n");
++}
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 
+ static int hostapd_ctrl_iface_wps_ap_pin(struct hostapd_data *hapd, char *txt,
+ 					 char *buf, size_t buflen)
+@@ -3301,6 +3337,11 @@ static int hostapd_ctrl_iface_receive_process(struct hostapd_data *hapd,
+ 	} else if (os_strncmp(buf, "WPS_GET_STATUS", 13) == 0) {
+ 		reply_len = hostapd_ctrl_iface_wps_get_status(hapd, reply,
+ 							      reply_size);
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        } else if (os_strncmp(buf, "WPS_MAPBH_CONFIG ", 17) == 0) {
++                reply_len = hostapd_ctrl_iface_wps_map_bh_creds(hapd, buf + 17,
++                                reply, reply_size);
++#endif /* CONFIG_DRIVER_BRCM_MAP */
+ #ifdef CONFIG_WPS_NFC
+ 	} else if (os_strncmp(buf, "WPS_NFC_TAG_READ ", 17) == 0) {
+ 		if (hostapd_ctrl_iface_wps_nfc_tag_read(hapd, buf + 17))
+@@ -3693,6 +3734,14 @@ static int hostapd_ctrl_iface_receive_process(struct hostapd_data *hapd,
+ 	} else if (os_strncmp(buf, "GET_CAPABILITY ", 15) == 0) {
+ 		reply_len = hostapd_ctrl_iface_get_capability(
+ 			hapd, buf + 15, reply, reply_size);
++#ifdef CONFIG_DRIVER_BRCM
++	} else if (os_strncmp(buf, "START_BSS", 9) == 0) {
++		if (hostapd_ctrl_iface_start_bss(hapd))
++			reply_len = -1;
++	} else if (os_strncmp(buf, "STOP_BSS", 8) == 0) {
++		if (hostapd_ctrl_iface_stop_bss(hapd))
++			reply_len = -1;
++#endif /* CONFIG_DRIVER_BRCM */
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+ 	} else if (os_strncmp(buf, "ADD_TO_GREYLIST ", 16) == 0) {
+                 if (hostapd_ctrl_add_to_greylist(hapd,
+diff --git a/source/hostap-2.10/hostapd/hostapd_cli.c b/source/hostap-2.10/hostapd/hostapd_cli.c
+index 4e6ed80..8b4e198 100644
+--- a/source/hostap-2.10/hostapd/hostapd_cli.c
++++ b/source/hostap-2.10/hostapd/hostapd_cli.c
+@@ -644,6 +644,30 @@ static int hostapd_cli_cmd_wps_config(struct wpa_ctrl *ctrl, int argc,
+ 			 ssid_hex, argv[1]);
+ 	return wpa_ctrl_command(ctrl, buf);
+ }
++#ifdef CONFIG_DRIVER_BRCM_MAP
++static int hostapd_cli_cmd_wps_mapbh_config(struct wpa_ctrl *ctrl, int argc,
++                                      char *argv[])
++{
++        char buf[256];
++
++        if (argc < 1) {
++                printf("Invalid 'wps_mapbh_config' command - at least two arguments "
++                       "are required.\n");
++                return -1;
++        }
++
++        if (argc > 3)
++                snprintf(buf, sizeof(buf), "WPS_MAPBH_CONFIG %s %s %s %s",
++                         argv[0], argv[1], argv[2], argv[3]);
++        else if (argc > 2)
++                snprintf(buf, sizeof(buf), "WPS_MAPBH_CONFIG %s %s %s",
++                        argv[0], argv[1], argv[2]);
++        else
++                snprintf(buf, sizeof(buf), "WPS_MAPBH_CONFIG %s %s",
++                         argv[0], argv[1]);
++        return wpa_ctrl_command(ctrl, buf);
++}
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ #endif /* CONFIG_WPS */
+ 
+ 
+@@ -1562,6 +1586,17 @@ static int hostapd_cli_cmd_driver(struct wpa_ctrl *ctrl, int argc, char *argv[])
+ }
+ #endif /* ANDROID */
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static int hostapd_cli_cmd_start_bss(struct wpa_ctrl *ctrl, int argc, char *argv[])
++{
++	return wpa_ctrl_command(ctrl, "START_BSS");
++}
++
++static int hostapd_cli_cmd_stop_bss(struct wpa_ctrl *ctrl, int argc, char *argv[])
++{
++	return wpa_ctrl_command(ctrl, "STOP_BSS");
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ struct hostapd_cli_cmd {
+ 	const char *cmd;
+@@ -1624,6 +1659,10 @@ static const struct hostapd_cli_cmd hostapd_cli_commands[] = {
+ 	  "<SSID> <auth> <encr> <key> = configure AP" },
+ 	{ "wps_get_status", hostapd_cli_cmd_wps_get_status, NULL,
+ 	  "= show current WPS status" },
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        { "wps_mapbh_config", hostapd_cli_cmd_wps_mapbh_config, NULL,
++          "<SSID> <auth> <encr> <key> = update multiap backhaul config" },
++#endif /* CONFIG_DRIVER_BRCM_MAP */
+ #endif /* CONFIG_WPS */
+ 	{ "disassoc_imminent", hostapd_cli_cmd_disassoc_imminent, NULL,
+ 	  "= send Disassociation Imminent notification" },
+@@ -1762,6 +1801,12 @@ static const struct hostapd_cli_cmd hostapd_cli_commands[] = {
+ 	{ "driver", hostapd_cli_cmd_driver, NULL,
+ 	  "<driver sub command> [<hex formatted data>] = send driver command data" },
+ #endif /* ANDROID */
++#ifdef CONFIG_DRIVER_BRCM
++	{ "start_bss", hostapd_cli_cmd_start_bss, NULL,
++	  "= start beaconing on BSS (BSS up)" },
++	{ "stop_bss", hostapd_cli_cmd_stop_bss, NULL,
++	  "= stop beaconing on BSS (BSS down)" },
++#endif /* CONFIG_DRIVER_BRCM */
+ 	{ NULL, NULL, NULL, NULL }
+ };
+ 
+diff --git a/source/hostap-2.10/hostapd/main.c b/source/hostap-2.10/hostapd/main.c
+index 8309a74..9d45818 100644
+--- a/source/hostap-2.10/hostapd/main.c
++++ b/source/hostap-2.10/hostapd/main.c
+@@ -34,6 +34,10 @@
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+ #include "ap/greylist.h"
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
++#if defined(CONFIG_DRIVER_BRCM) && defined(BCM_CEVENT)
++#include "ce_shared.h"
++#include "security_ipc.h"
++#endif /* CONFIG_DRIVER_BRCM && BCM_CEVENT */
+ 
+ #if 0
+ struct hapd_global {
+diff --git a/source/hostap-2.10/src/ap/ap_config.h b/source/hostap-2.10/src/ap/ap_config.h
+index d63af2e..0203575 100644
+--- a/source/hostap-2.10/src/ap/ap_config.h
++++ b/source/hostap-2.10/src/ap/ap_config.h
+@@ -789,6 +789,15 @@ struct hostapd_bss_config {
+ #define FRONTHAUL_BSS 2
+ 	int multi_ap; /* bitmap of BACKHAUL_BSS, FRONTHAUL_BSS */
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        u8 map;
++        u8 map_bh_ssid[SSID_MAX_LEN];
++        size_t map_bh_ssid_len;
++        u16 map_bh_auth;
++        u16 map_bh_encr;
++        u8 map_bh_psk[PMK_LEN_MAX];
++        size_t map_bh_psk_len;
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ #ifdef CONFIG_AIRTIME_POLICY
+ 	unsigned int airtime_weight;
+ 	int airtime_limit;
+@@ -917,6 +926,9 @@ struct hostapd_bss_config {
+ 	u8 ext_capa[EXT_CAPA_MAX_LEN];
+ 
+ 	u8 rnr;
++#ifdef CONFIG_DRIVER_BRCM
++	int spp_amsdu;
++#endif /* CONFIG_DRIVER_BRCM */
+ };
+ 
+ /**
+@@ -1131,7 +1143,9 @@ struct hostapd_config {
+ 	unsigned int airtime_update_interval;
+ #define AIRTIME_MODE_MAX (__AIRTIME_MODE_MAX - 1)
+ #endif /* CONFIG_AIRTIME_POLICY */
+-
++#ifdef CONFIG_DRIVER_BRCM
++	int ft_rrb_lo_sock; /* Create loopback socket for FT RRB OUI */
++#endif /* CONFIG_DRIVER_BRCM */
+ 	int ieee80211be;
+ #ifdef CONFIG_IEEE80211BE
+ 	u8 eht_oper_chwidth;
+diff --git a/source/hostap-2.10/src/ap/ap_drv_ops.h b/source/hostap-2.10/src/ap/ap_drv_ops.h
+index f39bcfd..3aef546 100644
+--- a/source/hostap-2.10/src/ap/ap_drv_ops.h
++++ b/source/hostap-2.10/src/ap/ap_drv_ops.h
+@@ -432,4 +432,13 @@ hostapd_drv_register_frame(struct hostapd_data *hapd, u16 type,
+ }
+ #endif /* CONFIG_TESTING_OPTIONS */
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static inline int
++hostapd_drv_stop_bss(struct hostapd_data *hapd)
++{
++	if (!hapd->driver || !hapd->driver->stop_bss || !hapd->drv_priv)
++		return 0;
++	return hapd->driver->stop_bss(hapd->drv_priv);
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ #endif /* AP_DRV_OPS */
+diff --git a/source/hostap-2.10/src/ap/beacon.c b/source/hostap-2.10/src/ap/beacon.c
+index eaa4033..1c5cce5 100644
+--- a/source/hostap-2.10/src/ap/beacon.c
++++ b/source/hostap-2.10/src/ap/beacon.c
+@@ -352,6 +352,19 @@ static u8 * hostapd_get_mde(struct hostapd_data *hapd, u8 *pos, size_t len)
+ 	return pos + 2 + ie[1];
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static u8 * hostapd_get_fte(struct hostapd_data *hapd, u8 *pos, size_t len)
++{
++	const u8 *ie;
++
++	ie = hostapd_wpa_ie(hapd, WLAN_EID_FAST_BSS_TRANSITION);
++	if (!ie || 2U + ie[1] > len)
++		return pos;
++
++	os_memcpy(pos, ie, 2 + ie[1]);
++	return pos + 2 + ie[1];
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ static u8 * hostapd_get_rsnxe(struct hostapd_data *hapd, u8 *pos, size_t len)
+ {
+@@ -1634,6 +1647,9 @@ int ieee802_11_build_ap_params(struct hostapd_data *hapd,
+ 	tailpos = hostapd_eid_rm_enabled_capab(hapd, tailpos,
+ 					       tailend - tailpos);
+ 	tailpos = hostapd_get_mde(hapd, tailpos, tailend - tailpos);
++#ifdef CONFIG_DRIVER_BRCM
++	tailpos = hostapd_get_fte(hapd, tailpos, tailend - tailpos);
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	/* eCSA IE */
+ 	csa_pos = hostapd_eid_ecsa(hapd, tailpos);
+diff --git a/source/hostap-2.10/src/ap/ctrl_iface_ap.c b/source/hostap-2.10/src/ap/ctrl_iface_ap.c
+index 29b41f5..c8742f4 100644
+--- a/source/hostap-2.10/src/ap/ctrl_iface_ap.c
++++ b/source/hostap-2.10/src/ap/ctrl_iface_ap.c
+@@ -25,7 +25,9 @@
+ #include "mbo_ap.h"
+ #include "taxonomy.h"
+ #include "wnm_ap.h"
+-
++#ifdef CONFIG_DRIVER_BRCM
++#include "beacon.h"
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ static size_t hostapd_write_ht_mcs_bitmask(char *buf, size_t buflen,
+ 					   size_t curr_len, const u8 *mcs_set)
+@@ -1065,7 +1067,26 @@ void * hostapd_ctrl_iface_pmksa_create_entry(const u8 *aa, char *cmd)
+ 
+ #endif /* CONFIG_MESH */
+ #endif /* CONFIG_PMKSA_CACHE_EXTERNAL */
++#ifdef CONFIG_DRIVER_BRCM
++int hostapd_ctrl_iface_start_bss(struct hostapd_data *hapd)
++{
++	hapd->bss_started = 1;
++
++	wpa_printf(MSG_INFO, " %s: start BSS", (hapd->conf ? hapd->conf->iface : "NA"));
++
++	hapd->reenable_beacon = 1;
++	return ieee802_11_set_beacon(hapd);
++}
+ 
++int hostapd_ctrl_iface_stop_bss(struct hostapd_data *hapd)
++{
++	hapd->bss_started = 0;
++
++	wpa_printf(MSG_INFO, "%s: stop BSS", (hapd->conf ? hapd->conf->iface : "NA"));
++
++	return hostapd_drv_stop_bss(hapd);
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ #ifdef CONFIG_WNM_AP
+ 
+diff --git a/source/hostap-2.10/src/ap/ctrl_iface_ap.h b/source/hostap-2.10/src/ap/ctrl_iface_ap.h
+index 614f042..b3b7300 100644
+--- a/source/hostap-2.10/src/ap/ctrl_iface_ap.h
++++ b/source/hostap-2.10/src/ap/ctrl_iface_ap.h
+@@ -36,7 +36,10 @@ int hostapd_ctrl_iface_pmksa_add(struct hostapd_data *hapd, char *cmd);
+ int hostapd_ctrl_iface_pmksa_list_mesh(struct hostapd_data *hapd,
+ 				       const u8 *addr, char *buf, size_t len);
+ void * hostapd_ctrl_iface_pmksa_create_entry(const u8 *aa, char *cmd);
+-
++#ifdef CONFIG_DRIVER_BRCM
++int hostapd_ctrl_iface_start_bss(struct hostapd_data *hapd);
++int hostapd_ctrl_iface_stop_bss(struct hostapd_data *hapd);
++#endif /* CONFIG_DRIVER_BRCM */
+ int hostapd_ctrl_iface_disassoc_imminent(struct hostapd_data *hapd,
+ 					 const char *cmd);
+ int hostapd_ctrl_iface_ess_disassoc(struct hostapd_data *hapd,
+diff --git a/source/hostap-2.10/src/ap/drv_callbacks.c b/source/hostap-2.10/src/ap/drv_callbacks.c
+index ccd073d..c5ee1fc 100644
+--- a/source/hostap-2.10/src/ap/drv_callbacks.c
++++ b/source/hostap-2.10/src/ap/drv_callbacks.c
+@@ -764,6 +764,10 @@ void hostapd_notif_disassoc(struct hostapd_data *hapd, const u8 *addr)
+ 
+ 	ap_sta_set_authorized(hapd, sta, 0);
+ 	sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC);
++#ifdef CONFIG_DRIVER_BRCM
++	/* This disassoc notification is due to driver event */
++	sta->flags |= WLAN_STA_DRIVER_IND;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	hostapd_set_sta_flags(hapd, sta);
+ 	wpa_auth_sm_event(sta->wpa_sm, WPA_DISASSOC);
+ 	sta->acct_terminate_cause = RADIUS_ACCT_TERMINATE_CAUSE_USER_REQUEST;
+@@ -2093,6 +2101,14 @@ void wpa_supplicant_event(void *ctx, enum wpa_event_type event,
+ 			data->wds_sta_interface.ifname,
+ 			data->wds_sta_interface.sta_addr);
+ 		break;
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_WPS_UPNP)
++	case EVENT_INTERFACE_IP_ADDR_CHANGED:
++		if (hapd->conf->upnp_iface &&
++			!os_strcmp(hapd->conf->upnp_iface, data->interface_status.ifname)) {
++			hostapd_wps_upnp_ifcae_ip_changed(hapd);
++		}
++		break;
++#endif	/* CONFIG_DRIVER_BRCM && CONFIG_WPS_UPNP */
+ #ifdef CONFIG_IEEE80211AX
+ 	case EVENT_BSS_COLOR_COLLISION:
+ 		/* The BSS color is shared amongst all BBSs on a specific phy.
+diff --git a/source/hostap-2.10/src/ap/gas_serv.c b/source/hostap-2.10/src/ap/gas_serv.c
+index 90f1577..408d704 100644
+--- a/source/hostap-2.10/src/ap/gas_serv.c
++++ b/source/hostap-2.10/src/ap/gas_serv.c
+@@ -19,7 +19,9 @@
+ #include "dpp_hostapd.h"
+ #include "sta_info.h"
+ #include "gas_serv.h"
+-
++#ifdef CONFIG_DRIVER_BRCM
++#include "common/dpp.h"
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ #ifdef CONFIG_DPP
+ static void gas_serv_write_dpp_adv_proto(struct wpabuf *buf)
+@@ -1527,6 +1529,9 @@ void gas_serv_req_dpp_processing(struct hostapd_data *hapd,
+ 				 int prot, struct wpabuf *buf)
+ {
+ 	struct wpabuf *tx_buf;
++#ifdef CONFIG_DRIVER_BRCM
++	unsigned int freq = hapd->dpp_auth->curr_freq;
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	if (wpabuf_len(buf) > hapd->conf->gas_frag_limit ||
+ 	    hapd->conf->gas_comeback_delay) {
+@@ -1582,9 +1587,17 @@ void gas_serv_req_dpp_processing(struct hostapd_data *hapd,
+ 		return;
+ 	if (prot)
+ 		convert_to_protected_dual(tx_buf);
++#ifdef CONFIG_DRIVER_BRCM
++	wpa_printf(MSG_DEBUG,
++		   "DPP: sending action frame in listen channel\n");
++	hostapd_drv_send_action(hapd, freq, 0, sa,
++				wpabuf_head(tx_buf),
++				wpabuf_len(tx_buf));
++#else
+ 	hostapd_drv_send_action(hapd, hapd->iface->freq, 0, sa,
+ 				wpabuf_head(tx_buf),
+ 				wpabuf_len(tx_buf));
++#endif /* CONFIG_DRIVER_BRCM */
+ 	wpabuf_free(tx_buf);
+ }
+ #endif /* CONFIG_DPP */
+diff --git a/source/hostap-2.10/src/ap/hostapd.c b/source/hostap-2.10/src/ap/hostapd.c
+index 6330b5c..872c95d 100644
+--- a/source/hostap-2.10/src/ap/hostapd.c
++++ b/source/hostap-2.10/src/ap/hostapd.c
+@@ -3936,3 +4006,36 @@ void hostapd_ocv_check_csa_sa_query(void *eloop_ctx, void *timeout_ctx)
+ 	}
+ }
+ #endif /* CONFIG_OCV */
++
++#ifdef CONFIG_DRIVER_BRCM
++/*
++ * start beaconing on virtual BSS iface on ifconfig up
++ */
++void hostapd_set_beacon_on_vif(struct hostapd_data *hapd)
++{
++	struct hostapd_bss_config *conf = hapd->conf;
++	hapd->disabled = 0;
++
++	if ((conf->start_disabled == 1)  && (hapd->bss_started == 0)) {
++		wpa_printf(MSG_DEBUG, "%s: hapd %p, start_disabled %d, bss_started %d. return",
++				conf->iface, hapd, conf->start_disabled, hapd->bss_started);
++		return;
++	}
++
++	hapd->reenable_beacon = 1;
++	if (ieee802_11_set_beacon(hapd) < 0) {
++		wpa_printf(MSG_ERROR, "%s: setting beacon failed", conf->iface);
++	} else {
++		wpa_printf(MSG_DEBUG, "%s: setting beacon success", conf->iface);
++	}
++}
++
++/*
++ * stop beaconing on vritual BSS iface on ifconfig down
++ */
++void hostapd_stop_beacon_on_vif(struct hostapd_data *hapd)
++{
++	wpa_printf(MSG_INFO, "%s: stop beacon", hapd->conf->iface);
++	hapd->disabled = 1;
++}
++#endif /* CONFIG_DRIVER_BRCM */
+\ No newline at end of file
+diff --git a/source/hostap-2.10/src/ap/hostapd.h b/source/hostap-2.10/src/ap/hostapd.h
+index 255e69f..d73bfc5 100644
+--- a/source/hostap-2.10/src/ap/hostapd.h
++++ b/source/hostap-2.10/src/ap/hostapd.h
+@@ -161,7 +161,9 @@ struct hostapd_data {
+ 	unsigned int started:1;
+ 	unsigned int disabled:1;
+ 	unsigned int reenable_beacon:1;
+-
++#ifdef CONFIG_DRIVER_BRCM
++	unsigned int bss_started:1; /* BSS started/stopped from cli - start_bss/stop_bss */
++#endif /* CONFIG_DRIVER_BRCM */
+ 	u8 own_addr[ETH_ALEN];
+ 
+ 	int num_sta; /* number of entries in sta_list */
+@@ -233,7 +235,13 @@ struct hostapd_data {
+ 	struct eth_p_oui_ctx *oui_sreq;
+ 	struct eth_p_oui_ctx *oui_sresp;
+ #endif /* CONFIG_IEEE80211R_AP */
+-
++#ifdef CONFIG_DRIVER_BRCM
++	struct eth_p_oui_ctx *lo_oui_pull;
++	struct eth_p_oui_ctx *lo_oui_resp;
++	struct eth_p_oui_ctx *lo_oui_push;
++	struct eth_p_oui_ctx *lo_oui_sreq;
++	struct eth_p_oui_ctx *lo_oui_sresp;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	struct wps_context *wps;
+ 
+ 	int beacon_set_done;
+diff --git a/source/hostap-2.10/src/ap/ieee802_11.c b/source/hostap-2.10/src/ap/ieee802_11.c
+index 394e292..ea53a5e 100644
+--- a/source/hostap-2.10/src/ap/ieee802_11.c
++++ b/source/hostap-2.10/src/ap/ieee802_11.c
+@@ -55,7 +55,9 @@
+ #include "fils_hlp.h"
+ #include "dpp_hostapd.h"
+ #include "gas_query_ap.h"
+-
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++#include "ce_shared.h"
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 
+ #ifdef CONFIG_FILS
+ static struct wpabuf *
+@@ -669,7 +675,12 @@ static int auth_sae_send_commit(struct hostapd_data *hapd,
+ 				    WLAN_AUTH_SAE, 1,
+ 				    status, wpabuf_head(data),
+ 				    wpabuf_len(data), "sae-send-commit");
+-
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	if (!reply_res) {
++		CE_SEND_CEVENT_A2C_EXT(hapd->conf->iface, (struct ether_addr *)sta->addr, 0, 0,
++			CEVENT_ST_HOSTAPD, CEVENT_A2C_MT_AUTH_COMMIT_TX, CEVENT_FRAME_DIR_TX, NULL, 0);
++	}
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	wpabuf_free(data);
+ 
+ 	return reply_res;
+@@ -691,7 +702,12 @@ static int auth_sae_send_confirm(struct hostapd_data *hapd,
+ 				    WLAN_AUTH_SAE, 2,
+ 				    WLAN_STATUS_SUCCESS, wpabuf_head(data),
+ 				    wpabuf_len(data), "sae-send-confirm");
+-
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	if (!reply_res) {
++		CE_SEND_CEVENT_A2C_EXT(hapd->conf->iface, (struct ether_addr *)sta->addr, 0, 0,
++			CEVENT_ST_HOSTAPD, CEVENT_A2C_MT_AUTH_CONFIRM_TX, CEVENT_FRAME_DIR_TX, NULL, 0);
++	}
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	wpabuf_free(data);
+ 
+ 	return reply_res;
+@@ -1362,6 +1378,10 @@ static void handle_auth_sae(struct hostapd_data *hapd, struct sta_info *sta,
+ 		size_t token_len = 0;
+ 		int allow_reuse = 0;
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++		CE_SEND_CEVENT_A2C_EXT(hapd->conf->iface, (struct ether_addr *)sta->addr, 0, 0,
++			CEVENT_ST_HOSTAPD, CEVENT_A2C_MT_AUTH_COMMIT_RX, CEVENT_FRAME_DIR_RX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
+ 			       HOSTAPD_LEVEL_DEBUG,
+ 			       "start SAE authentication (RX commit, status=%u (%s))",
+@@ -1522,6 +1542,10 @@ static void handle_auth_sae(struct hostapd_data *hapd, struct sta_info *sta,
+ 		resp = sae_sm_step(hapd, sta, mgmt->bssid, auth_transaction,
+ 				   status_code, allow_reuse, &sta_removed);
+ 	} else if (auth_transaction == 2) {
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++		CE_SEND_CEVENT_A2C_EXT(hapd->conf->iface, (struct ether_addr *)sta->addr, 0, 0,
++			CEVENT_ST_HOSTAPD, CEVENT_A2C_MT_AUTH_CONFIRM_RX, CEVENT_FRAME_DIR_RX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
+ 			       HOSTAPD_LEVEL_DEBUG,
+ 			       "SAE authentication (RX confirm, status=%u (%s))",
+@@ -3866,7 +3890,11 @@ static void handle_auth(struct hostapd_data *hapd,
+ 			goto fail;
+ 		}
+ 	}
+-
++#ifdef CONFIG_DRIVER_BRCM
++        else {
++                sta->added_unassoc = 1;
++        }
++#endif /* CONFIG_DRIVER_BRCM */
+ 	switch (auth_alg) {
+ 	case WLAN_AUTH_OPEN:
+ 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
+@@ -5559,6 +5587,9 @@ static void handle_assoc(struct hostapd_data *hapd,
+ 		 * entry in the driver as associated and not authenticated
+ 		 */
+ 		sta->flags |= WLAN_STA_AUTH;
++#ifdef CONFIG_DRIVER_BRCM
++		sta->added_unassoc = 1;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	} else
+ #endif /* CONFIG_IEEE80211R_AP */
+ 	if (sta == NULL || (sta->flags & WLAN_STA_AUTH) == 0) {
+@@ -5609,6 +5640,29 @@ static void handle_assoc(struct hostapd_data *hapd,
+ 			wpa_auth_sm_event(sta->wpa_sm, WPA_AUTH);
+ 			sta->auth_alg = WLAN_AUTH_OPEN;
+ 		} else {
++#ifdef CONFIG_DRIVER_BRCM
++                        sta = ap_sta_add(hapd, mgmt->sa);
++                        if (!sta) {
++                                hostapd_logger(hapd, mgmt->sa,
++                                               HOSTAPD_MODULE_IEEE80211,
++                                               HOSTAPD_LEVEL_INFO,
++                                               "Failed to add STA");
++                                resp = WLAN_STATUS_AP_UNABLE_TO_HANDLE_NEW_STA;
++                                goto fail;
++                        }
++                        hostapd_logger(hapd, sta->addr,
++                                       HOSTAPD_MODULE_IEEE80211,
++                                       HOSTAPD_LEVEL_DEBUG,
++                                       "Skip authentication for DMG/IEEE 802.11ad");
++                        sta->flags |= WLAN_STA_AUTH;
++                        wpa_auth_sm_event(sta->wpa_sm, WPA_AUTH);
++                        sta->auth_alg = WLAN_AUTH_OPEN;
++                        /* It comes here only when STA is already authenticated by the driver
++                         * and association request is getting handled by hostapd.
++                         * So set added_unassoc flag here.
++                         */
++                        sta->added_unassoc = 1;
++#else
+ 			hostapd_logger(hapd, mgmt->sa,
+ 				       HOSTAPD_MODULE_IEEE80211,
+ 				       HOSTAPD_LEVEL_INFO,
+@@ -5618,9 +5672,15 @@ static void handle_assoc(struct hostapd_data *hapd,
+ 			send_deauth(hapd, mgmt->sa,
+ 				    WLAN_REASON_CLASS2_FRAME_FROM_NONAUTH_STA);
+ 			return;
++#endif /* CONFIG_DRIVER_BRCM */
+ 		}
+ 	}
+ 
++	os_free(sta->assoc_req);
++	sta->assoc_req = os_malloc(len);
++	os_memcpy(sta->assoc_req, (u8 *)mgmt, len);
++	sta->assoc_req_len = len;
++
+ 	if ((fc & WLAN_FC_RETRY) &&
+ 	    sta->last_seq_ctrl != WLAN_INVALID_MGMT_SEQ &&
+ 	    sta->last_seq_ctrl == seq_ctrl &&
+@@ -6038,7 +6098,7 @@ static int handle_action(struct hostapd_data *hapd,
+ 			   mgmt->u.action.category, MAC2STR(mgmt->sa));
+ 		return 0;
+ 	}
+-
++#ifndef CONFIG_DRIVER_BRCM
+ 	if (sta && (sta->flags & WLAN_STA_MFP) &&
+ 	    !(mgmt->frame_control & host_to_le16(WLAN_FC_ISWEP)) &&
+ 	    robust_action_frame(mgmt->u.action.category)) {
+@@ -6048,6 +6108,7 @@ static int handle_action(struct hostapd_data *hapd,
+ 			       "an MFP STA");
+ 		return 0;
+ 	}
++#endif /* !CONFIG_DRIVER_BRCM */
+ 
+ 	if (sta) {
+ 		u16 fc = le_to_host16(mgmt->frame_control);
+diff --git a/source/hostap-2.10/src/ap/sta_info.c b/source/hostap-2.10/src/ap/sta_info.c
+index c541926..f91ed65 100644
+--- a/source/hostap-2.10/src/ap/sta_info.c
++++ b/source/hostap-2.10/src/ap/sta_info.c
+@@ -206,7 +206,18 @@ void ap_free_sta(struct hostapd_data *hapd, struct sta_info *sta)
+ 
+ 	if (!hapd->iface->driver_ap_teardown &&
+ 	    !(sta->flags & WLAN_STA_PREAUTH)) {
++#ifdef CONFIG_DRIVER_BRCM
++		/* Do not send deauth/disassoc notification back to driver, if it is
++		 * due to driver deauth/disassoc event.
++		 */
++		if (!(sta->flags & WLAN_STA_DRIVER_IND)) {
++			wpa_printf(MSG_DEBUG, "%s %d AP: remove STA " MACSTR
++					, __FUNCTION__, __LINE__, MAC2STR(sta->addr));
++			hostapd_drv_sta_remove(hapd, sta->addr);
++		}
++#else
+ 		hostapd_drv_sta_remove(hapd, sta->addr);
++#endif /* CONFIG_DRIVER_BRCM */
+ 		sta->added_unassoc = 0;
+ 	}
+ 
+@@ -320,7 +331,18 @@ void ap_free_sta(struct hostapd_data *hapd, struct sta_info *sta)
+ 		 */
+ 		if (hapd->iface->driver_ap_teardown &&
+ 		    !(sta->flags & WLAN_STA_PREAUTH)) {
++#ifdef CONFIG_DRIVER_BRCM
++			/* Do not send deauth/disassoc notification back to driver, if it is
++			 * due to driver deauth/disassoc event.
++			 */
++			if (!(sta->flags & WLAN_STA_DRIVER_IND)) {
++				wpa_printf(MSG_DEBUG, "%s %d AP: remove STA " MACSTR
++						, __FUNCTION__, __LINE__, MAC2STR(sta->addr));
++				hostapd_drv_sta_remove(hapd, sta->addr);
++			}
++#else
+ 			hostapd_drv_sta_remove(hapd, sta->addr);
++#endif /* CONFIG_DRIVER_BRCM */
+ 			sta->added_unassoc = 0;
+ 		}
+ 		vlan_remove_dynamic(hapd, sta->vlan_id_bound);
+diff --git a/source/hostap-2.10/src/ap/sta_info.h b/source/hostap-2.10/src/ap/sta_info.h
+index af8f171..5cdd6e3 100644
+--- a/source/hostap-2.10/src/ap/sta_info.h
++++ b/source/hostap-2.10/src/ap/sta_info.h
+@@ -20,6 +20,9 @@
+ /* STA flags */
+ #define WLAN_STA_AUTH BIT(0)
+ #define WLAN_STA_ASSOC BIT(1)
++#ifdef CONFIG_DRIVER_BRCM
++#define WLAN_STA_DRIVER_IND BIT(2)
++#endif /* CONFIG_DRIVER_BRCM */
+ #define WLAN_STA_AUTHORIZED BIT(5)
+ #define WLAN_STA_PENDING_POLL BIT(6) /* pending activity poll not ACKed */
+ #define WLAN_STA_SHORT_PREAMBLE BIT(7)
+diff --git a/source/hostap-2.10/src/ap/wpa_auth.c b/source/hostap-2.10/src/ap/wpa_auth.c
+index 0cf603c..77f2188 100644
+--- a/source/hostap-2.10/src/ap/wpa_auth.c
++++ b/source/hostap-2.10/src/ap/wpa_auth.c
+@@ -32,6 +32,9 @@
+ #include "pmksa_cache_auth.h"
+ #include "wpa_auth_i.h"
+ #include "wpa_auth_ie.h"
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++#include "ce_shared.h"
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 
+ #define STATE_MACHINE_DATA struct wpa_state_machine
+ #define STATE_MACHINE_DEBUG_PREFIX "WPA"
+@@ -78,6 +81,14 @@ static const int dot11RSNAConfigPMKLifetime = 43200;
+ static const int dot11RSNAConfigPMKReauthThreshold = 70;
+ static const int dot11RSNAConfigSATimeout = 60;
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++static inline char* wpa_auth_get_ifname(struct wpa_authenticator *wpa_auth)
++{
++	if (wpa_auth->cb->get_ifname)
++		return wpa_auth->cb->get_ifname(wpa_auth->cb_ctx);
++	return 0;
++}
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 
+ static inline int wpa_auth_mic_failure_report(
+ 	struct wpa_authenticator *wpa_auth, const u8 *addr)
+@@ -1026,6 +1037,9 @@ void wpa_receive(struct wpa_authenticator *wpa_auth,
+ 	const u8 *key_data;
+ 	size_t keyhdrlen, mic_len;
+ 	u8 *mic;
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	char *ifname = NULL;
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 
+ 	if (!wpa_auth || !wpa_auth->conf.wpa || !sm)
+ 		return;
+@@ -1097,7 +1111,9 @@ void wpa_receive(struct wpa_authenticator *wpa_auth,
+ 		wpa_printf(MSG_DEBUG, "WPA: Ignore SMK message");
+ 		return;
+ 	}
+-
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	ifname = wpa_auth_get_ifname(wpa_auth);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	if (key_info & WPA_KEY_INFO_REQUEST) {
+ 		msg = REQUEST;
+ 		msgtxt = "Request";
+@@ -1109,9 +1125,17 @@ void wpa_receive(struct wpa_authenticator *wpa_auth,
+ 		    key_data_length == AES_BLOCK_SIZE)) {
+ 		msg = PAIRWISE_4;
+ 		msgtxt = "4/4 Pairwise";
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++		CE_SEND_CEVENT_A2C_EXT(ifname, (struct ether_addr *)sm->addr, 0, 0, CEVENT_ST_HOSTAPD,
++			CEVENT_A2C_MT_M4_RX, CEVENT_FRAME_DIR_RX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	} else {
+ 		msg = PAIRWISE_2;
+ 		msgtxt = "2/4 Pairwise";
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++		CE_SEND_CEVENT_A2C_EXT(ifname, (struct ether_addr *)sm->addr, 0, 0, CEVENT_ST_HOSTAPD,
++			CEVENT_A2C_MT_M2_RX, CEVENT_FRAME_DIR_RX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	}
+ 
+ 	if (msg == REQUEST || msg == PAIRWISE_2 || msg == PAIRWISE_4 ||
+@@ -2196,6 +2220,9 @@ SM_STATE(WPA_PTK, PTKSTART)
+ 	u8 buf[2 + RSN_SELECTOR_LEN + PMKID_LEN], *pmkid = NULL;
+ 	size_t pmkid_len = 0;
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	char *ifname = NULL;
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	SM_ENTRY_MA(WPA_PTK, PTKSTART, wpa_ptk);
+ 	sm->PTKRequest = false;
+ 	sm->TimeoutEvt = false;
+@@ -2208,7 +2235,11 @@ SM_STATE(WPA_PTK, PTKSTART)
+ 		 * immediately following this. */
+ 		return;
+ 	}
+-
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	ifname = wpa_auth_get_ifname(sm->wpa_auth);
++	CE_SEND_CEVENT_A2C_EXT(ifname, (struct ether_addr *)sm->addr, 0, 0, CEVENT_ST_HOSTAPD,
++		CEVENT_A2C_MT_M1_TX, CEVENT_FRAME_DIR_TX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	wpa_auth_logger(sm->wpa_auth, sm->addr, LOGGER_DEBUG,
+ 			"sending 1/4 msg of 4-Way Handshake");
+ 	/*
+@@ -3411,6 +3442,9 @@ SM_STATE(WPA_PTK, PTKINITNEGOTIATING)
+ 	u8 hdr[2];
+ 	struct wpa_auth_config *conf = &sm->wpa_auth->conf;
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	char *ifname = NULL;
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	SM_ENTRY_MA(WPA_PTK, PTKINITNEGOTIATING, wpa_ptk);
+ 	sm->TimeoutEvt = false;
+ 
+@@ -3463,6 +3497,11 @@ SM_STATE(WPA_PTK, PTKINITNEGOTIATING)
+ 		wpa_ie = wpa_ie_buf;
+ 	}
+ #endif /* CONFIG_TESTING_OPTIONS */
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	ifname = wpa_auth_get_ifname(sm->wpa_auth);
++	CE_SEND_CEVENT_A2C_EXT(ifname, (struct ether_addr *)sm->addr, 0, 0, CEVENT_ST_HOSTAPD,
++			CEVENT_A2C_MT_M3_TX, CEVENT_FRAME_DIR_TX, NULL, 0);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	wpa_auth_logger(sm->wpa_auth, sm->addr, LOGGER_DEBUG,
+ 			"sending 3/4 msg of 4-Way Handshake");
+ 	if (sm->wpa == WPA_VERSION_WPA2) {
+diff --git a/source/hostap-2.10/src/ap/wpa_auth.h b/source/hostap-2.10/src/ap/wpa_auth.h
+index d2a3600..07c51c4 100644
+--- a/source/hostap-2.10/src/ap/wpa_auth.h
++++ b/source/hostap-2.10/src/ap/wpa_auth.h
+@@ -267,7 +267,9 @@ struct wpa_auth_config {
+ #ifdef CONFIG_DPP2
+ 	int dpp_pfs;
+ #endif /* CONFIG_DPP2 */
+-
++#ifdef CONFIG_DRIVER_BRCM
++	int spp_amsdu;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	/*
+ 	 * If set Key Derivation Key should be derived as part of PMK to
+ 	 * PTK derivation regardless of advertised capabilities.
+@@ -350,6 +352,9 @@ struct wpa_auth_callbacks {
+ #ifdef CONFIG_MESH
+ 	int (*start_ampe)(void *ctx, const u8 *sta_addr);
+ #endif /* CONFIG_MESH */
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++	char* (*get_ifname)(void *ctx);
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ };
+ 
+ struct wpa_authenticator * wpa_init(const u8 *addr,
+diff --git a/source/hostap-2.10/src/ap/wpa_auth_glue.c b/source/hostap-2.10/src/ap/wpa_auth_glue.c
+index f1724c3..aedac41 100644
+--- a/source/hostap-2.10/src/ap/wpa_auth_glue.c
++++ b/source/hostap-2.10/src/ap/wpa_auth_glue.c
+@@ -210,6 +210,9 @@ static void hostapd_wpa_auth_conf(struct hostapd_bss_config *conf,
+ #ifdef CONFIG_DPP2
+ 	wconf->dpp_pfs = conf->dpp_pfs;
+ #endif /* CONFIG_DPP2 */
++#ifdef CONFIG_DRIVER_BRCM
++	wconf->spp_amsdu = conf->spp_amsdu;
++#endif /* CONFIG_DRIVER_BRCM */
+ #ifdef CONFIG_PASN
+ #ifdef CONFIG_TESTING_OPTIONS
+ 	wconf->force_kdk_derivation = conf->force_kdk_derivation;
+@@ -759,6 +762,29 @@ static struct eth_p_oui_ctx * hostapd_wpa_get_oui(struct hostapd_data *hapd,
+ 		return NULL;
+ 	}
+ }
++
++#ifdef CONFIG_DRIVER_BRCM
++static struct eth_p_oui_ctx * hostapd_wpa_get_lo_oui(struct hostapd_data *hapd,
++						  u8 oui_suffix)
++{
++	switch (oui_suffix) {
++#ifdef CONFIG_IEEE80211R_AP
++	case FT_PACKET_R0KH_R1KH_PULL:
++		return hapd->lo_oui_pull;
++	case FT_PACKET_R0KH_R1KH_RESP:
++		return hapd->lo_oui_resp;
++	case FT_PACKET_R0KH_R1KH_PUSH:
++		return hapd->lo_oui_push;
++	case FT_PACKET_R0KH_R1KH_SEQ_REQ:
++		return hapd->lo_oui_sreq;
++	case FT_PACKET_R0KH_R1KH_SEQ_RESP:
++		return hapd->lo_oui_sresp;
++#endif /* CONFIG_IEEE80211R_AP */
++	default:
++		return NULL;
++	}
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ #endif /* CONFIG_ETH_P_OUI */
+ 
+ 
+@@ -906,6 +932,16 @@ static int hostapd_wpa_auth_send_oui(void *ctx, const u8 *dst, u8 oui_suffix,
+ 			return data_len;
+ 	}
+ #endif /* CONFIG_IEEE80211R_AP */
++#ifdef CONFIG_DRIVER_BRCM
++	/* Send l2 packet on loopback socket as well */
++	if (hapd->iconf->ft_rrb_lo_sock) {
++		oui_ctx = hostapd_wpa_get_lo_oui(hapd, oui_suffix);
++		if (!oui_ctx)
++			return -1;
++
++		eth_p_oui_send(oui_ctx, hapd->own_addr, dst, data, data_len);
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	oui_ctx = hostapd_wpa_get_oui(hapd, oui_suffix);
+ 	if (!oui_ctx)
+@@ -1354,6 +1390,15 @@ static int hostapd_wpa_auth_get_session_timeout(void *ctx, const u8 *sta_addr)
+ 	return (remaining.sec > 0) ? remaining.sec : 1;
+ }
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++static char* hostapd_wpa_auth_get_ifname(void *ctx)
++{
++	struct hostapd_data *hapd = ctx;
++	if (hapd && hapd->conf)
++		return hapd->conf->iface;
++	return NULL;
++}
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 
+ static void hostapd_rrb_receive(void *ctx, const u8 *src_addr, const u8 *buf,
+ 				size_t len)
+@@ -1434,6 +1479,43 @@ static int hostapd_wpa_register_ft_oui(struct hostapd_data *hapd,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static int hostapd_wpa_register_ft_lo_oui(struct hostapd_data *hapd,
++				       const char *ft_iface)
++{
++	hapd->lo_oui_pull = eth_p_oui_register(hapd, ft_iface,
++					    FT_PACKET_R0KH_R1KH_PULL,
++					    hostapd_rrb_oui_receive, hapd);
++	if (!hapd->lo_oui_pull)
++		return -1;
++
++	hapd->lo_oui_resp = eth_p_oui_register(hapd, ft_iface,
++					    FT_PACKET_R0KH_R1KH_RESP,
++					    hostapd_rrb_oui_receive, hapd);
++	if (!hapd->lo_oui_resp)
++		return -1;
++
++	hapd->lo_oui_push = eth_p_oui_register(hapd, ft_iface,
++					    FT_PACKET_R0KH_R1KH_PUSH,
++					    hostapd_rrb_oui_receive, hapd);
++	if (!hapd->lo_oui_push)
++		return -1;
++
++	hapd->lo_oui_sreq = eth_p_oui_register(hapd, ft_iface,
++					    FT_PACKET_R0KH_R1KH_SEQ_REQ,
++					    hostapd_rrb_oui_receive, hapd);
++	if (!hapd->lo_oui_sreq)
++		return -1;
++
++	hapd->lo_oui_sresp = eth_p_oui_register(hapd, ft_iface,
++					     FT_PACKET_R0KH_R1KH_SEQ_RESP,
++					     hostapd_rrb_oui_receive, hapd);
++	if (!hapd->lo_oui_sresp)
++		return -1;
++
++	return 0;
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ static void hostapd_wpa_unregister_ft_oui(struct hostapd_data *hapd)
+ {
+@@ -1448,6 +1530,21 @@ static void hostapd_wpa_unregister_ft_oui(struct hostapd_data *hapd)
+ 	eth_p_oui_unregister(hapd->oui_sresp);
+ 	hapd->oui_sresp = NULL;
+ }
++#ifdef CONFIG_DRIVER_BRCM
++static void hostapd_wpa_unregister_ft_lo_oui(struct hostapd_data *hapd)
++{
++	eth_p_oui_unregister(hapd->lo_oui_pull);
++	hapd->lo_oui_pull = NULL;
++	eth_p_oui_unregister(hapd->lo_oui_resp);
++	hapd->lo_oui_resp = NULL;
++	eth_p_oui_unregister(hapd->lo_oui_push);
++	hapd->lo_oui_push = NULL;
++	eth_p_oui_unregister(hapd->lo_oui_sreq);
++	hapd->lo_oui_sreq = NULL;
++	eth_p_oui_unregister(hapd->lo_oui_sresp);
++	hapd->lo_oui_sresp = NULL;
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ #endif /* CONFIG_IEEE80211R_AP */
+ 
+ 
+@@ -1514,6 +1611,9 @@ int hostapd_setup_wpa(struct hostapd_data *hapd)
+ #ifndef CONFIG_NO_RADIUS
+ 		.request_radius_psk = hostapd_request_radius_psk,
+ #endif /* CONFIG_NO_RADIUS */
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_DRIVER_BRCM_CEVENT)
++		.get_ifname = hostapd_wpa_auth_get_ifname,
++#endif /* CONFIG_DRIVER_BRCM && CONFIG_DRIVER_BRCM_CEVENT */
+ 	};
+ 	const u8 *wpa_ie;
+ 	size_t wpa_ie_len;
+@@ -1608,6 +1708,15 @@ int hostapd_setup_wpa(struct hostapd_data *hapd)
+ 				   "Failed to open ETH_P_OUI interface");
+ 			return -1;
+ 		}
++#ifdef CONFIG_DRIVER_BRCM
++		/* create loopback socket for FT OUI communication */
++		if (hapd->iconf->ft_rrb_lo_sock) {
++			if (hostapd_wpa_register_ft_lo_oui(hapd, "lo")) {
++				wpa_printf(MSG_ERROR,
++					   "Failed to open ETH_P_OUI loopback interface");
++			}
++		}
++#endif /* CONFIG_DRIVER_BRCM */
+ 	}
+ #endif /* CONFIG_IEEE80211R_AP */
+ 
+@@ -1658,6 +1767,12 @@ void hostapd_deinit_wpa(struct hostapd_data *hapd)
+ 	l2_packet_deinit(hapd->l2);
+ 	hapd->l2 = NULL;
+ 	hostapd_wpa_unregister_ft_oui(hapd);
++#ifdef CONFIG_DRIVER_BRCM
++	/* Unregister loopback socket created for FT OUI communication */
++	if (hapd->iconf->ft_rrb_lo_sock) {
++		hostapd_wpa_unregister_ft_lo_oui(hapd);
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ #endif /* CONFIG_IEEE80211R_AP */
+ 
+ #ifdef CONFIG_TESTING_OPTIONS
+diff --git a/source/hostap-2.10/src/ap/wpa_auth_ie.c b/source/hostap-2.10/src/ap/wpa_auth_ie.c
+index 524922e..7d6b19c 100644
+--- a/source/hostap-2.10/src/ap/wpa_auth_ie.c
++++ b/source/hostap-2.10/src/ap/wpa_auth_ie.c
+@@ -103,6 +103,14 @@ static u16 wpa_own_rsn_capab(struct wpa_auth_config *conf)
+ 		if (conf->ieee80211w == MGMT_FRAME_PROTECTION_REQUIRED)
+ 			capab |= WPA_CAPABILITY_MFPR;
+ 	}
++#ifdef CONFIG_DRIVER_BRCM
++	if (conf->spp_amsdu != 0) {
++		capab |= WPA_CAPABILITY_SPP_A_MSDU_CAPABLE;
++		if (conf->spp_amsdu == 2) {
++			capab |= WPA_CAPABILITY_SPP_A_MSDU_REQUIRED;
++		}
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ #ifdef CONFIG_OCV
+ 	if (conf->ocv)
+ 		capab |= WPA_CAPABILITY_OCVC;
+@@ -481,9 +489,15 @@ static u8 * wpa_write_osen(struct wpa_auth_config *conf, u8 *eid)
+ 
+ int wpa_auth_gen_wpa_ie(struct wpa_authenticator *wpa_auth)
+ {
++#ifdef CONFIG_DRIVER_BRCM
++	u8 *pos, buf[256];
++#else
+ 	u8 *pos, buf[128];
++#endif /* CONFIG_DRIVER_BRCM */
+ 	int res;
+-
++#ifdef CONFIG_DRIVER_BRCM
++	int use_sha384;
++#endif
+ #ifdef CONFIG_TESTING_OPTIONS
+ 	if (wpa_auth->conf.own_ie_override_len) {
+ 		wpa_hexdump(MSG_DEBUG, "WPA: Forced own IE(s) for testing",
+@@ -525,6 +539,23 @@ int wpa_auth_gen_wpa_ie(struct wpa_authenticator *wpa_auth)
+ 		if (res < 0)
+ 			return res;
+ 		pos += res;
++#ifdef CONFIG_DRIVER_BRCM
++		if (wpa_auth->conf.r0_key_holder_len == 0) {
++			os_free(wpa_auth->wpa_ie);
++			wpa_auth->wpa_ie = NULL;
++			return -1;
++		}
++
++		wpa_printf(MSG_DEBUG, "Writing FT IE r0kh_id_len %d\n",  wpa_auth->conf.r0_key_holder_len);
++		use_sha384 = wpa_key_mgmt_sha384(wpa_auth->conf.wpa_key_mgmt);
++		res = wpa_write_ftie(&wpa_auth->conf, use_sha384, wpa_auth->conf.r0_key_holder,
++		   wpa_auth->conf.r0_key_holder_len, NULL, NULL,
++		   pos, buf + sizeof(buf) - pos, NULL, 0, 0);
++
++		if (res < 0)
++			return res;
++		pos += res;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	}
+ #endif /* CONFIG_IEEE80211R_AP */
+ 	if (wpa_auth->conf.wpa & WPA_PROTO_WPA) {
+diff --git a/source/hostap-2.10/src/ap/wps_hostapd.c b/source/hostap-2.10/src/ap/wps_hostapd.c
+index aacfa33..5a03d84 100644
+--- a/source/hostap-2.10/src/ap/wps_hostapd.c
++++ b/source/hostap-2.10/src/ap/wps_hostapd.c
+@@ -451,6 +451,122 @@ static int hapd_wps_reconfig_in_memory(struct hostapd_data *hapd,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static void hapd_wps_write_creds_to_file(FILE *nconf, struct hostapd_data *hapd,
++                const struct wps_credential *cred)
++{
++        int wpa;
++        int i;
++        int sae = 0;
++
++        fprintf(nconf, "# WPS configuration - START\n");
++
++        fprintf(nconf, "wps_state=2\n");
++
++        if (is_hex(cred->ssid, cred->ssid_len)) {
++                fprintf(nconf, "ssid2=");
++                for (i = 0; i < cred->ssid_len; i++)
++                        fprintf(nconf, "%02x", cred->ssid[i]);
++                fprintf(nconf, "\n");
++        } else {
++                fprintf(nconf, "ssid=");
++                for (i = 0; i < cred->ssid_len; i++)
++                        fputc(cred->ssid[i], nconf);
++                fprintf(nconf, "\n");
++        }
++
++        if ((cred->auth_type & (WPS_AUTH_WPA2 | WPS_AUTH_WPA2PSK)) &&
++            (cred->auth_type & (WPS_AUTH_WPA | WPS_AUTH_WPAPSK)))
++                wpa = 3;
++        else if (cred->auth_type & (WPS_AUTH_WPA2 | WPS_AUTH_WPA2PSK))
++                wpa = 2;
++        else if (cred->auth_type & (WPS_AUTH_WPA | WPS_AUTH_WPAPSK))
++                wpa = 1;
++        else
++                wpa = 0;
++
++        if (wpa) {
++                char *prefix;
++                if (cred->auth_type & WPS_AUTH_WPA2PSK
++                        /* Sae needs credential in passphrase-form */
++                        && (cred->key_len >= 8 && cred->key_len < 64)
++                        && hapd->conf->wps_cred_add_sae) {
++                        /* wpa needs to be set to 2 for transition mode (WPA2-PSK + WPA3-SAE) */
++                        sae = 1;
++                        wpa = 2;
++                }
++
++                fprintf(nconf, "wpa=%d\n", wpa);
++
++                fprintf(nconf, "wpa_key_mgmt=");
++                prefix = "";
++                if (cred->auth_type & (WPS_AUTH_WPA2 | WPS_AUTH_WPA)) {
++                        fprintf(nconf, "WPA-EAP");
++                        prefix = " ";
++                }
++                if (cred->auth_type & (WPS_AUTH_WPA2PSK | WPS_AUTH_WPAPSK)) {
++                        fprintf(nconf, "%sWPA-PSK", prefix);
++                        prefix=" ";
++                }
++                if (sae)
++                        fprintf(nconf, "%sSAE", prefix);
++
++                fprintf(nconf, "\n");
++
++                /* ieee80211w may setup as 0 */
++                if (sae && hapd->conf->ieee80211w == NO_MGMT_FRAME_PROTECTION) {
++                        fprintf(nconf, "ieee80211w=%d\n",
++                                MGMT_FRAME_PROTECTION_OPTIONAL);
++                } else {
++                        /* fill current setting */
++                        fprintf(nconf, "ieee80211w=%d\n", hapd->conf->ieee80211w);
++                }
++
++                /* asumme sae_require_mfp is always set when wps_cred_add_sae set */
++
++                fprintf(nconf, "wpa_pairwise=");
++                prefix = "";
++                if (cred->encr_type & WPS_ENCR_AES) {
++                        if (hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211AD)
++                                fprintf(nconf, "GCMP");
++                        else
++                                fprintf(nconf, "CCMP");
++
++                        prefix = " ";
++                }
++                if (!sae && cred->encr_type & WPS_ENCR_TKIP) {
++                        fprintf(nconf, "%sTKIP", prefix);
++                }
++                fprintf(nconf, "\n");
++
++                if (cred->key_len >= 8 && cred->key_len < 64) {
++                        fprintf(nconf, "wpa_passphrase=");
++                        for (i = 0; i < cred->key_len; i++)
++                                fputc(cred->key[i], nconf);
++                        fprintf(nconf, "\n");
++                } else if (cred->key_len == 64) {
++                        fprintf(nconf, "wpa_psk=");
++                        for (i = 0; i < cred->key_len; i++)
++                                fputc(cred->key[i], nconf);
++                        fprintf(nconf, "\n");
++                } else {
++                        wpa_printf(MSG_WARNING, "WPS: Invalid key length %lu "
++                                   "for WPA/WPA2",
++                                   (unsigned long) cred->key_len);
++                }
++
++                fprintf(nconf, "auth_algs=1\n");
++        } else {
++                /*
++                 * WPS 2.0 does not allow WEP to be configured, so no need to
++                 * process that option here either.
++                 */
++                fprintf(nconf, "auth_algs=1\n");
++        }
++
++        fprintf(nconf, "# WPS configuration - END\n");
++}
++#endif  /* CONFIG_DRIVER_BRCM */
+ 
+ static int hapd_wps_cred_cb(struct hostapd_data *hapd, void *ctx)
+ {
+@@ -463,6 +579,10 @@ static int hapd_wps_cred_cb(struct hostapd_data *hapd, void *ctx)
+ 	int wpa;
+ 	int pmf_changed = 0;
+ 
++#ifdef CONFIG_DRIVER_BRCM
++        char ifr_token[32], bss_token[32];
++        int bss_found, wps_cred_updated_in_newconf, bss_token_len, ifr_token_len;
++#endif  /* CONFIG_DRIVER_BRCM */
+ 	if (hapd->wps == NULL)
+ 		return 0;
+ 
+@@ -552,7 +672,52 @@ static int hapd_wps_cred_cb(struct hostapd_data *hapd, void *ctx)
+ 		fclose(oconf);
+ 		return -1;
+ 	}
+-
++#ifdef CONFIG_DRIVER_BRCM
++        os_snprintf(ifr_token, sizeof(ifr_token), "interface=%s", hapd->conf->iface);
++        ifr_token_len = strlen(ifr_token);
++        os_snprintf(bss_token, sizeof(bss_token), "bss=%s", hapd->conf->iface);
++        bss_token_len = strlen(bss_token);
++        bss_found = wps_cred_updated_in_newconf = 0;
++        multi_bss = 0;
++        while (fgets(buf, sizeof(buf), oconf)) {
++                /* This is to handle the case for multiple bss lets say we have 3 bss enabled bss1,
++                 * bss2 and bss3. Wps running on bss2 should not update the settings of bss3.
++                 */
++                if (bss_found && os_strncmp(buf, "bss=", 4) == 0) {
++                        multi_bss = 1;
++                }
++
++                /* Find the bss entry which needs to be updated */
++                if (!bss_found && (os_strncmp(buf, bss_token, bss_token_len) == 0 ||
++                        os_strncmp(buf, ifr_token, ifr_token_len) == 0)) {
++                        bss_found = 1;
++                }
++
++                if (bss_found && !multi_bss &&
++                    (str_starts(buf, "ssid=") ||
++                     str_starts(buf, "ssid2=") ||
++                     str_starts(buf, "auth_algs=") ||
++                     str_starts(buf, "wep_default_key=") ||
++                     str_starts(buf, "wep_key") ||
++                     str_starts(buf, "wps_state=") ||
++                     str_starts(buf, "wpa=") ||
++                     str_starts(buf, "wpa_psk=") ||
++                     str_starts(buf, "wpa_pairwise=") ||
++                     str_starts(buf, "rsn_pairwise=") ||
++                     str_starts(buf, "wpa_key_mgmt=") ||
++                     str_starts(buf, "ieee80211w=") ||
++                     str_starts(buf, "wpa_passphrase="))) {
++                        fprintf(nconf, "#WPS# %s", buf);
++                } else
++                        fprintf(nconf, "%s", buf);
++
++                /* Write the wps credentials in new conf file */
++                if (bss_found && !wps_cred_updated_in_newconf) {
++                        hapd_wps_write_creds_to_file(nconf, hapd, cred);
++                        wps_cred_updated_in_newconf = 1;
++                }
++        }
++#else   /* !CONFIG_DRIVER_BRCM */
+ 	fprintf(nconf, "# WPS configuration - START\n");
+ 
+ 	fprintf(nconf, "wps_state=2\n");
+@@ -687,6 +852,7 @@ static int hapd_wps_cred_cb(struct hostapd_data *hapd, void *ctx)
+ 		} else
+ 			fprintf(nconf, "%s", buf);
+ 	}
++#endif  /* CONFIG_DRIVER_BRCM */
+ 
+ 	fclose(nconf);
+ 	fclose(oconf);
+@@ -872,14 +1038,28 @@ static void hostapd_wps_event_fail(struct hostapd_data *hapd,
+ 
+ 	if (fail->error_indication > 0 &&
+ 	    fail->error_indication < NUM_WPS_EI_VALUES) {
++#ifdef CONFIG_DRIVER_BRCM
++            wpa_msg(hapd->msg_ctx, MSG_INFO,
++                    WPS_EVENT_FAIL "msg=%d peer_macaddr="MACSTR" config_error=%d "
++                    "reason=%d (%s)", fail->msg, MAC2STR(fail->peer_macaddr),
++                    fail->config_error, fail->error_indication,
++                    wps_ei_str(fail->error_indication));
++#else
+ 		wpa_msg(hapd->msg_ctx, MSG_INFO,
+ 			WPS_EVENT_FAIL "msg=%d config_error=%d reason=%d (%s)",
+ 			fail->msg, fail->config_error, fail->error_indication,
+ 			wps_ei_str(fail->error_indication));
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	} else {
++#ifdef CONFIG_DRIVER_BRCM
++		wpa_msg(hapd->msg_ctx, MSG_INFO,
++			WPS_EVENT_FAIL "msg=%d peer_macaddr="MACSTR" config_error=%d",
++			fail->msg, MAC2STR(fail->peer_macaddr), fail->config_error);
++#else
+ 		wpa_msg(hapd->msg_ctx, MSG_INFO,
+ 			WPS_EVENT_FAIL "msg=%d config_error=%d",
+ 			fail->msg, fail->config_error);
++#endif  /* CONFIG_DRIVER_BRCM */
+ 	}
+ }
+ 
+@@ -1294,7 +1474,16 @@ int hostapd_init_wps(struct hostapd_data *hapd,
+ 
+ 	wps->ap_settings = conf->ap_settings;
+ 	wps->ap_settings_len = conf->ap_settings_len;
+-
++#ifdef CONFIG_DRIVER_BRCM_MAP
++    wps->map = conf->map;
++    os_memset(&wps->bh_creds, 0, sizeof(wps->bh_creds));
++    wps->bh_creds.ssid_len = conf->map_bh_ssid_len;
++    os_memcpy(wps->bh_creds.ssid, conf->map_bh_ssid, wps->bh_creds.ssid_len);
++    wps->bh_creds.auth_type = conf->map_bh_auth;
++    wps->bh_creds.encr_type = conf->map_bh_encr;
++    wps->bh_creds.key_len = conf->map_bh_psk_len;
++    os_memcpy(wps->bh_creds.key, conf->map_bh_psk, wps->bh_creds.key_len);
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 	cfg.new_psk_cb = hostapd_wps_new_psk_cb;
+ 	cfg.set_ie_cb = hostapd_wps_set_ie_cb;
+ 	cfg.pin_needed_cb = hostapd_wps_pin_needed_cb;
+@@ -1869,6 +2058,12 @@ static int wps_ap_pin_set(struct hostapd_data *hapd, void *ctx)
+ 	return 0;
+ }
+ 
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_WPS_UPNP)
++int hostapd_wps_upnp_ifcae_ip_changed(struct hostapd_data *hapd)
++{
++	return upnp_wps_web_listener_sock_update(hapd->wps_upnp, hapd->conf->upnp_iface);
++}
++#endif	/* CONFIG_DRIVER_BRCM && CONFIG_WPS_UPNP */
+ 
+ const char * hostapd_wps_ap_pin_random(struct hostapd_data *hapd, int timeout)
+ {
+@@ -1973,6 +2168,56 @@ int hostapd_wps_config_ap(struct hostapd_data *hapd, const char *ssid,
+ 	return wps_registrar_config_ap(hapd->wps->registrar, &cred);
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++int hostapd_wps_config_map_bh(struct hostapd_data *hapd, const char *ssid,
++                const char *auth, const char *encr, const char *key)
++{
++        struct wps_credential cred;
++        size_t len;
++
++        os_memset(&cred, 0, sizeof(cred));
++
++        len = os_strlen(ssid);
++        if ((len <= 0) || len > sizeof(cred.ssid))
++                return -1;
++        cred.ssid_len = len;
++        os_memcpy(cred.ssid, ssid, len);
++
++        if (os_strncmp(auth, "OPEN", 4) == 0)
++                cred.auth_type = WPS_AUTH_OPEN;
++        else if (os_strncmp(auth, "WPAPSK", 6) == 0)
++                cred.auth_type = WPS_AUTH_WPAPSK;
++        else if (os_strncmp(auth, "WPA2PSK", 7) == 0)
++                cred.auth_type = WPS_AUTH_WPA2PSK;
++        else
++                return -1;
++
++        if (encr) {
++                if (os_strncmp(encr, "NONE", 4) == 0)
++                        cred.encr_type = WPS_ENCR_NONE;
++                else if (os_strncmp(encr, "TKIP", 4) == 0)
++                        cred.encr_type = WPS_ENCR_TKIP;
++                else if (os_strncmp(encr, "CCMP", 4) == 0)
++                        cred.encr_type = WPS_ENCR_AES;
++                else
++                        return -1;
++        } else
++                cred.encr_type = WPS_ENCR_NONE;
++
++        if (key) {
++                len = os_strlen(key);
++                if (len <= 8 && len > sizeof(cred.key)) {
++                        return -1;
++                }
++                cred.key_len = len;
++                os_memcpy(cred.key, key, len);
++        }
++
++        os_memcpy(&hapd->wps->bh_creds, &cred, sizeof(hapd->wps->bh_creds));
++        return 0;
++}
++#endif /* CONFIG_DRIVER_BRCM_MAP */
++ 
+ 
+ #ifdef CONFIG_WPS_NFC
+ 
+diff --git a/source/hostap-2.10/src/ap/wps_hostapd.h b/source/hostap-2.10/src/ap/wps_hostapd.h
+index 204bd82..45dc4f4 100644
+--- a/source/hostap-2.10/src/ap/wps_hostapd.h
++++ b/source/hostap-2.10/src/ap/wps_hostapd.h
+@@ -30,8 +30,15 @@ const char * hostapd_wps_ap_pin_get(struct hostapd_data *hapd);
+ int hostapd_wps_ap_pin_set(struct hostapd_data *hapd, const char *pin,
+ 			   int timeout);
+ void hostapd_wps_update_ie(struct hostapd_data *hapd);
++#if defined(CONFIG_DRIVER_BRCM) && defined(CONFIG_WPS_UPNP)
++int hostapd_wps_upnp_ifcae_ip_changed(struct hostapd_data *hapd);
++#endif	/* CONFIG_DRIVER_BRCM && CONFIG_WPS_UPNP */
+ int hostapd_wps_config_ap(struct hostapd_data *hapd, const char *ssid,
+ 			  const char *auth, const char *encr, const char *key);
++#ifdef CONFIG_DRIVER_BRCM_MAP
++int hostapd_wps_config_map_bh(struct hostapd_data *hapd, const char *ssid,
++                          const char *auth, const char *encr, const char *key);
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ int hostapd_wps_nfc_tag_read(struct hostapd_data *hapd,
+ 			     const struct wpabuf *data);
+ struct wpabuf * hostapd_wps_nfc_config_token(struct hostapd_data *hapd,
+diff --git a/source/hostap-2.10/src/common/hw_features_common.c b/source/hostap-2.10/src/common/hw_features_common.c
+index 732124f..fe69007 100644
+--- a/source/hostap-2.10/src/common/hw_features_common.c
++++ b/source/hostap-2.10/src/common/hw_features_common.c
+@@ -417,12 +417,14 @@ int hostapd_set_freq_params(struct hostapd_freq_params *data,
+ 				 &data->edmg);
+ 
+ 	if (is_6ghz_freq(freq)) {
++#ifndef CONFIG_DRIVER_BRCM /* TODO :6GHZ: Enable with CONFIG_IEEE80211AX=y and \
++	ieee80211ax=1 */
+ 		if (!data->he_enabled && !data->eht_enabled) {
+ 			wpa_printf(MSG_ERROR,
+ 				   "Can't set 6 GHz mode - HE or EHT aren't enabled");
+ 			return -1;
+ 		}
+-
++#endif
+ 		if (center_idx_to_bw_6ghz(channel) < 0) {
+ 			wpa_printf(MSG_ERROR,
+ 				   "Invalid control channel for 6 GHz band");
+diff --git a/source/hostap-2.10/src/common/ieee802_11_common.c b/source/hostap-2.10/src/common/ieee802_11_common.c
+index 3dfe375..18bdd5d 100644
+--- a/source/hostap-2.10/src/common/ieee802_11_common.c
++++ b/source/hostap-2.10/src/common/ieee802_11_common.c
+@@ -1454,7 +1476,13 @@ static int ieee80211_chan_to_freq_global(u8 op_class, u8 chan)
+ 	case 135: /* UHB channels, 80+80 MHz: 7, 23, 39.. */
+ 		if (chan < 1 || chan > 233)
+ 			return -1;
+-		return 5950 + chan * 5;
++#ifndef CONFIG_DRIVER_BRCM
++		return 5940 + chan * 5;
++#else
++		/* New 6GHz channelization - May 2020 */
++		if (chan == 2) return 5935;
++		else return 5950 + chan * 5;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	case 136: /* UHB channels, 20 MHz: 2 */
+ 		if (chan == 2)
+ 			return 5935;
+@@ -2272,7 +2300,11 @@ int center_idx_to_bw_6ghz(u8 idx)
+ 
+ bool is_6ghz_freq(int freq)
+ {
+-	if (freq < 5935 || freq > 7115)
++#ifdef CONFIG_DRIVER_BRCM
++	if (freq < 5935 || freq > 7125)
++#else
++ 	if (freq < 5935 || freq > 7115)
++#endif
+ 		return false;
+ 
+ 	if (freq == 5935)
+@@ -2297,13 +2329,24 @@ bool is_6ghz_psc_frequency(int freq)
+ 
+ 	if (!is_6ghz_freq(freq) || freq == 5935)
+ 		return false;
++#ifndef CONFIG_DRIVER_BRCM
+ 	if ((((freq - 5950) / 5) & 0x3) != 0x1)
+ 		return false;
+ 
+ 	i = (freq - 5950 + 55) % 80;
+ 	if (i == 0)
+ 		i = (freq - 5950 + 55) / 80;
++#else
++	/* New 6GHz channelization - May 2020 */
++	if (freq == 5935)
++		return 0;
++	if ((((freq - 5950) / 5) & 0x3) != 0x1)
++		return 0;
+ 
++	i = (freq - 5950 + 55) % 80;
++	if (i == 0)
++		i = (freq - 5950 + 55) / 80;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if (i >= 1 && i <= 15)
+ 		return true;
+ 
+diff --git a/source/hostap-2.10/src/common/wpa_common.c b/source/hostap-2.10/src/common/wpa_common.c
+index 27336c9..b9681d0 100644
+--- a/source/hostap-2.10/src/common/wpa_common.c
++++ b/source/hostap-2.10/src/common/wpa_common.c
+@@ -1452,6 +1452,10 @@ static int rsn_selector_to_bitfield(const u8 *s)
+ 		return WPA_CIPHER_BIP_CMAC_256;
+ 	if (RSN_SELECTOR_GET(s) == RSN_CIPHER_SUITE_NO_GROUP_ADDRESSED)
+ 		return WPA_CIPHER_GTK_NOT_USED;
++#ifdef CONFIG_DRIVER_BRCM
++        if (RSN_SELECTOR_GET(s) == BRCM_CIPHER_SUITE_NO_GROUP_ADDRESSED)
++                return WPA_CIPHER_CCMP;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	return 0;
+ }
+ 
+diff --git a/source/hostap-2.10/src/common/wpa_common.h b/source/hostap-2.10/src/common/wpa_common.h
+index c28c55d..afbba11 100644
+--- a/source/hostap-2.10/src/common/wpa_common.h
++++ b/source/hostap-2.10/src/common/wpa_common.h
+@@ -110,6 +110,9 @@ WPA_CIPHER_BIP_CMAC_256)
+ #define RSN_CIPHER_SUITE_CMIC RSN_SELECTOR(0x00, 0x40, 0x96, 2)
+ /* KRK is defined for nl80211 use only */
+ #define RSN_CIPHER_SUITE_KRK RSN_SELECTOR(0x00, 0x40, 0x96, 255)
++#ifdef CONFIG_DRIVER_BRCM
++#define BRCM_CIPHER_SUITE_NO_GROUP_ADDRESSED RSN_SELECTOR(0x00, 0x10, 0x18, 0)
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ /* EAPOL-Key Key Data Encapsulation
+  * GroupKey and PeerKey require encryption, otherwise, encryption is optional.
+diff --git a/source/hostap-2.10/src/crypto/random.c b/source/hostap-2.10/src/crypto/random.c
+index 548b60d..229f58c 100644
+--- a/source/hostap-2.10/src/crypto/random.c
++++ b/source/hostap-2.10/src/crypto/random.c
+@@ -255,6 +255,14 @@ int random_pool_ready(void)
+ 	res = -1;
+ #endif /* CONFIG_GETRANDOM */
+ 	if (res < 0) {
++#ifdef true
++                fd = open("/dev/urandom", O_RDONLY | O_NONBLOCK);
++                if (fd < 0) {
++                        wpa_printf(MSG_ERROR, "random: Cannot open /dev/urandom: %s",
++                                        strerror(errno));
++                        return -1;
++                }
++#else
+ 		fd = open("/dev/random", O_RDONLY | O_NONBLOCK);
+ 		if (fd < 0) {
+ 			wpa_printf(MSG_ERROR,
+@@ -262,7 +270,7 @@ int random_pool_ready(void)
+ 				   strerror(errno));
+ 			return -1;
+ 		}
+-
++#endif /* CONFIG_DRIVER_BRCM */
+ 		res = read(fd, stub_key + stub_key_avail,
+ 			   sizeof(stub_key) - stub_key_avail);
+ 		if (res < 0) {
+@@ -338,6 +346,17 @@ static void random_read_fd(int sock, void *eloop_ctx, void *sock_ctx)
+ 
+ 	res = read(sock, stub_key + stub_key_avail,
+ 		   sizeof(stub_key) - stub_key_avail);
++#ifdef true
++        if (res < 0) {
++                wpa_printf(MSG_ERROR, "random: Cannot read from /dev/urandom: "
++                           "%s", strerror(errno));
++                return;
++        }
++
++        wpa_printf(MSG_DEBUG, "random: Got %u/%u bytes from /dev/urandom",
++                   (unsigned) res,
++                   (unsigned) (sizeof(stub_key) - stub_key_avail));
++#else
+ 	if (res < 0) {
+ 		wpa_printf(MSG_ERROR, "random: Cannot read from /dev/random: "
+ 			   "%s", strerror(errno));
+@@ -347,6 +366,7 @@ static void random_read_fd(int sock, void *eloop_ctx, void *sock_ctx)
+ 	wpa_printf(MSG_DEBUG, "random: Got %u/%u bytes from /dev/random",
+ 		   (unsigned) res,
+ 		   (unsigned) (sizeof(stub_key) - stub_key_avail));
++#endif /* CONFIG_DRIVER_BRCM */
+ 	stub_key_avail += res;
+ 
+ 	if (stub_key_avail == sizeof(stub_key)) {
+@@ -450,7 +470,16 @@ void random_init(const char *entropy_file)
+ 		}
+ 	}
+ #endif /* CONFIG_GETRANDOM */
+-
++#ifdef true
++        random_fd = open("/dev/urandom", O_RDONLY | O_NONBLOCK);
++        if (random_fd < 0) {
++                wpa_printf(MSG_ERROR, "random: Cannot open /dev/urandom: %s",
++                           strerror(errno));
++                return;
++        }
++        wpa_printf(MSG_DEBUG, "random: Trying to read entropy from "
++                   "/dev/urandom");
++#else
+ 	random_fd = open("/dev/random", O_RDONLY | O_NONBLOCK);
+ 	if (random_fd < 0) {
+ 		wpa_printf(MSG_ERROR, "random: Cannot open /dev/random: %s",
+@@ -459,6 +488,7 @@ void random_init(const char *entropy_file)
+ 	}
+ 	wpa_printf(MSG_DEBUG, "random: Trying to read entropy from "
+ 		   "/dev/random");
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	eloop_register_read_sock(random_fd, random_read_fd, NULL, NULL);
+ #endif /* __linux__ */
+diff --git a/source/hostap-2.10/src/drivers/driver.h b/source/hostap-2.10/src/drivers/driver.h
+index b3d4e48..41de024 100644
+--- a/source/hostap-2.10/src/drivers/driver.h
++++ b/source/hostap-2.10/src/drivers/driver.h
+@@ -4622,7 +4622,16 @@ struct wpa_driver_ops {
+ 	 */
+ 	int (*update_dh_ie)(void *priv, const u8 *peer_mac, u16 reason_code,
+ 			    const u8 *ie, size_t ie_len);
+-
++#ifdef CONFIG_DRIVER_BRCM
++	/**
++	 * stop_bss - stop beacon on BSS
++	 * @priv: Private driver interface data
++	 * Returns: 0 on success, -1 on failure (or if not supported)
++	 *
++	 * This optional function can be used to disable beaconing on BSS.
++	 */
++	int (*stop_bss)(void *priv);
++#endif /* CONFIG_DRIVER_BRCM */
+ 	/**
+ 	 * dpp_listen - Notify driver about start/stop of DPP listen
+ 	 * @priv: Private driver interface data
+@@ -5198,7 +5207,12 @@ enum wpa_event_type {
+ 	 * is required to provide more details of the frame.
+ 	 */
+ 	EVENT_UNPROT_BEACON,
+-
++#ifdef CONFIG_DRIVER_BRCM
++	/**
++	  * EVENT_INTERFACE_ADDR_CHANGED - Notification of updated ip addr for interface
++	  */
++	EVENT_INTERFACE_IP_ADDR_CHANGED,
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	/**
+ 	 * EVENT_TX_WAIT_EXPIRE - TX wait timed out
+ 	 *
+diff --git a/source/hostap-2.10/src/drivers/driver_nl80211.c b/source/hostap-2.10/src/drivers/driver_nl80211.c
+index fa89a00..b07cb87 100644
+--- a/source/hostap-2.10/src/drivers/driver_nl80211.c
++++ b/source/hostap-2.10/src/drivers/driver_nl80211.c
+@@ -1253,6 +1253,18 @@ static void wpa_driver_nl80211_event_rtm_newlink(void *ctx,
+ 			wpa_printf(MSG_DEBUG,
+ 				   "nl80211: Not the main interface (%s) - do not indicate interface down",
+ 				   drv->first_bss->ifname);
++#ifdef CONFIG_DRIVER_BRCM
++		struct i802_bss *bss = get_bss_ifindex(drv, ifi->ifi_index);
++		if (bss == NULL) {
++			wpa_printf(MSG_INFO, "nl80211: BSS not avaliable");
++			return;
++		}
++
++		wpa_printf(MSG_INFO, "nl80211: stop beacon on %s", ifname);
++		struct hostapd_data *hapd = (struct hostapd_data *)bss->ctx;
++		hostapd_stop_beacon_on_vif(hapd);
++		bss->beacon_set = 0;
++#endif /* CONFIG_DRIVER_BRCM */
+ 		} else if (drv->ignore_if_down_event) {
+ 			wpa_printf(MSG_DEBUG, "nl80211: Ignore interface down "
+ 				   "event generated by mode change");
+@@ -1273,7 +1285,28 @@ static void wpa_driver_nl80211_event_rtm_newlink(void *ctx,
+ 				return;
+ 		}
+ 	}
++#ifdef CONFIG_DRIVER_BRCM
++	if ((ifi->ifi_flags & IFF_UP)
++			&& (os_strcmp(drv->first_bss->ifname, ifname) != 0)) {
+ 
++		struct i802_bss *bss = get_bss_ifindex(drv, ifi->ifi_index);
++		if (bss == NULL) {
++			wpa_printf(MSG_INFO, "nl80211: BSS not avaliable");
++			goto event_newlink;
++		}
++
++		if (bss->beacon_set == 0) {
++			wpa_printf(MSG_INFO, "nl80211: set beacon on %s", ifname);
++			struct hostapd_data *hapd = (struct hostapd_data *)bss->ctx;
++			hostapd_set_beacon_on_vif(hapd);
++			bss->beacon_set = 1;
++		} else {
++			wpa_printf(MSG_DEBUG, "nl80211: beacon already set on %s", ifname);
++		}
++
++		goto event_newlink;
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if (drv->if_disabled && (ifi->ifi_flags & IFF_UP)) {
+ 		namebuf[0] = '\0';
+ 		if (if_indextoname(ifi->ifi_index, namebuf) &&
+@@ -1425,6 +1458,45 @@ static void wpa_driver_nl80211_event_rtm_dellink(void *ctx,
+ 						 ifname);
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static void wpa_driver_nl80211_event_rtm_newaddr(void *ctx,
++						 struct ifaddrmsg *ifa,
++						 u8 *buf, size_t len)
++{
++	struct nl80211_global *global = ctx;
++	struct wpa_driver_nl80211_data *drv;
++	int attrlen;
++	struct rtattr *attr;
++	char ifname[IFNAMSIZ + 1];
++	char ip_addr[INET_ADDRSTRLEN];
++	union wpa_event_data event;
++
++	attrlen = len;
++	attr = (struct rtattr *) buf;
++	while (RTA_OK(attr, attrlen)) {
++		switch (attr->rta_type) {
++		case IFA_LOCAL:
++			if_indextoname(ifa->ifa_index, ifname);
++			inet_ntop(AF_INET, RTA_DATA(attr), ip_addr, sizeof(ip_addr));
++			wpa_printf(MSG_DEBUG, "nl80211: Ip address change is detected in "
++				"interface %s new ip %s ", ifname, ip_addr);
++			break;
++		}
++		attr = RTA_NEXT(attr, attrlen);
++	}
++
++	drv = nl80211_find_drv(global, ifa->ifa_index, buf, len, NULL);
++	if (drv) {
++		os_memset(&event, 0, sizeof(event));
++		event.interface_status.ifindex = ifa->ifa_index;
++		os_strlcpy(event.interface_status.ifname, ifname,
++				sizeof(event.interface_status.ifname));
++		wpa_printf(MSG_DEBUG, "nl80211: Ip address change detected for "
++				"interface %s raise EVENT_INTERFACE_IP_ADDR_CHANGED", ifname);
++		wpa_supplicant_event(drv->ctx, EVENT_INTERFACE_IP_ADDR_CHANGED, &event);
++	}
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ struct nl80211_get_assoc_freq_arg {
+ 	struct wpa_driver_nl80211_data *drv;
+@@ -2675,6 +2747,20 @@ out_err:
+ 
+ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ {
++#ifdef CONFIG_DRIVER_BRCM
++        static const int stypes[] = {
++                WLAN_FC_STYPE_AUTH,
++                WLAN_FC_STYPE_ASSOC_REQ,
++                WLAN_FC_STYPE_REASSOC_REQ,
++                /* Beacon doesn't work as mac80211 doesn't currently allow
++                 * it, but it wouldn't really be the right thing anyway as
++                 * it isn't per interface ... maybe just dump the scan
++                 * results periodically for OLBC?
++                 */
++                /* WLAN_FC_STYPE_BEACON, */
++        };
++        unsigned int i;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if (nl80211_alloc_mgmt_handle(bss))
+ 		return -1;
+ 	wpa_printf(MSG_DEBUG, "nl80211: Subscribe to mgmt frames with AP "
+@@ -2684,6 +2770,16 @@ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ 		goto out_err;
+ 
+ 	if (bss->drv->device_ap_sme) {
++#ifdef CONFIG_DRIVER_BRCM
++        for (i = 0; i < ARRAY_SIZE(stypes); i++) {
++                if (nl80211_register_frame(bss, bss->nl_mgmt,
++                                           (WLAN_FC_TYPE_MGMT << 2) |
++                                           (stypes[i] << 4),
++                                           NULL, 0, false) < 0) {
++                        goto out_err;
++                }
++        }
++#else
+ 		u16 type = (WLAN_FC_TYPE_MGMT << 2) | (WLAN_FC_STYPE_AUTH << 4);
+ 
+ 		/* Register for all Authentication frames */
+@@ -2691,6 +2787,7 @@ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ 					   false) < 0)
+ 			wpa_printf(MSG_DEBUG,
+ 				   "nl80211: Failed to subscribe to handle Authentication frames - SAE offload may not work");
++#endif /* CONFIG_DRIVER_BRCM */
+ 	}
+ 
+ 	nl80211_mgmt_handle_register_eloop(bss);
+@@ -2943,6 +3040,19 @@ static int wpa_driver_nl80211_del_beacon(struct i802_bss *bss)
+ 	return send_and_recv_msgs(drv, msg, NULL, NULL, NULL, NULL);
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static int wpa_driver_nl80211_del_beacon_bss(struct i802_bss *bss)
++{
++	struct nl_msg *msg;
++	struct wpa_driver_nl80211_data *drv = bss->drv;
++
++	wpa_printf(MSG_INFO, "nl80211: Remove beacon (ifindex=%d, bss=%s)",
++			drv->ifindex, bss->ifname);
++	msg = nl80211_bss_msg(bss, 0, NL80211_CMD_DEL_BEACON);
++	nl80211_put_wiphy_data_ap(bss);
++	return send_and_recv_msgs(drv, msg, NULL, NULL, NULL, NULL);
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ /**
+  * wpa_driver_nl80211_deinit - Deinitialize nl80211 driver interface
+@@ -5475,7 +5585,10 @@ static int nl80211_create_iface_once(struct wpa_driver_nl80211_data *drv,
+ 	msg = nl80211_cmd_msg(drv->first_bss, 0, NL80211_CMD_NEW_INTERFACE);
+ 	if (!msg ||
+ 	    nla_put_string(msg, NL80211_ATTR_IFNAME, ifname) ||
+-	    nla_put_u32(msg, NL80211_ATTR_IFTYPE, iftype))
++#ifdef CONFIG_DRIVER_BRCM
++        nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN, addr) ||
++#endif /* CONFIG_DRIVER_BRCM */	    
++		nla_put_u32(msg, NL80211_ATTR_IFTYPE, iftype))
+ 		goto fail;
+ 
+ 	if (iftype == NL80211_IFTYPE_MONITOR) {
+@@ -5492,13 +5605,15 @@ static int nl80211_create_iface_once(struct wpa_driver_nl80211_data *drv,
+ 			goto fail;
+ 	}
+ 
++/* CMWIFI_RDKB_COMCAST */
++#ifndef CONFIG_DRIVER_BRCM
+ 	/*
+ 	 * Tell cfg80211 that the interface belongs to the socket that created
+ 	 * it, and the interface should be deleted when the socket is closed.
+ 	 */
+ 	if (nla_put_flag(msg, NL80211_ATTR_IFACE_SOCKET_OWNER))
+ 		goto fail;
+-
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if ((addr && iftype == NL80211_IFTYPE_P2P_DEVICE) &&
+ 	    nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN, addr))
+ 		goto fail;
+@@ -8736,6 +8851,9 @@ static void * nl80211_global_init(void *ctx)
+ 	cfg->ctx = global;
+ 	cfg->newlink_cb = wpa_driver_nl80211_event_rtm_newlink;
+ 	cfg->dellink_cb = wpa_driver_nl80211_event_rtm_dellink;
++#ifdef CONFIG_DRIVER_BRCM
++	cfg->newaddr_cb = wpa_driver_nl80211_event_rtm_newaddr;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	global->netlink = netlink_init(cfg);
+ 	if (global->netlink == NULL) {
+ 		os_free(cfg);
+@@ -12192,6 +12310,23 @@ fail:
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static int wpa_driver_nl80211_stop_bss(void *priv)
++{
++	struct i802_bss *bss = priv;
++	struct wpa_driver_nl80211_data *drv = bss->drv;
++	struct hostapd_data *hapd = (struct hostapd_data *)bss->ctx;
++
++	if (!is_ap_interface(drv->nlmode)) {
++		return -1;
++	}
++
++	wpa_driver_nl80211_del_beacon_bss(bss);
++	bss->beacon_set = 0;
++
++	return 0;
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ #ifdef CONFIG_DPP
+ static int nl80211_dpp_listen(void *priv, bool enable)
+@@ -12281,6 +12416,11 @@ const struct wpa_driver_ops wpa_driver_nl80211_ops = {
+ 	.get_capa = wpa_driver_nl80211_get_capa,
+ 	.set_operstate = wpa_driver_nl80211_set_operstate,
+ 	.set_supp_port = wpa_driver_nl80211_set_supp_port,
++#ifdef CONFIG_DRIVER_BRCM
++    .set_country = NULL,
++#else
++	.set_country = wpa_driver_nl80211_set_country,
++#endif /* CONFIG_DRIVER_BRCM  */
+ 	.set_country = wpa_driver_nl80211_set_country,
+ 	.get_country = wpa_driver_nl80211_get_country,
+ 	.set_ap = wpa_driver_nl80211_set_ap,
+@@ -12398,6 +12538,9 @@ const struct wpa_driver_ops wpa_driver_nl80211_ops = {
+ 	.update_connect_params = nl80211_update_connection_params,
+ 	.send_external_auth_status = nl80211_send_external_auth_status,
+ 	.set_4addr_mode = nl80211_set_4addr_mode,
++#ifdef CONFIG_DRIVER_BRCM
++	.stop_bss = wpa_driver_nl80211_stop_bss,
++#endif /* CONFIG_DRIVER_BRCM */
+ #ifdef CONFIG_DPP
+ 	.dpp_listen = nl80211_dpp_listen,
+ #endif /* CONFIG_DPP */
+diff --git a/source/hostap-2.10/src/drivers/driver_nl80211.h b/source/hostap-2.10/src/drivers/driver_nl80211.h
+index 80d4564..3df12b0 100644
+--- a/source/hostap-2.10/src/drivers/driver_nl80211.h
++++ b/source/hostap-2.10/src/drivers/driver_nl80211.h
+@@ -332,5 +332,9 @@ int wpa_driver_nl80211_abort_scan(void *priv, u64 scan_cookie);
+ int wpa_driver_nl80211_vendor_scan(struct i802_bss *bss,
+ 				   struct wpa_driver_scan_params *params);
+ int nl80211_set_default_scan_ies(void *priv, const u8 *ies, size_t ies_len);
++#ifdef CONFIG_DRIVER_BRCM
++void hostapd_set_beacon_on_vif(struct hostapd_data *hapd);
++void hostapd_stop_beacon_on_vif(struct hostapd_data *hapd);
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ #endif /* DRIVER_NL80211_H */
+diff --git a/source/hostap-2.10/src/drivers/driver_nl80211_event.c b/source/hostap-2.10/src/drivers/driver_nl80211_event.c
+index 3b05cab..6053e9e 100644
+--- a/source/hostap-2.10/src/drivers/driver_nl80211_event.c
++++ b/source/hostap-2.10/src/drivers/driver_nl80211_event.c
+@@ -192,6 +192,10 @@ static void mlme_event_auth(struct wpa_driver_nl80211_data *drv,
+ {
+ 	const struct ieee80211_mgmt *mgmt;
+ 	union wpa_event_data event;
++#ifdef CONFIG_DRIVER_BRCM
++        u16 auth_type;
++        u16 fc, stype;
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	if (!(drv->capa.flags & WPA_DRIVER_FLAGS_SME) &&
+ 	    drv->force_connect_cmd) {
+@@ -215,6 +219,19 @@ static void mlme_event_auth(struct wpa_driver_nl80211_data *drv,
+ 	os_memcpy(drv->auth_bssid, mgmt->sa, ETH_ALEN);
+ 	os_memset(drv->auth_attempt_bssid, 0, ETH_ALEN);
+ 	os_memset(&event, 0, sizeof(event));
++#ifdef CONFIG_DRIVER_BRCM
++        auth_type = le_to_host16(mgmt->u.auth.auth_alg);
++        fc = le_to_host16(mgmt->frame_control);
++        stype = WLAN_FC_GET_STYPE(fc);
++
++        if ((stype == WLAN_FC_STYPE_AUTH) &&
++                        (auth_type == WLAN_AUTH_SAE)) {
++                wpa_printf(MSG_DEBUG, "nl80211: SAE Authenticate event");
++                event.rx_mgmt.frame = frame;
++                event.rx_mgmt.frame_len = len;
++                wpa_supplicant_event(drv->ctx, EVENT_RX_MGMT, &event);
++        } else
++#endif /* CONFIG_DRIVER_BRCM */
+     {
+         os_memcpy(event.auth.peer, mgmt->sa, ETH_ALEN);
+         event.auth.auth_type = le_to_host16(mgmt->u.auth.auth_alg);
+@@ -1544,6 +1561,14 @@ static void nl80211_new_station_event(struct wpa_driver_nl80211_data *drv,
+ {
+ 	u8 *addr;
+ 	union wpa_event_data data;
++#ifdef CONFIG_DRIVER_BRCM
++                struct nl80211_sta_flag_update *sta_flags;
++                static struct nla_policy stats_policy[NL80211_STA_INFO_MAX + 1] = {
++                        [NL80211_STA_INFO_STA_FLAGS] =
++                                { .minlen = sizeof(struct nl80211_sta_flag_update) },
++                };
++                struct nlattr *sinfo[NL80211_STA_INFO_MAX + 1];
++#endif // endif
+ 
+ 	if (tb[NL80211_ATTR_MAC] == NULL)
+ 		return;
+@@ -1553,10 +1578,42 @@ static void nl80211_new_station_event(struct wpa_driver_nl80211_data *drv,
+ 	if (is_ap_interface(drv->nlmode) && drv->device_ap_sme) {
+ 		u8 *ies = NULL;
+ 		size_t ies_len = 0;
++#ifdef CONFIG_DRIVER_BRCM
++		struct nl80211_sta_flag_update *sta_flags;
++		static struct nla_policy stats_policy[NL80211_STA_INFO_MAX + 1] = {
++			[NL80211_STA_INFO_STA_FLAGS] =
++				{ .minlen = sizeof(struct nl80211_sta_flag_update) },
++		};
++		struct nlattr *sinfo[NL80211_STA_INFO_MAX + 1];
++#endif /* CONFIG_DRIVER_BRCM */
+ 		if (tb[NL80211_ATTR_IE]) {
+ 			ies = nla_data(tb[NL80211_ATTR_IE]);
+ 			ies_len = nla_len(tb[NL80211_ATTR_IE]);
+ 		}
++#ifdef CONFIG_DRIVER_BRCM
++                if (tb[NL80211_ATTR_STA_INFO]) {
++                        if (nla_parse_nested(sinfo, NL80211_STA_INFO_MAX,
++                                tb[NL80211_ATTR_STA_INFO], stats_policy)) {
++                                wpa_printf(MSG_DEBUG, "nl80211: Failed to parse Station info attribute ");
++                                return ;
++                        }
++                        if (sinfo[NL80211_STA_INFO_STA_FLAGS]) {
++                                sta_flags = (struct nl80211_sta_flag_update *)
++                                            nla_data(sinfo[NL80211_STA_INFO_STA_FLAGS]);
++
++                                wpa_printf(MSG_DEBUG, "nl80211: sinfo sta_flags mask %d set %d ",
++                                                        sta_flags->mask, sta_flags->set);
++                                if ((sta_flags->mask & BIT(NL80211_STA_FLAG_ASSOCIATED)) &&
++                                    (sta_flags->mask & BIT(NL80211_STA_FLAG_AUTHENTICATED))) {
++                                        if ((sta_flags->set & BIT(NL80211_STA_FLAG_ASSOCIATED)) &&
++                                           (sta_flags->set & BIT(NL80211_STA_FLAG_AUTHENTICATED))) {
++                                                drv_event_assoc(bss->ctx, addr, ies, ies_len, 1);
++                                                return;
++                                        }
++                                }
++                        }
++                }
++#endif // endif
+ 		wpa_hexdump(MSG_DEBUG, "nl80211: Assoc Req IEs", ies, ies_len);
+ 		drv_event_assoc(bss->ctx, addr, ies, ies_len, 0);
+ 		return;
+diff --git a/source/hostap-2.10/src/drivers/linux_ioctl.c b/source/hostap-2.10/src/drivers/linux_ioctl.c
+index 7edb9df..eba6b81 100644
+--- a/source/hostap-2.10/src/drivers/linux_ioctl.c
++++ b/source/hostap-2.10/src/drivers/linux_ioctl.c
+@@ -15,6 +15,86 @@
+ #include "common/linux_bridge.h"
+ #include "linux_ioctl.h"
+ 
++#ifdef CONFIG_DRIVER_BRCM
++#include <sys/wait.h>
++#define OVS_MODULE "/sys/module/openvswitch"
++
++#define run_prog(p, ...) ({ \
++	int rc = -1, status; \
++	pid_t pid = fork(); \
++	if (!pid) \
++		exit(execlp(p, p, ##__VA_ARGS__, NULL)); \
++	if (pid < 0) {\
++		rc = -1;\
++	} else {\
++		while ((rc = waitpid(pid, &status, 0)) == -1 && errno == EINTR); \
++		rc = (rc == pid && WIFEXITED(status)) ? WEXITSTATUS(status) : -1; \
++	}\
++	rc;\
++})
++
++static
++int ovs_br_exists(const char *brname)
++{
++	char buf[128] = {};
++	char *p;
++	FILE *f;
++
++	f = popen("/usr/bin/ovs-vsctl list-br", "r");
++	while (f && (p = fgets(buf, sizeof(buf), f)))
++		if (!strcmp(strsep(&p, "\n") ?: "", brname))
++			break;
++
++	if (f) pclose(f);
++	return strlen(buf) > 0;
++}
++
++static
++int ovs_br_add_if(const char *brname, const char *ifname)
++{
++	printf("ovs-vsctl add-port %s %s\r\n", brname, ifname);
++	if (run_prog("/usr/bin/ovs-vsctl", "add-port", brname, ifname))
++		return -1;
++	return 0;
++}
++
++static
++int ovs_br_del_if(const char *brname, const char *ifname)
++{
++	printf("ovs-vsctl del-port %s %s\r\n", brname, ifname);
++
++	if (run_prog("/usr/bin/ovs-vsctl", "del-port", brname, ifname))
++		return -1;
++	return 0;
++}
++
++static
++int ovs_if_get_br(char *brname, const char *ifname)
++{
++	char cmd[128];
++	char *p;
++	FILE *f;
++
++	os_snprintf(cmd, sizeof(cmd), "/usr/bin/ovs-vsctl port-to-br %s", ifname);
++	f = popen(cmd, "r");
++	if (!f) return -1;
++	p = fgets(brname, IFNAMSIZ, f);
++	pclose(f);
++	if (p == NULL || strlen(p) == 0) return -1;
++	strsep(&p, "\n"); /* chomp \n */
++	return 0;
++}
++
++static
++int ovs_add_br(const char *brname)
++{
++	printf("ovs-vsctl add-br %s \r\n", brname);
++	if (run_prog("/usr/bin/ovs-vsctl", "add-br", brname)) {
++		return -1;
++	}
++	return 0;
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ int linux_set_iface_flags(int sock, const char *ifname, int dev_up)
+ {
+@@ -122,6 +202,21 @@ int linux_set_ifhwaddr(int sock, const char *ifname, const u8 *addr)
+ 
+ int linux_br_add(int sock, const char *brname)
+ {
++#ifdef CONFIG_DRIVER_BRCM
++	if (access(OVS_MODULE, F_OK) == 0) {
++		wpa_printf(MSG_DEBUG, "Skipping creation of linux bridge in OpenvSwitch mode  %s",
++				   brname);
++		if ((strcmp(brname, "brlan2") != 0) ||
++			(strcmp(brname, "brlan3") != 0) ||
++			(strcmp(brname, "brlan4") != 0) ||
++			(strcmp(brname, "brlan5") != 0)) {
++			if ( ovs_add_br(brname) < 0) {
++				return -1;
++			}
++			return 0;
++		}
++	}
++#endif
+ 	if (ioctl(sock, SIOCBRADDBR, brname) < 0) {
+ 		int saved_errno = errno;
+ 
+@@ -152,6 +247,16 @@ int linux_br_add_if(int sock, const char *brname, const char *ifname)
+ 	struct ifreq ifr;
+ 	int ifindex;
+ 
++#ifdef CONFIG_DRIVER_BRCM
++	if (ovs_br_exists(brname)) {
++		if ((strcmp(brname, "brlan2") != 0) ||
++			(strcmp(brname, "brlan3") != 0) ||
++			(strcmp(brname, "brlan4") != 0) ||
++			(strcmp(brname, "brlan5") != 0)) {
++			return ovs_br_add_if(brname, ifname);
++		}
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ 	ifindex = if_nametoindex(ifname);
+ 	if (ifindex == 0)
+ 		return -1;
+@@ -177,6 +282,16 @@ int linux_br_del_if(int sock, const char *brname, const char *ifname)
+ 	struct ifreq ifr;
+ 	int ifindex;
+ 
++#ifdef CONFIG_DRIVER_BRCM
++	if (ovs_br_exists(brname)) {
++		if ((strcmp(brname, "brlan2") != 0) ||
++			(strcmp(brname, "brlan3") != 0) ||
++			(strcmp(brname, "brlan4") != 0) ||
++			(strcmp(brname, "brlan5") != 0)) {
++			return ovs_br_del_if(brname, ifname);
++		}
++	}
++#endif /* CONFIG_DRIVER_BRCM */
+ 	ifindex = if_nametoindex(ifname);
+ 	if (ifindex == 0)
+ 		return -1;
+@@ -203,7 +318,11 @@ int linux_br_get(char *brname, const char *ifname)
+ 		    ifname);
+ 	res = readlink(path, brlink, sizeof(brlink));
+ 	if (res < 0 || (size_t) res >= sizeof(brlink))
++#ifdef CONFIG_DRIVER_BRCM
++		return ovs_if_get_br(brname, ifname);
++#else
+ 		return -1;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	brlink[res] = '\0';
+ 	pos = os_strrchr(brlink, '/');
+ 	if (pos == NULL)
+diff --git a/source/hostap-2.10/src/drivers/netlink.c b/source/hostap-2.10/src/drivers/netlink.c
+index 0e960f4..faaeb0c 100644
+--- a/source/hostap-2.10/src/drivers/netlink.c
++++ b/source/hostap-2.10/src/drivers/netlink.c
+@@ -32,6 +32,19 @@ static void netlink_receive_link(struct netlink_data *netlink,
+ 	   NLMSG_PAYLOAD(h, sizeof(struct ifinfomsg)));
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM
++static void netlink_receive_addr(struct netlink_data *netlink,
++				 void (*cb)(void *ctx, struct ifaddrmsg *ifa,
++					    u8 *buf, size_t len),
++				 struct nlmsghdr *h)
++{
++	if (cb == NULL || NLMSG_PAYLOAD(h, 0) < sizeof(struct ifaddrmsg))
++		return;
++	cb(netlink->cfg->ctx, NLMSG_DATA(h),
++	   (u8 *) NLMSG_DATA(h) + NLMSG_ALIGN(sizeof(struct ifaddrmsg)),
++	   NLMSG_PAYLOAD(h, sizeof(struct ifaddrmsg)));
++}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ static void netlink_receive(int sock, void *eloop_ctx, void *sock_ctx)
+ {
+@@ -65,6 +78,12 @@ try_again:
+ 			netlink_receive_link(netlink, netlink->cfg->dellink_cb,
+ 					     h);
+ 			break;
++#ifdef CONFIG_DRIVER_BRCM
++		case RTM_NEWADDR:
++			netlink_receive_addr(netlink, netlink->cfg->newaddr_cb,
++					     h);
++			break;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 		}
+ 
+ 		h = NLMSG_NEXT(h, left);
+@@ -107,7 +126,11 @@ struct netlink_data * netlink_init(struct netlink_config *cfg)
+ 
+ 	os_memset(&local, 0, sizeof(local));
+ 	local.nl_family = AF_NETLINK;
++#ifdef CONFIG_DRIVER_BRCM
++        local.nl_groups = RTMGRP_LINK | RTMGRP_IPV4_IFADDR;
++#else
+ 	local.nl_groups = RTMGRP_LINK;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if (bind(netlink->sock, (struct sockaddr *) &local, sizeof(local)) < 0)
+ 	{
+ 		wpa_printf(MSG_ERROR, "netlink: Failed to bind netlink "
+diff --git a/source/hostap-2.10/src/drivers/netlink.h b/source/hostap-2.10/src/drivers/netlink.h
+index 3a7340e..8d4bc2a 100644
+--- a/source/hostap-2.10/src/drivers/netlink.h
++++ b/source/hostap-2.10/src/drivers/netlink.h
+@@ -18,6 +18,10 @@ struct netlink_config {
+ 			   size_t len);
+ 	void (*dellink_cb)(void *ctx, struct ifinfomsg *ifi, u8 *buf,
+ 			   size_t len);
++#ifdef CONFIG_DRIVER_BRCM
++	void (*newaddr_cb)(void *ctx, struct ifaddrmsg *ifa, u8 *buf,
++			   size_t len);
++#endif	/* CONFIG_DRIVER_BRCM */
+ };
+ 
+ struct netlink_data * netlink_init(struct netlink_config *cfg);
+diff --git a/source/hostap-2.10/src/drivers/priv_netlink.h b/source/hostap-2.10/src/drivers/priv_netlink.h
+index d3f091c..d0bc4a2 100644
+--- a/source/hostap-2.10/src/drivers/priv_netlink.h
++++ b/source/hostap-2.10/src/drivers/priv_netlink.h
+@@ -106,4 +106,22 @@ struct rtattr
+ 	unsigned short rta_type;
+ };
+ 
++#ifdef CONFIG_DRIVER_BRCM
++
++#ifndef IFA_LOCAL
++#define IFA_LOCAL 2
++#endif // endif
++#define RTMGRP_IPV4_IFADDR      0x10
++#define RTM_NEWADDR (RTM_BASE + 4)
++
++struct ifaddrmsg
++{
++        u8 ifa_family;
++        u8 ifa_prefixlen;       /* The prefix length    */
++        u8 ifa_flags;           /* Flag                 */
++        u8 ifa_scope;           /* Address scope        */
++        u32 ifa_index;          /* Link index           */
++};
++#endif  /* CONFIG_DRIVER_BRCM */
++
+ #endif /* PRIV_NETLINK_H */
+diff --git a/source/hostap-2.10/src/wps/http_server.c b/source/hostap-2.10/src/wps/http_server.c
+index 507abe8..9de220b 100644
+--- a/source/hostap-2.10/src/wps/http_server.c
++++ b/source/hostap-2.10/src/wps/http_server.c
+@@ -244,8 +244,13 @@ struct http_server * http_server_init(struct in_addr *addr, int port,
+ 	if (srv->fd < 0)
+ 		goto fail;
+ 
++#if defined(CONFIG_DRIVER_BRCM) && !defined(CMWIFI)
++	//CMWIFI to upgrade toolchain to have SO_RESUEPORT
++	if (setsockopt(srv->fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(on)) < 0)
++#else
+ 	if (setsockopt(srv->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+-	{
++#endif /* CONFIG_DRIVER_BRCM */
++	{
+ 		wpa_printf(MSG_DEBUG,
+ 			   "HTTP: setsockopt(SO_REUSEADDR) failed: %s",
+ 			   strerror(errno));
+diff --git a/source/hostap-2.10/src/wps/wps.h b/source/hostap-2.10/src/wps/wps.h
+index fed3e28..9c4d034 100644
+--- a/source/hostap-2.10/src/wps/wps.h
++++ b/source/hostap-2.10/src/wps/wps.h
+@@ -841,7 +841,10 @@ struct wps_context {
+ 	struct wpabuf *ap_nfc_dh_pubkey;
+ 	struct wpabuf *ap_nfc_dh_privkey;
+ 	struct wpabuf *ap_nfc_dev_pw;
+-
++#ifdef CONFIG_DRIVER_BRCM_MAP
++    u8 map;
++    struct wps_credential bh_creds; /* Multiap backhaul credentials */
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 	/* Whether to send WPA2-PSK passphrase as a passphrase instead of PSK
+ 	 * for WPA3-Personal transition mode needs. */
+ 	bool use_passphrase;
+diff --git a/source/hostap-2.10/src/wps/wps_attr_parse.c b/source/hostap-2.10/src/wps/wps_attr_parse.c
+index fd51635..02eb877 100644
+--- a/source/hostap-2.10/src/wps/wps_attr_parse.c
++++ b/source/hostap-2.10/src/wps/wps_attr_parse.c
+@@ -67,6 +67,15 @@ static int wps_set_vendor_ext_wfa_subelem(struct wps_parse_attr *attr,
+ 		}
+ 		attr->registrar_configuration_methods = pos;
+ 		break;
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        case WFA_ELEM_MAP_EXTENSION_ATTR:
++                if (len < 1) {
++                        wpa_printf(MSG_DEBUG, "WPS: Invalid multiap extension attr %u", len);
++                        return -1;
++                }
++                attr->map_ext_attr = pos;
++                break;
++#else
+ 	case WFA_ELEM_MULTI_AP:
+ 		if (len != 1) {
+ 			wpa_printf(MSG_DEBUG,
+@@ -78,6 +87,7 @@ static int wps_set_vendor_ext_wfa_subelem(struct wps_parse_attr *attr,
+ 		wpa_printf(MSG_DEBUG, "WPS: Multi-AP Extension 0x%02x",
+ 			   attr->multi_ap_ext);
+ 		break;
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 	default:
+ 		wpa_printf(MSG_MSGDUMP, "WPS: Skipped unknown WFA Vendor "
+ 			   "Extension subelement %u", id);
+diff --git a/source/hostap-2.10/src/wps/wps_attr_parse.h b/source/hostap-2.10/src/wps/wps_attr_parse.h
+index 4de27b2..c953350 100644
+--- a/source/hostap-2.10/src/wps/wps_attr_parse.h
++++ b/source/hostap-2.10/src/wps/wps_attr_parse.h
+@@ -56,6 +56,9 @@ struct wps_parse_attr {
+ 	const u8 *request_to_enroll; /* 1 octet (Bool) */
+ 	const u8 *ap_channel; /* 2 octets */
+ 	const u8 *registrar_configuration_methods; /* 2 octets */
++#ifdef CONFIG_DRIVER_BRCM_MAP
++    const u8 *map_ext_attr; /* 1 octet */
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 
+ 	/* variable length fields */
+ 	const u8 *manufacturer;
+diff --git a/source/hostap-2.10/src/wps/wps_defs.h b/source/hostap-2.10/src/wps/wps_defs.h
+index ddaeda5..a194243 100644
+--- a/source/hostap-2.10/src/wps/wps_defs.h
++++ b/source/hostap-2.10/src/wps/wps_defs.h
+@@ -153,7 +153,10 @@ enum {
+ 	WFA_ELEM_REQUEST_TO_ENROLL = 0x03,
+ 	WFA_ELEM_SETTINGS_DELAY_TIME = 0x04,
+ 	WFA_ELEM_REGISTRAR_CONFIGURATION_METHODS = 0x05,
+-	WFA_ELEM_MULTI_AP = 0x06
++	WFA_ELEM_MULTI_AP = 0x06,
++#ifdef CONFIG_DRIVER_BRCM_MAP
++    WFA_ELEM_MAP_EXTENSION_ATTR = 0x06,
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ };
+ 
+ /* Device Password ID */
+@@ -381,4 +384,9 @@ enum wps_response_type {
+ 
+ #define WPS_MAX_AUTHORIZED_MACS 5
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++#define WPS_MAP_BH_STA          0x80
++#define WPS_MAP_FH_BSS          0x20
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
++
+ #endif /* WPS_DEFS_H */
+diff --git a/source/hostap-2.10/src/wps/wps_i.h b/source/hostap-2.10/src/wps/wps_i.h
+index 2cf22d4..3b78fad 100644
+--- a/source/hostap-2.10/src/wps/wps_i.h
++++ b/source/hostap-2.10/src/wps/wps_i.h
+@@ -127,6 +127,9 @@ struct wps_data {
+ 	struct wps_nfc_pw_token *nfc_pw_token;
+ 
+ 	int multi_ap_backhaul_sta;
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        u8 map_ext_attr_e;              /* Enrolee multiap extension attribute */
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ };
+ 
+ 
+diff --git a/source/hostap-2.10/src/wps/wps_registrar.c b/source/hostap-2.10/src/wps/wps_registrar.c
+index 9587293..c95956a 100644
+--- a/source/hostap-2.10/src/wps/wps_registrar.c
++++ b/source/hostap-2.10/src/wps/wps_registrar.c
+@@ -1632,7 +1632,20 @@ int wps_build_cred(struct wps_data *wps, struct wpabuf *msg)
+ 		goto use_provided;
+ 	}
+ 	os_memset(&wps->cred, 0, sizeof(wps->cred));
+-
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        /* For multiap backhaul sta use the backhaul ssid and password */
++        if ((wps->map_ext_attr_e == WPS_MAP_BH_STA) && (wps->wps->map & WPS_MAP_FH_BSS) &&
++                        wps->wps->bh_creds.ssid_len > 0) {
++                os_memcpy(wps->cred.ssid, wps->wps->bh_creds.ssid, wps->wps->bh_creds.ssid_len);
++                wps->cred.ssid_len = wps->wps->bh_creds.ssid_len;
++                wps->cred.auth_type = wps->wps->bh_creds.auth_type;
++                wps->cred.encr_type = wps->wps->bh_creds.encr_type;
++                os_memcpy(wps->cred.mac_addr, wps->mac_addr_e, ETH_ALEN);
++                os_memcpy(wps->cred.key, wps->wps->bh_creds.key, wps->wps->bh_creds.key_len);
++                wps->cred.key_len = wps->wps->bh_creds.key_len;
++                goto use_provided;
++        }
++#else
+ 	if (wps->peer_dev.multi_ap_ext == MULTI_AP_BACKHAUL_STA &&
+ 	    reg->multi_ap_backhaul_ssid_len) {
+ 		wpa_printf(MSG_DEBUG, "WPS: Use backhaul STA credentials");
+@@ -1655,7 +1668,7 @@ int wps_build_cred(struct wps_data *wps, struct wpabuf *msg)
+ 		}
+ 		goto use_provided;
+ 	}
+-
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 	os_memcpy(wps->cred.ssid, wps->wps->ssid, wps->wps->ssid_len);
+ 	wps->cred.ssid_len = wps->wps->ssid_len;
+ 
+@@ -2602,6 +2615,21 @@ static int wps_process_config_error(struct wps_data *wps, const u8 *err)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++static int wps_process_map_ext_attr(struct wps_data *wps, const u8 *map)
++{
++        if (map == NULL) {
++                wpa_printf(MSG_DEBUG, "WPS: No multiap extension attribute received");
++                wps->map_ext_attr_e = 0;
++                return 0;
++        }
++
++        wps->map_ext_attr_e = *map;
++        wpa_printf(MSG_DEBUG, "WPS: Enrollee Multiap Extension Attr %d", wps->map_ext_attr_e);
++
++        return 0;
++}
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 
+ static int wps_registrar_p2p_dev_addr_match(struct wps_data *wps)
+ {
+@@ -2667,7 +2695,11 @@ static enum wps_process_res wps_process_m1(struct wps_data *wps,
+ 	    wps_process_assoc_state(wps, attr->assoc_state) ||
+ 	    wps_process_dev_password_id(wps, attr->dev_password_id) ||
+ 	    wps_process_config_error(wps, attr->config_error) ||
+-	    wps_process_os_version(&wps->peer_dev, attr->os_version))
++	    wps_process_os_version(&wps->peer_dev, attr->os_version) ||
++#ifdef CONFIG_DRIVER_BRCM_MAP
++            wps_process_map_ext_attr(wps, attr->map_ext_attr) ||
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
++		0 )
+ 		return WPS_FAILURE;
+ 
+ 	if (wps->dev_pw_id < 0x10 &&
+diff --git a/source/hostap-2.10/src/wps/wps_upnp.c b/source/hostap-2.10/src/wps/wps_upnp.c
+index 05bb9c5..33de512 100644
+--- a/source/hostap-2.10/src/wps/wps_upnp.c
++++ b/source/hostap-2.10/src/wps/wps_upnp.c
+@@ -184,7 +184,9 @@
+ #include "wps_i.h"
+ #include "wps_upnp.h"
+ #include "wps_upnp_i.h"
+-
++#ifdef CONFIG_DRIVER_BRCM
++#include <assert.h>
++#endif	/* CONFIG_DRIVER_BRCM */
+ 
+ /*
+  * UPnP allows a client ("control point") to send a server like us ("device")
+@@ -212,9 +214,39 @@
+ /* Maximum number of Probe Request events per second */
+ #define MAX_EVENTS_PER_SEC 5
+ 
+-
++#ifndef CONFIG_DRIVER_BRCM
+ static struct upnp_wps_device_sm *shared_upnp_device = NULL;
++#else
++#define MAX_SHARED_DEV	16
++static struct upnp_wps_device_sm **shared_upnp_device = NULL;
++static struct upnp_wps_device_sm *upnp_devices[MAX_SHARED_DEV] = {NULL};
++static struct upnp_wps_device_sm **get_shared_upnp_device(char *net_if)
++{
++	int idx = 0;
++	struct upnp_wps_device_sm **upnp_device = NULL;
+ 
++	if (!net_if) {
++		wpa_printf(MSG_ERROR, "WPS UPnP: %s unexpected net_if \n", __func__);
++		return &upnp_devices[MAX_SHARED_DEV - 1];
++	}
++
++	while (idx < MAX_SHARED_DEV && upnp_devices[idx] != NULL &&
++			upnp_devices[idx]->upnp_iface != NULL) {
++		if (!os_strcmp(net_if, upnp_devices[idx]->upnp_iface)) {
++			upnp_device = &upnp_devices[idx];
++			break;
++		}
++		idx++;
++	}
++
++	assert(idx < MAX_SHARED_DEV);
++
++	if (!upnp_device)
++		upnp_device = &upnp_devices[idx];
++
++	return upnp_device;
++}
++#endif	/* CONFIG_DRIVER_BRCM */
+ 
+ /* Write the current date/time per RFC */
+ void format_date(struct wpabuf *buf)
+@@ -1044,6 +1076,10 @@ static void upnp_wps_device_stop(struct upnp_wps_device_sm *sm)
+  */
+ static int upnp_wps_device_start(struct upnp_wps_device_sm *sm, char *net_if)
+ {
++#ifdef CONFIG_DRIVER_BRCM
++	int failed = 0;
++#endif	/* CONFIG_DRIVER_BRCM */
++
+ 	if (!sm || !net_if)
+ 		return -1;
+ 
+@@ -1054,6 +1090,9 @@ static int upnp_wps_device_start(struct upnp_wps_device_sm *sm, char *net_if)
+ 	sm->ssdp_sd = -1;
+ 	sm->started = 1;
+ 	sm->advertise_count = 0;
++#ifdef CONFIG_DRIVER_BRCM
++	sm->upnp_iface = os_strdup(net_if);
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	/* Fix up linux multicast handling */
+ 	if (add_ssdp_network(net_if))
+@@ -1064,7 +1103,11 @@ static int upnp_wps_device_start(struct upnp_wps_device_sm *sm, char *net_if)
+ 			   &sm->netmask, sm->mac_addr)) {
+ 		wpa_printf(MSG_INFO, "WPS UPnP: Could not get IP/MAC address "
+ 			   "for %s. Does it have IP address?", net_if);
++#ifdef CONFIG_DRIVER_BRCM
++		failed = 1;
++#else
+ 		goto fail;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	}
+ 	wpa_printf(MSG_DEBUG, "WPS UPnP: Local IP address %s netmask %s hwaddr "
+ 		   MACSTR,
+@@ -1074,8 +1117,13 @@ static int upnp_wps_device_start(struct upnp_wps_device_sm *sm, char *net_if)
+ 	/* Listen for incoming TCP connections so that others
+ 	 * can fetch our "xml files" from us.
+ 	 */
++#ifdef CONFIG_DRIVER_BRCM
++	if (!failed &&  web_listener_start(sm))
++		goto fail;
++#else
+ 	if (web_listener_start(sm))
+ 		goto fail;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 
+ 	/* Set up for receiving discovery (UDP) packets */
+ 	if (ssdp_listener_start(sm))
+@@ -1133,6 +1181,9 @@ void upnp_wps_device_deinit(struct upnp_wps_device_sm *sm, void *priv)
+ 			   "instance to deinit");
+ 		return;
+ 	}
++#ifdef CONFIG_DRIVER_BRCM
++	shared_upnp_device = get_shared_upnp_device(sm->upnp_iface);
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	wpa_printf(MSG_DEBUG, "WPS UPnP: Deinit interface instance %p", iface);
+ 	if (dl_list_len(&sm->interfaces) == 1) {
+ 		wpa_printf(MSG_DEBUG, "WPS UPnP: Deinitializing last instance "
+@@ -1157,8 +1208,16 @@ void upnp_wps_device_deinit(struct upnp_wps_device_sm *sm, void *priv)
+ 	if (dl_list_empty(&sm->interfaces)) {
+ 		os_free(sm->root_dir);
+ 		os_free(sm->desc_url);
++#ifdef CONFIG_DRIVER_BRCM
++		os_free(sm->upnp_iface);
++		sm->upnp_iface = NULL;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 		os_free(sm);
++#ifdef CONFIG_DRIVER_BRCM
++		*shared_upnp_device = NULL;
++#else
+ 		shared_upnp_device = NULL;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	}
+ }
+ 
+@@ -1192,10 +1251,19 @@ upnp_wps_device_init(struct upnp_wps_device_ctx *ctx, struct wps_context *wps,
+ 	iface->wps = wps;
+ 	iface->priv = priv;
+ 
++#ifdef CONFIG_DRIVER_BRCM
++	shared_upnp_device = get_shared_upnp_device(net_if);
++	if (*shared_upnp_device) {
++#else
+ 	if (shared_upnp_device) {
++#endif	/* CONFIG_DRIVER_BRCM */
+ 		wpa_printf(MSG_DEBUG, "WPS UPnP: Share existing device "
+ 			   "context");
++#ifdef CONFIG_DRIVER_BRCM
++		sm = *shared_upnp_device;
++#else
+ 		sm = shared_upnp_device;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 	} else {
+ 		wpa_printf(MSG_DEBUG, "WPS UPnP: Initialize device context");
+ 		sm = os_zalloc(sizeof(*sm));
+@@ -1207,7 +1275,11 @@ upnp_wps_device_init(struct upnp_wps_device_ctx *ctx, struct wps_context *wps,
+ 			os_free(ctx);
+ 			return NULL;
+ 		}
+-		shared_upnp_device = sm;
++#ifdef CONFIG_DRIVER_BRCM
++		*shared_upnp_device = sm;
++#else
++ 		shared_upnp_device = sm;
++#endif	/* CONFIG_DRIVER_BRCM */
+ 
+ 		dl_list_init(&sm->msearch_replies);
+ 		dl_list_init(&sm->subscriptions);
+@@ -1257,3 +1329,38 @@ int upnp_wps_set_ap_pin(struct upnp_wps_device_sm *sm, const char *ap_pin)
+ 
+ 	return 0;
+ }
++
++
++#ifdef CONFIG_DRIVER_BRCM
++/**
++ * upnp_wps_web_listener_sock_update - updates web listner socket
++ * @sm: WPS UPnP state machine from upnp_wps_device_init()
++ * @net_if: Selected network interface name
++ * Returns: 0 or -1 on failure
++ */
++int upnp_wps_web_listener_sock_update(struct upnp_wps_device_sm *sm, char *net_if)
++{
++	if (!sm || !net_if)
++		return -1;
++
++	web_listener_stop(sm);
++
++	/* Determine which IP and mac address we're using */
++	if (get_netif_info(net_if, &sm->ip_addr, &sm->ip_addr_text,
++			   &sm->netmask, sm->mac_addr)) {
++		wpa_printf(MSG_INFO, "WPS UPnP: Could not get IP address for %s", net_if);
++		goto fail;
++	}
++
++	/* Listen for incoming TCP connections so that others
++	 * can fetch our "xml files" from us.
++	 */
++	if (web_listener_start(sm))
++		goto fail;
++
++	return 0;
++fail:
++	upnp_wps_device_stop(sm);
++	return -1;
++}
++#endif	/* CONFIG_DRIVER_BRCM */
+\ No newline at end of file
+diff --git a/source/hostap-2.10/src/wps/wps_upnp.h b/source/hostap-2.10/src/wps/wps_upnp.h
+index b6f6df5..f49e0a1 100644
+--- a/source/hostap-2.10/src/wps/wps_upnp.h
++++ b/source/hostap-2.10/src/wps/wps_upnp.h
+@@ -47,5 +47,8 @@ int upnp_wps_device_send_wlan_event(struct upnp_wps_device_sm *sm,
+ 				    const struct wpabuf *msg);
+ int upnp_wps_subscribers(struct upnp_wps_device_sm *sm);
+ int upnp_wps_set_ap_pin(struct upnp_wps_device_sm *sm, const char *ap_pin);
++#ifdef CONFIG_DRIVER_BRCM
++int upnp_wps_web_listener_sock_update(struct upnp_wps_device_sm *sm, char *net_if);
++#endif	/* CONFIG_DRIVER_BRCM */
+ 
+ #endif /* WPS_UPNP_H */
+diff --git a/source/hostap-2.10/src/wps/wps_upnp_ap.c b/source/hostap-2.10/src/wps/wps_upnp_ap.c
+index b6c9478..98b6d2e 100644
+--- a/source/hostap-2.10/src/wps/wps_upnp_ap.c
++++ b/source/hostap-2.10/src/wps/wps_upnp_ap.c
+@@ -76,8 +76,11 @@ int upnp_er_set_selected_registrar(struct wps_registrar *reg,
+ void upnp_er_remove_notification(struct wps_registrar *reg,
+ 				 struct subscription *s)
+ {
++#ifndef CONFIG_DRIVER_BRCM
+ 	bool was_sel_reg = s->selected_registrar;
+-
++#else
++	u8 was_sel_reg = s->selected_registrar;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	s->selected_registrar = 0;
+ 	eloop_cancel_timeout(upnp_er_set_selected_timeout, s, reg);
+ 	if (reg && was_sel_reg)
+diff --git a/source/hostap-2.10/src/wps/wps_upnp_i.h b/source/hostap-2.10/src/wps/wps_upnp_i.h
+index 6ead7b4..d2d82ec 100644
+--- a/source/hostap-2.10/src/wps/wps_upnp_i.h
++++ b/source/hostap-2.10/src/wps/wps_upnp_i.h
+@@ -146,6 +146,9 @@ struct upnp_wps_device_sm {
+ 	enum upnp_wps_wlanevent_type wlanevent_type;
+ 	os_time_t last_event_sec;
+ 	unsigned int num_events_in_sec;
++#ifdef CONFIG_DRIVER_BRCM
++	char *upnp_iface;
++#endif	/* CONFIG_DRIVER_BRCM */
+ };
+ 
+ /* wps_upnp.c */
+diff --git a/source/hostap-2.10/src/wps/wps_validate.c b/source/hostap-2.10/src/wps/wps_validate.c
+index 5c12bce..1c10201 100644
+--- a/source/hostap-2.10/src/wps/wps_validate.c
++++ b/source/hostap-2.10/src/wps/wps_validate.c
+@@ -421,6 +421,24 @@ static int wps_validate_request_to_enroll(const u8 *request_to_enroll,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DRIVER_BRCM_MAP
++static int wps_validate_map_ext_attr(const u8 *map_ext_attr, int mandatory)
++{
++        if (map_ext_attr == NULL) {
++                if (mandatory) {
++                        wpa_printf(MSG_INFO, "WPS-STRICT: multiap extension attribute missing");
++                        return -1;
++                }
++                return 0;
++        }
++        if (*map_ext_attr != WPS_MAP_BH_STA) {
++                wpa_printf(MSG_INFO, "WPS-STRICT: Invalid multiap extension "
++                           "attribute value 0x%x", *map_ext_attr);
++                return -1;
++        }
++        return 0;
++}
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
+ 
+ static int wps_validate_req_dev_type(const u8 *req_dev_type[], size_t num,
+ 				     int mandatory)
+@@ -1324,7 +1342,11 @@ int wps_validate_m1(const struct wpabuf *tlvs)
+ 	    wps_validate_config_error(attr.config_error, 1) ||
+ 	    wps_validate_os_version(attr.os_version, 1) ||
+ 	    wps_validate_version2(attr.version2, wps2) ||
+-	    wps_validate_request_to_enroll(attr.request_to_enroll, 0)) {
++	    wps_validate_request_to_enroll(attr.request_to_enroll, 0) ||
++#ifdef CONFIG_DRIVER_BRCM_MAP
++        wps_validate_map_ext_attr(attr.map_ext_attr, 0) ||
++#endif  /* CONFIG_DRIVER_BRCM_MAP */
++            0) {
+ 		wpa_printf(MSG_INFO, "WPS-STRICT: Invalid M1");
+ #ifdef WPS_STRICT_WPS2
+ 		if (wps2)
+diff --git a/source/hostap-2.10/src/crypto/crypto_openssl.c b/source/hostap-2.10/src/crypto/crypto_openssl.c
+index 3c8bc4e..e24a16e 100644
+--- a/source/hostap-2.10/src/crypto/crypto_openssl.c
++++ b/source/hostap-2.10/src/crypto/crypto_openssl.c
+@@ -1775,7 +1775,7 @@ int crypto_get_random(void *buf, size_t len)
+                return -1;
+        return 0;
+ }
+-
++#ifdef CONFIG_OPENSSL_CMAC
+
+ int omac1_aes_vector(const u8 *key, size_t key_len, size_t num_elem,
+                     const u8 *addr[], const size_t *len, u8 *mac)
+@@ -1875,7 +1875,7 @@ int omac1_aes_256(const u8 *key, const u8 *data, size_t data_len, u8 *mac)
+ {
+        return omac1_aes_vector(key, 32, 1, &data, &data_len, mac);
+ }
+-
++#endif
+
+ struct crypto_bignum * crypto_bignum_init(void)
+ { 
+diff --git a/source/hostap-2.10/src/utils/crc32.c b/source/hostap-2.10/src/utils/crc32.c
+index 12d9e2a..3712549 100644
+--- a/source/hostap-2.10/src/utils/crc32.c
++++ b/source/hostap-2.10/src/utils/crc32.c
+@@ -72,7 +72,7 @@ static const u32 crc32_table[256] = {
+ };
+ 
+ 
+-u32 crc32(const u8 *frame, size_t frame_len)
++u32 ieee80211_crc32(const u8 *frame, size_t frame_len)
+ {
+        size_t i;
+        u32 crc;
+diff --git a/source/hostap-2.10/src/utils/crc32.h b/source/hostap-2.10/src/utils/crc32.h
+index dc31399..f92a7a9 100644
+--- a/source/hostap-2.10/src/utils/crc32.h
++++ b/source/hostap-2.10/src/utils/crc32.h
+@@ -9,6 +9,9 @@
+ #ifndef CRC32_H
+ #define CRC32_H
+ 
+-u32 crc32(const u8 *frame, size_t frame_len);
++/* crc32 conflicts with zlib crc32 */
++#define crc32 ieee80211_crc32
++
++u32 ieee80211_crc32(const u8 *frame, size_t frame_len);
+ 
+ #endif /* CRC32_H */ 

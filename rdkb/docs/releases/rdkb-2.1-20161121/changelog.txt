@@ -1,0 +1,148 @@
+Changelog between rdkb-2.1-20161107 and rdkb-2.1-20161121
+
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+7a144a9 RDKB-9007 : Return code from the HAL is not handled by the CM Agent
+f50e20e RDKB-8912 : Ccsp PandM Deadlock cases
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+e9a9a1e ARRISXB6-2906 : [Arris xb6] systemd process-restart Reporting
+54e0319 RDKB-9181,RDKB-9182 : Move wecb & log_agent to cosa_start_rem.sh bbhm changes
+1dfb828 RDKB-8912 : Ccsp PandM Deadlock cases
+5656b05 ARRISXB6-2807: Add FSC to rdk logger
+85f90fd RDKB-8004 : Adding CcspXDNS to startup scripts
+34aea50 ARRISXB6-2840,ARRISXB6-2839 : logsync issues
+7fcab96 ARRISXB6-2819: [Boot][Logging] CR Log going to console instead of CRlog.txt
+096b8ff RDKB-7973, RDKB-7974, RDKB-7975: [Yocto][Boot Time]: Delay brlan1,brlan2,brlan3
+a5520ac RDKB-8938: add new script/cron job BS enable print
+0d1b5be ARRISXB6-2794: Fixing RDK Logger for power manager
+
+project rdkb/components/opensource/ccsp/CcspCr/
+7e3d96f BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+419bf93 RDKB-7241 RDKB-7242 :Include XHS client into ARM side client scan
+040f92d BLDK-443 Update LICENSE, NOTICE and COPYING files.
+d80f16f RDKB-9058 : Putting Offset Calculation behind UTC_ENABLE Flag
+b5be914 RDKB-8912 : Ccsp PandM Deadlock cases
+9f106ea RDKB-8867: LM lite is reporting client connect disconnect in a loop
+3233d88 RDKB-8833 : Print HostName/ClientName in the logs from Host table
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+b0bc38f RDKB-9086: Time Conversion needs to handle date change scenerio
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+58e0854 RDKBEMU-259 : BridgeMode Updation with PSM Support in ccsp-p-and-m
+031a9a0 RDKB-9087: Migration and rollback should handle day change
+90a67b5 RDKB-9087: Migration and rollback should handle day change
+c90ed1d RDKB-9088 : Define UTC_Enable parameter under Device.Time. object .
+29e4837 RDKB-8912 : Ccsp PandM Deadlock cases
+05fc2e6 Revert "WEBPA-1181, RDKB-7817 : RDKB - XDNS feature"
+bdcc837 RDKB-8964 : Remove MoCA related implementation from PandM.
+9c50930 RDKB-7972 : [Yocto][Boot Time]: Bring up Lan early
+0abb2b1 WEBPA-1181, RDKB-7817 : RDKB - XDNS feature
+727ec4a RDKB-8994: Remove time conversion for parental control rules from Dml layer.
+96dc24f RDKB-8493 : Disable MoCA in bridge Mode, and restore while coming out
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+765ba6e BLDK-443 Update LICENSE, NOTICE and COPYING files.
+21eda06 RDKB-7972 : [Yocto][Boot Time]: Bring up Lan early
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+59c1855 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+ea91d2e ARRISXB6-2876: [SNMP] RDKB Vendor Controlled MIB Description Update
+7b4303b ARRISXB6-2650 ARRISXB6-2649: RDKB Vendor Controlled MIB
+66740cb RDKB-8709 : DCS SNMP MIBs developing
+aec9a26 RDKB-5276:[Self Healing] Ping Server to Detect Network Connectivity
+a690747 RDKB-4286 : Self Healing - Diagnostic Mode requirements.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+49040ff RDKB-9152 : Handle maxInstance entry for X_CISCO_COM_MacFilterTable
+fb00627 RDKB-9005 : When box goes to bridge mode then radio status goes to down.
+4b17dc7 RDKBEMU-258 : Updated X_CISCO_COM_ApplySetting Parameter
+18477e5 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+f356975 Revert "RDKB-8705 : DCS TR181 developing"
+e67b2cd RDKB-7241 RDKB-7242 :Include XHS client into ARM side client scan
+020e0e9 RDKB-8915 :  add new log file for band steering status print
+5f85dd5 RDKB-8705 : DCS TR181 developing
+6201e3e RDKB-8196 : Add table on X_CISCO_COM_MacFilterTable returns negative indexes
+400c180 RDKB-9059: radiohealth.sh script fix.
+6a52423 RDKB-9022: To push the DNS from ARM to ATOM.
+3254165 RDKB-7339 : Process stuck risk to use CosaDmlWiFi_GetBandSteeringLog
+fcd4068 RDKB-8705 : DCS TR181 developing
+a308f38 RDKB-9011 : Update br0_ip.sh
+f311a8b RDKB-9026:  add telemetry marker for tageet_assert and radio_not_up
+0944e9e RDKB-8915: removed print from wifiagent and added cron job
+f206801 RDKB-8938: add new script/cron job BS enable print
+6361e48 RDKB-8939: add telemetry marker for wrong pice device class
+3d69b86 RDKB-8866: timestamp
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+cf723e0 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+1a7b685 RDKB-7972, RDKB-7974, RDKB-7975: Boot time optimization changes
+40a6ef3 RDKB-8493 : Disable MoCA in bridge Mode, and restore while coming out
+
+project rdkb/components/opensource/ccsp/RebootManager/
+17a60cc BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+77de489 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+09fa7ac RDKB-7459 : Security issues found on Static Analysis in diagnostics Component.
+66b5cf8 RDKB-9044 : speed test is running when TR-181 Run is set to false
+a9d3fb4 ARRISXB6-2872: [Self Healing] [UTC] Update script to process
+3ea490b ARRISXB6-2872: [Self Healing] [UTC] Update script to process
+d2cbf4c RDKB-9044 : speed test is running when TR-181 Run is set to false
+f93dae7 RDKB-9089 : Make Time zone offset creation configurable.
+b0e9b67 ARRISXB6-2836: [RDKB Flow Down] [Self Healing] Diagnostic Mode requirements.
+0b2c54f RDKB-5276:[Self Healing] Ping Server to Detect Network Connectivity
+f15cc96 ARRISXB6-2808: [Self Healing] Task Script Fails
+8860552 ARRISXB6-2752: [Self Heal] Check if IP exists for brlan0/brlan1 during run time
+49d50f3 ARRISXB6-2632: Modify speedtest shell script
+cd7d2b6 RDKB-4286 : Self Healing - Diagnostic Mode requirements.
+c52f562 RDKB-8834 : Check if IP exists for brlan0/brlan1 during run time
+
+project rdkb/components/opensource/ccsp/Utopia/
+ee32d26 ARRISXB6-2902: Unexpected log during xw1 sync
+004740e RDKB-9022: To push the DNS from ARM to ATOM.
+899d439 Revert "WEBPA-1181, RDKB-7817, WEBPA-1362 : RDKB - XDNS feature"
+8e4774c ARRISXB6-2858: [Master] erouter0 not getting v6 address
+47c6971 RDKB-5276:[Self Healing] Ping Server to Detect Network Connectivity
+7541fdf RDKB-9049, CISCOXB3-1673: Dibbler server: NOT RUNNING
+b2fe3da RDKB-7972,RDKB-7973,RDKB-7974,RDKB-7977,RDKB-7979,RDKB-8161,RDKB-8476: boot time
+17df0ae WEBPA-1181, RDKB-7817, WEBPA-1362 : RDKB - XDNS feature
+dd11cce RDKB-7836 : [SECVULN]Firewall-DropBear Accessible from InternalNetwork.
+3556ecf RDKB-8493 : Disable MoCA in bridge Mode, and restore while coming out
+b42af64 RDKB-8911: rpcclient shouldnt hardcode ARM and ATOM interface IPs.
+87d8632 ARRISXB6-2794: Turn on rdk logger for power mgr
+f60b924 ARRISXB6-2779 : hostarpd process crashing
+72bd76a RDKB-4286 : Self Healing - Diagnostic Mode requirements.
+4497d2c RDKB-7136 : Security issues found on Static Analysis in Utopia Component.
+
+project rdkb/components/opensource/ccsp/hal/
+fd840b1 RDKBEMU-257 : Updated X_CISCO_COM_ApplySetting Parameter Implementation
+384546b BLDK-443 Update LICENSE, NOTICE and COPYING files.
+8fc2ad3 ARRISXB6-2650: Code Develop - DOCSIS Config & RDKB Connection
+
+project rdkb/components/opensource/ccsp/hotspot/
+e13ede0 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/webui/
+9f01b20 RDKB-9209:UTC: Endtime of rule is getting added as 00:00 in stack
+cc670c5 RDKB-9150: parental control Managed Devices
+91d162f RDKB-9149: parental control Blocked Sitesâ€‹ & Blocked Keywordsâ€‹
+011564e RDKB-7510: Add additional options to Pagination in WebGUI
+2fccb8f RDKB-7510: Add additional options to Pagination in WebGUI
+200a2ec RDKB-9066: Local UI convert time for Managed Devices
+5544921 RDKB-9065: Local UI convert time for Managed Services
+d39a2b5 RDKB-9064: Local UI convert time for Blocked Sitesâ€‹ & Keywordsâ€‹
+f20f9a7 RDKB-9063: Local UI library to convert time for parental control
+50977ad RDKB-7510: Add additional options to Pagination in WebGUI
+dd9cd9d RDKB-8987: DFS channel should not be allowed
+2613737 RDKB-8053: WiFi module status in GUI when box is in bridge mode.
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+19a987d RDKBEMU-260 : Added BridgeMode Scripts to support External-source
+773af55 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+5334cfa BLDK-443 Update LICENSE, NOTICE and COPYING files.

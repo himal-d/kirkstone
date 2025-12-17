@@ -1,0 +1,67 @@
+From 867e44dcf19f2e6373ad00b175c84de2d841a7ee Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@gmail.com>
+Date: Fri, 1 Dec 2023 11:10:12 +0100
+Subject: [PATCH] Fix playback position during simulated preroll
+
+When simulating preroll in MSE, the player sets m_isSeeking = false
+immediately despite the actual preroll may not be done yet and hence
+playback position may not yield correct results at that time.
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp   | 9 +++++++--
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.h     | 1 +
+ .../gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp     | 1 +
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index f847339056f7..1fde263ed018 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -1353,8 +1353,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+     else if (m_canFallBackToLastFinishedSeekPosition)
+         playbackPosition = m_seekTime;
+ 
+-    setCachedPosition(playbackPosition);
+-    invalidateCachedPositionOnNextIteration();
++    setCachedPositionForOneIteration(playbackPosition);
+     return playbackPosition;
+ }
+ 
+@@ -3615,6 +3614,12 @@ void MediaPlayerPrivateGStreamer::setCachedPosition(const MediaTime& cachedPosit
+     m_isCachedPositionValid = true;
+ }
+ 
++void MediaPlayerPrivateGStreamer::setCachedPositionForOneIteration(const MediaTime& position) const
++{
++    setCachedPosition(position);
++    invalidateCachedPositionOnNextIteration();
++}
++
+ void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
+ {
+     m_isCachedPositionValid = false;
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+index 0f674aaeef39..49d165d1cc02 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+@@ -372,6 +372,7 @@ protected:
+ #endif
+ 
+     void setCachedPosition(const MediaTime&) const;
++    void setCachedPositionForOneIteration(const MediaTime&) const;
+ 
+     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
+     MediaPlayer* m_player;
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index 6daec5a190c7..bf53cb140a8a 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -281,6 +281,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
+             m_player->queueTaskOnEventLoop([weakThis = WeakPtr { *this }, this] {
+                 if (!weakThis)
+                     return;
++                setCachedPositionForOneIteration(m_seekTime);
+                 didPreroll();
+             });
+         }
+-- 
+2.25.1

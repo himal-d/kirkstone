@@ -1,0 +1,580 @@
+Date: Mon Jul 6 21:47:38 BST 2009
+Subject: There are multiple sources for this patch file.
+       [PATCH 1/2] [rtadv] IPv6 Router Advertisement Option for RDNSS
+	IPv6 Router Advertisement Option for DNS Configuration (RFC 5006)[1]
+	introduced a mechanism to hand out recursive DNS server addresses via
+	router advertisement (RA) messages. This simple combines the IPv6
+	stateless address auto-configuration process with the ability to get DNS
+	server information - in one message. This options frees many
+	environments from operating an additional DHCPv6 server that provides
+	such information.
+
+	This patch extends quagga by the ability to generate and transport RDNS
+	addresses. RDNSS options are currently supported at radvd(1) and the
+	Linux Kernel by handover this information to the user-space (via netlink
+	socket).
+
+	A simple RA configuration with two RDNS entries can be enabled via
+
+	no ipv6 nd suppress-ra
+	ipv6 nd prefix 2001:db8::/64
+	ipv6 nd rdnss 2001:db8::1
+	ipv6 nd rdnss 2001:db8::2
+
+	It is additionally possible to specify the lifetime of an RDNSS option
+	as stated in [1] section 4.1. The default is infinity lifetime
+	(0xfffffff) as it serves the most common application areas.
+
+	ip nd rdnss 2001:db8::1 300000
+
+	[1] http://tools.ietf.org/html/rfc5006
+Source: https://lists.quagga.net/pipermail/quagga-dev/2009-July/023362.html
+Signed-off-by: Hagen Paul Pfeifer <hagen at jauu.net>
+Source: OpenEmbedded
+Upstream-Status: Pending
+---
+
+Index: quagga-1.2.1/lib/memtypes.h
+===================================================================
+--- quagga-1.2.1.orig/lib/memtypes.h
++++ quagga-1.2.1/lib/memtypes.h
+@@ -231,6 +231,7 @@ enum
+   MTYPE_NHRP_ROUTE,
+   MTYPE_VTYSH_CONFIG,
+   MTYPE_VTYSH_CONFIG_LINE,
++  MTYPE_RTADV_DOMAIN,
+   MTYPE_MAX,
+ };
+ 
+Index: quagga-1.2.1/zebra/interface.c
+===================================================================
+--- quagga-1.2.1.orig/zebra/interface.c
++++ quagga-1.2.1/zebra/interface.c
+@@ -141,7 +141,15 @@ if_zebra_new_hook (struct interface *ifp
+     rtadv->DefaultPreference = RTADV_PREF_MEDIUM;
+ 
+     rtadv->AdvPrefixList = list_new ();
+-  }    
++
++    rtadv->AdvRDNSSFlag = 0;
++    rtadv->AdvRDNSSLifetime = RTADV_RDNSS_DEFAULT_LIFETIME;
++    rtadv->AdvRDNSSList = list_new ();
++
++    rtadv->AdvDNSSLFlag = 0;
++    rtadv->AdvDNSSLLifetime = RTADV_RDNSS_DEFAULT_LIFETIME;
++    rtadv->AdvDNSSLList = list_new ();
++  }
+ #endif /* HAVE_RTADV */
+ 
+   /* Initialize installed address chains tree. */
+@@ -801,9 +809,16 @@ nd_dump_vty (struct vty *vty, struct int
+ 	vty_out (vty, "  Home Agent preference is %u%s",
+ 	         rtadv->HomeAgentPreference, VTY_NEWLINE);
+       }
++      if(rtadv->AdvRDNSSFlag)
++          vty_out (vty, "  ND router advertisements with RDNSS information.%s",
++                  VTY_NEWLINE);
++
+       if (rtadv->AdvIntervalOption)
+       	vty_out (vty, "  ND router advertisements with Adv. Interval option.%s",
+ 		 VTY_NEWLINE);
++      if (rtadv->AdvDNSSLFlag)
++          vty_out (vty, "  ND router advertisements with DNSSL information.%s",
++                  VTY_NEWLINE);
+     }
+ }
+ #endif /* HAVE_RTADV */
+Index: quagga-1.2.1/zebra/interface.h
+===================================================================
+--- quagga-1.2.1.orig/zebra/interface.h
++++ quagga-1.2.1/zebra/interface.h
+@@ -183,6 +183,27 @@ struct rtadvconf
+      Default: 0 (medium) */
+   int DefaultPreference;
+ #define RTADV_PREF_MEDIUM 0x0 /* Per RFC4191. */
++/* A list of Recursive DNS server addresses specified in
++ * RFC 5006 */
++  int AdvRDNSSFlag;
++  struct list *AdvRDNSSList;
++/* the maximum lifetime in seconds over which the RDNSS entry
++ * may be used. After this time a host may send a router solicitation
++ * message to refresh the RDNSS information.
++ *
++ * Default is infinity lifetime (0xffffffff) */
++  uint32_t AdvRDNSSLifetime;
++#define RTADV_DOMAIN_LEN_MAX 255 /* Per RFC1035, section 3.1. */
++  /* A list of domain searh list suffixes specified in RFC 6106, 5.2 */
++  int AdvDNSSLFlag;
++  struct list *AdvDNSSLList;
++   /* the maximum lifetime in seconds over which the DNSSL entry
++    * may be used. After this time a host may send a router solicitation
++    * message to refresh the DNSSL information.
++    * Default is infinity lifetime (0xffffffff) */
++  uint32_t AdvDNSSLLifetime;
++#define RTADV_RDNSS_INFINITY_LIFETIME (0xffffffff)
++#define RTADV_RDNSS_DEFAULT_LIFETIME RTADV_RDNSS_INFINITY_LIFETIME
+ };
+
+ #endif /* HAVE_RTADV */
+Index: quagga-1.2.1/zebra/rtadv.c
+===================================================================
+--- quagga-1.2.1.orig/zebra/rtadv.c
++++ quagga-1.2.1/zebra/rtadv.c
+@@ -145,6 +145,7 @@ rtadv_send_packet (int sock, struct inte
+   u_char all_nodes_addr[] = {0xff,0x02,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+   struct listnode *node;
+   u_int16_t pkt_RouterLifetime;
++  struct nd_opt_route_info *rinfo;
+
+   /*
+    * Allocate control message bufffer.  This is dynamic because
+@@ -243,7 +244,31 @@ rtadv_send_packet (int sock, struct inte
+       );
+       len += sizeof(struct nd_opt_homeagent_info);
+     }
++ if (zif->rtadv.AdvRDNSSFlag)
++  {
++      char *addr_ptr;
++      struct nd_opt_rdnss *ndopt_rdnss;
++      struct prefix *rdnss_prefix;
++      unsigned int rdnss_entries = 1;
++
++      ndopt_rdnss = (struct nd_opt_rdnss *) (buf + len);
++      ndopt_rdnss->nd_opt_type = ND_OPT_RDNSS;
++      ndopt_rdnss->nd_opt_reserved = 0;
++      ndopt_rdnss->nd_opt_lifetime = htonl(zif->rtadv.AdvRDNSSLifetime);
++      len += sizeof(struct nd_opt_rdnss);
++
++      /* Fill in all RDNS server entries */
++      for (ALL_LIST_ELEMENTS_RO (zif->rtadv.AdvRDNSSList, node, rdnss_prefix))
++      {
++          addr_ptr = (char *)(buf + len);
++          memcpy(addr_ptr, &rdnss_prefix->u.prefix6, sizeof (struct in6_addr));
++          len += sizeof (struct in6_addr);
++          rdnss_entries += 2;
++      }
++      ndopt_rdnss->nd_opt_len = rdnss_entries;
++  }
+
++
+   if (zif->rtadv.AdvIntervalOption)
+     {
+       struct nd_opt_adv_interval *ndopt_adv =
+@@ -293,6 +318,73 @@ rtadv_send_packet (int sock, struct inte
+       len += sizeof (struct nd_opt_prefix_info);
+     }
+
++  /* Add route information option for default route */
++  rinfo = (struct nd_opt_route_info *) (buf + len);
++  memset(rinfo, 0, sizeof(struct nd_opt_route_info));
++  rinfo->nd_opt_ri_type = ND_OPT_ROUTE_INFORMATION;
++  rinfo->nd_opt_ri_len = 3;
++
++  /* Use route lifetime from router advertisement header */
++  rinfo->nd_opt_ri_lifetime = htonl (zif->rtadv.AdvDefaultLifetime);
++  /* Set the prefix to ::/0 */
++  rinfo->nd_opt_ri_prefix_len = 0;
++  inet_pton(AF_INET6, "::0", &rinfo->nd_opt_ri_prefix);
++  len += sizeof (struct nd_opt_route_info);
++  if (zif->rtadv.AdvDNSSLFlag)
++  {
++      unsigned option_bytes, stuffing_bytes, total_opt_len;
++      struct nd_opt_dnssl *ndopt_dnssl = (struct nd_opt_dnssl *) (buf + len);
++      char *domain;
++      int len_copy = len;
++
++      /* calculate total length needed by the option, including stuffing */
++      option_bytes = 8; /* type,length, reserved, and lifetime */
++      for (ALL_LIST_ELEMENTS_RO (zif->rtadv.AdvDNSSLList, node, domain))
++      {
++          /*
++             length of the string plus the leading length byte
++             and trailing 0 length byte
++             (the dots in the middle get replaced with more length bytes
++             */
++
++          option_bytes += strlen(domain)+2;
++      }
++      total_opt_len = 8*((option_bytes+7)/8);
++      stuffing_bytes = total_opt_len-option_bytes;
++
++      if ((len + total_opt_len) > RTADV_MSG_SIZE)
++      {
++          zlog_err ("rtadv_send_packet: router advertisement message buffer overflow\n");
++          return;
++          ndopt_dnssl->nd_opt_type = ND_OPT_DNSSL;
++          ndopt_dnssl->nd_opt_len = total_opt_len/8;
++          ndopt_dnssl->nd_opt_reserved = 0;
++          ndopt_dnssl->nd_opt_lifetime = htonl(zif->rtadv.AdvRDNSSLifetime);
++          len_copy += 8;
++      }
++      /* fill n each domain string - the format is in RFC 1035, 3.1 */
++      /* (((len)(label))+(0x00))+ */
++      /* test.example.com would be 0x04test0x07example0x03com0x00 */
++      for (ALL_LIST_ELEMENTS_RO (zif->rtadv.AdvDNSSLList, node, domain))
++      {
++          char domain_copy[RTADV_DOMAIN_LEN_MAX];
++          strcpy(domain_copy, domain);
++
++          char *label = strtok(domain_copy, ".");
++          while(NULL != label) {
++              buf[len_copy++] = strlen(label);
++              memcpy(buf+len_copy, label, strlen(label)); /* don't copy NULL terminator */
++              len_copy += strlen(label);
++              label = strtok(NULL, ".");
++          }
++          buf[len_copy++] = 0;
++      }
++      bzero(buf + len_copy, stuffing_bytes);
++      len_copy += stuffing_bytes;
++
++      len += total_opt_len;
++  }
++
+   /* Hardware address. */
+   if (ifp->hw_addr_len != 0)
+     {
+@@ -414,6 +506,8 @@ rtadv_process_packet (u_char *buf, unsig
+   struct icmp6_hdr *icmph;
+   struct interface *ifp;
+   struct zebra_if *zif;
++  uint8_t *opt_str = (uint8_t *) (buf + sizeof(struct nd_router_solicit));
++  int len_local;
+
+   /* Interface search. */
+   ifp = if_lookup_by_index_vrf (ifindex, vrf_id);
+@@ -455,6 +549,34 @@ rtadv_process_packet (u_char *buf, unsig
+ 		 hoplimit);
+       return;
+     }
++  /* Check ICMP code */
++  /* Must be 0 per RFC 4861 section 6.1.1 */
++  if (icmph->icmp6_code != 0) {
++      zlog_warn ("Invalid ICMPV6 code for router solicitation: %d", icmph->icmp6_code);
++      return;
++  }
++  /* Check for valid options per RFC 4861 section 6.1.1 */
++  len_local = len - sizeof(struct nd_router_solicit);
++
++  while (len_local > 0) {
++      if (len_local < 2) {
++          zlog_warn("trailing garbage in router solicitation");
++          return;
++      }
++
++      int const optlen = (opt_str[1] << 3);
++
++      if (optlen == 0) {
++          zlog_warn("zero length option in router solicitation");
++          return;
++      } else if (optlen > len_local) {
++          zlog_warn("option length greater than total length in router solicitation");
++          return;
++      }
++
++      len_local -= optlen;
++      opt_str += optlen;
++  }
+
+   /* Check ICMP message type. */
+   if (icmph->icmp6_type == ND_ROUTER_SOLICIT)
+@@ -1522,6 +1644,233 @@ ALIAS (no_ipv6_nd_mtu,
+        "Neighbor discovery\n"
+        "Advertised MTU\n"
+        "MTU in bytes\n")
++    static struct prefix *
++rtadv_rdnss_lookup (struct list *list, struct prefix *p)
++{
++    struct listnode *node;
++    struct prefix *prefix;
++
++    for (ALL_LIST_ELEMENTS_RO (list, node, prefix))
++        if (prefix_same (prefix, p))
++            return prefix;
++
++    return NULL;
++}
++    static void
++rtadv_rdnss_set (struct zebra_if *zif, struct prefix *p)
++{
++    struct prefix *prefix;
++    struct list *rdnsslist = zif->rtadv.AdvRDNSSList;
++
++    prefix = rtadv_rdnss_lookup (rdnsslist, p);
++    if (prefix)
++        return;
++    prefix = prefix_new ();
++    memcpy (prefix, p, sizeof (struct prefix));
++    listnode_add (rdnsslist, prefix);
++
++    return;
++}
++    static int
++rtadv_rdnss_reset (struct zebra_if *zif, struct prefix *rp)
++{
++    struct prefix *prefix;
++
++    prefix = rtadv_rdnss_lookup(zif->rtadv.AdvRDNSSList, rp);
++    if (prefix != NULL)
++    {
++        listnode_delete (zif->rtadv.AdvRDNSSList, (void *) prefix);
++        prefix_free (prefix);
++        return 1;
++    }
++    else
++        return 0;
++}
++
++DEFUN (ipv6_nd_rdnss,
++        ipv6_nd_rdnss_cmd,
++        "ipv6 nd rdnss X:X::X:X (<0-4294967295>|infinite)",
++        "Interface IPv6 config commands\n"
++        "Neighbor discovery\n"
++        "RDNSS Option\n"
++        "IPv6 address of recursive DNS server\n")
++{
++    int ret;
++    char *pnt;
++    struct interface *ifp;
++    struct zebra_if *zif;
++    struct prefix rp;
++
++    ifp = (struct interface *) vty->index;
++    zif = ifp->info;
++    /* make sure no '/' exists in the argument */
++    pnt = strchr (argv[0], '/');
++    if (pnt != NULL)
++    {
++        vty_out (vty, "Malformed IPv6 RDNS address - no prefix notation allowed%s",
++                VTY_NEWLINE);
++        return CMD_WARNING;
++    }
++    /* now we can abuse str2prefix_ipv6 for a sanity check
++     * because IPv6 addresses with missing prefix
++     * slashes '/' are treated as host routes */
++    ret = str2prefix_ipv6 (argv[0], (struct prefix_ipv6 *) &rp);
++    if (!ret)
++    {
++        vty_out (vty, "Malformed IPv6 RDNS address%s", VTY_NEWLINE);
++        return CMD_WARNING;
++    }
++    rtadv_rdnss_set(zif, &rp);
++    zif->rtadv.AdvRDNSSFlag = 1;
++
++    if (argc > 1)
++    {
++        if ( strncmp (argv[1], "i", 1) == 0)
++        {
++            zif->rtadv.AdvRDNSSLifetime = RTADV_RDNSS_INFINITY_LIFETIME;
++        }
++        else
++        {
++            zif->rtadv.AdvRDNSSLifetime = (u_int32_t) strtoll (argv[1], (char **)NULL, 10);
++        }
++    }
++
++    return CMD_SUCCESS;
++}
++ALIAS (ipv6_nd_rdnss,
++        ipv6_nd_rdnss_cmd_nolife,
++        "ipv6 nd rdnss X:X::X:X",
++        "Interface IPv6 config commands\n"
++        "Neighbor discovery\n"
++        "RDNSS Option\n"
++        "IPv6 address of recursive DNS server\n")
++    static char *
++rtadv_dnssl_lookup (struct list *list, char *domain)
++{
++    struct listnode *node;
++    char *existing_domain;
++
++    for (ALL_LIST_ELEMENTS_RO (list, node, existing_domain)) 
++    {
++        if (!strncasecmp (domain, existing_domain, RTADV_DOMAIN_LEN_MAX)) 
++        {
++            return existing_domain;
++        }
++    }
++
++    return NULL;
++}
++    static void
++rtadv_dnssl_set (struct zebra_if *zif, char *domain)
++{
++    char *existing_domain;
++    struct list *dnssllist = zif->rtadv.AdvDNSSLList;
++    int domain_len = strlen(domain);
++
++    existing_domain = rtadv_dnssl_lookup (dnssllist, domain);
++    if (existing_domain) 
++    {
++        return;
++    }
++    if (domain_len > RTADV_DOMAIN_LEN_MAX) {
++        zlog_warn ("Domain string too long, ignoring\n");
++        return;
++    }
++
++    if (existing_domain = XCALLOC (MTYPE_RTADV_DOMAIN, RTADV_DOMAIN_LEN_MAX+1))
++    {
++        strcpy (existing_domain, domain);
++        listnode_add (dnssllist, existing_domain);
++    }
++    else
++    {
++        zlog_warn ("Memory allocation failed for domain search list string\n");
++    }
++
++    return;
++}
++    static int
++rtadv_dnssl_reset (struct zebra_if *zif, char *domain)
++{
++    char *existing_domain;
++
++    existing_domain = rtadv_dnssl_lookup(zif->rtadv.AdvDNSSLList, domain);
++    if (existing_domain != NULL)
++    {
++        listnode_delete (zif->rtadv.AdvDNSSLList, (void *) existing_domain);
++        XFREE (MTYPE_RTADV_DOMAIN, existing_domain);
++        return 1;
++    }
++    else
++    {
++        return 0;
++    }
++}
++
++DEFUN (ipv6_nd_dnssl,
++        ipv6_nd_dnssl_cmd,
++        "ipv6 nd dnssl SUFFIX (<0-4294967295>|infinite)",
++        "Interface IPv6 config commands\n"
++        "Neighbor discovery\n"
++        "DNSSL Option\n"
++        "IPv6 domain search suffix\n")
++{        int ret;
++    struct interface *ifp;
++    struct zebra_if *zif;
++    char *domain = argv[0];
++    unsigned i;
++
++    ifp = (struct interface *) vty->index;
++    zif = ifp->info;
++
++    if (strlen(domain) > RTADV_DOMAIN_LEN_MAX) {
++        vty_out (vty, "DNSSL domain string too long%s", VTY_NEWLINE);
++        return CMD_WARNING;
++    }
++    for (i = 0; i < strlen(domain); i++) {
++        if ((domain[i] >= 'A') && (domain[i] <= 'Z')) {
++            domain[i] += 'a' - 'A';
++        }
++        if (
++                ((domain[i] >= '0') && (domain[i] <= '9')) ||
++                ((domain[i] >= 'a') && (domain[i] <= 'z')) ||
++                (domain[i] == '-') ||
++                (domain[i] == '.')
++           )
++        {
++            /* Intentionally empty */
++        }
++        else
++        {
++            vty_out (vty, "Malformed DNSSL domain string%s", VTY_NEWLINE);
++            return CMD_WARNING;
++        }
++    }
++
++    rtadv_dnssl_set(zif, domain);
++    zif->rtadv.AdvDNSSLFlag = 1;
++
++    if (argc > 1)
++    {
++        if ( strncmp (argv[1], "i", 1) == 0)
++        {
++            zif->rtadv.AdvDNSSLLifetime = RTADV_RDNSS_INFINITY_LIFETIME;
++        }
++        else
++        {
++            zif->rtadv.AdvDNSSLLifetime = (u_int32_t) strtoll (argv[1], (char **)NULL, 10);
++        }
++    }
++    return CMD_SUCCESS;
++}
++
++ALIAS (ipv6_nd_dnssl,
++        ipv6_nd_dnssl_cmd_nolife,
++        "ipv6 nd dnssl SUFFIX",
++        "Interface IPv6 config commands\n"
++        "Neighbor discovery\n"
++        "DNSSL Option\n"
++        "IPv6 domain search suffix\n")
+
+ /* Write configuration about router advertisement. */
+ void
+@@ -1732,6 +2081,10 @@ rtadv_cmd_init (void)
+   install_element (INTERFACE_NODE, &ipv6_nd_mtu_cmd);
+   install_element (INTERFACE_NODE, &no_ipv6_nd_mtu_cmd);
+   install_element (INTERFACE_NODE, &no_ipv6_nd_mtu_val_cmd);
++  install_element (INTERFACE_NODE, &ipv6_nd_rdnss_cmd);
++  install_element (INTERFACE_NODE, &ipv6_nd_rdnss_cmd_nolife);
++  install_element (INTERFACE_NODE, &ipv6_nd_dnssl_cmd);
++  install_element (INTERFACE_NODE, &ipv6_nd_dnssl_cmd_nolife);
+ }
+ 
+ static int
+Index: quagga-1.2.1/zebra/rtadv.h
+===================================================================
+--- quagga-1.2.1.orig/zebra/rtadv.h
++++ quagga-1.2.1/zebra/rtadv.h
+@@ -69,6 +69,10 @@ extern void rtadv_config_write (struct v
+ #define ND_OPT_HA_INFORMATION	8   /* HA Information Option */
+ #endif
+
++#ifndef ND_OPT_RDNSS
++#define ND_OPT_RDNSS 25 /* RDNSS option (RFC 5006) */
++#endif
++
+ #ifndef HAVE_STRUCT_ND_OPT_ADV_INTERVAL
+ struct nd_opt_adv_interval {   /* Advertisement interval option */
+         uint8_t        nd_opt_ai_type;
+@@ -96,8 +100,39 @@ struct nd_opt_homeagent_info {  /* Home
+ } __attribute__((__packed__));
+ #endif
+
++/* see RFC 5006, section 5.1 */
++struct nd_opt_rdnss {
++    uint8_t  nd_opt_type;
++    uint8_t  nd_opt_len;
++    uint16_t nd_opt_reserved;
++    uint32_t nd_opt_lifetime;
++    /* followed by n (16 byte) entries */
++} __attribute__((__packed__));
++
+ extern const char *rtadv_pref_strs[];
+
++/* See RFC 4191 */
++#define  ND_OPT_ROUTE_INFORMATION  24
++struct nd_opt_route_info { /* route information */
++    uint8_t nd_opt_ri_type;
++    uint8_t nd_opt_ri_len;
++    uint8_t nd_opt_ri_prefix_len;
++    uint8_t nd_opt_ri_flags_reserved;
++    uint32_t nd_opt_ri_lifetime;
++    struct in6_addr nd_opt_ri_prefix;
++} __attribute__((__packed__));
++
++/* See RFC 6106, 5.2 */
++#define  ND_OPT_DNSSL   31
++struct nd_opt_dnssl {  /* domain search list strings */
++    uint8_t nd_opt_type;
++    uint8_t nd_opt_len;
++    uint16_t nd_opt_reserved;
++    uint32_t nd_opt_lifetime;
++    /* followed by n variable-length entries formatted according to RFC 1035, section 3.1 */
++    /* followed by padding if needed to round out length to a multiple of 8 bytes */
++} __attribute__((__packed__));
++
+ #endif /* HAVE_RTADV */
+
+ extern void rtadv_init (struct zebra_vrf *);

@@ -1,0 +1,128 @@
+###############################################################################
+Date: Mon 19 April 13:00:00 UTC 2021
+From: 27047ddf33a19b668ab19d4476485cf8ebf7ede0 Mon 19 April 13:00:00 UTC 2021
+Subject: ADAHUB-126 : [OS] DHCPv6 sending Solicit instead of DHCPv6 Renew
+Source: SKY
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Vysakh A V <vysakh.venugopal@sky.uk>
+Patch recreated for kirkstone by: Arjun <arjun_daasuramdass@comcast.com>
+###############################################################################
+Index: git/ClntMessages/ClntMsgConfirm.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsgConfirm.cpp
++++ git/ClntMessages/ClntMsgConfirm.cpp
+@@ -85,6 +85,7 @@ void TClntMsgConfirm::answer(SPtr<TClntM
+ }
+ 
+ void TClntMsgConfirm::addrsAccepted() {
++    struct timespec ts;
+     SPtr<TAddrIA> ptrIA;
+     SPtr<TOpt> ptrOpt;
+     this->firstOption();
+@@ -108,7 +109,9 @@ void TClntMsgConfirm::addrsAccepted() {
+         ptrIA->setState(STATE_CONFIGURED);
+ 
+         // Once confirmed, this triggers the
+-        ptrIA->setTimestamp( (uint32_t)time(NULL) - ptrIA->getT1() );
++	if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++		ptrIA->setTimestamp( (uint32_t)ts.tv_sec - ptrIA->getT1() );
++	}
+ 
+         SPtr<TIfaceIface> ptrIface = ClntIfaceMgr().getIfaceByID(ptrIA->getIfindex());
+         if (!ptrIface)
+Index: git/ClntMessages/ClntMsg.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsg.cpp
++++ git/ClntMessages/ClntMsg.cpp
+@@ -321,8 +321,11 @@ TClntMsg::~TClntMsg() {
+ 
+ void TClntMsg::setDefaults()
+ {
+-    FirstTimeStamp = time(NULL);
+-    LastTimeStamp  = time(NULL);
++    struct timespec ts;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    FirstTimeStamp = (unsigned long)ts.tv_sec;
++	    LastTimeStamp  = (unsigned long)ts.tv_sec;
++    }
+ 
+     RC  = 0;
+     RT  = 0;
+@@ -341,7 +344,11 @@ void TClntMsg::setDefaults()
+ 
+ unsigned long TClntMsg::getTimeout()
+ {
+-    long diff = (LastTimeStamp+RT) - time(NULL);
++    struct timespec ts;
++    long diff;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    diff = (LastTimeStamp+RT) - (unsigned long)ts.tv_sec;
++    }
+     return (diff<0) ? 0 : diff;
+ }
+ 
+@@ -351,7 +358,12 @@ void TClntMsg::send()
+     char* pkt = new char[size];
+     memset(pkt, 0, size);
+ 
+-    srand((uint32_t)time(NULL));
++    struct timespec ts;
++    uint32_t diff;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    diff = (uint32_t)ts.tv_sec;
++    }
++    srand(diff);
+     if (!RC)
+ 	RT=(int)(0.5+IRT+IRT*(0.2*(double)rand()/(double)RAND_MAX-0.1));
+     else
+@@ -397,7 +409,9 @@ void TClntMsg::send()
+ 		   << "/" << Iface << " to multicast." << LogEnd;
+ 	ClntIfaceMgr().sendMulticast(Iface, pkt, getSize());
+     }
+-    LastTimeStamp = time(NULL);
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    LastTimeStamp = (unsigned long)ts.tv_sec;
++    }
+     delete [] pkt;
+ }
+ 
+Index: git/ClntOptions/ClntOptElapsed.cpp
+===================================================================
+--- git.orig/ClntOptions/ClntOptElapsed.cpp
++++ git/ClntOptions/ClntOptElapsed.cpp
+@@ -18,13 +18,19 @@
+ TClntOptElapsed::TClntOptElapsed( char * buf,  int n, TMsg* parent)
+     :TOptInteger(OPTION_ELAPSED_TIME, OPTION_ELAPSED_TIME_LEN, buf,n, parent)
+ {
+-    Timestamp = (uint32_t)time(NULL);
++    struct timespec ts;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    Timestamp = (uint32_t)ts.tv_sec;
++    }
+ }
+ 
+ TClntOptElapsed::TClntOptElapsed(TMsg* parent)
+     :TOptInteger(OPTION_ELAPSED_TIME, OPTION_ELAPSED_TIME_LEN, 0, parent)
+ {
+-    Timestamp = (uint32_t)time(NULL);
++    struct timespec ts;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    Timestamp = (uint32_t)ts.tv_sec;
++    }
+ }
+ 
+ bool TClntOptElapsed::doDuties()
+@@ -34,6 +40,11 @@ bool TClntOptElapsed::doDuties()
+ 
+ char * TClntOptElapsed::storeSelf(char* buf)
+ {
+-    Value = (unsigned int)((uint32_t)time(NULL) - Timestamp)*100;
++    struct timespec ts;
++    uint32_t diff;
++    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
++	    diff = (uint32_t)ts.tv_sec;
++    }
++    Value = (unsigned int)(diff - Timestamp)*100;
+     return TOptInteger::storeSelf(buf);
+ }

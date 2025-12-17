@@ -1,0 +1,29 @@
+Date: Jul 16, 2016 2:40 AM
+
+From: 265becaf8671ca865c63bfe683409c0e93dfade6 Jul 16, 2016 6:40 AM
+
+Subject: [PATCH] RDKB-6701: Create a patch for libupnp
+
+	Create a patch for libupnp.
+     
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: shirish <shirish_s@infosys.com>
+---
+
+Index: libupnp-1.6.18/ixml/inc/ixml.h
+===================================================================
+--- libupnp-1.6.18.orig/ixml/inc/ixml.h
++++ libupnp-1.6.18/ixml/inc/ixml.h
+@@ -47,7 +47,7 @@
+ 
+ /* Define BOOL. */
+ #ifndef __OBJC__ 
+-	typedef int BOOL;
++	typedef unsigned char BOOL;
+ #else
+ 	/* For Objective C compilers, include objc.h which defines BOOL. */
+ 	#include <objc/objc.h>

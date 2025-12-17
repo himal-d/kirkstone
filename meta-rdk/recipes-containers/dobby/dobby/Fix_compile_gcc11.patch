@@ -1,0 +1,13 @@
+Index: git/bundle/lib/source/DobbySpecConfig.cpp
+===================================================================
+--- git.orig/bundle/lib/source/DobbySpecConfig.cpp
++++ git/bundle/lib/source/DobbySpecConfig.cpp
+@@ -24,7 +24,7 @@
+ #include "DobbySpecConfig.h"
+ #include "DobbyTemplate.h"
+ #include "IDobbyUtils.h"
+-
++#include <algorithm>
+ #include <array>
+ #include <atomic>
+ #include <grp.h>

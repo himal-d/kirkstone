@@ -1,0 +1,85 @@
+From acbce2e71d27f81ceef8a617904bf8053c2d8d64 Mon Sep 17 00:00:00 2001
+From: Vinothkumar <vinothkumar_baskaran@comcast.com>
+Date: Wed, 8 Apr 2020 14:58:22 +0000
+Subject: [PATCH] RDKB-20441: zebra service fails to start
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Vinothkumar <vinothkumar_baskaran@comcast.com>
+
+Reason for change:
+    1. New quagga version in morty has introduced zebra.service
+    2. But zebra has to be launched by service_routed utility, so remove the installed service
+    3. Fix quagga crash and ipv6 rtadv issue (ported from daisy)
+Test Procedure: Build & verify
+Risks: Low
+
+Signed-off-by: Deva <Deva_Thiyagarajan2@comcast.com>
+---
+ lib/privs.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/lib/privs.c b/lib/privs.c
+index 7935edb..1669900 100644
+--- a/lib/privs.c
++++ b/lib/privs.c
+@@ -668,8 +668,10 @@ zprivs_init(struct zebra_privs_t *zprivs)
+ {
+   struct passwd *pwentry = NULL;
+   struct group *grentry = NULL;
+-  gid_t groups[NGROUPS_MAX];
+-  int i, ngroups = 0;
++  /*gid_t groups[NGROUPS_MAX];*/
++  gid_t *groups;
++  long ngroups_max, ngroups = 0;
++  int i;
+   int found = 0;
+ 
+   if (!zprivs)
+@@ -687,6 +689,16 @@ zprivs_init(struct zebra_privs_t *zprivs)
+       return;
+     }
+ 
++  /*Get the maximum supplementaty groups at run time*/
++  ngroups_max = sysconf(_SC_NGROUPS_MAX);
++  groups = (gid_t *)malloc(sizeof(gid_t)*ngroups_max);
++
++  if (!groups)
++  {
++      fprintf(stderr,"Cannot allocate memory with  %ld \n", ngroups_max);
++      exit (1);
++  }
++
+   if (zprivs->user)
+     {
+       if ( (pwentry = getpwnam (zprivs->user)) == NULL )
+@@ -717,7 +729,8 @@ zprivs_init(struct zebra_privs_t *zprivs)
+ 
+   if (zprivs->user)
+     {
+-      ngroups = sizeof(groups);
++      /* Change the logic */
++      ngroups = ( sizeof(gid_t)*ngroups_max );
+       if ( (ngroups = getgrouplist (zprivs->user, zprivs_state.zgid, groups, &ngroups )) < 0 )
+         {
+           /* cant use log.h here as it depends on vty */
+@@ -747,8 +760,8 @@ zprivs_init(struct zebra_privs_t *zprivs)
+ 		       zprivs->user, zprivs->vty_group);
+               exit (1);
+             }
+-          if ( i >= ngroups && ngroups < (int) ZEBRA_NUM_OF(groups) )
+-            {
++          if ( i >= ngroups && ngroups < ngroups_max )
++	    {
+               groups[i] = zprivs_state.vtygrp;
+             }
+         }
+@@ -770,6 +783,9 @@ zprivs_init(struct zebra_privs_t *zprivs)
+         }
+     }
+ 
++  /* we are done with groups, releasing the memory*/
++  free(groups);
++
+   if (zprivs_state.zgid)
+     {
+       /* change group now, forever. uid we do later */

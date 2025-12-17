@@ -1,0 +1,41 @@
+Fix from here: https://github.com/protocolbuffers/protobuf/issues/5144#issuecomment-688723405
+ 
+Index: git/src/libprotobuf-lite.map
+===================================================================
+--- git.orig/src/libprotobuf-lite.map
++++ git/src/libprotobuf-lite.map
+@@ -3,6 +3,8 @@
+     extern "C++" {
+       *google*;
+     };
++    scc_info_*;
++    descriptor_table_*;
+ 
+   local:
+     *;
+Index: git/src/libprotobuf.map
+===================================================================
+--- git.orig/src/libprotobuf.map
++++ git/src/libprotobuf.map
+@@ -3,6 +3,8 @@
+     extern "C++" {
+       *google*;
+     };
++    scc_info_*;
++    descriptor_table_*;
+ 
+   local:
+     *;
+Index: git/src/libprotoc.map
+===================================================================
+--- git.orig/src/libprotoc.map
++++ git/src/libprotoc.map
+@@ -3,6 +3,8 @@
+     extern "C++" {
+       *google*;
+     };
++    scc_info_*;
++    descriptor_table_*;
+ 
+   local:
+     *;

@@ -1,0 +1,36 @@
+Date: Mon Oct 7 13:25:21 2019 +0200
+From: Damian Wrobel <dwrobel.contractor@libertyglobal.com>
+
+diff --git a/src/starboard/shared/wayland/window_internal.cc b/src/starboard/shared/wayland/window_internal.cc
+index 6cbc36005..969e5f51d 100644
+--- a/src/starboard/shared/wayland/window_internal.cc
++++ b/src/starboard/shared/wayland/window_internal.cc
+@@ -18,8 +18,8 @@
+ 
+ namespace {
+ 
+-const int kWindowWidth = 1920;
+-const int kWindowHeight = 1080;
++const int kWindowWidth = 1280;
++const int kWindowHeight = 720;
+ 
+ // shell_surface_listener
+ void ShellSurfacePing(void*,
+@@ -53,8 +53,6 @@ SbWindowPrivate::SbWindowPrivate(wl_compositor* compositor,
+                                  wl_shell* shell,
+                                  const SbWindowOptions* options,
+                                  float pixel_ratio) {
+-  width = kWindowWidth;
+-  height = kWindowHeight;
+   video_pixel_ratio = pixel_ratio;
+ 
+   if (options && options->size.width > 0 && options->size.height > 0) {
+@@ -62,6 +60,8 @@ SbWindowPrivate::SbWindowPrivate(wl_compositor* compositor,
+     height = options->size.height;
+   }
+ 
++  width = kWindowWidth;
++  height = kWindowHeight;
+   surface = wl_compositor_create_surface(compositor);
+   shell_surface = wl_shell_get_shell_surface(shell, surface);
+   wl_shell_surface_add_listener(shell_surface, &shell_surface_listener, this);

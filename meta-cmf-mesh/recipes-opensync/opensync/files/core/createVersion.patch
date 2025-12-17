@@ -1,0 +1,36 @@
+Source: Backport from later version of opensync
+
+diff --git a/src/lib/version/src/build_version.c b/src/lib/version/src/build_version.c
+index 9f43cf5..04aac13 100644
+--- a/src/lib/version/src/build_version.c
++++ b/src/lib/version/src/build_version.c
+@@ -25,11 +25,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+ #include <stdio.h>
++#include <string.h>
+ #include "version_defs.h"
+ #include "build_version.h"
+
+ static const char app_build_time[]     = APP_BUILD_TIME;
+-static const char app_build_version[]  = APP_BUILD_VERSION_LONG;
++// static const char app_build_version[]  = APP_BUILD_VERSION_LONG;
++char app_build_version[64];
+ static const char app_build_author[]   = APP_BUILD_AUTHOR;
+ static const char app_build_ver_only[] = APP_BUILD_VERSION;
+ static const char app_build_num_only[] = APP_BUILD_NUMBER;
+@@ -39,6 +41,14 @@ static const char app_build_profile[]  = APP_BUILD_PROFILE;
+
+ const char *app_build_ver_get()
+ {
++    FILE *fp;
++    fp = fopen("/usr/opensync/.version", "r");
++    if (fp == NULL) {
++        strncpy (app_build_version, APP_BUILD_VERSION_LONG, sizeof(app_build_version));
++    } else {
++        fscanf(fp,"%s", app_build_version);
++        fclose(fp);
++    }
+     return app_build_version;
+ }
+ const char *app_build_time_get()

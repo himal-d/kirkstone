@@ -1,0 +1,12 @@
+[Unit]
+Description=Firmware Sanity Monitor service
+After=CcspCrSsp.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/bin/fscMonitor &'
+RemainAfterExit=yes
+
+
+[Install]
+WantedBy=ccspCr-started.target

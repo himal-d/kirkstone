@@ -1,0 +1,20 @@
+diff --git a/src/google_breakpad/common/breakpad_types.h b/src/google_breakpad/common/breakpad_types.h
+index d8828043..1d5a73c0 100644
+--- a/src/google_breakpad/common/breakpad_types.h
++++ b/src/google_breakpad/common/breakpad_types.h
+@@ -40,11 +40,15 @@
+ #ifndef GOOGLE_BREAKPAD_COMMON_BREAKPAD_TYPES_H__
+ #define GOOGLE_BREAKPAD_COMMON_BREAKPAD_TYPES_H__
+ 
++// disable this check as inttypes.h contains format macros defined
++// and __STDC_FORMAT_MACROS is not used in inttypes.h at all
++#if 0
+ #if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && \
+     !defined(__STDC_FORMAT_MACROS)
+ #error "inttypes.h has already been included before this header file, but "
+ #error "without __STDC_FORMAT_MACROS defined."
+ #endif
++#endif
+ 
+ #ifndef __STDC_FORMAT_MACROS
+ #define __STDC_FORMAT_MACROS

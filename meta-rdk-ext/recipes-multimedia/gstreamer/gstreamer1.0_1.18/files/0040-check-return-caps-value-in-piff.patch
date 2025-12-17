@@ -1,0 +1,41 @@
+Check return value from caps before usage in PIFF box
+
+In Canal Plus test streams we are using PIFF boxes, but caps did not had 
+present GST_PROTECTION_SYSTEM_ID_CAPS_FIELD. In consequence, we were returning
+invalid system_id pointer, which caused SIGSEGV crash. 
+
+Reproduction testcase (uses PlayReady):
+https://developers.canal-plus.com/rx-player/upc/?appTileLocation=[object%20Object]
+
+Fix was applied to gstreamer upstream (will be present in version 1.21.90):
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3535
+
+Jacek Skiba <jacek.skiba@consult.red>
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 4200bd5..da59a4a 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -2944,6 +2944,7 @@ qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
+   QtDemuxCencSampleSetInfo *ss_info = NULL;
+   const gchar *system_id;
+   gboolean uses_sub_sample_encryption = FALSE;
++  gboolean result = FALSE;
+   guint32 sample_count;
+ 
+   if (QTDEMUX_N_STREAMS (qtdemux) == 0)
+@@ -2958,9 +2959,11 @@ qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
+     return;
+   }
+ 
+-  gst_structure_get (structure, GST_PROTECTION_SYSTEM_ID_CAPS_FIELD,
++  result = gst_structure_get (structure, GST_PROTECTION_SYSTEM_ID_CAPS_FIELD,
+       G_TYPE_STRING, &system_id, NULL);
+-  gst_qtdemux_append_protection_system_id (qtdemux, system_id);
++  if (result) {
++    gst_qtdemux_append_protection_system_id (qtdemux, system_id);
++  }
+ 
+   stream->protected = TRUE;
+   stream->protection_scheme_type = FOURCC_cenc;
+

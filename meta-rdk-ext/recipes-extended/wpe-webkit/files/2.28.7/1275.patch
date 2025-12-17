@@ -1,0 +1,24 @@
+From 632e56b458b49a6d9ec96987aaebfe6c47d962a5 Mon Sep 17 00:00:00 2001
+From: kkanag314 <krishnapriya_kanagaraj@comcast.com>
+Date: Sun, 3 Mar 2024 17:57:41 +0000
+Subject: [PATCH] changes
+
+---
+ .../graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
+index b63ab53264aa..4839a1e0246f 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
+@@ -46,7 +46,7 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffe
+ GST_DEBUG_CATEGORY(webkitMediaThunderDecryptDebugCategory);
+ #define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory
+ 
+-static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "video/x-h265", "audio/mpeg", "audio/x-eac3", "audio/x-ac3", "audio/x-flac", "video/x-vp9", nullptr };
++static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "video/x-h265", "audio/mpeg", "audio/x-eac3", "audio/x-ac3", "audio/x-flac", "audio/x-opus", "video/x-vp9", nullptr };
+ static const char** cbcsEncryptionMediaTypes = cencEncryptionMediaTypes;
+ static const char* webmEncryptionMediaTypes[] = { "video/webm", "audio/webm", "video/x-vp9", "audio/x-opus", nullptr };
+ 
+-- 
+2.17.1

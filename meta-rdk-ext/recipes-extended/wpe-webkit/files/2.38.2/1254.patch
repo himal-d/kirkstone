@@ -1,0 +1,107 @@
+From 0081a8f5ba8d94b4b72650f3e2f1bcf619ac9a9a Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Mon, 11 Dec 2023 18:59:04 +0000
+Subject: [PATCH 1/3] Build fix LTO
+
+---
+ Source/WebCore/Modules/mediastream/RTCDataChannel.cpp | 2 ++
+ Source/WebCore/Modules/mediastream/RTCDataChannel.h   | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/Source/WebCore/Modules/mediastream/RTCDataChannel.cpp b/Source/WebCore/Modules/mediastream/RTCDataChannel.cpp
+index ccedbb851f864..4abc5de693f5d 100644
+--- a/Source/WebCore/Modules/mediastream/RTCDataChannel.cpp
++++ b/Source/WebCore/Modules/mediastream/RTCDataChannel.cpp
+@@ -104,6 +104,8 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<
+ {
+ }
+ 
++RTCDataChannel::~RTCDataChannel() = default;
++
+ std::optional<unsigned short> RTCDataChannel::id() const
+ {
+     if (!m_options.id && m_handler)
+diff --git a/Source/WebCore/Modules/mediastream/RTCDataChannel.h b/Source/WebCore/Modules/mediastream/RTCDataChannel.h
+index 2073a662ef168..6f9ed04efa92e 100644
+--- a/Source/WebCore/Modules/mediastream/RTCDataChannel.h
++++ b/Source/WebCore/Modules/mediastream/RTCDataChannel.h
+@@ -89,6 +89,7 @@ class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOM
+     using RefCounted<RTCDataChannel>::deref;
+ 
+     WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
++    virtual ~RTCDataChannel();
+ 
+ private:
+     RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+
+From 6f56e75bd42e5c451aea820b12e8565a73607f6d Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Mon, 11 Dec 2023 19:00:15 +0000
+Subject: [PATCH 2/3] Remove comiple duplication
+
+---
+ Source/ThirdParty/libwebrtc/CMakeLists.txt | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/CMakeLists.txt b/Source/ThirdParty/libwebrtc/CMakeLists.txt
+index 273668834a0e0..1c9c9ca9e1505 100644
+--- a/Source/ThirdParty/libwebrtc/CMakeLists.txt
++++ b/Source/ThirdParty/libwebrtc/CMakeLists.txt
+@@ -81,7 +81,6 @@ set(webrtc_SOURCES
+     Source/third_party/abseil-cpp/absl/synchronization/notification.cc
+     Source/third_party/abseil-cpp/absl/hash/internal/wyhash.cc
+     Source/third_party/abseil-cpp/absl/hash/internal/hash.cc
+-    Source/third_party/abseil-cpp/absl/hash/internal/print_hash_of.cc
+     Source/third_party/abseil-cpp/absl/hash/internal/city.cc
+     Source/third_party/abseil-cpp/absl/debugging/symbolize.cc
+     Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
+@@ -119,7 +118,6 @@ set(webrtc_SOURCES
+     Source/third_party/abseil-cpp/absl/random/gaussian_distribution.cc
+     Source/third_party/abseil-cpp/absl/random/discrete_distribution.cc
+     Source/third_party/abseil-cpp/absl/random/seed_gen_exception.cc
+-    Source/third_party/abseil-cpp/absl/random/internal/gaussian_distribution_gentables.cc
+     Source/third_party/abseil-cpp/absl/random/internal/seed_material.cc
+     Source/third_party/abseil-cpp/absl/random/internal/randen_slow.cc
+     Source/third_party/abseil-cpp/absl/random/internal/chi_square.cc
+@@ -240,11 +238,6 @@ set(webrtc_SOURCES
+     Source/third_party/boringssl/src/crypto/evp/sign.c
+     Source/third_party/boringssl/src/crypto/ex_data.c
+     Source/third_party/boringssl/src/crypto/fipsmodule/bcm.c
+-    Source/third_party/boringssl/src/crypto/fipsmodule/dh/check.c
+-    Source/third_party/boringssl/src/crypto/fipsmodule/dh/dh.c
+-    Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
+-    Source/third_party/boringssl/src/crypto/fipsmodule/ec/p256.c
+-    Source/third_party/boringssl/src/crypto/fipsmodule/rand/fork_detect.c
+     Source/third_party/boringssl/src/crypto/hkdf/hkdf.c
+     Source/third_party/boringssl/src/crypto/hpke/hpke.c
+     Source/third_party/boringssl/src/crypto/hrss/hrss.c
+@@ -1001,7 +994,6 @@ set(webrtc_SOURCES
+     Source/webrtc/modules/audio_processing/splitting_filter.cc
+     Source/webrtc/modules/audio_processing/test/conversational_speech/config.cc
+     Source/webrtc/modules/audio_processing/test/conversational_speech/timing.cc
+-    Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/vad.cc
+     Source/webrtc/modules/audio_processing/three_band_filter_bank.cc
+     Source/webrtc/modules/audio_processing/transient/file_utils.cc
+     Source/webrtc/modules/audio_processing/transient/moving_moments.cc
+
+From 73e25f1d5dccb73509903aa0e4d8f12c32bde71d Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Mon, 11 Dec 2023 19:01:03 +0000
+Subject: [PATCH 3/3] Change PAL libary type to OBJECT
+
+---
+ Source/cmake/OptionsWPE.cmake | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/cmake/OptionsWPE.cmake b/Source/cmake/OptionsWPE.cmake
+index ebeb7249c0a7c..b68c14a72562f 100644
+--- a/Source/cmake/OptionsWPE.cmake
++++ b/Source/cmake/OptionsWPE.cmake
+@@ -197,6 +197,7 @@ set(bmalloc_LIBRARY_TYPE OBJECT)
+ set(WTF_LIBRARY_TYPE OBJECT)
+ set(JavaScriptCore_LIBRARY_TYPE OBJECT)
+ set(WebCore_LIBRARY_TYPE OBJECT)
++set(PAL_LIBRARY_TYPE OBJECT)
+ 
+ # These are shared variables, but we special case their definition so that we can use the
+ # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.

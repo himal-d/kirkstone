@@ -1,0 +1,13 @@
+[Unit]
+Description=To stress openssl Functionality Testcases
+
+After=local-fs.target nvram.service network-online.target 
+Requires=network-online.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c '/lib/rdk/openssl-ptest-stress.sh'
+ExecStart=/bin/sh -c '/lib/rdk/openssl-ptest-perf_stats.sh'
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+##########################################
+Date: Jan 2, 2022 16:47
+From: I877a33e6a56ccdd7bf8be7beabca46d92f474b9
+Subject: solve compilation for one wifi
+Source: Comcast
+Upstream-Status: Pending
+Signed-off-by: Jayanth Rajan <jayanth.rajan@sky.uk>
+##########################################
+Index: rdk-wifi-libhostap/source/hostap-2.9/src/ap/wpa_auth_glue.c
+===================================================================
+--- rdk-wifi-libhostap.orig/source/hostap-2.9/src/ap/wpa_auth_glue.c
++++ rdk-wifi-libhostap/source/hostap-2.9/src/ap/wpa_auth_glue.c
+@@ -185,6 +185,9 @@ static void hostapd_wpa_auth_psk_failure
+ 	struct hostapd_data *hapd = ctx;
+ 	wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_POSSIBLE_PSK_MISMATCH MACSTR,
+ 		MAC2STR(addr));
++#ifdef RDK_ONEWIFI
++	hostapd_drv_sta_notify_deauth(hapd, addr, WLAN_REASON_PREV_AUTH_NOT_VALID);
++#endif //RDK_ONEWIFI
+ }
+ 
+ 

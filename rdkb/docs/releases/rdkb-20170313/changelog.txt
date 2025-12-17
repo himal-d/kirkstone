@@ -1,0 +1,118 @@
+Changelog between rdkb-20170227 and rdkb-20170313
+
+
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+816495f BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+11606b7 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+95b95d1 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+fdc0123 RDKB-10372 : X_CISCO_NetworkCoordinatorMACAddress is giving wrong value
+9396106 RDKB-8513 : TR-181 parameter implementation
+c4e3f09 RDKB-10330 : For RxPowerLevel , datatype to be changed to int
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+37b8c75 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+f0a35ea RDKBEMU-357 : CcspPandM crashes when trying to add a rule for Port Forwarding
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+5105feb RDKBEMU-382 : Upstream Tr069 Implementation in ccsp-tr069-pa
+78c6958 CISCOXB3-2036:No mapping for components even after dmcli is success.
+2bd80e4 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+84808ab BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+1e7cb2a RDKBCMF-42 : Remove Docsis Dependencies from GwProvApp for RaspberryPi Platform
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+a8e482e RDKB-9367 : Log file-nr regularly and nr_open to selfheal.txt
+3f1bc3b RDKB-10381 : Need a error log in SelfHeal logs when dnsmasq is not running
+5e94b9a RDKB-10459 :Xfinity Home security not working after Arris XB3 upgrade to 2.4s7
+2107c35 RDKB-10417 : Speedtest Client does not remain Enabled after device reboot
+a53b6f6 RDKB-9367 : Log file-nr and nr_open in selfheal
+da7c207 RDKB-10332:Bring proper time-stamp in all logs of RDK-B Devices-dcm scripts
+879d553 WEBPA-1696,WEBPA-1717 : parodus DISTRO_FEATURES and remove parodus env variables
+e586d45 RDKB-10411 : Device's are rebooting because of ATOM connectivity failure
+
+project rdkb/components/opensource/ccsp/Utopia/
+6949b04 RDKB-10230: [FIELD] Two ti_dhcp6c process is running on erouter0 interface
+1a809a2 RDKB-10396 :Enhance logging in dhcp server script to log XHS bridge details
+d2200ed RDKB-10417 : Speedtest Client does not remain Enabled after device reboot
+a619bcd MESH-6: DHCP for MESH backhaul
+ae2418a RDKB-10257: Adding a fix for Null Pointer Exception in Utopia
+d7307f9 RDKB-9367 : Log file-nr and nr_open in selfheal
+398b49d RDKB-10367: start and end ip address not correct in dnsmasq.conf
+58f181f RDKB-9039 : Add default parameters for logging to syscfg
+1ac212a RDKB-10332:Bring proper time-stamp in all logs of RDK-B Devices-dcm scripts
+4884ae1 TCCBR-365: Need to remove the dependency to MoCA in TCCBR product.
+212f723 RDKB-10434,RDKB-10435:Observed "Didn't get WiFi 2.4 GHz SSID from agent"
+e0a08c1 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+477c546 Revert "CISCOXB3-1961: [FIELD] Two ti_dhcp6c process is running on erouter0 interface"
+2d5c24b RDKB-10410:  Firewall keeps on getting restarted.
+bfb28e7 RDKB-10266 :  [Field] Two IGD processes running for brlan0.
+c30800c CISCOXB3-1961: [FIELD] Two ti_dhcp6c process is running on erouter0 interface
+88e0326 CISCOXB3-2070: Incorrect boot_to_ETH_uptime and boot_to_WIFI_uptime values
+47a8dd1 ARRISXB6-3599: intermittent syscfg corruption after reset to defaults
+243c137 TCCBR-755: ip6 tables are not getting set completely
+db6369c ARRISXB6-3348: [Field]In ipv6 mode,Xg1 is not able to communicate with XB6,Xi5
+f7442d4 RDKB-4930: [Yocto][Boot Time]: handle_sw.sh C implementation
+f66903f ARRISXB6-3348: [Field]In ipv6 mode,Xg1 is not able to communicate with XB6,Xi5
+dc6e487 RDKB-9867 :  Log Top 5 Processes When CPU Usage Reaches 100%.
+4f8a045 TCCBR-695: SSH & HTTP functions not working in IPv6 CM mode
+a9e9ca4 ARRISXB6-3159 : optimized qsr10g_pcie driver time for unloaded
+1327e9c RDKB-10240:Bring proper time-stamp in all logs of RDK-B Devices-TandD
+8399387 ARRISXB6-3539 ARRISXB6-3265
+0c57ba8 RDKB-7044 : Develop Code - Boot Up information
+e418a64 ARRISXB6-3458 : brlan0 mac address changing on every boot of XB6
+7f702f4 RDKB-8933:Log timestamp when the device enters into/out captive portal
+dea7327 RDKB-148 : Parental Control - Block/Allow Device based on Time Not Working For IPv6
+
+project rdkb/components/opensource/ccsp/hal/
+e1784be RDKBEMU-381 : Upstream Tr069 Implementation in Hal
+33ea251 RDKB-10330 : [HAL] For RxPowerLevel , datatype to be changed to int
+d7f9f55 RDKB-7549,RDKB-7550,RDKB-7553,RDKB-7555,RDKB-7557 : Doxygen Documentation HAL
+
+project rdkb/components/opensource/ccsp/halinterface/
+6780f5a RDKB-5987: Merged changes from generic codebase.
+
+project rdkb/components/opensource/ccsp/servicemanager/
+e902322 RDKB-10433 : dmcli GET SET failed for CcspserviceManager
+
+project rdkb/components/opensource/ccsp/sysint/
+3483379 ARRISXB3-5651 : cron job race condition protection
+934d452 ARRISXB6-3682 : Fix continuous reboot in the case of pcie HW failure.
+cfb5e31 RDKB-9428 : Develop Code-Add Partner ID to Telemetry
+f3d1bdc RDKB-10332:Bring proper time-stamp in all logs of RDK-B Devices-dcm scripts
+7c4587e ARRISXB6-3656, ARRISXB6-3658: Report PCIE Enumeration Failure to Telemetry
+c9f0945 WEBPA-1672 : Add log upload and sync mechanism for webpa and parodus
+5be25e0 RDKB-9428 : Develop Code-Add Partner ID to Telemetry
+2783a7e RDKB-10326 : Modify DCM_RFCscript to use configparamgen and TLS versin in curl
+
+project rdkb/components/opensource/ccsp/webui/
+89aaaef RDKB-8205: special chars for WiFi SSID Range Extenders Page
+d3b4ce2 RDKB-9297: not able to add/edit Port Forward rules beyond DHCPv6
+a4ab39c RDKB-9228: GUI Restore of user Configuration is not working
+61a8057 RDKB-10201: Security Vulnerabilities[XSS] - Port Triggering
+5626469 RDKB-10199: Security Vulnerabilities[XSS] - Gateway tab
+8346cf0 RDKB-10201: Security Vulnerabilities[XSS] - Advanced tab
+62153c7 RDKB-10200: Security Vulnerabilities[XSS] - Parental Control tab
+cec18cb RDKB-8579: Inconsistent display of Connected Device IPv6 Address
+05d6182 RDKB-8933:Log timestamp when the device enters into/out captive portal
+347ef31 RDKCMF-6316 : To add README.md and doxygen comments in ccsp WebUI component
+e4f44c4 RDKBCMF-43: Managed Service validation is getting failed on webUI in case of protocol: TCP/UDP
+
+project rdkb/devices/raspberrypi/hal/
+8e15059 RDKBCMF-56:Wifi Status is not reflecting on WebUI
+7fc8f2a RDKBCMF-54: hostapd is not starting in case of dual band and impacting LAN functionality once restarted in single as well as dual band.
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+d8a1afb RDKBEMU-383 : Added ccsptr069 support in RDKB

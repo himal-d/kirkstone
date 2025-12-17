@@ -1,0 +1,27 @@
+From 51a2d46038d0283dedf1e99db2e2599c26852381 Mon Sep 17 00:00:00 2001
+From: Stefan Verkoyen <sverkoyen.contractor@libertyglobal.com>
+Date: Tue, 9 Jan 2024 11:21:38 +0100
+Subject: [PATCH 1/2] 0001-convert-error-to-warning.patch
+
+Change-Id: Id1d93473ec65d8dcefe8c169d084fbcea8c1f265
+---
+ src/lib/rootfs.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/lib/rootfs.py b/src/lib/rootfs.py
+index 9dc0d7c..489a106 100644
+--- a/src/lib/rootfs.py
++++ b/src/lib/rootfs.py
+@@ -468,8 +468,7 @@ class cRootfs(object):
+                         # Library doen't exists in rootfs but referenced by LD_PRELOAD
+                         self.log_warn("%s library doesn't exists. required for: %s" % (name, " ".join(lib["required_by"])))
+                     else:
+-                        self.log_err("%s library missing. required for: %s" % (name, " ".join(lib["required_by"])))
+-                        wasError = True
++                        self.log_warn("%s library missing. required for: %s" % (name, " ".join(lib["required_by"])))
+         return wasError
+ 
+ 
+-- 
+2.41.0
+

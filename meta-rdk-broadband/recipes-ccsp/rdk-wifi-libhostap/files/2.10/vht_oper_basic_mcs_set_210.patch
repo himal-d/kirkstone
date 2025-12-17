@@ -1,0 +1,36 @@
+##########################################
+Date: Apr 16, 2024 1:00 PM
+From: 
+Subject: Make basic MCS set configurable
+Source: Comcast
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: Bogdan Bogush <bogdan.bogush@comcast.com>
+##########################################
+diff --git a/source/hostap-2.10/src/ap/ap_config.h b/source/hostap-2.10/src/ap/ap_config.h
+index 805ea93..1f7ef7a 100644
+--- a/source/hostap-2.10/src/ap/ap_config.h
++++ b/source/hostap-2.10/src/ap/ap_config.h
+@@ -1053,6 +1053,8 @@ struct hostapd_config {
+ 	u8 vht_oper_centr_freq_seg1_idx;
+ 	u8 ht40_plus_minus_allowed;
+ 
++	u16 vht_oper_basic_mcs_set;
++
+ 	/* Use driver-generated interface addresses when adding multiple BSSs */
+ 	u8 use_driver_iface_addr;
+ 
+diff --git a/source/hostap-2.10/src/ap/ieee802_11_vht.c b/source/hostap-2.10/src/ap/ieee802_11_vht.c
+index 828f0ab..f0c8888 100644
+--- a/source/hostap-2.10/src/ap/ieee802_11_vht.c
++++ b/source/hostap-2.10/src/ap/ieee802_11_vht.c
+@@ -119,7 +119,8 @@ u8 * hostapd_eid_vht_operation(struct hostapd_data *hapd, u8 *eid)
+ 
+ 	/* VHT Basic MCS set comes from hw */
+ 	/* Hard code 1 stream, MCS0-7 is a min Basic VHT MCS rates */
+-	oper->vht_basic_mcs_set = host_to_le16(0xfffc);
++	//oper->vht_basic_mcs_set = host_to_le16(0xfffc);
++	oper->vht_basic_mcs_set = host_to_le16(hapd->iconf->vht_oper_basic_mcs_set);
+ 	pos += sizeof(*oper);
+ 
+ 	return pos;

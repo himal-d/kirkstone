@@ -1,0 +1,53 @@
+From e607c41e801015b541beb0fc7cde09c965ea916b Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Tue, 18 Jul 2023 07:00:30 +0000
+Subject: [PATCH] comcast : DELIA-61357: Moderate Memory Pressure logs
+
+---
+ Source/WTF/wtf/MemoryPressureHandler.h              | 2 +-
+ Source/WTF/wtf/linux/MemoryPressureHandlerLinux.cpp | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WTF/wtf/MemoryPressureHandler.h b/Source/WTF/wtf/MemoryPressureHandler.h
+index 8fcd277c427e..5ec6a9a53ad6 100644
+--- a/Source/WTF/wtf/MemoryPressureHandler.h
++++ b/Source/WTF/wtf/MemoryPressureHandler.h
+@@ -115,7 +115,7 @@ public:
+         static void setLoggingEnabled(bool enabled) { s_loggingEnabled = enabled; }
+         static bool loggingEnabled()
+         {
+-#if RELEASE_LOG_DISABLED
++#if RELEASE_LOG_DISABLED || 1
+             return s_loggingEnabled;
+ #else
+             return true;
+diff --git a/Source/WTF/wtf/linux/MemoryPressureHandlerLinux.cpp b/Source/WTF/wtf/linux/MemoryPressureHandlerLinux.cpp
+index 674ff297837c..6e43738a28ac 100644
+--- a/Source/WTF/wtf/linux/MemoryPressureHandlerLinux.cpp
++++ b/Source/WTF/wtf/linux/MemoryPressureHandlerLinux.cpp
+@@ -36,6 +36,7 @@
+ #include <wtf/Threading.h>
+ #include <wtf/linux/CurrentProcessMemoryStatus.h>
+ #include <wtf/text/WTFString.h>
++#include <wtf/Scope.h>
+ 
+ #define LOG_CHANNEL_PREFIX Log
+ 
+@@ -296,6 +297,14 @@ void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical, bool isS
+     if (!m_installed)
+         return;
+ 
++    static const bool isAlwaysLogAllowed = []() {
++        const auto* webkit_debug_env = getenv("WEBKIT_DEBUG");
++        return (webkit_debug_env && strlen(webkit_debug_env));
++    }();
++
++    auto scopeExit = WTF::makeScopeExit([ oldValue = ReliefLogger::loggingEnabled() ] () { ReliefLogger::setLoggingEnabled(oldValue); });
++    ReliefLogger::setLoggingEnabled(isSynchronous || isAlwaysLogAllowed);
++
+     if (ReliefLogger::loggingEnabled())
+         LOG(MemoryPressure, "Got memory pressure notification (%s, %s) ", isCritical ? "critical" : "non-critical", isSynchronous ? "synchronous" : "non-synchronous");
+ 
+-- 
+2.25.1
+

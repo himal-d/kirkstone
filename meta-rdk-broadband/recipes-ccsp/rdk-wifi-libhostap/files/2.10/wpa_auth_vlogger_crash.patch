@@ -1,0 +1,25 @@
+##########################################
+Date: Jul 31, 2022 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: wpa_auth_vlogger crash
+Source: Comcast
+License: BSD 
+Upstream-Status: Pending
+Signed-off-by: Tamilarasi Ganesan <tamilarasi_ganesan@comcast.com>
+##########################################
+diff --git a/source/hostap-2.10/src/ap/wpa_auth.c b/source/hostap-2.10/src/ap/wpa_auth.c
+index 9aaf7ea..2ad3eca 100644
+--- a/source/hostap-2.10/src/ap/wpa_auth.c
++++ b/source/hostap-2.10/src/ap/wpa_auth.c
+@@ -268,6 +268,11 @@ void wpa_auth_vlogger(struct wpa_authenticator *wpa_auth, const u8 *addr,
+ 	int maxlen;
+ 	va_list ap;
+ 
++    if (wpa_auth == NULL)
++        return;
++    if (wpa_auth->cb == NULL)
++        return;
++
+ 	if (!wpa_auth->cb->logger)
+ 		return;
+ 

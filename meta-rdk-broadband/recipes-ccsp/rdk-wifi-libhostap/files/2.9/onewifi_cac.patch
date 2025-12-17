@@ -1,0 +1,28 @@
+Date: 31-May-2023
+From: yanina_husarevych@comcast.com
+Source: COMCAST
+
+diff --color -Naur rdk-wifi-libhostap/source/hostap-2.9/src/ap/ieee802_11.c rdk-wifi-libhostap_new/source/hostap-2.9/src/ap/ieee802_11.c
+--- rdk-wifi-libhostap/source/hostap-2.9/src/ap/ieee802_11.c	2023-05-31 14:43:30.191753221 +0300
++++ rdk-wifi-libhostap_new/source/hostap-2.9/src/ap/ieee802_11.c	2023-05-31 14:44:33.881060053 +0300
+@@ -3453,7 +3453,7 @@
+ }
+ 
+ 
+-static u16 send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
++u16 send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
+ 			   const u8 *addr, u16 status_code, int reassoc,
+ 			   const u8 *ies, size_t ies_len, int rssi)
+ {
+diff --color -Naur rdk-wifi-libhostap/source/hostap-2.9/src/ap/ieee802_11.h rdk-wifi-libhostap_new/source/hostap-2.9/src/ap/ieee802_11.h
+--- rdk-wifi-libhostap/source/hostap-2.9/src/ap/ieee802_11.h	2023-05-31 14:43:30.191753221 +0300
++++ rdk-wifi-libhostap_new/source/hostap-2.9/src/ap/ieee802_11.h	2023-05-31 14:45:22.210467911 +0300
+@@ -193,4 +193,8 @@
+ 
+ void auth_sae_process_commit(void *eloop_ctx, void *user_ctx);
+ 
++u16 send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
++			   const u8 *addr, u16 status_code, int reassoc,
++			   const u8 *ies, size_t ies_len, int rssi);
++
+ #endif /* IEEE802_11_H */

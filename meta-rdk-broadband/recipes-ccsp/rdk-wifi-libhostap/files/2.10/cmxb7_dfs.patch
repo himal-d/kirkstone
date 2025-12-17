@@ -1,0 +1,100 @@
+diff --git a/source/hostap-2.10/src/ap/dfs.c b/source/hostap-2.10/src/ap/dfs.c
+index e46dd7e..de86407 100644
+--- a/source/hostap-2.10/src/ap/dfs.c
++++ b/source/hostap-2.10/src/ap/dfs.c
+@@ -19,12 +19,6 @@
+ #include "dfs.h"
+
+
+-enum dfs_channel_type {
+-	DFS_ANY_CHANNEL,
+-	DFS_AVAILABLE, /* non-radar or radar-available */
+-	DFS_NO_CAC_YET, /* radar-not-yet-available */
+-};
+-
+ static struct hostapd_channel_data *
+ dfs_downgrade_bandwidth(struct hostapd_iface *iface, int *secondary_channel,
+ 			u8 *oper_centr_freq_seg0_idx,
+@@ -154,7 +148,7 @@ static int dfs_is_chan_allowed(struct hostapd_channel_data *chan, int n_chans)
+ }
+
+
+-static struct hostapd_channel_data *
++struct hostapd_channel_data *
+ dfs_get_chan_data(struct hostapd_hw_modes *mode, int freq, int first_chan_idx)
+ {
+ 	int i;
+@@ -502,7 +496,7 @@ static int dfs_check_chans_unavailable(struct hostapd_iface *iface,
+ }
+
+
+-static struct hostapd_channel_data *
++struct hostapd_channel_data *
+ dfs_get_valid_channel(struct hostapd_iface *iface,
+ 		      int *secondary_channel,
+ 		      u8 *oper_centr_freq_seg0_idx,
+@@ -624,7 +618,7 @@ static int dfs_set_valid_channel(struct hostapd_iface *iface, int skip_radar)
+ }
+
+
+-static int set_dfs_state_freq(struct hostapd_iface *iface, int freq, u32 state)
++int set_dfs_state_freq(struct hostapd_iface *iface, int freq, u32 state)
+ {
+ 	struct hostapd_hw_modes *mode;
+ 	struct hostapd_channel_data *chan = NULL;
+@@ -649,8 +643,7 @@ static int set_dfs_state_freq(struct hostapd_iface *iface, int freq, u32 state)
+ 	return 0;
+ }
+
+-
+-static int set_dfs_state(struct hostapd_iface *iface, int freq, int ht_enabled,
++int set_dfs_state(struct hostapd_iface *iface, int freq, int ht_enabled,
+ 			 int chan_offset, int chan_width, int cf1,
+ 			 int cf2, u32 state)
+ {
+@@ -716,7 +709,7 @@ static int set_dfs_state(struct hostapd_iface *iface, int freq, int ht_enabled,
+ }
+
+
+-static int dfs_are_channels_overlapped(struct hostapd_iface *iface, int freq,
++int dfs_are_channels_overlapped(struct hostapd_iface *iface, int freq,
+ 				       int chan_width, int cf1, int cf2)
+ {
+ 	int start_chan_idx, start_chan_idx1;
+@@ -1082,7 +1075,7 @@ static void hostpad_dfs_update_background_chain(struct hostapd_iface *iface)
+ }
+
+
+-static bool
++bool
+ hostapd_dfs_is_background_event(struct hostapd_iface *iface, int freq)
+ {
+ 	return dfs_use_radar_background(iface) &&
+diff --git a/source/hostap-2.10/src/ap/dfs.h b/source/hostap-2.10/src/ap/dfs.h
+index 606c1b3..f737367 100644
+--- a/source/hostap-2.10/src/ap/dfs.h
++++ b/source/hostap-2.10/src/ap/dfs.h
+@@ -9,6 +9,12 @@
+ #ifndef DFS_H
+ #define DFS_H
+
++enum dfs_channel_type {
++	DFS_ANY_CHANNEL,
++	DFS_AVAILABLE, /* non-radar or radar-available */
++	DFS_NO_CAC_YET, /* radar-not-yet-available */
++};
++
+ int hostapd_handle_dfs(struct hostapd_iface *iface);
+
+ int hostapd_dfs_complete_cac(struct hostapd_iface *iface, int success, int freq,
+@@ -32,5 +38,10 @@ int hostapd_dfs_start_cac(struct hostapd_iface *iface, int freq,
+ int hostapd_handle_dfs_offload(struct hostapd_iface *iface);
+ int hostapd_is_dfs_overlap(struct hostapd_iface *iface, enum chan_width width,
+ 			   int center_freq);
++struct hostapd_channel_data *dfs_get_valid_channel(struct hostapd_iface *iface, int *secondary_channel, u8 *oper_centr_freq_seg0_idx, u8 *oper_centr_freq_seg1_idx, enum dfs_channel_type type);
++int set_dfs_state(struct hostapd_iface *iface, int freq, int ht_enabled, int chan_offset, int chan_width, int cf1, int cf2, u32 state);
++bool hostapd_dfs_is_background_event(struct hostapd_iface *iface, int freq);
++int dfs_are_channels_overlapped(struct hostapd_iface *iface, int freq, int chan_width, int cf1, int cf2);
++struct hostapd_channel_data *dfs_get_chan_data(struct hostapd_hw_modes *mode, int freq, int first_chan_idx);
+
+ #endif /* DFS_H */

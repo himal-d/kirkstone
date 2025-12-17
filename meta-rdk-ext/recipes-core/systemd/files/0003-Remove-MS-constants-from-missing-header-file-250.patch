@@ -1,0 +1,57 @@
+From b752a0c1725c68838c9945ebb24fd5807115969d Mon Sep 17 00:00:00 2001
+From: anaras440 <aravindan_narasimhapuramchakravarthy@comcast.com>
+Date: Fri, 17 Mar 2023 19:48:06 +0000
+Subject: [PATCH] Remove MS constants from missing header file
+
+         Remove MS_* constants from src/basic/missing.h since these
+         variables are already defined in linux/fs.h
+
+Source: COMCAST
+License: LGPL-2.1-or-later
+Upstream-Status: Inappropriate 
+Signed-off-by: Aravindan NarasimhapuramChakravarthy <aravindan_narasimhapuramchakravarthy@comcast.com>
+
+Recreated from https://gerrit.teamccp.com/#/c/492402/4/recipes-core/systemd/files/0003-Remove-MS-constants-from-missing-header-file.patch
+for yocto kirkstone
+---
+Index: git/src/basic/missing_fs.h
+===================================================================
+--- git.orig/src/basic/missing_fs.h
++++ git/src/basic/missing_fs.h
+@@ -7,25 +7,7 @@
+ #endif
+ 
+ /* linux/fs.h or sys/mount.h */
+-#ifndef MS_MOVE
+-#define MS_MOVE 8192
+-#endif
+-
+-#ifndef MS_REC
+-#define MS_REC 16384
+-#endif
+-
+-#ifndef MS_PRIVATE
+-#define MS_PRIVATE      (1<<18)
+-#endif
+ 
+-#ifndef MS_SLAVE
+-#define MS_SLAVE        (1<<19)
+-#endif
+-
+-#ifndef MS_SHARED
+-#define MS_SHARED       (1<<20)
+-#endif
+ 
+ #ifndef MS_RELATIME
+ #define MS_RELATIME     (1<<21)
+@@ -39,10 +21,6 @@
+ #define MS_I_VERSION    (1<<23)
+ #endif
+ 
+-#ifndef MS_STRICTATIME
+-#define MS_STRICTATIME  (1<<24)
+-#endif
+-
+ #ifndef MS_LAZYTIME
+ #define MS_LAZYTIME     (1<<25)
+ #endif

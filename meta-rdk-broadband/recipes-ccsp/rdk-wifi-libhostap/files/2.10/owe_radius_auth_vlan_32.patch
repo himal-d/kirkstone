@@ -1,0 +1,72 @@
+##########################################
+Date: April 20 2023 10:47 PM
+From: 2ac273d52d72f7ed6f8b91f1e2a5bd01cb9e6d6d
+Subject: Four bytes vlanid and RadiusGreylist for wl2.3
+Source: COMCAST
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: pjoshi <pjoshi020@comcast.com>
+##########################################
+--- a/source/hostap-2.10/src/radius/radius.h	2023-04-26 17:46:32.996579719 +0000
++++ b/source/hostap-2.10/src/radius/radius.h	2023-04-26 05:11:24.345104824 +0000
+@@ -239,9 +239,9 @@
+ enum {
+ 	RADIUS_VENDOR_ATTR_COMCAST_NETWORK_TYPE = 133,
+ 	RADIUS_VENDOR_ATTR_COMCAST_CM_MAC = 134,
+-	RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN = 135,
+ 	RADIUS_VENDOR_ATTR_COMCAST_AP_SNR = 136,
+ 	RADIUS_VENDOR_ATTR_COMCAST_REPLY_MESSAGE = 137,
++	RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN_32 = 141,
+ };
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ #ifdef _MSC_VER
+--- a/source/hostap-2.10/src/ap/ieee802_1x.c	2023-04-26 17:46:33.292577142 +0000
++++ b/source/hostap-2.10/src/ap/ieee802_1x.c	2023-04-26 18:25:22.520185527 +0000
+@@ -841,7 +841,8 @@
+ #endif /* CONFIG_HS20 */
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+ 	if (hapd->conf->rdk_greylist) {
+-		u8 secure, snr, ap_vlan;
++		u8 secure, snr;
++		u32 ap_vlan;
+ 		char txtaddr[TXT_MAC_ADDR_LEN] = {'\0'};
+ 
+ 		secure = (hapd->conf->wpa == 0) ? 1 : 2;
+@@ -851,7 +852,7 @@
+ 
+ 		greylist_get_cmmac();
+ 
+-		ap_vlan = hapd->conf->ap_vlan;
++		ap_vlan = htonl(hapd->conf->ap_vlan);
+ 
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_NETWORK_TYPE,
+@@ -860,8 +861,8 @@
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_CM_MAC,
+ 			cmmac, TXT_MAC_ADDR_LEN - 1);
+ 		radius_msg_add_comcast(
+-			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN,
+-			&ap_vlan, 1);
++			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN_32,
++			(u8 *)&ap_vlan, 4);
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_SNR,
+ 			&snr, 1);
+@@ -1300,7 +1301,7 @@
+ 
+ 	key_mgmt = wpa_auth_sta_key_mgmt(sta->wpa_sm);
+ 	if (key_mgmt != -1 &&
+-	    (wpa_key_mgmt_wpa_psk(key_mgmt) || key_mgmt == WPA_KEY_MGMT_OWE ||
++	    (wpa_key_mgmt_wpa_psk(key_mgmt) || (key_mgmt == WPA_KEY_MGMT_OWE && !(hapd->conf->rdk_greylist)) ||
+ 	     key_mgmt == WPA_KEY_MGMT_DPP)) {
+ 		wpa_printf(MSG_DEBUG, "IEEE 802.1X: Ignore STA - using PSK");
+ 		/*
+@@ -1311,7 +1312,7 @@
+ 		return;
+ 	}
+ 
+-	if (!sta->eapol_sm) {
++	if (!sta->eapol_sm ||  (key_mgmt == WPA_KEY_MGMT_OWE && (hapd->conf->rdk_greylist))) {
+ 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE8021X,
+ 			       HOSTAPD_LEVEL_DEBUG, "start authentication");
+ 		sta->eapol_sm = ieee802_1x_alloc_eapol_sm(hapd, sta);

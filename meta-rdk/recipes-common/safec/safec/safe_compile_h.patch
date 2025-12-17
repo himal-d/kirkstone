@@ -1,0 +1,19 @@
+Date: Sat, 12 Oct 2019 17:06:56 +0000
+From 954565d7b35fe7c947bdf4057466324b2aa8f444 Mon Sep 17 00:00:00 2001
+From: sshett799 <sanath_shettyb@comcast.com>
+Subject: [PATCH] RDKB-23803 : integration of safe c lib in RDK-B build
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: sshett799 <sanath_shettyb@comcast.com>
+
+--- safeclib-04062019/include/safe_compile.h	2019-06-04 07:55:38.000000000 +0000
++++ safeclib-040620192/include/safe_compile.h	2019-09-20 16:50:52.109817312 +0000
+@@ -33,7 +33,7 @@
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+-
++#define restrict __restrict
+ typedef void (*constraint_handler_t)(const char *restrict /* msg */,
+                                      void *restrict /* ptr */,
+                                      errno_t /* error */);

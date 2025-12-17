@@ -1,0 +1,200 @@
+Changelog between rdkb-20171030 and rdkb-20171127
+
+
+project rdk/components/generic/crashupload/
+61ee473 DELIA-24777: Corefiles are not saved under "/opt/corefiles_backup"
+220867d RDKB-14945: S3 Minidump upload Failure
+7552e96 MOT7425-11061: Coredump to crashportal is not using TLS1.2
+0abca96 RDKB-14777:unprocessed minidump file after a process is killed
+364b18f RDKB3939-235 : syntax error: unexpected "then" (expecting "do")"
+1ca3c28 DELIA-24171: Coredump upload failure after reboot
+
+project rdk/components/generic/rdk_logger/
+d6ef19e RDKC-1496: Integrate EvoStream (PoC)
+3bd50c4 RDK-20463 : Callback for dynamic logging
+ca8f971 RDKB-14774 : PARODUSlog.txt.0 is not getting created in PACEXF3
+cdaf16a RDKB-14632: Deploy aker on Yocto.
+
+project rdk/components/generic/sys_mon_tools/sys_resource/
+15f5185 RDKCOM-372: update AC_CONFIG_MACRO_DIR
+50ec0dc update AC_CONFIG_MACRO_DIR
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+e69ff7f RDKB-11139 : Develop code - integrate the HAL with Tr181.
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+c23dea02 XF3-2758 : Not all processes are getting initialized in latest CFG3 Master
+b72b7a1b RDKB-14426 ccsp-common-library recipe contains a patch, not compatible with EXTSRC build
+c1ef2973 RDKB-14820 : Add webpa startup code to cosa_start_mips.sh
+76513376 RDKB-14632: Compile time enable/disable aker on Yocto.
+03cf474a CISCOXB3-3483:Calling meshap correction script from cosa
+e9cfb5cf CISCOXB3-3466,CISCOXB3-3461:Correct swapped radios without FR
+20fa7756 RDKB-14632: Deploy updates to aker on Yocto.
+cff11745 RDKB-14409: Add Systemd Startup Service in CcspCommonLibrary
+72382f8b RDKB-14563, RDKB-14730  : CCSP_Message_Bus_Init() can permanently hang.
+1b8c6f2d RDKB-14632: Deploy aker on Yocto.
+b2b0f1a9 XF3-2672: Sensitive information is displayed in Console logs. It must either be removed or encrypted
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+07c7821 RDKCOM-378: set stdout to unbuffered mode
+a7e3e74 set stdout to unbuffered mode
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+780252b RDKCOM-377: fix gcc 7 build issues
+a8309ad fix gcc 7 build issues
+67072e8 fix libCcspLM and liblmapi linker order
+06a4ae8 add missing libs to linker command line ( part 2 )
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+6b255e9 XF3-2757 : Factory reset causes parodusStart core dump
+d32a665 RDKB-14520 :Modify ParodusStart to support manufacturer name and device mac
+a6963fb WEBPA-2418 : Support configurable webpa server url on dev image
+7720496 XMIDT-236 : Add webpa-token command-line argument
+c82521a RDKB-14673 : Log db details after sync
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+eb7b228 RDKCOM-381: add missing libs to MoCASsp LDFLAGS
+f0d0e96 add missing libs to MoCASsp LDFLAGS
+b71ee9b RDKB-14716 , RDKB-14717, RDKB-14718 : MoCA Force Enable Flag
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+49da6ed RDKB-15027: Add log messages for admin login
+1c96be6 ARRISXB3-6655 : Observed CCSP Deadlock in PAM logs
+54d7d3e RDKB-14996 : [TR69] After device factory reset TR69 queries are failing.
+d3d3c3d RDKB-14868, RDKB-14869: Encrypt admin password
+7e52c31 RDKB-14864, RDKB-14862, RDKB-14865 : Single Build for Syndication (Phase 1).
+fb2e3a3 RDKB-14845 Develop Code - Reboot Primitives (Phase 2)
+f64041c RDKB3939-119 UI Not showing link local IPV6 address
+379ce63 RDKB-14845 Develop Code - Reboot Primitives (Phase 2)
+0c48664 TCCBR-1939 : Adding RFC TR181 parameter codebig feature
+592f9ab RDKB-10632 : TR69 Device.Bridging.Bridge.{i}.Port.{i}.Status didn't change
+f9a3f8c ARRISXB3-6878 : [Auto] CCSP_Deadlock observed on Stable Build.
+18d3985 RDKB-14134,RDKB-14135 : TR-181 Parameter addition Reason for change: For RFC control Test Procedure: Set/Get through dmcli Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+cc97416 RDKBEMU-545 : [TDK][TandD] Fails to set the value of
+0c36aa0 RDKB-14692 : Adding RFC support for enabling codebig feature
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+895b3be RDKB-14864, RDKB-14862, RDKB-14865 : Single Build for Syndication (Phase 1).
+e70aab5 Revert "RDKB-14336 : Adding RFC CodebigSupport record"
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+2983c09 RDKB-14961 : Able to set & get XHS password using SNMP
+7825119 RDKB-14134,RDKB14135 : 1.Flag value should be false,2.Log removal.
+22fde2b RDKB-14717:  Moca force enable object implementation Reason for change: Snmp MIB support Test Procedure:  Use following Snmp commands 		baseOid : 1.3.6.1.4.1.17270.50.4.1.4 		mib : 1 	1.snmpget -t 20 -v2c -c hDaFHJG7 10.255.244.43 .1.3.6.1.4.1.17270.50.4.1.4.1.0 		-> iso.3.6.1.4.1.17270.50.4.1.4.1.0 = INTEGER: 2
+57c495f RDKB-14135,RDKB-14134 : SNMP password Removal - XHS,LNF Reason for change: To Fix Security vulnerability Test Procedure: Snmp query test Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+ecf8710 RDKB-14864, RDKB-14862, RDKB-14865 : Single Build for Syndication (Phase 1).
+7442c72 RDKB-14793 : To make a stack generic Tr69 sharedKey stored in the clear.
+022b347 RDKB-8074 Few Parameter attributes when retrieved as list are shown as readable but when retrieved as individual parameters, then it is shown as writable.
+342437b RDKB-14134,RDKB-14135 : TR69 Flag should be false for GET/SET removal Reason for change: Flag value should be false Test Procedure: TR69 query Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+960f38a link CcspTr069PaSsp with openssl ( source-pc builds )
+d936d9f RDKB-14517 : Tr69 sharedKey stored in the clear (RDK-B).
+b4a426c RDKB-14134,RDKB-14135 : TR69 password removal - XHS,LNF Reason for change: To fix security vulnerability Test Procedure: TR69 query from ACS Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+81c4d11 RDKCOM-311: CcspTr069PaSsp: link with openssl libcrypto.so
+9d59c40 CcspTr069PaSsp: link with openssl libcrypto.so
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+566bbf8 RDKB3939-199: Wifi can't be up when exiting the powersave mode
+2b9b282 RDKBEMU-561 : [TDK][WiFi]Disabling the SSID of WiFi 2.4GHz is making
+c1f7b3d RDKB-14999:Wifi module load failure
+f6aca49 CISCOXB3-3510  :Remove wifi.agent.tch.oem.patch from meta-rdk-oem-cisco-intel repo
+dbf295f RDKB-14832 : [Wifi agent] add log when private password been changed
+5bce3e6 CISCOXB3-3505  :Remove repatch.wifi.agent.tch.oem.patch from meta-rdk-oem-cisco-intel repo
+975932c MESH-400,RDKB-14787: Disable mesh ssid broadcast when mesh is off
+43ab8dd CISCOXB3-3489  :Remove wps.config.patch from meta-rdk-oem-cisco-intel repo
+2afed3e RDKBEMU-559 : [TDK][WiFi]Cannot set operating standard of WiFi 2.4GHz as 'n'
+82c415c  RDKB-14881: telemetry marker for country code/power
+aa510b9 RDKB-14785 : Device continuously reporting Wifi not registered.
+d5f1933 ARRISXB6-5769: date rate overflow
+50c8360 RDKCOM-355: RPI-118: wifi clients are not getting an ip address
+187b560 RPI-118: wifi clients are not getting an ip address
+eb71894 RDKB-14523: Clear mesh state on factory reset
+
+project rdkb/components/opensource/ccsp/PowerManager/
+01ac320 add -pthread to rdkbPowerMgr LDFLAGS
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+11ed1e1 RDKB-14827  :Clear the MacFIlter entries when database is corrupted.
+b8c0b8e RDKB-14653 : CPE is returning param not exist leading to activation failures.
+5b9703d ARRISXB3-6884,RDKB-14772 : Add selfheal script to restart pandm when it is not responding
+640e268 Revert "Observed Error message in selfheal logs while fetching device mode"
+0738ea2 RDKB-14005	 : AUTO][MASTER][RDKB_PLATFORM_ERROR] : Something went wrong while fetching device mode [Intermittent]
+
+project rdkb/components/opensource/ccsp/Utopia/
+5089cd5 RDKB-14868, RDKB-14869: Encrypt admin password
+39e151b ARRISXB6-5624 : Opening port 56982
+3c19f43 RDKB-14944 : SECVULN: LnF Password Logged (CVSS 7.7) Remove passphrase from log Reason for change: To remove sensitive information such as logging of passphrase, Keypassphrase key to output file. Test Procedure: Ensure that box boots up, logs should not contain the passphrase, Keypassphrase key values. Risks: Low
+8f6f6ce ARRISXB6-6042 workaround for MTU on wifi recovery
+d9955c7 TCXB6-3057: No access to MSO/Local GUI upto 15min after switching from router to bridge mode
+d4b97db RDKB-14134,RDKB-14135 : Changed Flag value to false as default Reason for change: Default value should be false Test Procedure: None Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+613ffa6 RDKB-14716 , RDKB-14717, RDKB-14718 : MoCA Force Enable Flag
+30286b7 RDKCOM-351: syseventd_restart.sh: fix quoting
+5604f55 RDKB-14134,RDKB-14135 : Updated system_default file Reason for change: Required for TR181 Parameter Test Procedure: Set/Get through dmcli Risks: None Signed-off-by: cganeshan <Chandra_Ganeshan@comcast.com>
+81828f8 RDKCOM-310: utopia: libpal.so needs to link with both libupup.so and libixml.so
+c42a5e8 utopia_init.sh: quoting fixes
+d8de5b0 syseventd_restart.sh: fix quoting
+ffc2796 RDKB-14687: Correct The Error In Interface For SNMPv3 Firewall Rules Reason for change: Enable SNMPv3 for XB6 and XF3 devices on erouter0 Interface Test Procedure: 1] Ensure existing SNMPv2 commands with community strings are working 2] Ensure SNMPv3 queries from remote servers with certificates enabled are working 3] Ensure SNMPv3 queries from remote servers without certificates are rejected Risks: Medium Signed-off-by: rsharm459 rishi_sharma@comcast.com
+9873d11 RDKB-14692 : Setting RFC Codebig default value in syscfg.db
+802fe57 TCCBR-1600: Disable UPnP by default in CBR.
+1551561 RDKB-14523: Clear mesh state on factory reset
+5925be8 utopia: libpal.so needs to link with both libupup.so and libixml.so
+
+project rdkb/components/opensource/ccsp/Xconf/
+32dbea4 RDKB-14900 : Added the log for Direct communication
+fc67e68 ARRISXB6-6173 : xb6_firmwareDwnld.sh hung, causing xconf upgrade failures.
+4f66999 RDKB-14900 : Logging Codebig Curl Query
+9740efe RDKB-14973 : Send Partner ID to Xconf
+c56a366 CISCOXB3-3108 :Requested Image parameter name is wrongly spelled
+8d85006 RDKB-14845 Develop Code - Reboot Primitives (Phase 2)
+78218a4 RDKB-14845 Develop Code - Reboot Primitives (Phase 2)
+58db81a XF3-1873 : Work around Xconf not sending firmwareVersion correctly
+c0c4770 TCCBR-2152: Upgrade to latest master using XCONF fails.
+0685434 RDKB-14692 : RFC Codebig Flag moved to persistent area
+1aa5374 CBC-38,RDKB-14624 : Send Partner ID to Xconf
+
+project rdkb/components/opensource/ccsp/hal/
+140052f RDKBEMU-544 : Implemented SSIDStatus code in wifi hal
+832c9fd RDKBEMU-564 : Modified setup script due to Removed inbuilt realtek
+
+project rdkb/components/opensource/ccsp/halinterface/
+d53ff1c RDKB-14611: [wifi hal] need Radar detect call back Hal
+689ceb7 ARRISXB3-6341:[MoCA HAL] notification HAL for MoCA device association.
+
+project rdkb/components/opensource/ccsp/hotspot/
+f5afb5d RDKCOM-380: hotspot_arpd.c: include <netinet/if_ether.h> before <linux/if_ether.h> ( source-pc builds )
+56f4d36 RDKCOM-379: fix missing #include <sys/types.h> ( source-pc builds )
+994bfd6 hotspot_arpd.c: include <netinet/if_ether.h> before <linux/if_ether.h> ( source-pc builds )
+4a4b86b fix missing #include <sys/types.h> ( source-pc builds )
+
+project rdkb/components/opensource/ccsp/sysint/
+0eec80a CBC-38,RDKB-14624 : Send Partner ID to Xconf
+ce13b97 ARRISXB3-6967Â :Â Fix test print from erouterIpv4 address Details : Remove test print string from erouterIpv4 address Reason for change: Remove test print string from erouterIpv4 address Test Procedure: Tested by arris engineer. Risks: <side effects and other considerations>
+559c887 DELIA-21636,RDKB-14306: Telemetry single binary
+770c083 CISCOXB3-3452: [RDKB-3581]Remove Signature from CURL command in ArmConsolelog.txt
+349e773 RDKB-14632: Deploy aker on Yocto.
+b03d25b RDKB-14700 : Exec counters are not getting updated for no error cases
+3bee066 CBC-38,RDKB-14624 : Send Partner ID to Xconf
+
+project rdkb/components/opensource/ccsp/webui/
+1e8dc01 RDKB-14867: Admin Password Management - GUI Modifications
+58d462a RDKB-14867: Admin Password Management - GUI Modifications
+7007b25 RDKB-14737  : RDK-B - lighttpd - Vulnerable TCP Listener Bound on All Interfaces
+7988404 RDKB-14779: In bridgemode complete MoCA functionality should be greyed out
+d75bf47 TCXB6-3141: Reset / Restore Gateway -> Reset Wi-Fi - messages
+bf9616f RDKB-10331: Reset / Restore Gateway -> Reset Wi-Fi - messages
+55a985b ARRISXB6-3431 : CM IP parameters are not reflecting under MSO webpage
+afc859d RDKB-14844: Operating standards available for 5G radio is not same
+0f13096 RDKB-14762: UI screen beahvior when MoCA Force Enable
+00d1e71 RDKB-14794: Local UI screen changes for Mesh updates for XB6
+400f2c9 RDKB-14720: Local UI screen changes for Mesh updates
+30852c9 RDKB3939-184,RDKB3939-185,CISCOXB3-3392: GUI Lan Connection Speed
+
+project rdkb/devices/raspberrypi/hal/
+f29709c RPI-120/RPI-121 [TDK][WIFI]5GHz Radio status changes to "Down" when 2.4GHz Radio is disabled | 5GHz Radio status is "Up" after disabling Device.WiFi.Radio.2.Enable
+798f1d3 RPI-116 WiFi HAL api wifi_getRadioNumberOfEntries gives segmentation fault on passing invalid reference or null pointers to exposed HAL APIs
+24fe062 RPI_117 WiFi HAL api wifi_getRadioOperatingChannelBandwidth() is returning invalid channel bandwidth value for 2.4 and 5GHz
+4e8fc02 RPI_84 2.4 and 5GHZ WIFI SSIDs stops broadcasting once the channel number of 5GHZ is set to 40
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+2725cc8 RDKBEMU-562 : Removed inbuilt realtek kernel module from

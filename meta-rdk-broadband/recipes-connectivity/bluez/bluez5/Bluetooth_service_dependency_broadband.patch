@@ -1,0 +1,20 @@
+Date: Wed, 20 Mar 2022 01:45:40 +0000
+From: 0e1f792ccceceb3592c90a29b396ac2bbcbfca51 Wed Mar 30 00:00:00 2022
+Subject: Created ble service file dependency in bluetooth service as 
+         firmware is installed in that
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Gururaaja ESR <gururaja_erodesriranganramlingham@comcast.com>
+
+diff -rupN org/src/bluetooth.service.in mod/src/bluetooth.service.in
+--- org/src/bluetooth.service.in	2022-03-30 00:07:01.350024280 +0000
++++ mod/src/bluetooth.service.in	2022-03-30 00:07:42.393136197 +0000
+@@ -1,7 +1,7 @@
+ [Unit]
+ Description=Bluetooth service
+-After=disk-check.service nvram.service dbus.service
+-Requires=disk-check.service nvram.service dbus.service
++After=securemount.service dbus.service
++Requires=securemount.service dbus.service
+ Documentation=man:bluetoothd(8)
+ ConditionPathIsDirectory=/sys/class/bluetooth

@@ -1,0 +1,22 @@
+Source: COMCAST
+Upstream-Status: N/A,as the patch is specific to Comcast and Video Accelerators
+From: Lakshmipriya <LakshmipriyaLakshmipriya_Purushan@cable.comcast.com>
+---
+
+Index: git/src/lib/rootfs.py
+===================================================================
+--- git.orig/src/lib/rootfs.py
++++ git/src/lib/rootfs.py
+@@ -223,6 +223,12 @@ class cRootfs(object):
+         # set proper rights for container parent dir, non-recursive
+         self.changeFilePermissions(self.getPathContainerParentDirHost(), stat.S_IRUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP)
+ 
++        # set exec permission for rootfs directory for capkeep capabilities support
++        linux_cmd = "chmod o+x %s"%self.getPathRootfsHost()
++        error = os.system(linux_cmd)
++        if error:
++            raise Exception("program returned error code {%s}"%(error))
++
+         # set proper rights for container launcher
+         if (self.launcherName is not None and self.launcherName != " "):
+             self.changeFilePermissions(self.getLauncherFileHost(), stat.S_IRUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP)

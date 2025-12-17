@@ -1,0 +1,308 @@
+Changelog between rdkb-20180426 and rdkb-20180527
+
+
+
+project rdk/components/generic/crashupload/
+ad668b1 RDKB-16375 : Minidump file name having unnecessary symbols/letters.
+
+project rdk/components/generic/rdk_logger/
+e56dd72 RDK-21562: Enable configurable Logging Option for wpa_supplicant
+f816602 CPC-1951 : Added line for Estoria library.
+b6dd8e0 DELIA-27521 : File and Function name changes
+a71d124 DELIA-27309 : Code improvement
+
+project rdk/components/generic/rdm/
+2e03dd6 RDKCOM-648: INFRA-216 : Incorrect or missing copyright attributions in rdm
+fabe239 RDK-21755: [RNE] SDK download from USB
+694fdc9 INFRA-216 : Incorrect or missing copyright attributions in rdm
+
+project rdk/components/generic/sys_mon_tools/sys_resource/
+97210ea Sync sys_resource repos.
+
+project rdk/components/generic/xupnp/
+ad1f26e RDKB-17285:Changes for Arris xb3 device
+fa208bb RDKCOM-649: INFRA-215 : Incorrect or missing copyright attributions in xupnp
+011ced9 DELIA-26226 : Xi3 are unable to reach XRE.
+00005a8 INFRA-215 : Incorrect or missing copyright attributions in xupnp
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+e031812 RDKCOM-435: add NULL pointer checks to plugin_main_apis.c
+8e35cce add NULL pointer checks to plugin_main_apis.c
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+70e27922 RDKB-16508:Create functions to fetch the broadband information
+5957f29e RDKB-17189 : Removal of dependency on /etc/device.properties
+7f468be7 RDKB-17237:Refactor PSM to SysDB for DeviceFingerPrint.
+7bed2511 MESH-596 : Remove existing dnsmasq file
+4932c316 RDKALL-546 : Move rfc service initialization to common recipe
+c3514bd1 RDKB-17237:Refactor PSM to SysDB for DeviceFingerPrint.(XB3).
+364caa68 RDKB-16168: Device provisioning and docsis_LinkUp Equivalent events
+c0f24fa5 RDKB-17185:Migrate PSM to Sysdb for DeviceFingerPrint (XB6).
+a4367e9d RDKB-15639 : Incorrect or missing copyright attributions in CcspCommonLibrary
+3cb16d86 RDKB-16749: Secure Dropbear key: Create unique temp files using pid number
+3d9a8296 XF3-3315 : fix syntax error
+c6850269 RDKB-17074:Observed agent tapper consuming high cpu
+c344a888 XF3-3288 : temporrarily disbale wifi phy self heal
+ddc46116 RDKB-15373 : CcspCommonLibrary contains text from unknown origin
+
+project rdkb/components/opensource/ccsp/CcspEPONAgent/
+28373de XF3-3359 : Adding print statement as requested
+c22dc3c XF3-3359 : Updating print statements
+0c995d9 RDKB-16852 : Normalize TR-181 Download Control (XF3/CFG3)
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+b130be2 RDKB-17313:XH agent need to set the new passphrase for both SSID
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+182e9e2 RDKB-17160 : LMLite Crash due to the size Dibbler Server Cache entries
+6cbbb99 RDKB-17160 : LMLite Crash due to the size Dibbler Server Cache entries
+f2dcbe1 RDKB-17115 : LMLite prints are coming into SelfHeal and ArmConsole Log
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+9a8f9e8 MESH-596 : Removing compilation of notify_lease
+c78c17f RDKB-15875 : Remove parodusStart from CcspMisc source code
+cef8650 RDKB-15642 : Incorrect/missing copyright attributions in CcspMisc
+85aface RDKB-15875 : Remove parodusStart from CcspMisc source code
+8a334b6 Correctly sync files in CcspMisc.
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+0414a17 RDKB-17046: MocaResetCount is not getting incremented after moca reset
+90035cc XF3-3273: Remove XF3 Patch Files For ccsp-moca
+2f3a40b XF3-3287 : Moving ccsp-moca-PACE.patch from Xf3.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+44193a6 RDKALL-325: DNS Queries follow strict ordering
+d0bf3e9 RDKBCMF-159 : Increase size of prefix_v6 in ifv6Details
+65251c1 XF3-3380 : DSCP marking for first NB packets are not set after FR.
+8e5c8df RDKCOM-625 RDKBCMF-159 : Increase size of prefix_v6 in ifv6Details
+915ff3b RDKB-17189 : Removal of dependency on /etc/device.properties
+dd9dd94 RDKB-15626:Introduce Zram support in RDKB
+4619f81 RDKB-17237:Refactor PSM to SysDB for DeviceFingerPrint.
+7aff981 RDKALL-546 : Move rfc service initialization to common recipe
+782b5a4 Revert "RDKB-17145  :XF3 build structure change to Source-Arm"
+a0239f6 ARRISXB6-7527: INTEL_PUMA7 for XB6 Device specific code
+0791949 TCXB6-4043 :Removal of cosa_deviceinfo_apis_custom.c_incorrect_erouterIPv4.patch
+f74e0c3 RDKB-16445 : Update Device.IP.Interface.4. on changing brlan0 addr
+0c8449e ARRISXB6-7324 ARRISXB6-7327 ARRISXB6-7328 ARRISXB6-7331 ARRISXB6-7332:
+635c94a TXB6VTN-15:JSON partners_default
+9579ad3 RDKCOM-437: Don't leak networkresponse.txt file handles
+614c37c TCXB6-4021: Single Build for Syndication - getFactoryPartnerId()
+e76694d TCCBR-2108: Enable MU-MIMO
+49ec500 TCXB6-3535 : High CPU usage on dibbler-client
+52ede18 RDKB-17203: Added defensive code to check for psm race condition
+7c50506 RDKB-17145  :XF3 build structure change to Source-Arm
+2fabd89 RDKB-17170 : [RDKB-16559] Mesh and Bridge mode dependency
+a5e73fa RDKB-17168: [advsec]Remove WEXITSTATUS usage for system() call.
+8447123 RDKB-15032: Device supports TR-181 trigger to perform immediate RFC checkin.
+b6195a2 RDKB-17139 : Limit MultiLAN firewall changes
+9c7cb4c RDKB-15909 : Add TR-181 in the DeviceFingerprint Data Model
+94c7a1e RDKB-15032: Device supports TR-181 trigger to perform immediate RFC checkin.
+1991232 TCCBR-2704 : Remove ccsp-pandm-cbr.patch
+c118772 RDKB-16524 : Moving certificates from /nvram to /etc
+d591553 ARRISXB3-7342, CISCOXB3-3373 : Zombie Process Observed
+4c76ac6 RDKB-16913 : Remove TR181-USGv2_battery_backup.patch
+0143e72 RDKB-16882 : TR181 Implementation for WiFiRegion Code
+18cad1f ARRISXB6-7319 ARRISXB6-7321 ARRISXB6-7322: PAM Device Up Flow
+bbb26fe ARRISXB6-7323 ARRISXB6-7326 ARRISXB6-7330: PAM Device Up Flow
+6b8314c RDKB-17074:Observed agent tapper consuming high cpu
+a82ca90 RDKB-16920, RDKB-17073: change the default setting
+34d4c9a TCXB6-3969 : Clients deleted using X button are getting access to internet
+2a40860 TCXB6-4040: Remove cosa_dhcpv4_apis.c.dns_number.patch
+050a2e0 RDKB-16920: max TX and RX rate must be disabled by default
+7f73883 RDKB-16951 : Tag string is supporting setting of text greater than 255 length.
+6e1f4fe TCXB6-4041: Remove moca patches from meta-rdk-oem-tch-brcm-xb6
+dff6728 RDKB-16862: Remove qtn-cosa_x_cisco_com_devicecontrol_apis_c.patch
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+6f58436 RDKB-17349 : snmp set is not working for RSSI threshold value as negative
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+21f1a51 RDKB-17189 : Removal of dependency on /etc/device.properties
+5522b66 RDKB-16524 : Moving certificates from /nvram to /etc
+3fca487 RDKB-17033 : Tr69 Data Exposed in Patch File.
+d0f3762 TCXB6-3996, TCXB6-3977: Tr69 activation failiure
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+c9d5ccb TCXB6-4237 : WiFi component is not initialized in boot up
+c5a4f8a XF3-3385 : fix interface names in mesh_setip.sh
+d7a0313 Revert "Merge "RDKBCMF-152: CcspWiFiAgent Intel enhancements for dynamic VAP creation Reason for change: Integrate Intel enhancements for dynamic VAP creation. Test Procedure: Build and test on arrisxb6p2atom and Puma7 Cgp platform. Compile test for raspberrypi-rdk-broadband and qemux86broadband. Risk: None. This is the first phase of complete feature implementation.       This should not break any other platforms.""
+612076e XF3-3383: modify mesh initialization script to handle xf3
+a9677ae RDKB-17333 : "nvram-full" because of high memory consumption by PSM Entry.
+79b94ce RDKB-17312: port the passphrase to SSID 4 when turn on XH 5G
+e1c3b56 ARRISXB6-6473: wifi default issue.
+43e5400 RDKCOM-640: CcspWiFiAgent Intel enhancements for dynamic VAP creation
+07603f9 MESH-596 : Script to copy dnsmasq.lease file
+181b9b9 RDKB-16753: Split Configuration - Band steering code dev
+4ffdbbf RDKB-16436: Create telemetry markers for ch NF
+30f92e8 TCXB6-4196: [TECHNICOLOR:XB-419] Prime Home delayed communication issue
+5d96dd7 RDKB-16636 : Moving updateBootLogTime to a thread
+881519c RDKB-17114 : Log ATOM dmesg output.
+44ab3c8 RDKB-15647 : Incorrect or missing copyright attributions in CcspWifiAgent
+45852e5 RDKB-16982: TR-181 objects for split SSID band st
+7e21ed1 RDKB-15047: Telemetry markers WiFi conn-disconn
+6a5c10a CISCOXB3-4103:wifi_setRadioBeaconPeriod need to save the config
+2441a02 RDKB-16845: Enhanced Self Heal when CU is high
+0cf5e2a CISCOXB3-4014: ConfigMethods returned by Enabled not present in Supported
+14d741e XE15-136 : Upstream ccsp-wifi-agent patch changes
+969ded0 RDKB-17073: change the default log to on setting
+641da4f RDKB-16882: WiFiRegion Code developing
+052bc5a RDKB-16994 : Fix for Device.WiFi.Radio.x.X_COMCAST-COM_BeaconInterval
+8b38e35 RDKB-16996 : Device.WiFi.Radio.x.BeaconPeriod config sync issue
+9813e51 RDKB-16882: WiFiRegion Code developing
+cc0209d RDKBEMU-688 : [TDK]Emulator builds are failing in Jenkins
+3f9639b Revert "Add missing TR181 Implementation for WiFiRegion Code for emulator"
+1bb7463 XE15-89 : DML wifi calls are failing
+a33c5e9 RDKBCMF-152: CcspWiFiAgent Intel enhancements for dynamic VAP creation Reason for change: Integrate Intel enhancements for dynamic VAP creation. Test Procedure: Build and test on arrisxb6p2atom and Puma7 Cgp platform.                 Compile test for raspberrypi-rdk-broadband and qemux86broadband. Risk: None. This is the first phase of complete feature implementation.       This should not break any other platforms.
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+9de5918 Align GwProvApp repos.
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+c88e91f XF3-3389: self heal does not trigger
+d42aad7 RDKB-17189 : Removal of dependency on /etc/device.properties
+ff94277 RDKB-17221 : gretap of secured ssid restoring
+c1cfe2f RDKB-12000 : UDP Echo test results are not getting populated
+e05a429 ARRISXB3-7584 Add telemetry mark to detect DHCP range corruption
+0b7eb95 RDKB-17131:Keep telemetry marker only for Agent abnormal Resets
+2bd72c6 XF3-3321 : fix path for self heal scripts
+feae94f RDKB-16889: l2sd0 bringup related checks
+ddcfd6a RDKB-16749 : Secure dropbear keys create unique temp files using pid number
+1d7d020 RDKB-17074:Observed agent tapper consuming high cpu
+abbc87c RDKB-17042 : XB3 not recovering from offline state.
+5d05e9b RDKB-16699: Initialize and start the logbackup daemon in ArrisXB3
+780c667 XF3-2783 : added platform specific path to start the self heal
+e70ef3c RDKB-16889: Handling l2sd0 vlanIDs in self heal
+
+project rdkb/components/opensource/ccsp/Utopia/
+e664570 RDKALL-325: DNS Queries follow strict ordering
+8f632ed libutapi: link with libulog
+efa3c1b RDKB-17189 : Removal of dependency on /etc/device.properties
+9cd7704 RDKCOM-421: libutapi: link with libulog
+43ff891 RDKB-17280 : syscfg stuck and database corruption.
+abd9843 RDKB-17101, RDKB-17103, RDKB-17104 : DSCP marking for first northbound packets
+76ae469 MESH-596 : Removing old notify lease mechanism
+ea45d32 TCXB6-4021: Single Build for Syndication - getFactoryPartnerId()
+ad38f21 RDKCOM-421: libutapi: link with libulog
+1cac53e ARRISXB6-7444 Device broadcasting Quantenna SSID
+d6cef43 ARRISXB3-7565: Fix regression on TCXB6 caused by Intel MultiLAN changes
+2d0bca9 TCXB6-3623:PING working for blocked devices
+0393ef6 RDKBCMF-147 : Integrate multiLAN Intel enhancements
+a033327 RDKCOM-348 RDKBCMF-147 : Integrate multiLAN Intel enhancements
+3c2259d RDKB-16893 : Factory Reset maxSubsystemResetCount Incorrectly 3
+a5daa92 RDKB-15730 : Setting RFC EncryptCloudUpload value in syscfg.db
+47d25a8 RDKB-16789, RDKB-16790 : TR181 Implementation and Cron scheduling
+3c9c130 RDKB-16163 : TR-181 param to enable/disable Eth-WAN functionality
+5f69c8f RDKB-13230: Limit the Ping failure based erouter Reset recovery mechanism.
+9757b59 TCXB6-3535 : High CPU usage on dibbler-client
+4c630f4 XE15-76 : Upstream all the CCSP patches
+49239ac CISCOXB3-4078 dropbear is not running - Missing /var/run/dropbear.pid
+83d482a TCCBR-2680: Fix issue where dhcp not restarted on reboot
+0bda808 TCCBR-2760: Fix regressions caused by Intel MultiLAN contribution
+4702b27 ARRISXB3-7565: Fix regressions caused by Intel MultiLAN contribution
+ce2e742 RDKB-16524 : Moving certificates from /nvram to /etc
+9dcfebb RDKB-17114 : Log ATOM dmesg output.
+c52dfee ARRISXB3-7584 Add telemetry mark to detect DHCP range corruption
+fbbf154 RDKB-17132 : Single-build changes to use partners_defaults.json breaking CBR.
+731fa94 ARRISXB3-7215,RDKB-16128 : lan_ipaddr getting corrupted in syscfg.db
+4cab9ce ARRISXB6-5668: Upflow SDK 7.x Patches to Generic
+fe14207 XE15-119 : Migrate to 4/25 Qualcomm sw drop
+44297ae RDKB-16749 : Secure dropbear keys create unique temp files using pid number
+19c58c0 Revert "TCCBR-2680: DHCPv4 started message not printing"
+9c19787 ARRISXB6-7447 : Log upload failure due to nvram2 mount issue.
+10a949e XF3-2598 : Fix IPV6 remote management
+70c1dd6 RDKB-15649 : Incorrect or missing copyright attributions in Utopia
+bd848d6 RDKB-17000: Zebra process not running in captive portal mode after IPv6onLnF
+57f8931 CISCOXB3-4078 dropbear is not running - Missing /var/run/dropbear.pid
+0e29e27 RDKB-16840 : Remote management is not working if DMZ is enabled
+4444b77 RDKB-16907: RA configurations and firewall implementation
+9b357cf RDKB-16882 : [Tr181] WiFiRegion Code developing.
+aa24164 RDKB-16466 : Not able to access admin UI in bridgemode
+fa82915 RDKB-16174:Move proprietary steps to cpc repo
+
+project rdkb/components/opensource/ccsp/Xconf/
+bbed47a RDKB-17189 : Removal of dependency on /etc/device.properties
+a64d92e RDKB-17183, RDKB-17184 : partner_id is always reported as "comcast"
+bba3ed9 RDKB-16852 : Removing "shutdown -r now" from script
+2fa3829 RDKB-17087: Adding proper keywords in the logs for success cases
+
+project rdkb/components/opensource/ccsp/hal/
+2319fc5 RDKBEMU-690 : [TDK] [Morty] [WIFIHAL] wifi_getApWpsConfigMethodsEnabled
+
+project rdkb/components/opensource/ccsp/halinterface/
+f3719d1 ARRISXB6-7529 ARRISXB6-7496 TCXB6-4203 TCXB6-4171 implement set/get country code
+97091f2 Revert "Add missing wifi_apAuthEvent_callback definitions"
+e74db89 RDKB-16820: [Eth HAL] implementation for Ethernet WAN.
+bd1a1b4 RDKB-17129: wifi_pushCountryCode hal define
+2b487d4 RDKB-15682: client disconnect-reconnect events definition
+c3467fb RDKBEMU-688 : [TDK]Emulator builds are failing in Jenkins
+
+project rdkb/components/opensource/ccsp/hotspot/
+74c0147 TCCBR-1938:Clients does not failover to the secondary tunnel.
+9eaea50 RDKB-16916: Box reboots every few hours due to kernel crash
+6bcf3c1 RDKB-16916: Box reboots every few hours due to kernel crash
+
+project rdkb/components/opensource/ccsp/sysint/
+50f6fe2 TCXB6-3965 : Default date shown on tarball to be uploaded to cloud server
+e0c9105 RDKB-17189 : Removal of dependency on /etc/device.properties
+de9f701 CISCOXB3-4199 : Log rotation not happening .
+bdc7799 RDKB-17183, RDKB-17184 : partner_id is always reported as "comcast"
+f6a423d DELIA-20670: Test commit for GRT Testing
+08aa2b7 RDKB-17236 : Incorrect log file name created during xOpsDMUploadLogsNow
+668f2be RDKB-15652 : Incorrect or missing copyright attributions in RDK-B sysint
+086fee5 RDKB-17120 : Adding safe clean-up step to handle racearound conditions
+2459544 RDKALL-546 : Move rfc service initialization to common recipe
+d544926 RDKB-17087: Adding keywords in the logs for DCMScript
+9bb8c11 RDKB-15032: Device supports TR-181 trigger to perform immediate RFC checkin.
+f8b50ed RDKB-15652 : Incorrect or missing copyright attributions in RDK-B sysint
+b8b63d8 RDKB-17114 : Log ATOM dmesg output.
+f3123ab RDKB-16524 : Moving certificates from /nvram to /etc
+daffab3 RDKB-17135 : Enter_WiFi_Personalization_captive_mode log is not available.
+aa5d6b7 CISCOXB3-4133 : fix log sync issues
+2b15266 RDKB-17087: Adding proper keywords in the logs for success cases
+6b409fb RDKB-16749 : Secure dropbear keys create unique temp files using pid number
+b1502f3 RDKB3939-584: swap logging is not going to cosnole logs
+0d98c20 ARRISXB6-7447 : Log upload failure due to nvram2 mount issue.
+
+project rdkb/components/opensource/ccsp/webui/
+45c5e9e RDKB-17352, RDKB-17384: MESH enabled, gray out WiFi configuration
+96c76b0 Revert "RDKB-17282: Remove WiFi configuration options, when MESH is enabled"
+d6a9aa3 RDKB-17257: Unable to Edit Private SSIDs from MSO -WiFi page
+a156c44 RDKB-17302: Email notification option should be removed
+f8a510a webui sync - same file but LE diff
+8e7a4cc RDKB-17095: Single Build for Syndication - UI branding issues
+ff6477a RDKB-15177, RDKB-15176, RDKB-15225: CSRF on app layer
+b6a5e9b RDKB-10747: Captive Portal not auto-sizing to fit mobile device
+00c1f26 RDKB-17282: Remove WiFi configuration options, when MESH is enabled
+c23a010 RDKB-17234, RDKB-17235: XB3/XB6 - When MESH is enabled
+80c5e91 RDKBCMF-177 : Remove double include of utility.php from captiveportal.php file
+789e2e2 RDKB-10747: Captive Portal not auto-sizing to fit mobile devices
+629a147 ARRISXB6-7528: Single Build for Syndication - Local UI issues
+70328a0 RDKB-15653 : Incorrect/missing copyright attributions in webui
+9cdc18f RDKB-16933: Bypassing Authentication by password parameter overflow
+d5c4eb8 TCXB6-1209: â€œNetwork Passwordâ€ text field is grayed out.
+76bd707 RDKB-17011,RDKB-17012,RDKB-17013,RDKB-17014: Syndication - Local UI
+e03ad61 TCXB6-4138 : Downstream channel ids mismatching
+0b0f3a9 TXB6VTN-8:add images to generic/webui
+268d675 RDKCOM-639: BD-526: remove nested license file.
+3b1f2b3 XF3-1123: WebUI Gateway->Software. Change "DOCSIS Software Version"
+49ebb65 Revert "RDKB-15724: Update LICENSE, NOTICE for CSRF App Layer"
+1f681d3 BD-526: remove nested license file.
+
+project rdkb/devices/intel-x86-pc/emulator/tdkb/
+b076b7b TDKB-464 :TDKB Sanity Script coverage
+d922b10 TDKB-425 : WEBPA component testing
+
+project rdkb/devices/raspberrypi/hal/
+a30e505 REFPLTB-175 : [TDK] [Morty] [WIFIHAL] wifi_getApWpsConfigMethodsEnabled
+a590ea3 REFPLTB-179 : [RPI-B] [WIFI] hostapd not starting.
+e85aa2b REFPLTB-133 : [TDK] [RPI] [Morty] wifi_getApEnable HAL API
+665716c REFPLTB-3 : [TDK][WiFi]The HAL api wifi_getRadioMaxBitRate()
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+db72f6f RDKCOM-660: REFPLTB-174 : WebPA client support in RPI
+2b964a4 Revert "REFPLTB-174 : WebPA client support in RPI"
+2586116 REFPLTB-174 : WebPA client support in RPI
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+93b6fd6 RDKB-15637: Incorrect or missing copyright attributions in RDK-B rdkbemu_xb3
+754cb2c RDKCOM-663: Incorrect or missing copyright attributions in RDK-B rdkbemu_xb3

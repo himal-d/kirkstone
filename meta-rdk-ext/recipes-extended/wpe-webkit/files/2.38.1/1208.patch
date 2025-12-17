@@ -1,0 +1,58 @@
+From ba2f2f4e2bb1496c70149c3847d67a2d56af7b28 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Mon, 9 Oct 2023 17:14:14 +0000
+Subject: [PATCH] [MSE][GStreamer] always reset appsink/parser state when
+ recycling the track
+
+After applying [1], appsink can receive EOS event that was sent by
+qtdemux before removing an "old" streamd. This marks the sink as
+"received_eos" and makes it reject any events from subsequent
+appends. Resulting in append failing with ParsingFailed error.
+
+[1]: https://github.com/WebPlatformForEmbedded/buildroot/blob/main/package/gstreamer1/gst1-plugins-good/1.18.6/0015-qtdemux-emit-no-more-pads-after-pruning-old-pads.patch
+---
+ .../graphics/gstreamer/mse/AppendPipeline.cpp   | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp
+index fd4766be0eb13..1aa21cbf8e655 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp
+@@ -852,16 +852,16 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
+         return false;
+     }
+ 
++    if (matchingTrack->parser)
++        gst_element_set_state(matchingTrack->parser.get(), GST_STATE_NULL);
++    gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_NULL);
++
+     GRefPtr<GstCaps> matchingTrackCaps = adoptGRef(gst_pad_get_current_caps(matchingTrack->entryPad.get()));
+     if (!matchingTrack->isLinked() && (!matchingTrackCaps || gst_caps_can_intersect(parsedCaps.get(), matchingTrackCaps.get())))
+         linkPadWithTrack(demuxerSrcPad, *matchingTrack);
+     else {
+         // Unlink from old track and link to new track, by 1. stopping parser/sink, 2. unlinking
+         // demuxer from track, 3. restarting parser/sink.
+-        if (matchingTrack->parser)
+-            gst_element_set_state(matchingTrack->parser.get(), GST_STATE_NULL);
+-        gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_NULL);
+-
+         auto peer = adoptGRef(gst_pad_get_peer(matchingTrack->entryPad.get()));
+         if (peer.get() != demuxerSrcPad) {
+             if (peer) {
+@@ -879,11 +879,12 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
+             matchingTrack->presentationSize = presentationSize;
+         } else
+             GST_DEBUG_OBJECT(pipeline(), "%s track pads match, nothing to re-link", matchingTrack->trackId.string().ascii().data());
+-
+-        gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_PLAYING);
+-        if (matchingTrack->parser)
+-            gst_element_set_state(matchingTrack->parser.get(), GST_STATE_PLAYING);
+     }
++
++    gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_PLAYING);
++    if (matchingTrack->parser)
++        gst_element_set_state(matchingTrack->parser.get(), GST_STATE_PLAYING);
++
+     return true;
+ }
+ 

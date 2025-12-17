@@ -1,0 +1,44 @@
+Date: Aug 07 17:09:26 2017
+
+From: 7b63a1f0857bcaacf6e78b736afe3ccbc4dce9f6 Aug 07 17:09:26 2017
+
+Subject: [PATCH] RDK-20100 : opencdm build error with Yocto Morty version
+	
+	Make file changes to build opencdm in Morty version.
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Vargheese Baby <vargheesebaby@tataelxsi.com>
+---
+
+Index: git/src/browser/wpe/test/Makefile
+===================================================================
+--- git.orig/src/browser/wpe/test/Makefile
++++ git/src/browser/wpe/test/Makefile
+@@ -42,20 +42,19 @@ OCDM_INCLUDES = -I $(OCDM_ROOT_PATH) \
+ 
+ CXFLAGS := -std=c++11 -g $(OCDM_INCLUDES) -pthread $(CXXFLAGS)
+ 
+-all: ocdm_client ocdm_decryptor
++all:
+ 	@echo "Building ocdm client"
+ 
+-ocdm_client: ocdm_client.cpp
+ 	$(MAKE) -C $(OCDM_CLIENT_DIR)/../opencdm all
+ 	@mkdir -p $(OCDM_WPE_ROOT_PATH)/bin
+-	$(CXX) $< $(CXFLAGS) $(LD_FLAGS) -Wall -o  $(OCDM_WPE_ROOT_PATH)/bin/ocdm_client
++	$(CXX) ocdm_client.cpp $(CXFLAGS) $(LD_FLAGS) -Wall -o  $(OCDM_WPE_ROOT_PATH)/bin/ocdm_client
+ 
+ 	@echo "Building ocdm decryptor"
+ 
+-ocdm_decryptor: ocdm_decryptor.cpp
+ 	$(MAKE) -C $(OCDM_CLIENT_DIR)/../opencdm all
+ 	@cd $(OCDM_WPE_ROOT_PATH)/bin
+-	$(CXX) $< $(CXFLAGS) $(LD_FLAGS) -Wall -o  $(OCDM_WPE_ROOT_PATH)/bin/ocdm_decryptor
++	$(CXX) ocdm_decryptor.cpp $(CXFLAGS) $(LD_FLAGS) -Wall -o  $(OCDM_WPE_ROOT_PATH)/bin/ocdm_decryptor
++	@echo "BUILT ocdm decryptor"
+ 
+ .PHONY: clean ocdm_client ocdm_decryptor
+ clean:

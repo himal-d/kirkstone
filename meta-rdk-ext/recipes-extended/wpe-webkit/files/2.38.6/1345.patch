@@ -1,0 +1,26 @@
+From ed18248a5108f21fd08e2e82973c4d85bcc65017 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Mon, 5 Aug 2024 14:19:11 +0200
+Subject: [PATCH] Fix UI Process hang on WebProcess unresponsive
+
+---
+ Source/WebKit/UIProcess/AuxiliaryProcessProxy.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Source/WebKit/UIProcess/AuxiliaryProcessProxy.cpp b/Source/WebKit/UIProcess/AuxiliaryProcessProxy.cpp
+index e660f7ef5f3a..d5fb2ea5ac6d 100644
+--- a/Source/WebKit/UIProcess/AuxiliaryProcessProxy.cpp
++++ b/Source/WebKit/UIProcess/AuxiliaryProcessProxy.cpp
+@@ -423,6 +423,9 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
+ {
+     startResponsivenessTimer(useLazyStop);
+     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = WeakPtr { *this }, responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
++       if (!weakThis || !weakThis->hasConnection() || !weakThis->connection()->isValid())
++           return;
++
+         // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
+         // being in the middle of destruction.
+         RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+-- 
+2.25.1
+

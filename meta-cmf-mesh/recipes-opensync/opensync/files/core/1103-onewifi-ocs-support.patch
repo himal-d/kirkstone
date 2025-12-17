@@ -1,0 +1,1808 @@
+Source: Backport from later version of opensync
+
+diff --git a/src/lib/osw/inc/osw_drv.h b/src/lib/osw/inc/osw_drv.h
+index 6c5adb57..0e70a3ed 100644
+--- a/src/lib/osw/inc/osw_drv.h
++++ b/src/lib/osw/inc/osw_drv.h
+@@ -278,6 +278,19 @@ osw_drv_request_sta_deauth_fn_t(struct osw_drv *drv,
+ typedef void
+ osw_drv_request_stats_fn_t(struct osw_drv *drv);
+ 
++struct osw_drv_scan_params {
++    const struct osw_channel *channels;
++    size_t n_channels;
++    unsigned int dwell_time_msec;
++    bool passive;
++};
++
++typedef void
++osw_drv_request_scan_fn_t(struct osw_drv *drv,
++                          const char *phy_name,
++                          const char *vif_name,
++                          const struct osw_drv_scan_params *params);
++
+ typedef void
+ osw_drv_push_frame_tx_fn_t(struct osw_drv *drv,
+                            const char *phy_name,
+@@ -297,6 +310,7 @@ struct osw_drv_ops {
+     osw_drv_request_wps_pbc_fn_t *request_wps_pbc_fn;
+     osw_drv_request_config_fn_t *request_config_fn;
+     osw_drv_request_stats_fn_t *request_stats_fn;
++    osw_drv_request_scan_fn_t *request_scan_fn;
+     osw_drv_push_frame_tx_fn_t *push_frame_tx_fn;
+ 
+     /* TODO
+@@ -436,6 +450,23 @@ osw_drv_report_sta_assoc_ies(struct osw_drv *drv,
+                              const struct osw_hwaddr *sta_addr,
+                              const void *ies,
+                              const size_t ies_len);
++
++enum osw_drv_scan_complete_reason {
++    OSW_DRV_SCAN_DONE,
++    OSW_DRV_SCAN_FAILED,
++    OSW_DRV_SCAN_ABORTED,
++    OSW_DRV_SCAN_TIMED_OUT,
++};
++
++void
++osw_drv_report_scan_completed(struct osw_drv *drv,
++                              const char *phy_name,
++                              const char *vif_name,
++                              enum osw_drv_scan_complete_reason reason);
++
++const char *
++osw_drv_scan_reason_to_str(enum osw_drv_scan_complete_reason reason);
++
+ /* TODO
+ void osw_drv_report_sta_deauth_tx
+ void osw_drv_report_sta_deauth_rx
+diff --git a/src/lib/osw/inc/osw_drv_dummy.h b/src/lib/osw/inc/osw_drv_dummy.h
+index 06f5343c..58f3f3a1 100644
+--- a/src/lib/osw/inc/osw_drv_dummy.h
++++ b/src/lib/osw/inc/osw_drv_dummy.h
+@@ -54,6 +54,7 @@ struct osw_drv_dummy {
+     osw_drv_init_fn_t *const init_fn;
+     osw_drv_request_config_fn_t *const request_config_fn;
+     osw_drv_request_stats_fn_t *const request_stats_fn;
++    osw_drv_request_scan_fn_t *const request_scan_fn;
+     osw_drv_request_sta_deauth_fn_t *request_sta_deauth_fn;
+     osw_drv_push_frame_tx_fn_t *const push_frame_tx_fn;
+ };
+diff --git a/src/lib/osw/inc/osw_mux.h b/src/lib/osw/inc/osw_mux.h
+index 84879219..acb38cd1 100644
+--- a/src/lib/osw/inc/osw_mux.h
++++ b/src/lib/osw/inc/osw_mux.h
+@@ -16,6 +16,11 @@ osw_mux_request_sta_deauth(const char *phy_name,
+ void
+ osw_mux_request_stats(void);
+ 
++bool
++osw_mux_request_scan(const char *phy_name,
++                     const char *vif_name,
++                     const struct osw_drv_scan_params *params);
++
+ bool
+ osw_mux_frame_tx_schedule(const char *phy_name,
+                           const char *vif_name,
+diff --git a/src/lib/osw/inc/osw_scan_sched.h b/src/lib/osw/inc/osw_scan_sched.h
+new file mode 100644
+index 00000000..1282f9f8
+--- /dev/null
++++ b/src/lib/osw/inc/osw_scan_sched.h
+@@ -0,0 +1,62 @@
++#ifndef OSW_SCAN_SCHED_H_INCLUDED
++#define OSW_SCAN_SCHED_H_INCLUDED
++
++#include <osw_types.h>
++
++struct osw_scan_sched;
++
++enum osw_scan_sched_filter {
++    OSW_SCAN_SCHED_ALLOW,
++    OSW_SCAN_SCHED_DENY,
++};
++
++enum osw_scan_sched_mode {
++    OSW_SCAN_SCHED_RR,
++    OSW_SCAN_SCHED_ALL,
++};
++
++typedef enum osw_scan_sched_filter
++osw_scan_sched_filter_fn_t(struct osw_scan_sched *ss,
++                           void *priv);
++
++struct osw_scan_sched *
++osw_scan_sched_alloc(void);
++
++void
++osw_scan_sched_free(struct osw_scan_sched *ss);
++
++void
++osw_scan_sched_set_interval(struct osw_scan_sched *ss,
++                            double seconds);
++
++void
++osw_scan_sched_set_offset(struct osw_scan_sched *ss,
++                          double seconds);
++
++void
++osw_scan_sched_set_mode(struct osw_scan_sched *ss,
++                        enum osw_scan_sched_mode mode);
++
++void
++osw_scan_sched_set_dwell_time_msec(struct osw_scan_sched *ss,
++                                   unsigned int dwell_time_msec);
++
++void
++osw_scan_sched_set_phy_name(struct osw_scan_sched *ss,
++                            const char *phy_name);
++
++void
++osw_scan_sched_set_vif_name(struct osw_scan_sched *ss,
++                            const char *vif_name);
++
++void
++osw_scan_sched_set_filter_fn(struct osw_scan_sched *ss,
++                             osw_scan_sched_filter_fn_t *fn,
++                             void *priv);
++
++void
++osw_scan_sched_set_channels(struct osw_scan_sched *ss,
++                            const struct osw_channel *channels,
++                            const size_t n_channels);
++
++#endif /* OSW_SCAN_SCHED_H_INCLUDED */
+diff --git a/src/lib/osw/inc/osw_state.h b/src/lib/osw/inc/osw_state.h
+index dd1b52f7..ffa4231d 100644
+--- a/src/lib/osw/inc/osw_state.h
++++ b/src/lib/osw/inc/osw_state.h
+@@ -100,6 +100,11 @@ osw_state_vif_csa_to_phy_fn_t(struct osw_state_observer *self,
+                               const struct osw_state_phy_info *to_phy,
+                               const struct osw_channel *channel);
+ 
++typedef void
++osw_state_vif_scan_completed_fn_t(struct osw_state_observer *self,
++                                  const struct osw_state_vif_info *vif,
++                                  const enum osw_drv_scan_complete_reason reason);
++
+ typedef void
+ osw_state_sta_connected_fn_t(struct osw_state_observer *self,
+                              const struct osw_state_sta_info *sta);
+@@ -127,6 +132,7 @@ struct osw_state_observer {
+     osw_state_vif_csa_rx_fn_t *vif_csa_rx_fn;
+     osw_state_vif_rrm_rep_fn_t *vif_rrm_rep_fn;
+     osw_state_vif_csa_to_phy_fn_t *vif_csa_to_phy_fn;
++    osw_state_vif_scan_completed_fn_t *vif_scan_completed_fn;
+     osw_state_sta_connected_fn_t *sta_connected_fn;
+     osw_state_sta_disconnected_fn_t *sta_disconnected_fn;
+     osw_state_sta_changed_fn_t *sta_changed_fn;
+diff --git a/src/lib/osw/src/osw_drv.c b/src/lib/osw/src/osw_drv.c
+index 89f74512..776edfc0 100644
+--- a/src/lib/osw/src/osw_drv.c
++++ b/src/lib/osw/src/osw_drv.c
+@@ -988,6 +988,16 @@ osw_drv_vif_process_state(struct osw_drv_vif *vif)
+     if (removed == true) OSW_STATE_NOTIFY(vif_removed_fn, &vif->pub);
+ }
+ 
++static void
++osw_drv_vif_scan_done(struct osw_drv_vif *vif,
++                      enum osw_drv_scan_complete_reason reason)
++{
++    if (vif == NULL) return;
++    if (vif->scan_started == false) return;
++    OSW_STATE_NOTIFY(vif_scan_completed_fn, &vif->pub, reason);
++    vif->scan_started = false;
++}
++
+ static void
+ osw_drv_vif_work(struct osw_drv_vif *vif)
+ {
+@@ -1008,6 +1018,7 @@ osw_drv_vif_work(struct osw_drv_vif *vif)
+             break;
+         case OSW_DRV_OBJ_PROCESSED:
+             if (vif->cur_state.exists == false) {
++                osw_drv_vif_scan_done(vif, OSW_DRV_SCAN_FAILED);
+                 osw_drv_vif_free(vif);
+                 return;
+             }
+@@ -2387,6 +2398,28 @@ osw_drv_invalidate(struct osw_drv *drv)
+     }
+ }
+ 
++void
++osw_drv_report_scan_completed(struct osw_drv *drv,
++                              const char *phy_name,
++                              const char *vif_name,
++                              enum osw_drv_scan_complete_reason reason)
++{
++    struct osw_drv_vif *vif = osw_drv_vif_from_report(drv, phy_name, vif_name);
++    osw_drv_vif_scan_done(vif, reason);
++}
++
++const char *
++osw_drv_scan_reason_to_str(enum osw_drv_scan_complete_reason reason)
++{
++    switch (reason) {
++        case OSW_DRV_SCAN_DONE: return "done";
++        case OSW_DRV_SCAN_FAILED: return "failed";
++        case OSW_DRV_SCAN_ABORTED: return "aborted";
++        case OSW_DRV_SCAN_TIMED_OUT: return "timed out";
++    }
++    return NULL;
++}
++
+ OSW_MODULE(osw_drv)
+ {
+     osw_drv_init();
+diff --git a/src/lib/osw/src/osw_drv_dummy.c b/src/lib/osw/src/osw_drv_dummy.c
+index 7f44365c..6fd01d98 100644
+--- a/src/lib/osw/src/osw_drv_dummy.c
++++ b/src/lib/osw/src/osw_drv_dummy.c
+@@ -171,6 +171,7 @@ osw_drv_dummy_init_struct(struct osw_drv_dummy *dummy)
+         .request_sta_state_fn = osw_drv_dummy_ops_get_sta_state_cb,
+         .request_config_fn = dummy->request_config_fn,
+         .request_stats_fn = dummy->request_stats_fn,
++        .request_scan_fn = dummy->request_scan_fn,
+         .request_sta_deauth_fn = dummy->request_sta_deauth_fn,
+         .push_frame_tx_fn = dummy->push_frame_tx_fn,
+     };
+diff --git a/src/lib/osw/src/osw_drv_i.h b/src/lib/osw/src/osw_drv_i.h
+index 4061f1ef..a5707d42 100644
+--- a/src/lib/osw/src/osw_drv_i.h
++++ b/src/lib/osw/src/osw_drv_i.h
+@@ -72,6 +72,7 @@ struct osw_drv_vif {
+     struct osw_ssid ssid;
+     struct osw_hwaddr bssid;
+     const struct osw_hwaddr *vsta_root_ap;
++    bool scan_started;
+     bool connected;
+     bool sta_list_valid;
+     ev_timer chan_sync; /* used for CSA state invalidation */
+diff --git a/src/lib/osw/src/osw_drv_target.c b/src/lib/osw/src/osw_drv_target.c
+index 509048ec..82cf1d3f 100644
+--- a/src/lib/osw/src/osw_drv_target.c
++++ b/src/lib/osw/src/osw_drv_target.c
+@@ -71,7 +71,7 @@ struct osw_drv_target_scan {
+     uint32_t dwell;
+     uint32_t *chans;
+     uint32_t n_chans;
+-    bool busy;
++    bool started;
+ };
+ 
+ struct osw_drv_target {
+@@ -436,71 +436,6 @@ osw_drv_target_scan_free(struct osw_drv_target_scan *scan)
+     FREE(scan);
+ }
+ 
+-static bool
+-osw_drv_target_scan_done_cb(void *priv, int status)
+-{
+-    struct osw_drv_target_scan *scan = priv;
+-    struct osw_drv_target *target = scan->target;
+-    struct osw_drv *drv = target->drv;
+-    const char *phy_name = scan->cfg.phy_name;
+-    struct osw_tlv buf = {0};
+-    struct osw_tlv *t = scan->target->stats ?: &buf;
+-    dpp_neighbor_report_data_t report = {
+-        .list = DS_DLIST_INIT(dpp_neighbor_record_list_t, node),
+-    };
+-
+-    LOGT("osw: drv: target: %s: scan: done status=%d", phy_name, status);
+-
+-    target_stats_scan_get(&scan->cfg, scan->chans, scan->n_chans, scan->type, &report);
+-
+-    dpp_neighbor_record_list_t *i;
+-    while ((i = ds_dlist_remove_head(&report.list)) != NULL) {
+-        const dpp_neighbor_record_t *n = &i->entry;
+-        osw_drv_target_bss_fill(t, phy_name, scan->cfg.type, n);
+-        dpp_neighbor_record_free(i);
+-    }
+-
+-    if (t == &buf && buf.used > 0) {
+-        LOGT("%s: %s: reporting %zu bytes", __func__, scan->cfg.phy_name, buf.used);
+-        osw_drv_report_stats(drv, &buf);
+-        osw_tlv_fini(&buf);
+-    }
+-
+-    osw_drv_target_scan_free(scan);
+-    osw_drv_target_scan_run(target);
+-
+-    return true;
+-}
+-
+-static void
+-osw_drv_target_scan_run(struct osw_drv_target *target)
+-{
+-    while (ds_dlist_is_empty(&target->scans) == false) {
+-        struct osw_drv_target_scan *scan = ds_dlist_head(&target->scans);
+-        LOGT("osw: drv: target: %s: scan: starting type=%d n_chans=%d",
+-             scan->cfg.phy_name,
+-             scan->type,
+-             scan->n_chans);
+-        const bool ok = target_stats_scan_start(&scan->cfg,
+-                                                scan->chans,
+-                                                scan->n_chans,
+-                                                scan->type,
+-                                                scan->dwell,
+-                                                osw_drv_target_scan_done_cb,
+-                                                scan);
+-        if (ok == true) return;
+-        LOGI("osw: drv: target: %s: scan: failed", scan->cfg.phy_name);
+-
+-        /* In case target called the callback and
+-         * we cleaned it up, be careful.
+-         */
+-        if (ds_dlist_head(&target->scans) == scan) {
+-            osw_drv_target_scan_free(scan);
+-        }
+-    }
+-}
+-
+-
+ static const char *
+ phy_to_scan_vif(struct osw_drv_dummy *dummy, const char *phy_name)
+ {
+@@ -530,38 +465,6 @@ osw_drv_target_prep_rcfg(radio_entry_t *cfg,
+     return true;
+ }
+ 
+-static void
+-osw_drv_target_scan_req_phy(struct osw_drv_target *target,
+-                            struct osw_drv_dummy_phy *phy,
+-                            const const radio_scan_type_t type,
+-                            uint32_t dwell,
+-                            uint32_t *chans,
+-                            uint32_t n_chans)
+-{
+-    if (chans == NULL) return;
+-    if (phy == NULL) return;
+-
+-    const bool first_req = (ds_dlist_is_empty(&target->scans) == true);
+-    struct osw_drv_dummy *dummy = &target->dummy;
+-
+-    struct osw_drv_target_scan *scan = CALLOC(1, sizeof(*scan));
+-    const bool prep_ok = osw_drv_target_prep_rcfg(&scan->cfg, dummy, phy);
+-    if (prep_ok == false) {
+-        FREE(scan);
+-        return;
+-    }
+-
+-    scan->target = target;
+-    scan->dwell = dwell,
+-    scan->type = type,
+-    scan->chans = chans;
+-    scan->n_chans = n_chans;
+-
+-    LOGT("osw: drv: target: %s: scan: requesting (first=%d)", scan->cfg.phy_name, first_req);
+-    ds_dlist_insert_tail(&target->scans, scan);
+-    if (first_req == true) osw_drv_target_scan_run(target);
+-}
+-
+ static void
+ osw_drv_target_survey_fill(struct osw_tlv *t,
+                            const radio_entry_t *cfg,
+@@ -670,7 +573,9 @@ osw_drv_target_survey_cb(ds_dlist_t *list, void *priv, int status)
+ 
+ static void
+ osw_drv_target_survey_req_phy(struct osw_drv_target *target,
+-                              struct osw_drv_dummy_phy *phy)
++                              struct osw_drv_dummy_phy *phy,
++                              radio_scan_type_t scan_type,
++                              const uint32_t *survey_chans)
+ {
+     const char *phy_name = phy->phy_name.buf;
+     struct osw_drv_dummy *dummy = &target->dummy;
+@@ -679,10 +584,13 @@ osw_drv_target_survey_req_phy(struct osw_drv_target *target,
+         s = CALLOC(1, sizeof(*s));
+         s->phy_name = STRDUP(phy_name);
+         s->target = target;
+-        s->type = RADIO_SCAN_TYPE_ONCHAN;
++        s->type = scan_type;
+         ds_tree_init(&s->entries, ds_int_cmp, struct osw_drv_target_survey_entry, node);
+         ds_dlist_init(&s->list, target_survey_record_t, node);
+         ds_tree_insert(&target->surveys, s, s->phy_name);
++    } else {
++        if ((s->target == target) && (s->type == scan_type)) return;
++        s->type = scan_type;
+     }
+ 
+     const bool pok = osw_drv_target_prep_rcfg(&s->cfg, dummy, phy);
+@@ -691,7 +599,12 @@ osw_drv_target_survey_req_phy(struct osw_drv_target *target,
+     if (s->requested == true) return;
+ 
+     const uint32_t n = 1;
+-    uint32_t *chans = phy_to_chan(dummy, phy_name);
++    uint32_t *chans = NULL;
++    if (s->type == RADIO_SCAN_TYPE_OFFCHAN) {
++        chans = MEMNDUP(survey_chans, sizeof(*survey_chans));
++    } else {
++        chans = phy_to_chan(dummy, phy_name);
++    }
+     LOGT("%s: %s: chan=%p (%u)", __func__, phy_name, chans, chans ? chans[0] : 0);
+     if (chans == NULL) return;
+ 
+@@ -702,6 +615,167 @@ osw_drv_target_survey_req_phy(struct osw_drv_target *target,
+     FREE(chans);
+ }
+ 
++static bool
++osw_drv_target_scan_done_cb(void *priv, int status)
++{
++    struct osw_drv_target_scan *scan = priv;
++    struct osw_drv_target *target = scan->target;
++    struct osw_drv *drv = target->drv;
++    const char *phy_name = scan->cfg.phy_name;
++    const char *vif_name = scan->cfg.if_name;
++    struct osw_tlv buf = {0};
++    struct osw_tlv *t = scan->target->stats ?: &buf;
++    dpp_neighbor_report_data_t report = {
++        .list = DS_DLIST_INIT(dpp_neighbor_record_list_t, node),
++    };
++
++    LOGT("osw: drv: target: %s: scan: done status=%d", phy_name, status);
++    WARN_ON(scan->started == false);
++
++    if (scan->type == RADIO_SCAN_TYPE_OFFCHAN) {
++        if (status == 1)
++            osw_drv_report_scan_completed(drv, phy_name ?: "", vif_name ?: "", OSW_DRV_SCAN_DONE);
++        else
++            osw_drv_report_scan_completed(drv, phy_name ?: "", vif_name ?: "", OSW_DRV_SCAN_FAILED);
++    }
++
++    const bool get_ok = target_stats_scan_get(&scan->cfg, scan->chans, scan->n_chans, scan->type, &report);
++    if (get_ok == false) {
++        LOGE("osw: drv: target: %s/%s: for type=%d, n_chans=%d, chan=%u failed",
++             scan->cfg.phy_name, scan->cfg.if_name, scan->type, scan->n_chans, scan->chans[0]);
++        return false;
++    }
++
++    if (scan->type == RADIO_SCAN_TYPE_OFFCHAN) {
++        struct osw_drv_dummy_phy *phy = ds_tree_find(&target->dummy.phy_tree, phy_name);
++        /* When the scan is completed, request for survey results */
++        osw_drv_target_survey_req_phy(target, phy, RADIO_SCAN_TYPE_OFFCHAN, scan->chans);
++    }
++
++    dpp_neighbor_record_list_t *i;
++    while ((i = ds_dlist_remove_head(&report.list)) != NULL) {
++        const dpp_neighbor_record_t *n = &i->entry;
++        osw_drv_target_bss_fill(t, phy_name, scan->cfg.type, n);
++        dpp_neighbor_record_free(i);
++    }
++
++    if (t == &buf && buf.used > 0) {
++        LOGT("%s: %s: reporting %zu bytes", __func__, scan->cfg.phy_name, buf.used);
++        osw_drv_report_stats(drv, &buf);
++        osw_tlv_fini(&buf);
++    }
++
++    osw_drv_target_scan_free(scan);
++    osw_drv_target_scan_run(target);
++
++    return true;
++}
++
++static void
++osw_drv_target_scan_run(struct osw_drv_target *target)
++{
++    while (ds_dlist_is_empty(&target->scans) == false) {
++        struct osw_drv_target_scan *scan = ds_dlist_head(&target->scans);
++        LOGT("osw: drv: target: %s: scan: starting type=%d n_chans=%d",
++             scan->cfg.phy_name,
++             scan->type,
++             scan->n_chans);
++
++        WARN_ON(scan->started);
++        scan->started = true;
++        const bool ok = target_stats_scan_start(&scan->cfg,
++                                                scan->chans,
++                                                scan->n_chans,
++                                                scan->type,
++                                                scan->dwell,
++                                                osw_drv_target_scan_done_cb,
++                                                scan);
++        if (ok == true) return;
++        LOGE("osw: drv: target: %s: scan: type=%d chan=%u failed", scan->cfg.phy_name, scan->type, scan->chans[0]);
++        struct osw_drv *drv = target->drv;
++        osw_drv_report_scan_completed(drv, scan->cfg.phy_name ?: "", scan->cfg.if_name ?: "", OSW_DRV_SCAN_FAILED);
++
++        /* In case target called the callback and
++         * we cleaned it up, be careful.
++         */
++        if (ds_dlist_head(&target->scans) == scan) {
++            osw_drv_target_scan_free(scan);
++        }
++    }
++}
++
++static bool
++osw_drv_target_scan_is_dupe(struct osw_drv_target *target,
++                            struct osw_drv_target_scan *scan)
++{
++    struct osw_drv_target_scan *i;
++    struct ds_dlist *scans = &target->scans;
++
++    WARN_ON(scan->started);
++
++    ds_dlist_foreach(scans, i) {
++        WARN_ON(i->n_chans > 0 && i->chans == NULL);
++        WARN_ON(scan->n_chans > 0 && scan->chans == NULL);
++
++        const size_t size = i->n_chans * sizeof(*i->chans);
++        const bool same = (i->target == scan->target)
++                       && (memcmp(&i->cfg, &scan->cfg, sizeof(i->cfg)) == 0)
++                       && (i->type == scan->type)
++                       && (i->dwell == scan->dwell)
++                       && (i->n_chans == scan->n_chans)
++                       && (i->n_chans > 0 && memcmp(i->chans, scan->chans, size) == 0)
++                       && (i->started == scan->started);
++
++        if (same) {
++            return true;
++        }
++    }
++
++    return false;
++}
++
++static void
++osw_drv_target_scan_req_phy(struct osw_drv_target *target,
++                            struct osw_drv_dummy_phy *phy,
++                            const radio_scan_type_t type,
++                            uint32_t dwell,
++                            uint32_t *chans,
++                            uint32_t n_chans)
++{
++    if (chans == NULL) return;
++    if (phy == NULL) return;
++
++    const bool first_req = (ds_dlist_is_empty(&target->scans) == true);
++    struct osw_drv_dummy *dummy = &target->dummy;
++
++    struct osw_drv_target_scan *scan = CALLOC(1, sizeof(*scan));
++    const bool prep_ok = osw_drv_target_prep_rcfg(&scan->cfg, dummy, phy);
++    if (prep_ok == false) {
++        FREE(scan);
++        return;
++    }
++
++    scan->target = target;
++    scan->dwell = dwell;
++    scan->type = type;
++    scan->chans = chans;
++    scan->n_chans = n_chans;
++
++    const bool duplicate = osw_drv_target_scan_is_dupe(target, scan);
++    if (duplicate) {
++        WARN_ON(first_req); /* This should be impossible, but double-check */
++
++        LOGT("osw: drv: target: %s: scan: request duplicate: type=%d dwell=%"PRIu32" n_chans=%"PRIu32", ch=%u",
++             scan->cfg.phy_name, type, dwell, n_chans, chans[0]);
++        FREE(scan);
++        return;
++    }
++
++    LOGT("osw: drv: target: %s: scan: requesting (first=%d) type=%d", scan->cfg.phy_name, first_req, scan->type);
++    ds_dlist_insert_tail(&target->scans, scan);
++    if (first_req == true) osw_drv_target_scan_run(target);
++}
++
+ static void
+ osw_drv_target_request_stats_cb(struct osw_drv *drv)
+ {
+@@ -718,7 +792,7 @@ osw_drv_target_request_stats_cb(struct osw_drv *drv)
+         const uint32_t n_chans = chans ? 1 : 0;
+         const uint32_t dwell = 0;
+ 
+-        osw_drv_target_survey_req_phy(target, phy);
++        osw_drv_target_survey_req_phy(target, phy, type, NULL);
+         osw_drv_target_scan_req_phy(target, phy, type, dwell, chans, n_chans);
+     }
+ 
+@@ -728,6 +802,30 @@ osw_drv_target_request_stats_cb(struct osw_drv *drv)
+     target->stats = NULL;
+ }
+ 
++static void
++osw_drv_target_request_scan_cb(struct osw_drv *drv,
++                               const char *phy_name,
++                               const char *vif_name,
++                               const struct osw_drv_scan_params *params)
++{
++    struct osw_drv_dummy *dummy = osw_drv_get_priv(drv);
++    struct osw_drv_target *target = container_of(dummy, struct osw_drv_target, dummy);
++    struct osw_drv_dummy_phy *phy = ds_tree_find(&target->dummy.phy_tree, phy_name);
++
++    const struct osw_channel *c = &params->channels[0];
++    const int freq = c->control_freq_mhz;
++    const int ch = freq_to_chan(freq);
++    uint32_t *chans = MEMNDUP(&ch, sizeof(ch));
++    LOGT("%s: %s: freq=%d ch=%d chans=%p n_chan=%zu", __func__, phy_name, freq, ch, chans, params->n_channels);
++
++    if (WARN_ON(params->n_channels != 1)) {
++        FREE(chans);
++        return;
++    }
++
++    osw_drv_target_scan_req_phy(target, phy, RADIO_SCAN_TYPE_OFFCHAN, params->dwell_time_msec, chans, params->n_channels);
++}
++
+ static void
+ osw_drv_target_request_sta_deauth_cb(struct osw_drv *drv,
+                                      const char *phy_name,
+@@ -754,6 +852,7 @@ static struct osw_drv_target g_osw_drv_target = {
+         .fini_vif_fn = osw_drv_target_fini_vif_cb,
+         .request_config_fn = osw_drv_target_request_config_cb,
+         .request_stats_fn = osw_drv_target_request_stats_cb,
++        .request_scan_fn = osw_drv_target_request_scan_cb,
+         .request_sta_deauth_fn = osw_drv_target_request_sta_deauth_cb,
+         .push_frame_tx_fn = osw_drv_target_push_frame_tx_cb,
+     },
+diff --git a/src/lib/osw/src/osw_mux.c b/src/lib/osw/src/osw_mux.c
+index 94a608ea..067e9aad 100644
+--- a/src/lib/osw/src/osw_mux.c
++++ b/src/lib/osw/src/osw_mux.c
+@@ -140,6 +140,30 @@ osw_mux_request_stats(void)
+                 drv->ops->request_stats_fn(drv);
+ }
+ 
++bool
++osw_mux_request_scan(const char *phy_name,
++                     const char *vif_name,
++                     const struct osw_drv_scan_params *params)
++{
++    struct osw_drv_phy *phy = osw_mux_lookup_phy_by_name(phy_name);
++    if (phy == NULL) return false;
++
++    struct ds_tree *vif_tree = &phy->vif_tree;
++    struct osw_drv_vif *vif = ds_tree_find(vif_tree, vif_name);
++    if (vif == NULL) return false;
++    //if (vif->scan_started) return false;
++    if (vif->cur_state.exists == false) return false;
++
++    struct osw_drv *drv = phy->drv;
++    if (drv->ops == NULL) return false;
++    if (drv->ops->request_scan_fn == NULL) return false;
++
++    vif->scan_started = true;
++    drv->ops->request_scan_fn(drv, phy_name, vif_name, params);
++
++    return true;
++}
++
+ void
+ osw_mux_poll(void)
+ {
+diff --git a/src/lib/osw/src/osw_scan_sched.c b/src/lib/osw/src/osw_scan_sched.c
+new file mode 100644
+index 00000000..9f698428
+--- /dev/null
++++ b/src/lib/osw/src/osw_scan_sched.c
+@@ -0,0 +1,493 @@
++/* libc */
++#include <string.h>
++
++/* opensync */
++#include <memutil.h>
++#include <os.h>
++#include <log.h>
++#include <const.h>
++
++/* unit */
++#include <osw_scan_sched.h>
++#include <osw_drv.h>
++#include <osw_state.h>
++#include <osw_mux.h>
++#include <osw_time.h>
++#include <osw_timer.h>
++#include <osw_util.h>
++#include <osw_ut.h>
++
++#define LOG_PREFIX(ss, fmt, ...) \
++    "osw: scan_sched: %p: %s/%s: " fmt, \
++    ss, \
++    ss->phy_name ?: "", \
++    ss->vif_name ?: "", ##__VA_ARGS__
++
++struct osw_scan_sched {
++    char *phy_name;
++    char *vif_name;
++    struct osw_channel *channels;
++    size_t n_channels;
++    size_t next_channel;
++    enum osw_scan_sched_mode mode;
++    struct osw_timer timer;
++    unsigned int dwell_time_msec;
++    double interval_seconds;
++    double offset_seconds;
++    osw_scan_sched_filter_fn_t *filter_fn;
++    void *filter_fn_priv;
++};
++
++static const char *
++osw_scan_sched_mode_to_str(enum osw_scan_sched_mode mode)
++{
++    switch (mode) {
++        case OSW_SCAN_SCHED_RR: return "rr";
++        case OSW_SCAN_SCHED_ALL: return "all";
++    }
++    return "";
++}
++
++static bool
++osw_scan_sched_is_configured(struct osw_scan_sched *ss)
++{
++    if (ss->phy_name == NULL) return false;
++    if (ss->vif_name == NULL) return false;
++    if (ss->n_channels == 0) return false;
++    if (ss->interval_seconds == 0) return false;
++    if (ss->dwell_time_msec == 0) return false;
++
++    return true;
++}
++
++static void
++osw_scan_sched_timer_set(struct osw_scan_sched *ss)
++{
++    struct osw_timer *timer = &ss->timer;
++
++    if (osw_scan_sched_is_configured(ss)) {
++        if (osw_timer_is_armed(timer)) {
++            const double now = OSW_TIME_TO_DBL(osw_time_mono_clk());
++            const double at = OSW_TIME_TO_DBL(timer->at_nsec);
++            LOGD(LOG_PREFIX(ss, "keeping armed in %lf", (at - now)));
++        }
++        else {
++            const double interval = ss->interval_seconds;
++            const double offset = ss->offset_seconds;
++            const double now = OSW_TIME_TO_DBL(osw_time_mono_clk());
++            const double at = osw_periodic_get_next(interval, offset, now);
++            LOGD(LOG_PREFIX(ss, "arming in %lf seconds", (at - now)));
++            osw_timer_arm_at_nsec(timer, OSW_TIME_SEC(at));
++        }
++    }
++    else {
++        if (osw_timer_is_armed(timer)) {
++            LOGD(LOG_PREFIX(ss, "disarming"));
++            osw_timer_disarm(timer);
++        }
++        else {
++            LOGD(LOG_PREFIX(ss, "keeping disarmed"));
++        }
++    }
++}
++
++static const struct osw_channel *
++osw_scan_sched_get_home_chan(struct osw_scan_sched *ss)
++{
++    /* FIXME: This could be smarter and check for
++     * other VIFs on the same PHY, although that
++     * would assume a single-channel operation.
++     * That's most often going to be the case in
++     * the near future anyway, so it also makes
++     * little sense to do anything fancy here.
++     */
++    const char *phy_name = ss->phy_name;
++    const char *vif_name = ss->vif_name;
++    if (phy_name == NULL) return NULL;
++    if (vif_name == NULL) return NULL;
++
++    const struct osw_state_vif_info *info = osw_state_vif_lookup(phy_name, vif_name);
++    if (info == NULL) return NULL;
++
++    const struct osw_drv_vif_state *state = info->drv_state;
++    if (state->enabled == false) return NULL;
++
++    switch (state->vif_type) {
++        case OSW_VIF_UNDEFINED:
++            return NULL;
++        case OSW_VIF_AP:
++            return &state->u.ap.channel;
++        case OSW_VIF_AP_VLAN:
++            return NULL;
++        case OSW_VIF_STA:
++            if (state->u.sta.link.status != OSW_DRV_VIF_STATE_STA_LINK_CONNECTED) {
++                return NULL;
++            }
++            return &state->u.sta.link.channel;
++    }
++
++    assert(0);
++    return NULL;
++}
++
++/* FIXME: This could be generalized to handle list of home[] */
++static size_t
++osw_scan_sched_build_scan_chan(struct osw_scan_sched *ss,
++                               const struct osw_channel *home,
++                               struct osw_channel *channels,
++                               size_t n_channels)
++{
++    size_t used = 0;
++    const int home_freq = home != NULL ? home->control_freq_mhz : 0;
++    const bool skip_home = true; /* for now, always skip home-chan */
++    const struct osw_channel *first = NULL;
++
++    for (;;) {
++        if (ss->n_channels == 0) {
++            break;
++        }
++
++        if (ss->next_channel >= ss->n_channels) {
++            ss->next_channel = 0;
++        }
++
++        if (used == n_channels) {
++            break;
++        }
++
++        if (used == ss->n_channels) {
++            break;
++        }
++
++        const struct osw_channel *c = &ss->channels[ss->next_channel];
++        if (c == first) {
++            break;
++        }
++        else if (first == NULL) {
++            first = c;
++        }
++
++        ss->next_channel++;
++
++        const bool is_home = (c->control_freq_mhz == home_freq);
++        if (is_home && skip_home) {
++            continue;
++        }
++
++        LOGT("%s: [%zu] = " OSW_CHANNEL_FMT " (next=%zu)",
++             __func__,
++             used,
++             OSW_CHANNEL_ARG(c),
++             ss->next_channel);
++
++        channels[used] = *c;
++        used++;
++    }
++
++    return used;
++}
++
++static bool
++osw_scan_sched_is_allowed(struct osw_scan_sched *ss)
++{
++    osw_scan_sched_filter_fn_t *fn = ss->filter_fn;
++    void *priv = ss->filter_fn_priv;
++
++    if (fn == NULL) {
++        return true;
++    }
++
++    const enum osw_scan_sched_filter result = fn(ss, priv);
++    switch (result){
++        case OSW_SCAN_SCHED_ALLOW: return true;
++        case OSW_SCAN_SCHED_DENY: return false;
++    }
++
++    assert(0);
++    return false;
++}
++
++static void
++osw_scan_sched_request(struct osw_scan_sched *ss,
++                       struct osw_channel *list,
++                       size_t count)
++{
++    struct osw_drv_scan_params params = {
++        .channels = list,
++        .n_channels = count,
++        .dwell_time_msec = ss->dwell_time_msec,
++        .passive = true,
++    };
++    const char *phy_name = ss->phy_name;
++    const char *vif_name = ss->vif_name;
++
++    if (phy_name == NULL) return;
++    if (vif_name == NULL) return;
++
++    LOGD(LOG_PREFIX(ss, "requesting: dwell=%u channels(%zu)=%d, ...",
++                    ss->dwell_time_msec,
++                    count,
++                    count > 0 ? list[0].control_freq_mhz : -1));
++
++    const bool ok = osw_mux_request_scan(phy_name, vif_name, &params);
++    const bool failed = !ok;
++    WARN_ON(failed);
++}
++
++static void
++osw_scan_sched_timer_work_rr(struct osw_scan_sched *ss)
++{
++    const struct osw_channel *home = osw_scan_sched_get_home_chan(ss);
++    struct osw_channel c;
++    const size_t used = osw_scan_sched_build_scan_chan(ss, home, &c, 1);
++    if (used == 0) return;
++    osw_scan_sched_request(ss, &c, used);
++}
++
++static void
++osw_scan_sched_timer_work_full(struct osw_scan_sched *ss)
++{
++    const struct osw_channel *home = osw_scan_sched_get_home_chan(ss);
++    const size_t count = ss->n_channels;
++    assert(count < 1000); /* keep it sane */
++    struct osw_channel list[count];
++    const size_t used = osw_scan_sched_build_scan_chan(ss, home, list, count);
++    if (used == 0) return;
++    osw_scan_sched_request(ss, list, used);
++}
++
++static void
++osw_scan_sched_timer_work(struct osw_scan_sched *ss)
++{
++    const bool allowed = osw_scan_sched_is_allowed(ss);
++    if (allowed) {
++        switch (ss->mode) {
++            case OSW_SCAN_SCHED_RR:
++                osw_scan_sched_timer_work_rr(ss);
++                break;
++            case OSW_SCAN_SCHED_ALL:
++                osw_scan_sched_timer_work_full(ss);
++                break;
++        }
++    }
++    osw_scan_sched_timer_set(ss);
++}
++
++static void
++osw_scan_sched_timer_cb(struct osw_timer *timer)
++{
++    struct osw_scan_sched *ss = container_of(timer, struct osw_scan_sched, timer);
++    osw_scan_sched_timer_work(ss);
++}
++
++void
++osw_scan_sched_set_interval(struct osw_scan_sched *ss,
++                            double seconds)
++{
++    if (ss->interval_seconds == seconds) return;
++
++    //seconds = 60.000000;
++    LOGD(LOG_PREFIX(ss, "interval: %lf", seconds));
++    ss->interval_seconds = seconds;
++    osw_timer_disarm(&ss->timer);
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_offset(struct osw_scan_sched *ss,
++                          double seconds)
++{
++    if (ss->offset_seconds == seconds) return;
++
++    LOGD(LOG_PREFIX(ss, "offset: %lf", seconds));
++    ss->offset_seconds = seconds;
++    osw_timer_disarm(&ss->timer);
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_mode(struct osw_scan_sched *ss,
++                        enum osw_scan_sched_mode mode)
++{
++    if (ss->mode == mode) return;
++
++    const char *mode_str = osw_scan_sched_mode_to_str(mode);
++    LOGD(LOG_PREFIX(ss, "mode: %s", mode_str));
++    ss->mode = mode;
++    ss->next_channel = 0;
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_dwell_time_msec(struct osw_scan_sched *ss,
++                                   unsigned int dwell_time_msec)
++{
++    if (ss->dwell_time_msec == dwell_time_msec) return;
++
++    LOGD(LOG_PREFIX(ss, "dwell: %u", dwell_time_msec));
++    ss->dwell_time_msec = dwell_time_msec;
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_phy_name(struct osw_scan_sched *ss,
++                            const char *phy_name)
++{
++    const bool same = (phy_name == NULL && ss->phy_name == NULL)
++                   || (phy_name != NULL && ss->phy_name != NULL &&
++                       strcmp(phy_name, ss->phy_name) == 0);
++    if (same) return;
++
++    LOGD(LOG_PREFIX(ss, "phy_name: %s", phy_name ?: "(null)"));
++    FREE(ss->phy_name);
++    ss->phy_name = NULL;
++    if (phy_name != NULL) {
++        ss->phy_name = STRDUP(phy_name);
++    }
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_vif_name(struct osw_scan_sched *ss,
++                            const char *vif_name)
++{
++    const bool same = (vif_name == NULL && ss->vif_name == NULL)
++                   || (vif_name != NULL && ss->vif_name != NULL &&
++                       strcmp(vif_name, ss->vif_name) == 0);
++    if (same) return;
++
++    LOGD(LOG_PREFIX(ss, "vif_name: %s", vif_name ?: "(null)"));
++    FREE(ss->vif_name);
++    ss->vif_name = NULL;
++    if (vif_name != NULL) {
++        ss->vif_name = STRDUP(vif_name);
++    }
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_filter_fn(struct osw_scan_sched *ss,
++                             osw_scan_sched_filter_fn_t *fn,
++                             void *priv)
++{
++    LOGD(LOG_PREFIX(ss, "filter: %p + %p", fn, priv));
++    ss->filter_fn = fn;
++    ss->filter_fn_priv = priv;
++    osw_scan_sched_timer_set(ss);
++}
++
++void
++osw_scan_sched_set_channels(struct osw_scan_sched *ss,
++                            const struct osw_channel *channels,
++                            const size_t n_channels)
++{
++    const size_t size = n_channels * sizeof(*channels);
++    const bool same = (ss->n_channels == n_channels)
++                   && ( (ss->channels == NULL && channels == NULL) ||
++                        (memcmp(ss->channels, channels, size) == 0) );
++    if (same) return;
++
++    char chans[4096] = {0};
++    char *p = chans;
++    size_t n = sizeof(chans);
++    size_t i;
++    for (i = 0; i < n_channels; i++) {
++        const int freq = channels[i].control_freq_mhz;
++        csnprintf(&p, &n, "%u, ", freq);
++    }
++    LOGD(LOG_PREFIX(ss, "channels: %s", chans));
++
++    FREE(ss->channels);
++    ss->channels = NULL;
++    ss->n_channels = 0;
++    ss->next_channel = 0;
++
++    if (n_channels > 0 && channels != NULL) {
++        ss->channels = MEMNDUP(channels, size);
++        ss->n_channels = n_channels;
++    }
++
++    osw_scan_sched_timer_set(ss);
++}
++
++static void
++osw_scan_sched_init(struct osw_scan_sched *ss)
++{
++    osw_timer_init(&ss->timer, osw_scan_sched_timer_cb);
++}
++
++struct osw_scan_sched *
++osw_scan_sched_alloc(void)
++{
++    struct osw_scan_sched *ss = CALLOC(1, sizeof(*ss));
++    osw_scan_sched_init(ss);
++    return ss;
++}
++
++void
++osw_scan_sched_free(struct osw_scan_sched *ss)
++{
++    if (ss == NULL) return;
++
++    osw_scan_sched_set_phy_name(ss, NULL);
++    osw_scan_sched_set_vif_name(ss, NULL);
++    osw_scan_sched_set_channels(ss, NULL, 0);
++    osw_timer_disarm(&ss->timer);
++    FREE(ss);
++}
++
++OSW_UT(osw_scan_sched_build)
++{
++    struct osw_scan_sched ss;
++    MEMZERO(ss);
++    osw_scan_sched_init(&ss);
++
++    const struct osw_channel c1 = { .control_freq_mhz = 2412 };
++    const struct osw_channel c6 = { .control_freq_mhz = 2437 };
++    const struct osw_channel c11 = { .control_freq_mhz = 2462 };
++    const struct osw_channel cl1[] = { c1, c6, c11 };
++
++    struct osw_channel ol[6];
++    struct osw_channel oc;
++
++    osw_scan_sched_set_channels(&ss, cl1, ARRAY_SIZE(cl1));
++
++    osw_scan_sched_build_scan_chan(&ss, NULL, &oc, 1); assert(memcmp(&oc, &c1, sizeof(oc)) == 0);
++    osw_scan_sched_build_scan_chan(&ss, NULL, &oc, 1); assert(memcmp(&oc, &c6, sizeof(oc)) == 0);
++    osw_scan_sched_build_scan_chan(&ss, NULL, &oc, 1); assert(memcmp(&oc, &c11, sizeof(oc)) == 0);
++
++    osw_scan_sched_build_scan_chan(&ss, &c6, &oc, 1); assert(memcmp(&oc, &c1, sizeof(oc)) == 0);
++    osw_scan_sched_build_scan_chan(&ss, &c6, &oc, 1); assert(memcmp(&oc, &c11, sizeof(oc)) == 0);
++    osw_scan_sched_build_scan_chan(&ss, &c6, &oc, 1); assert(memcmp(&oc, &c1, sizeof(oc)) == 0);
++    osw_scan_sched_build_scan_chan(&ss, &c6, &oc, 1); assert(memcmp(&oc, &c11, sizeof(oc)) == 0);
++
++    osw_scan_sched_build_scan_chan(&ss, &c1, &oc, 1); assert(memcmp(&oc, &c6, sizeof(oc)) == 0);
++
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, ol, ARRAY_SIZE(ol)) == 2);
++    assert(memcmp(&ol[0], &c11, sizeof(c11)) == 0);
++    assert(memcmp(&ol[1], &c6, sizeof(c6)) == 0);
++
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, ol, ARRAY_SIZE(ol)) == 2);
++    assert(memcmp(&ol[0], &c11, sizeof(c11)) == 0);
++    assert(memcmp(&ol[1], &c6, sizeof(c6)) == 0);
++
++    /* This should reset the iterator, thus different list order is expected */
++    osw_scan_sched_set_mode(&ss, OSW_SCAN_SCHED_ALL);
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, ol, ARRAY_SIZE(ol)) == 2);
++    assert(memcmp(&ol[0], &c6, sizeof(c6)) == 0);
++    assert(memcmp(&ol[1], &c11, sizeof(c11)) == 0);
++
++    /* Empty outputs expected */
++    osw_scan_sched_set_channels(&ss, &c1, 1);
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, &oc, 1) == 0);
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, &oc, 1) == 0);
++    assert(osw_scan_sched_build_scan_chan(&ss, &c1, &oc, 1) == 0);
++
++    /* Not empty anymore */
++    assert(osw_scan_sched_build_scan_chan(&ss, NULL, &oc, 1) == 1);
++    assert(memcmp(&oc, &c1, sizeof(oc)) == 0);
++
++    /* Empty again */
++    osw_scan_sched_set_channels(&ss, NULL, 0);
++    assert(osw_scan_sched_build_scan_chan(&ss, NULL, &oc, 1) == 0);
++}
+diff --git a/src/lib/osw/unit.mk b/src/lib/osw/unit.mk
+index 28936a27..288f524b 100644
+--- a/src/lib/osw/unit.mk
++++ b/src/lib/osw/unit.mk
+@@ -29,6 +29,7 @@ UNIT_SRC += src/osw_module.c
+ UNIT_SRC += src/osw_sampler.c
+ UNIT_SRC += src/osw_stats_defs.c
+ UNIT_SRC += src/osw_stats.c
++UNIT_SRC += src/osw_scan_sched.c
+ UNIT_SRC += src/osw_sta_cache.c
+ UNIT_SRC += src/osw_btm.c
+ UNIT_SRC += src/osw_rrm_meas.c
+diff --git a/src/lib/ow/inc/ow_stats_conf.h b/src/lib/ow/inc/ow_stats_conf.h
+index 72968a65..c1f40583 100644
+--- a/src/lib/ow/inc/ow_stats_conf.h
++++ b/src/lib/ow/inc/ow_stats_conf.h
+@@ -83,4 +83,16 @@ ow_stats_conf_entry_set_channels(struct ow_stats_conf_entry *e,
+                                  const int *channels,
+                                  size_t n_channels);
+ 
++void
++ow_stats_conf_entry_set_dwell_time(struct ow_stats_conf_entry *e,
++                                   unsigned int msec);
++
++void
++ow_stats_conf_entry_set_holdoff_busy(struct ow_stats_conf_entry *e,
++                                     unsigned int threshold);
++
++void
++ow_stats_conf_entry_set_holdoff_delay(struct ow_stats_conf_entry *e,
++                                      unsigned int seconds);
++
+ #endif /* OW_STATS_CONF_H_INCLUDED */
+diff --git a/src/lib/ow/src/ow_stats_conf.c b/src/lib/ow/src/ow_stats_conf.c
+index 8ffcf41a..ccea04f0 100644
+--- a/src/lib/ow/src/ow_stats_conf.c
++++ b/src/lib/ow/src/ow_stats_conf.c
+@@ -4,6 +4,7 @@
+ #include <const.h>
+ #include <log.h>
+ #include <util.h>
++#include <os.h>
+ #include <qm_conn.h>
+ #include <os_time.h>
+ #include <stddef.h>
+@@ -16,6 +17,7 @@
+ #include <osw_stats_subscriber.h>
+ #include <osw_stats_defs.h>
+ #include <osw_sampler.h>
++#include <osw_scan_sched.h>
+ #include <osw_module.h>
+ #include <osw_time.h>
+ #include <osw_timer.h>
+@@ -61,8 +63,8 @@ threshold          : ["map",[["max_delay",600],["util",10]]]
+ struct ow_stats_conf {
+     struct ds_tree entries; /* ow_stats_conf_entry */
+     struct ds_tree bands;
+-    struct ds_tree freqs_phy;
+-    struct ds_tree freqs_vif;
++    struct ds_tree phys;
++    struct ds_tree vifs;
+     struct osw_state_observer state_obs;
+     struct osw_timer work;
+ };
+@@ -73,17 +75,19 @@ struct ow_stats_conf_band {
+     enum ow_stats_conf_radio_type type;
+ };
+ 
+-struct ow_stats_conf_freq_phy {
++struct ow_stats_conf_phy {
+     struct ds_tree_node node;
+     struct ds_tree vifs;
+     char *phy_name;
+ };
+ 
+-struct ow_stats_conf_freq_vif {
+-    struct ds_tree_node phy_node; /* ow_stats_conf_freq_phy.vifs */
+-    struct ds_tree_node conf_node; /* ow_stats_conf.freqs_vif */
+-    struct ow_stats_conf_freq *phy_freq;
++struct ow_stats_conf_vif {
++    struct ds_tree_node phy_node; /* ow_stats_conf_phy.vifs */
++    struct ds_tree_node conf_node; /* ow_stats_conf._vif */
++    struct ow_stats_conf_phy *phy;
+     char *vif_name;
++    bool enabled;
++    enum osw_vif_type vif_type;
+     uint32_t freq_mhz;
+ };
+ 
+@@ -115,6 +119,9 @@ struct ow_stats_conf_entry_params {
+     enum ow_stats_conf_stats_type stats_type;
+     double sample_seconds;
+     double report_seconds;
++    unsigned int holdoff_busy_threshold;
++    unsigned int holdoff_delay_seconds;
++    unsigned int dwell_time_msec;
+     bool valid;
+ };
+ 
+@@ -129,6 +136,10 @@ struct ow_stats_conf_entry {
+     struct ow_stats_conf *conf;
+     struct ow_stats_conf_entry_params params;
+     struct ow_stats_conf_entry_params params_next;
++    struct osw_scan_sched *scan;
++    struct osw_stats_subscriber *util_sub;
++    int last_util;
++    double scan_delayed_until;
+     double report_at;
+     double last_sub_reported_at;
+     char *id;
+@@ -241,6 +252,9 @@ ow_stats_conf_entry_params_changed(const struct ow_stats_conf_entry_params *a,
+         || (a->stats_type != b->stats_type)
+         || (a->sample_seconds != b->sample_seconds)
+         || (a->report_seconds != b->report_seconds)
++        || (a->dwell_time_msec != b->dwell_time_msec)
++        || (a->holdoff_busy_threshold != b->holdoff_busy_threshold)
++        || (a->holdoff_delay_seconds != b->holdoff_delay_seconds)
+         || (size > 0 &&
+             ((a->channels == NULL || b->channels == NULL) ||
+              memcmp(a->channels, b->channels, size) != 0));
+@@ -313,6 +327,21 @@ ow_stats_conf_entry_free_sta_list(struct ow_stats_conf_entry *e)
+     }
+ }
+ 
++static void
++ow_stats_conf_entry_stop_scan(struct ow_stats_conf_entry *e)
++{
++    if (e->scan == NULL) return;
++
++    LOGI("ow: stats: entry: %s: stopping scan schedule",
++          e->id ?: "");
++
++    osw_stats_unregister_subscriber(e->util_sub);
++    osw_stats_subscriber_free(e->util_sub);
++    osw_scan_sched_free(e->scan);
++    e->scan = NULL;
++    e->util_sub = NULL;
++}
++
+ static void
+ ow_stats_conf_entry_stop(struct ow_stats_conf_entry *e)
+ {
+@@ -324,6 +353,7 @@ ow_stats_conf_entry_stop(struct ow_stats_conf_entry *e)
+         e->sub = NULL;
+         LOGI("ow: stats: entry: %s: stopping", e->id ?: "");
+     }
++    ow_stats_conf_entry_stop_scan(e);
+     ow_stats_conf_entry_free_surveys(e);
+     ow_stats_conf_entry_free_neighbors(e);
+     ow_stats_conf_entry_free_clients(e);
+@@ -368,11 +398,16 @@ static uint32_t
+ ow_stats_conf_get_oper_mhz(struct ow_stats_conf *c,
+                            const char *phy_name)
+ {
+-    struct ow_stats_conf_freq_phy *fp = ds_tree_find(&c->freqs_phy, phy_name);
++    struct ow_stats_conf_phy *fp = ds_tree_find(&c->phys, phy_name);
+     if (fp == NULL) return 0;
+-    struct ow_stats_conf_freq_vif *fv = ds_tree_head(&fp->vifs);
+-    if (fv == NULL) return 0;
+-    return fv->freq_mhz;
++    struct ow_stats_conf_vif *fv = NULL;
++    ds_tree_foreach(&fp->vifs, fv) {
++        if (fv->freq_mhz != 0) {
++            return fv->freq_mhz;
++        }
++    }
++
++    return 0;
+ }
+ 
+ static struct ow_stats_conf_band *
+@@ -893,7 +928,7 @@ ow_stats_conf_is_entry_ready(struct ow_stats_conf_entry *e,
+             return false;
+         }
+ 
+-        LOGI("ow: stats: conf: underrun on entry '%s', type=%s radio=%s chan=%s",
++        LOGD("ow: stats: conf: underrun on entry '%s', type=%s radio=%s chan=%s",
+              e->id,
+              ow_stats_conf_stats_type_to_str(e->params.stats_type),
+              ow_stats_conf_radio_type_to_str(e->params.radio_type),
+@@ -1025,6 +1060,270 @@ static const struct osw_state_observer g_ow_stats_conf_sta_obs = {
+     .sta_disconnected_fn = ow_stats_conf_sta_disconnected_cb,
+ };
+ 
++static double
++ow_stats_conf_entry_get_scan_offset(const struct ow_stats_conf_entry *e)
++{
++    /* Purpose of these offsets is to stagger scan requests
++     * from across different PHYs to reduce packet loss and
++     * stalls in the data path.
++     *
++     * FIXME: This could be smarter at allocating offsets
++     * automatically based on runtime configuration. However
++     * this is good enough for now.
++     */
++    switch (e->params.radio_type) {
++        case OW_STATS_CONF_RADIO_TYPE_UNSPEC: return 0;
++        case OW_STATS_CONF_RADIO_TYPE_2G: return 1;
++        case OW_STATS_CONF_RADIO_TYPE_5G: return 2;
++        case OW_STATS_CONF_RADIO_TYPE_5GL: return 2;
++        case OW_STATS_CONF_RADIO_TYPE_5GU: return 3;
++        case OW_STATS_CONF_RADIO_TYPE_6G: return 4;
++    }
++    return 0;
++}
++
++static enum osw_band
++ow_stats_conf_radio_to_band(enum ow_stats_conf_radio_type radio_type)
++{
++    switch (radio_type) {
++        case OW_STATS_CONF_RADIO_TYPE_UNSPEC: return OSW_BAND_UNDEFINED;
++        case OW_STATS_CONF_RADIO_TYPE_2G: return OSW_BAND_2GHZ;
++        case OW_STATS_CONF_RADIO_TYPE_5G: return OSW_BAND_5GHZ;
++        case OW_STATS_CONF_RADIO_TYPE_5GL: return OSW_BAND_5GHZ;
++        case OW_STATS_CONF_RADIO_TYPE_5GU: return OSW_BAND_5GHZ;
++        case OW_STATS_CONF_RADIO_TYPE_6G: return OSW_BAND_6GHZ;
++    }
++    return OSW_BAND_UNDEFINED;
++}
++
++static struct ow_stats_conf_vif *
++ow_stats_conf_phy_get_scan_vif(struct ow_stats_conf_phy *phy)
++{
++    struct ds_tree *vifs = &phy->vifs;
++    struct ow_stats_conf_vif *vif;
++
++    ds_tree_foreach(vifs, vif) {
++        if (vif->enabled == false) continue;
++
++        switch (vif->vif_type) {
++            case OSW_VIF_AP:
++            case OSW_VIF_STA:
++                return vif;
++            case OSW_VIF_AP_VLAN:
++            case OSW_VIF_UNDEFINED:
++                break;
++        }
++    }
++
++    return NULL;
++}
++static void
++ow_stats_conf_phy_fix_scan_vif(struct ow_stats_conf *c,
++                               struct ow_stats_conf_phy *phy)
++{
++    if (phy == NULL) return;
++
++    const char *phy_name = phy->phy_name;
++    struct ow_stats_conf_band *b = ds_tree_find(&c->bands, phy_name);
++    if (b == NULL) return;
++
++    struct ow_stats_conf_vif *vif = ow_stats_conf_phy_get_scan_vif(phy);
++    const char *vif_name = vif ? vif->vif_name : NULL;
++
++    struct ow_stats_conf_entry *e;
++    ds_tree_foreach(&c->entries, e) {
++        if (e->params.radio_type != b->type) continue;
++        if (e->scan == NULL) continue;
++
++        osw_scan_sched_set_phy_name(e->scan, phy_name);
++        osw_scan_sched_set_vif_name(e->scan, vif_name);
++    }
++}
++
++static struct osw_channel *
++ow_stats_conf_build_channels(enum osw_band band,
++                             int *channels,
++                             size_t n_channels)
++{
++    struct osw_channel *arr = CALLOC(n_channels, sizeof(*arr));
++    size_t i;
++    for (i = 0; i < n_channels; i++) {
++        const int chan = channels[i];
++        const int freq = osw_chan_to_freq(band, chan);
++        const struct osw_channel c = {
++            .control_freq_mhz = freq,
++            .center_freq0_mhz = freq,
++            .width = OSW_CHANNEL_20MHZ,
++        };
++        arr[i] = c;
++    }
++    return arr;
++}
++
++static void
++ow_stats_conf_util_report_cb(enum osw_stats_id id,
++                             const struct osw_tlv *data,
++                             const struct osw_tlv *last,
++                             void *priv)
++{
++    if (id != OSW_STATS_CHAN) return;
++
++    const struct osw_stats_defs *defs = osw_stats_defs_lookup(id);
++    const size_t tb_size = defs->size;
++    const struct osw_tlv_policy *policy = defs->tpolicy;
++    const struct osw_tlv_hdr *tb[tb_size];
++    MEMZERO(tb);
++    const size_t left = osw_tlv_parse(data->data, data->used, policy, tb, tb_size);
++    WARN_ON(left != 0);
++
++    const struct osw_tlv_hdr *percent = tb[OSW_STATS_CHAN_CNT_PERCENT];
++    const struct osw_tlv_hdr *phy = tb[OSW_STATS_CHAN_PHY_NAME];
++    const struct osw_tlv_hdr *freq = tb[OSW_STATS_CHAN_FREQ_MHZ];
++
++    if (percent == NULL) return;
++    if (phy == NULL) return;
++    if (freq == NULL) return;
++
++    const char *phy_name = osw_tlv_get_string(phy);
++    const uint32_t freq_mhz = osw_tlv_get_u32(freq);
++
++    struct ow_stats_conf_entry *e = priv;
++    struct ow_stats_conf *c = e->conf;
++    const uint32_t oper_mhz = ow_stats_conf_get_oper_mhz(c, phy_name);
++
++    if (ow_stats_conf_is_radio_type_ok(e, phy_name) == false) return;
++    if (freq_mhz != oper_mhz) return;
++
++    const size_t tb_size2 = defs->tpolicy[OSW_STATS_CHAN_CNT_PERCENT].tb_size;
++    const struct osw_tlv_policy *policy2 = defs->tpolicy[OSW_STATS_CHAN_CNT_PERCENT].nested;
++    const struct osw_tlv_hdr *tb2[tb_size2];
++    MEMZERO(tb2);
++    const void *data2 = osw_tlv_get_data(percent);
++    const size_t len2 = percent->len;
++    const size_t left2 = osw_tlv_parse(data2, len2, policy2, tb2, tb_size2);
++    WARN_ON(left2 != 0);
++
++    const struct osw_tlv_hdr *tx = tb2[OSW_STATS_CHAN_CNT_TX];
++    const struct osw_tlv_hdr *inbss = tb2[OSW_STATS_CHAN_CNT_RX_INBSS];
++
++    if (inbss == NULL) return;
++    if (tx == NULL) return;
++
++    const uint32_t txp = osw_tlv_get_u32(tx);
++    const uint32_t inbssp = osw_tlv_get_u32(inbss);
++    e->last_util = txp + inbssp;
++
++    LOGD("ow: stats: conf: %s: util: %u (%u + %u)",
++          e->id ?: "",
++          e->last_util,
++          txp,
++          inbssp);
++}
++
++static bool
++ow_stats_conf_scan_needs_delay(struct ow_stats_conf_entry *e)
++{
++    const int last_util = e->last_util;
++    const int threshold = e->params.holdoff_busy_threshold;
++    const bool not_configured = (threshold == 0);
++    const bool can_scan = (last_util < threshold);
++
++    if (not_configured) return false;
++    if (can_scan) return false;
++
++    LOGD("ow: stats: entry: %s: scan: delaying due to channel utilization: %d%% >= %d%%",
++         e->id ?: "",
++         last_util,
++         threshold);
++    return true;
++}
++
++static enum osw_scan_sched_filter
++ow_stats_conf_scan_filter_cb(struct osw_scan_sched *ss,
++                             void *priv)
++{
++    struct ow_stats_conf_entry *e = priv;
++    const double now_mono = OSW_TIME_TO_DBL(osw_time_mono_clk());
++    const bool needs_delay = ow_stats_conf_scan_needs_delay(e);
++
++    if (needs_delay) {
++        const bool first_deny = (e->scan_delayed_until == 0);
++        const bool expired = (e->scan_delayed_until <= now_mono);
++        if (first_deny) {
++            e->scan_delayed_until = now_mono + e->params.holdoff_delay_seconds;
++            LOGI("ow: stats: entry: %s: scan: starting delay", e->id ?: "");
++            return OSW_SCAN_SCHED_DENY;
++        }
++        else if (expired) {
++            e->scan_delayed_until = 0;
++            LOGI("ow: stats: entry: %s: scan: forcing delayed scan due to timeout", e->id ?: "");
++            return OSW_SCAN_SCHED_ALLOW;
++        }
++        else {
++            LOGD("ow: stats: entry: %s: scan: continuing delay", e->id ?: "");
++            return OSW_SCAN_SCHED_DENY;
++        }
++    }
++    else {
++        const bool delayed = (e->scan_delayed_until != 0);
++        if (delayed) {
++            e->scan_delayed_until = 0;
++            LOGI("ow: stats: entry: %s: scan: resetting delay", e->id ?: "");
++            return OSW_SCAN_SCHED_ALLOW;
++        }
++        else {
++            return OSW_SCAN_SCHED_ALLOW;
++        }
++    }
++    return OSW_SCAN_SCHED_ALLOW;
++}
++
++static void
++ow_stats_conf_entry_start_scan(struct ow_stats_conf_entry *e,
++                               double interval)
++{
++    if (e->params.scan_type != OW_STATS_CONF_SCAN_TYPE_OFF_CHAN) return;
++    if (interval <= 0) return;
++
++    LOGI("ow: stats: entry: %s: starting scan schedule at %lf",
++          e->id ?: "",
++          interval);
++
++    e->last_util = 0;
++    e->scan_delayed_until = 0.0;
++
++    struct ow_stats_conf *c = e->conf;
++    const enum ow_stats_conf_radio_type type = e->params.radio_type;
++    const struct ow_stats_conf_band *b = ow_stats_conf_get_radio_type(c, type);
++    const char *phy_name = b ? b->phy_name : NULL;
++    struct ow_stats_conf_phy *phy = phy_name ? ds_tree_find(&c->phys, phy_name) : NULL;
++    const double offset = interval - ow_stats_conf_entry_get_scan_offset(e);
++    const unsigned int dwell = e->params.dwell_time_msec;
++    const enum osw_band band = ow_stats_conf_radio_to_band(e->params.radio_type);
++    const size_t n_channels = e->params.n_channels;
++    struct osw_channel *channels = ow_stats_conf_build_channels(band, e->params.channels, n_channels);
++
++    struct osw_stats_subscriber *sub = osw_stats_subscriber_alloc();
++    osw_stats_subscriber_set_chan(sub, true);
++    osw_stats_subscriber_set_report_fn(sub, ow_stats_conf_util_report_cb, e);
++    osw_stats_subscriber_set_report_seconds(sub, interval);
++    osw_stats_subscriber_set_poll_seconds(sub, interval);
++    osw_stats_register_subscriber(sub);
++    e->util_sub = sub;
++
++    assert(e->scan == NULL);
++    e->scan = osw_scan_sched_alloc();
++    osw_scan_sched_set_interval(e->scan, interval);
++    osw_scan_sched_set_offset(e->scan, offset);
++    osw_scan_sched_set_mode(e->scan, OSW_SCAN_SCHED_RR);
++    osw_scan_sched_set_dwell_time_msec(e->scan, dwell);
++    osw_scan_sched_set_filter_fn(e->scan, ow_stats_conf_scan_filter_cb, e);
++    osw_scan_sched_set_channels(e->scan, channels, n_channels);
++    FREE(channels);
++
++    ow_stats_conf_phy_fix_scan_vif(c, phy);
++}
++
+ static void
+ ow_stats_conf_entry_start(struct ow_stats_conf_entry *e,
+                           const double now)
+@@ -1055,6 +1354,7 @@ ow_stats_conf_entry_start(struct ow_stats_conf_entry *e,
+     osw_stats_subscriber_set_poll_seconds(e->sub, poll);
+     osw_stats_register_subscriber(e->sub);
+     osw_state_register_observer(&e->obs);
++    ow_stats_conf_entry_start_scan(e, poll);
+ 
+     if (e->params.report_seconds > 0) {
+         e->report_at = (floor(now / e->params.report_seconds) + 1) * e->params.report_seconds;
+@@ -1223,10 +1523,10 @@ ow_stats_conf_entry_set_channels(struct ow_stats_conf_entry *e,
+     e->params_next.valid = true;
+ 
+     const size_t size = n_channels * sizeof(*channels);
+-    const bool changed = ((n_channels == e->params_next.n_channels) &&
+-                          (n_channels == 0 ||
+-                           memcmp(channels, e->params_next.channels, size) == 0));
+-    if (changed == false) return;
++    const bool same = ((n_channels == e->params_next.n_channels) &&
++                       (n_channels == 0 ||
++                        memcmp(channels, e->params_next.channels, size) == 0));
++    if (same) return;
+ 
+     FREE(e->params_next.channels);
+     e->params_next.channels = NULL;
+@@ -1236,6 +1536,33 @@ ow_stats_conf_entry_set_channels(struct ow_stats_conf_entry *e,
+     e->params_next.n_channels = n_channels;
+ }
+ 
++void
++ow_stats_conf_entry_set_dwell_time(struct ow_stats_conf_entry *e,
++                                   unsigned int msec)
++{
++    osw_timer_arm_at_nsec(&e->conf->work, 0);
++    e->params_next.valid = true;
++    e->params_next.dwell_time_msec = msec;
++}
++
++void
++ow_stats_conf_entry_set_holdoff_busy(struct ow_stats_conf_entry *e,
++                                     unsigned int threshold)
++{
++    osw_timer_arm_at_nsec(&e->conf->work, 0);
++    e->params_next.valid = true;
++    e->params_next.holdoff_busy_threshold = threshold;
++}
++
++void
++ow_stats_conf_entry_set_holdoff_delay(struct ow_stats_conf_entry *e,
++                                          unsigned int seconds)
++{
++    osw_timer_arm_at_nsec(&e->conf->work, 0);
++    e->params_next.valid = true;
++    e->params_next.holdoff_delay_seconds = seconds;
++}
++
+ static bool
+ ow_stats_conf_report_gen(uint8_t **buf, uint32_t *len)
+ {
+@@ -1422,42 +1749,54 @@ ow_stats_conf_vif_get_freq_mhz(const struct osw_state_vif_info *vif)
+ }
+ 
+ static void
+-ow_stats_conf_freq_set__(struct ow_stats_conf *c,
+-                         const char *phy_name,
+-                         const char *vif_name,
+-                         uint32_t freq_mhz)
+-{
+-    struct ow_stats_conf_freq_vif *fv = ds_tree_find(&c->freqs_vif, vif_name);
+-    struct ow_stats_conf_freq_phy *fp = ds_tree_find(&c->freqs_phy, phy_name);
++ow_stats_conf_vif_set__(struct ow_stats_conf *c,
++                        const char *phy_name,
++                        const char *vif_name,
++                        bool enabled,
++                        enum osw_vif_type vif_type,
++                        uint32_t freq_mhz)
++{
++    struct ow_stats_conf_vif *fv = ds_tree_find(&c->vifs, vif_name);
++    struct ow_stats_conf_phy *fp = ds_tree_find(&c->phys, phy_name);
++    const bool add_vif = (fv == NULL);
++    const bool del_vif = (vif_type == OSW_VIF_UNDEFINED);
++    const bool fix_scan = (add_vif || del_vif);
+ 
+     if (fp == NULL) {
+         fp = CALLOC(1, sizeof(*fp));
+         fp->phy_name = STRDUP(phy_name);
+-        ds_tree_init(&fp->vifs, ds_str_cmp, struct ow_stats_conf_freq_vif, phy_node);
+-        ds_tree_insert(&c->freqs_phy, fp, fp->phy_name);
++        ds_tree_init(&fp->vifs, ds_str_cmp, struct ow_stats_conf_vif, phy_node);
++        ds_tree_insert(&c->phys, fp, fp->phy_name);
+     }
+ 
+     if (fv == NULL) {
+         fv = CALLOC(1, sizeof(*fv));
+         fv->vif_name = STRDUP(vif_name);
+-        ds_tree_insert(&c->freqs_vif, fv, fv->vif_name);
++	fv->phy = fp;
++        ds_tree_insert(&c->vifs, fv, fv->vif_name);
+         ds_tree_insert(&fp->vifs, fv, fv->vif_name);
+     }
+ 
++    fv->enabled = enabled;
++    fv->vif_type = vif_type;
+     fv->freq_mhz = freq_mhz;
+ 
+-    if (freq_mhz == 0) {
++    if (del_vif) {
+         ds_tree_remove(&fp->vifs, fv);
+-        ds_tree_remove(&c->freqs_vif, fv);
++        ds_tree_remove(&c->vifs, fv);
+         FREE(fv->vif_name);
+         FREE(fv);
+ 
+         if (ds_tree_is_empty(&fp->vifs) == true) {
+-            ds_tree_remove(&c->freqs_phy, fp);
++            ds_tree_remove(&c->phys, fp);
+             FREE(fp->phy_name);
+             FREE(fp);
+         }
+     }
++
++    if (fix_scan) {
++        ow_stats_conf_phy_fix_scan_vif(c, fp);
++    }
+ }
+ 
+ static bool
+@@ -1475,35 +1814,39 @@ ow_stats_conf_freq_is_valid(const struct osw_state_vif_info *vif)
+ }
+ 
+ static void
+-ow_stats_conf_freq_set(struct osw_state_observer *self,
+-                       const struct osw_state_vif_info *vif,
+-                       const bool removing)
++ow_stats_conf_vif_set(struct osw_state_observer *self,
++                      const struct osw_state_vif_info *vif,
++                      const bool removing)
+ {
+     struct ow_stats_conf *c = container_of(self, struct ow_stats_conf, state_obs);
+     const bool valid = (removing == false && ow_stats_conf_freq_is_valid(vif));
++    const bool enabled = vif->drv_state->enabled;
++    const enum osw_vif_type vif_type = removing
++                                     ? OSW_VIF_UNDEFINED
++                                     : vif->drv_state->vif_type;
+     const int freq_mhz = valid ? ow_stats_conf_vif_get_freq_mhz(vif) : 0;
+-    ow_stats_conf_freq_set__(c, vif->phy->phy_name, vif->vif_name, freq_mhz);
++    ow_stats_conf_vif_set__(c, vif->phy->phy_name, vif->vif_name, enabled, vif_type, freq_mhz);
+ }
+ 
+ static void
+ ow_stats_conf_vif_added_cb(struct osw_state_observer *self,
+                            const struct osw_state_vif_info *vif)
+ {
+-    ow_stats_conf_freq_set(self, vif, false);
++    ow_stats_conf_vif_set(self, vif, false);
+ }
+ 
+ static void
+ ow_stats_conf_vif_changed_cb(struct osw_state_observer *self,
+                              const struct osw_state_vif_info *vif)
+ {
+-    ow_stats_conf_freq_set(self, vif, false);
++    ow_stats_conf_vif_set(self, vif, false);
+ }
+ 
+ static void
+ ow_stats_conf_vif_removed_cb(struct osw_state_observer *self,
+                              const struct osw_state_vif_info *vif)
+ {
+-    ow_stats_conf_freq_set(self, vif, true);
++    ow_stats_conf_vif_set(self, vif, true);
+ }
+ 
+ static void
+@@ -1520,8 +1863,8 @@ ow_stats_conf_init(struct ow_stats_conf *c)
+ {
+     ds_tree_init(&c->entries, ds_str_cmp, struct ow_stats_conf_entry, node);
+     ds_tree_init(&c->bands, ds_str_cmp, struct ow_stats_conf_band, node);
+-    ds_tree_init(&c->freqs_phy, ds_str_cmp, struct ow_stats_conf_freq_phy, node);
+-    ds_tree_init(&c->freqs_vif, ds_str_cmp, struct ow_stats_conf_freq_vif, conf_node);
++    ds_tree_init(&c->phys, ds_str_cmp, struct ow_stats_conf_phy, node);
++    ds_tree_init(&c->vifs, ds_str_cmp, struct ow_stats_conf_vif, conf_node);
+     ow_stats_conf_init_dpp();
+     osw_timer_init(&c->work, ow_stats_conf_work_cb);
+ }

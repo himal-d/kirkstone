@@ -1,0 +1,261 @@
+From 12f27c363eda9f468985ea2b4364a1fff23d3c56 Mon Sep 17 00:00:00 2001
+From: Andre McCurdy <armccurdy@gmail.com>
+Date: Thu, 12 Nov 2020 15:57:49 -0800
+Subject: [PATCH 1/1] fix misguided (and broken) usage of
+ clock_gettime(CLOCK_MONOTONIC_RAW, ...)
+
+ - Fix bugs introduced by a copy and paste mistakes (assignment to
+   the wrong variable if the call to clock_gettime() succeeds in
+   TAddrIA::getT2Timeout() and the addition of bogus calls to
+   this->setTimestamp(ts) (ie calls which were not there in the
+   original code and not related to the change from time() to
+   clock_gettime()) in TAddrIA::getT1Timeout() and
+   TAddrIA::getT2Timeout()
+
+ - Replace CLOCK_MONOTONIC_RAW with CLOCK_MONOTONIC. For the purpose
+   of replacing time() (ie resolution of seconds), there's no clear
+   reason to use CLOCK_MONOTONIC_RAW with clock_gettime() instead of
+   the more widely supported CLOCK_MONOTONIC. The incremental
+   adjustments performed by adjtime() and NTP are limited to small
+   changes which should not effect timers, timeouts, etc measured in
+   seconds.
+
+ - Avoid needlessly calling both time() and clock_gettime()
+
+Signed-off-by: Andre McCurdy <armccurdy@gmail.com>
+---
+ AddrMgr/AddrAddr.cpp | 50 +++++++++++++------------------
+ AddrMgr/AddrIA.cpp   | 71 ++++++++++++++++----------------------------
+ 2 files changed, 45 insertions(+), 76 deletions(-)
+
+diff --git a/AddrMgr/AddrAddr.cpp b/AddrMgr/AddrAddr.cpp
+index d4a7b73a..a36cf759 100644
+--- a/AddrMgr/AddrAddr.cpp
++++ b/AddrMgr/AddrAddr.cpp
+@@ -32,13 +32,11 @@ TAddrAddr::TAddrAddr(SPtr<TIPv6Addr> addr, long pref, long valid) {
+     this->Prefered = pref;
+     this->Valid = valid;
+     this->Addr=addr;
+-    this->Timestamp = (unsigned long)time(NULL);
+-    struct timespec ts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) == 0) {
+-	    //The time we are taking is with reference to boot time,
+-	    //which is not changed wvwn when the NTP updates the latest time.
+-	    this->Timestamp = (unsigned long)ts.tv_sec;
+-    }
++
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    this->Timestamp = (unsigned long)ts_local.tv_sec;
++
+     this->Tentative = ADDRSTATUS_UNKNOWN;
+     this->Prefix = 128;
+ 
+@@ -64,14 +62,10 @@ TAddrAddr::TAddrAddr(SPtr<TIPv6Addr> addr, long pref, long valid, int prefix) {
+     this->Prefered = pref;
+     this->Valid = valid;
+     this->Addr=addr;
+-    this->Timestamp = (unsigned long)time(NULL);
+ 
+-    struct timespec ts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) == 0) {
+-	    //The time we are taking is with reference to boot time,
+-	    //which is not changed wvwn when the NTP updates the latest time.
+-	    this->Timestamp = (unsigned long)ts.tv_sec;
+-    }
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    this->Timestamp = (unsigned long)ts_local.tv_sec;
+ 
+     this->Tentative = ADDRSTATUS_UNKNOWN;
+     this->Prefix = prefix;
+@@ -110,14 +104,14 @@ SPtr<TIPv6Addr> TAddrAddr::get() {
+ unsigned long TAddrAddr::getPrefTimeout()
+ {
+     unsigned long ts = Timestamp + Prefered;
+-    struct timespec ts_local;
+-    unsigned long x  = (unsigned long)time(NULL);
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts_local) == 0) {
+-	    x  = (unsigned long)ts_local.tv_sec;
+-    }
+     if (ts<Timestamp) { // (Timestamp + T1 overflowed (unsigned long) maximum value
+         return DHCPV6_INFINITY;
+     }
++
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    unsigned long x = (unsigned long)ts_local.tv_sec;
++
+     if (ts>x) 
+         return ts-x;
+     else 
+@@ -134,16 +128,14 @@ unsigned long TAddrAddr::getPrefTimeout()
+ unsigned long TAddrAddr::getValidTimeout()
+ {
+     unsigned long ts = Timestamp + Valid;
+-    unsigned long x  = (unsigned long)time(NULL);
+-
+-    struct timespec ts_local;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts_local) == 0) {
+-	    x = (unsigned long)ts_local.tv_sec;
+-    }
+     if (ts<Timestamp) { // (Timestamp + T1 overflowed (unsigned long) maximum value
+ 	return DHCPV6_INFINITY;
+     }
+ 
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    unsigned long x = (unsigned long)ts_local.tv_sec;
++
+     if (ts>x) 
+         return ts-x;
+     else 
+@@ -180,11 +172,9 @@ void TAddrAddr::setValid(unsigned long valid)
+ // set timestamp
+ void TAddrAddr::setTimestamp()
+ {
+-    this->Timestamp = (unsigned long)time(NULL);
+-    struct timespec ts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) == 0) {
+-	    this->Timestamp = (unsigned long)ts.tv_sec;
+-    }
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    this->Timestamp = (unsigned long)ts_local.tv_sec;
+ }
+ 
+ enum EAddrStatus TAddrAddr::getTentative()
+diff --git a/AddrMgr/AddrIA.cpp b/AddrMgr/AddrIA.cpp
+index 96608fa0..358780eb 100644
+--- a/AddrMgr/AddrIA.cpp
++++ b/AddrMgr/AddrIA.cpp
+@@ -39,7 +39,7 @@ using namespace std;
+ TAddrIA::TAddrIA(const std::string& ifacename, int ifindex, TIAType type, SPtr<TIPv6Addr> addr,
+                  SPtr<TDUID> duid, unsigned long t1, unsigned long t2,unsigned long id)
+     :IAID(id),T1(t1),T2(t2), State(STATE_NOTCONFIGURED), 
+-     Tentative(ADDRSTATUS_UNKNOWN), Timestamp((unsigned long)time(NULL)),
++     Tentative(ADDRSTATUS_UNKNOWN), Timestamp(0),
+      Unicast(false), Iface_(ifacename), Ifindex_(ifindex), Type(type)
+ {
+     this->setDUID(duid);
+@@ -48,12 +48,9 @@ TAddrIA::TAddrIA(const std::string& ifacename, int ifindex, TIAType type, SPtr<T
+     else
+         this->setMulticast();
+ 
+-    struct timespec clockts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-        //The time we are taking is with reference to boot time,
+-        //which is not changed wvwn when the NTP updates the latest time.
+-        this->setTimestamp((unsigned long)clockts.tv_sec);
+-    }
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    this->setTimestamp((unsigned long)ts_local.tv_sec);
+ }
+ 
+ unsigned long TAddrIA::getIAID()
+@@ -294,14 +291,10 @@ unsigned long TAddrIA::getT1Timeout() {
+ 	return DHCPV6_INFINITY;
+     }
+     
+-    x  = (unsigned long)time(NULL);
+-    struct timespec clockts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-        //The time we are taking is with reference to boot time,
+-        //which is not changed wvwn when the NTP updates the latest time.
+-        x = (unsigned long)clockts.tv_sec;
+-    }
+-    this->setTimestamp(ts);
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    x = (unsigned long)ts_local.tv_sec;
++
+     if (ts>x)  
+         return ts-x;
+     else
+@@ -315,14 +308,10 @@ unsigned long TAddrIA::getT2Timeout() {
+ 	return DHCPV6_INFINITY;
+     }
+ 
+-    x  = (unsigned long)time(NULL);
+-    struct timespec clockts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-        //The time we are taking is with reference to boot time,
+-        //which is not changed wvwn when the NTP updates the latest time.
+-        ts = (unsigned long)clockts.tv_sec;
+-    }
+-    this->setTimestamp(ts);
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    x = (unsigned long)ts_local.tv_sec;
++
+     if (ts>x) 
+         return ts-x;
+     else 
+@@ -396,14 +385,9 @@ void TAddrIA::setTimestamp(unsigned long ts)
+ }
+ 
+ void TAddrIA::setTimestamp() {
+-    unsigned long ts = (unsigned long)time(NULL);
+-    struct timespec clockts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-        //The time we are taking is with reference to boot time,
+-        //which is not changed wvwn when the NTP updates the latest time.
+-        ts = (unsigned long)clockts.tv_sec;
+-    }
+-    this->setTimestamp(ts);
++    struct timespec ts_local;
++    clock_gettime(CLOCK_MONOTONIC, &ts_local);
++    this->setTimestamp((unsigned long)ts_local.tv_sec);
+ }
+ 
+ unsigned long TAddrIA::getTimestamp()
+@@ -432,13 +416,10 @@ unsigned long TAddrIA::getTentativeTimeout()
+         AddrLst.first();
+         while ( ptrAddr = AddrLst.get() )
+         {
+-            unsigned long x = (unsigned long)time(NULL);
+-            struct timespec clockts;
+-            if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-               //The time we are taking is with reference to boot time,
+-               //which is not changed wvwn when the NTP updates the latest time.
+-               x = (unsigned long)clockts.tv_sec;
+-            }
++            struct timespec ts_local;
++            clock_gettime(CLOCK_MONOTONIC, &ts_local);
++            unsigned long x = (unsigned long)ts_local.tv_sec;
++
+             if (ptrAddr->getTentative()==ADDRSTATUS_UNKNOWN)
+                 if (min > ptrAddr->getTimestamp()+DADTIMEOUT-x)
+                 {
+@@ -463,13 +444,6 @@ enum EAddrStatus TAddrIA::getTentative()
+ 
+     SPtr<TAddrAddr> ptrAddr;
+     AddrLst.first();
+-    unsigned long localts = (unsigned long)time(NULL);
+-    struct timespec clockts;
+-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &clockts) == 0) {
+-        //The time we are taking is with reference to boot time,
+-        //which is not changed wvwn when the NTP updates the latest time.
+-        localts = (unsigned long)clockts.tv_sec;
+-    }
+ 
+     bool allChecked = true;
+ 
+@@ -483,7 +457,12 @@ enum EAddrStatus TAddrIA::getTentative()
+ 	case ADDRSTATUS_NO:
+ 	    continue;
+ 	case ADDRSTATUS_UNKNOWN:
+-        if ( ptrAddr->getTimestamp()+DADTIMEOUT < localts )
++
++        struct timespec ts_local;
++        clock_gettime(CLOCK_MONOTONIC, &ts_local);
++        unsigned long x = (unsigned long)ts_local.tv_sec;
++
++        if ( ptrAddr->getTimestamp()+DADTIMEOUT < x )
+         {
+ 
+             switch (is_addr_tentative(NULL, Ifindex_, ptrAddr->get()->getPlain()) ) 
+-- 
+2.25.1
+

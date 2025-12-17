@@ -1,0 +1,184 @@
+#!/bin/sh
+
+source /etc/utopia/service.d/log_env_var.sh
+source /etc/utopia/service.d/log_capture_path.sh
+source /etc/device.properties
+source /etc/log_timestamp.sh
+
+echo_t "****************** udhcpc_backupwan.script called*************"
+[ -z "$1" ] && echo_t "Error: should be called from udhcpc backupwan" && exit 1
+
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+RESOLV_CONF="/etc/resolv.conf"
+RESOLV_CONF_TMP="/tmp/resolv_tmp.conf"
+
+dump_dhcp_offer() {
+        echo "interface     : $interface"
+        echo "ip address    : $ip"
+        echo "subnet mask   : $subnet"
+        echo "broadcast     : $broadcast"
+        echo "lease time    : $lease"
+        echo "router        : $router"
+        echo "hostname      : $hostname"
+        echo "domain        : $domain"
+        echo "next server   : $siaddr"
+        echo "server name   : $sname"
+        echo "server id     : $serverid"
+        echo "tftp server   : $tftp"
+        echo "timezone      : $timezone"
+        echo "time server   : $timesvr"
+        echo "name server   : $namesvr"
+        echo "ntp server    : $ntpsvr"
+        echo "dns server    : $dns"
+        echo "wins server   : $wins"
+        echo "log server    : $logsvr"
+        echo "cookie server : $cookiesvr"
+        echo "print server  : $lprsvr"
+        echo "swap server   : $swapsvr"
+        echo "boot file     : $boot_file"
+        echo "boot file name: $bootfile"
+        echo "bootsize      : $bootsize"
+        echo "root path     : $rootpath"
+        echo "ip ttl        : $ipttl"
+        echo "mtu           : $mtuipttl"
+        echo "vendorspecific: $vendorspecific"
+}
+
+have_bin_ip=0
+if [ -x /sbin/ip.iproute2 ]; then
+  have_bin_ip=1
+fi
+
+echo_t "======= BackupWAN - $1 ======="
+
+case "$1" in
+        deconfig)
+                echo_t "BackupWAN - Inside $1 for $interface"
+
+                sysevent set backup-wan-status "deconfig"
+
+                if [ $have_bin_ip -eq 1 ]; then
+                   ip -4 addr flush dev $interface
+                   ip link set dev $interface up
+                else
+                   /sbin/ifconfig $interface 0.0.0.0
+                fi
+
+                sysevent set ipv4_backupwan_subnet ""
+                sysevent set ipv4_backupwan_ipaddr ""
+                sysevent set backupwan_ipaddr ""
+                sysevent set current_backupwan_ipaddr ""
+                sysevent set current_backupwan_ifname ""
+        ;;
+
+       renew|bound)
+                echo_t "BackupWAN - Inside $1 for $interface"
+
+                sysevent set backup-wan-status "bounded"
+
+                dump_dhcp_offer
+
+                if [ $have_bin_ip -eq 1 ]; then
+                    ip addr add dev $interface $ip/$mask $BROADCAST
+                else
+                    /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+                fi
+
+                echo_t "BackupWAN ***** Iface is $interface IP is $ip and mask is $mask  ***********"
+                sysevent set ipv4_backupwan_subnet $mask
+                sysevent set ipv4_backupwan_ipaddr $ip
+                sysevent set backupwan_ipaddr $ip
+                sysevent set current_backupwan_ipaddr $ip
+                sysevent set current_backupwan_ifname $interface
+                sysevent set backupwan_router_addr $router
+                sysevent set backupwan_broadcast_addr $BROADCAST
+        ;;
+
+        configure)
+                echo_t "BackupWAN - Inside Configure"
+
+                sysevent set backup-wan-status "started"
+
+                bwan_mask=`sysevent get ipv4_backupwan_subnet`
+                bwan_ip=`sysevent get ipv4_backupwan_ipaddr`
+                bwan_ifname=`sysevent get current_backupwan_ifname`
+
+                sysevent set ipv4_wan_subnet $bwan_mask
+                sysevent set ipv4_wan_ipaddr $bwan_ip
+                sysevent set current_ipv4_link_state up
+                sysevent set wan_ipaddr $bwan_ip
+                sysevent set current_wan_ipaddr $bwan_ip
+                sysevent set current_wan_ifname $bwan_ifname
+
+                route_val=`sysevent get backupwan_router_addr`
+                iface=`sysevent get current_wan_ifname`
+
+                echo_t "BackupWAN - Configure - iface:$bwan_ifname ip:$bwan_ip mask:$bwan_mask router:$route_val"
+
+                if [ -n "$route_val" ] ; then
+                   if [ $have_bin_ip -eq 1 ]; then
+                      while ip route del default 2>/dev/null ; do
+                            :
+                      done
+                   else
+                      while route del default gw 0.0.0.0 dev $iface 2>/dev/null ; do
+                            :
+                      done
+                   fi
+                                
+                   metric=0
+                   for i in $route_val ; do
+                       if [ $have_bin_ip -eq 1 ]; then
+                          ip route add default via $i metric $metric
+                       else
+                          route add default gw $i dev $iface metric $metric 2>/dev/null
+                       fi
+                       metric=$(($metric + 1))
+                   done
+		    lan_ipaddr=$(syscfg get lan_ipaddr)
+	            if [ -n "$(grep "$lan_ipaddr" $RESOLV_CONF)" ]; then
+                        echo "Adding $route_val to $RESOLV_CONF"
+                        cp "$RESOLV_CONF" "$RESOLV_CONF_TMP"
+                        echo "nameserver $route_val" >> "$RESOLV_CONF_TMP"
+                        cat "$RESOLV_CONF_TMP" > "$RESOLV_CONF"
+                        rm "$RESOLV_CONF_TMP"
+                   fi   
+                fi
+       ;;
+
+       deconfigure)
+                echo_t "BackupWAN - Inside Deconfigure"
+
+                sysevent set backup-wan-status "stopped"
+                
+                sysevent set current_wan_ifname "erouter0"
+
+		route_val=`sysevent get backupwan_router_addr`
+
+		bwan_ifname=`psmcli get dmsb.Mesh.WAN.Interface.Name`
+
+       		if [ -n "$route_val" ] ; then
+			ip route del default via $route_val dev $bwan_ifname
+		fi
+		
+		if [ -n "$(grep $route_val "$RESOLV_CONF")" ]; then
+                	cp "$RESOLV_CONF" "$RESOLV_CONF_TMP"
+                   	grep -v "$route_val" "$RESOLV_CONF_TMP" > "$RESOLV_CONF"
+                    	rm "$RESOLV_CONF_TMP"
+                        sysevent set dhcp_server-stop
+                      	sleep 1
+                        touch /var/tmp/lan_not_restart
+                       	sysevent set dhcp_server-start
+                        echo "Calling gw_lan_refresh from backupwan deconfigure"
+                        gw_lan_refresh &
+            	fi
+	;;
+
+
+esac
+
+echo "==============================="
+
+exit 0

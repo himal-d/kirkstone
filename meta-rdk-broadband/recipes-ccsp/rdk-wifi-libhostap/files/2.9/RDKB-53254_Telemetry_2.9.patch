@@ -1,0 +1,81 @@
+Date: 10-Jan-2024
+From: Pavithra_Sundaravadivel@Comcast.com
+Source: COMCAST
+
+diff --git a/source/hostap-2.9/src/ap/ap_drv_ops.c b/source/hostap-2.9/src/ap/ap_drv_ops.c
+index 4b98dbd..5a9bc7f 100755
+--- a/source/hostap-2.9/src/ap/ap_drv_ops.c
++++ b/source/hostap-2.9/src/ap/ap_drv_ops.c
+@@ -728,6 +728,14 @@ int hostapd_drv_sta_deauth(struct hostapd_data *hapd,
+ 					reason);
+ }
+ 
++int hostapd_drv_radius_eap_failure(struct hostapd_data *hapd,
++                           int failure_reason)
++{
++       if (!hapd->driver || !hapd->driver->radius_eap_failure || !hapd->drv_priv)
++               return 0;
++       return hapd->driver->radius_eap_failure(hapd->drv_priv, failure_reason);
++}
++
+ #ifdef RDK_ONEWIFI
+ int hostapd_drv_sta_notify_deauth(struct hostapd_data *hapd,
+ 			   const u8 *addr, int reason)
+diff --git a/source/hostap-2.9/src/ap/ap_drv_ops.h b/source/hostap-2.9/src/ap/ap_drv_ops.h
+index 638041d..604909c 100755
+--- a/source/hostap-2.9/src/ap/ap_drv_ops.h
++++ b/source/hostap-2.9/src/ap/ap_drv_ops.h
+@@ -102,6 +102,7 @@ int hostapd_drv_send_mlme_csa(struct hostapd_data *hapd,
+ 			      const u16 *csa_offs, size_t csa_offs_len);
+ int hostapd_drv_sta_deauth(struct hostapd_data *hapd,
+ 			   const u8 *addr, int reason);
++int hostapd_drv_radius_eap_failure(struct hostapd_data *hapd, int failure_reason);
+ #ifdef RDK_ONEWIFI
+ int hostapd_drv_sta_notify_deauth(struct hostapd_data *hapd,
+ 			   const u8 *addr, int reason);
+diff --git a/source/hostap-2.9/src/ap/ieee802_1x.c b/source/hostap-2.9/src/ap/ieee802_1x.c
+index d75683e..57f76c9 100755
+--- a/source/hostap-2.9/src/ap/ieee802_1x.c
++++ b/source/hostap-2.9/src/ap/ieee802_1x.c
+@@ -1551,6 +1551,7 @@ static void ieee802_1x_decapsulate_radius(struct hostapd_data *hapd,
+ 		os_strlcpy(buf, "EAP Success", sizeof(buf));
+ 		break;
+ 	case EAP_CODE_FAILURE:
++		hostapd_drv_radius_eap_failure(hapd, DRV_EAP_FAILURE);
+ 		os_strlcpy(buf, "EAP Failure", sizeof(buf));
+ 		break;
+ 	default:
+@@ -2160,6 +2161,7 @@ ieee802_1x_receive_auth(struct radius_msg *msg, struct radius_msg *req,
+ 			}
+ 		}
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
++		hostapd_drv_radius_eap_failure(hapd, DRV_RADIUS_ACCESS_REJECT);
+ 		break;
+ 	case RADIUS_CODE_ACCESS_CHALLENGE:
+ 		sm->eap_if->aaaEapReq = TRUE;
+diff --git a/source/hostap-2.9/src/ap/ieee802_1x.h b/source/hostap-2.9/src/ap/ieee802_1x.h
+index bb85b93..633a794 100755
+--- a/source/hostap-2.9/src/ap/ieee802_1x.h
++++ b/source/hostap-2.9/src/ap/ieee802_1x.h
+@@ -9,6 +9,9 @@
+ #ifndef IEEE802_1X_H
+ #define IEEE802_1X_H
+ 
++#define DRV_RADIUS_ACCESS_REJECT 1
++#define DRV_EAP_FAILURE 2
++
+ struct hostapd_data;
+ struct sta_info;
+ struct eapol_state_machine;
+diff --git a/source/hostap-2.9/src/drivers/driver.h b/source/hostap-2.9/src/drivers/driver.h
+index 66d52fd..85c64fa 100755
+--- a/source/hostap-2.9/src/drivers/driver.h
++++ b/source/hostap-2.9/src/drivers/driver.h
+@@ -4264,6 +4264,7 @@ struct wpa_driver_ops {
+ 	 */
+ 	int (*update_dh_ie)(void *priv, const u8 *peer_mac, u16 reason_code,
+ 			    const u8 *ie, size_t ie_len);
++	int (*radius_eap_failure)(void *priv, int failure_reason);
+ };
+ 
+ /**

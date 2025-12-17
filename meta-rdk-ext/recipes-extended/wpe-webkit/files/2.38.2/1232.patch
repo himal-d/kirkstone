@@ -1,0 +1,46 @@
+From f3a02a4be164ef97d0f7055c3128d185be15ce9a Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Thu, 16 Nov 2023 09:34:58 +0000
+Subject: [PATCH] [GSTMediaPlayer] Make fake preroll asynchronous
+
+1) Call didPreroll() also for <video> elements that are audio-only
+2) Make didPreroll() call async and put in onto HTML media element
+   task queue to make sure it is executed after dispatching
+   'seeking' event to JS so app has a chance to note HTMLmedia.seeking
+   attribute is 'true'
+---
+ .../mse/MediaPlayerPrivateGStreamerMSE.cpp          | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index a2f33334befa..88f7d54cfc89 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -262,13 +262,22 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
+ 
+     m_mediaSource->seekToTime(m_seekTime);
+ 
+-    if (m_player && !m_player->isVideoPlayer() && m_audioSink) {
++    if (m_player && !hasVideo() && m_audioSink) {
+         gboolean audioSinkPerformsAsyncStateChanges;
+         g_object_get(m_audioSink.get(), "async", &audioSinkPerformsAsyncStateChanges, nullptr);
+         if (!audioSinkPerformsAsyncStateChanges) {
+             // If audio-only pipeline's sink is not performing async state changes
+             // we must simulate preroll right away as otherwise nothing will trigger it.
+-            didPreroll();
++
++            // Post this on HTML media element queue so it will be executed
++            // synchonously with media events (e.g. seeking). This will ensure
++            // that HTML element attributes (like HTMLmedia.seeking) are not reseted
++            // before app receives "seeking" event
++            m_player->queueTaskOnEventLoop([weakThis = WeakPtr { *this }, this] {
++                if (!weakThis)
++                    return;
++                didPreroll();
++            });
+         }
+     }
+ 
+-- 
+2.41.0
+

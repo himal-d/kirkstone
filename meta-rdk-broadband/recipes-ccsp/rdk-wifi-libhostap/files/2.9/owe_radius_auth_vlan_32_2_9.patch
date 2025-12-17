@@ -1,0 +1,58 @@
+##########################################
+Date: April 27 2023 12.30PM
+From: 2ac273d52d72f7ed6f8b91f1e2a5bd01cb9e6d6d
+Subject: Four bytes vlanid and RadiusGreylist for wl2.3
+Source: COMCAST
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: pavithra_sundaravadivel@comcast.com
+##########################################
+diff --git a/source/hostap-2.9/src/ap/ieee802_1x.c b/source/hostap-2.9/src/ap/ieee802_1x.c
+index 5b466d6..c1e9193 100755
+--- a/source/hostap-2.9/src/ap/ieee802_1x.c
++++ b/source/hostap-2.9/src/ap/ieee802_1x.c
+@@ -843,7 +843,8 @@ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+ 	if (hapd->conf->rdk_greylist) {
+-		u8 secure, snr, ap_vlan;
++		u8 secure, snr;
++		u32 ap_vlan;
+ 		char txtaddr[TXT_MAC_ADDR_LEN] = {'\0'};
+ 
+ 		secure = (hapd->conf->wpa == 0) ? 1 : 2;
+@@ -851,7 +852,7 @@ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 		os_snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+ 		snr = greylist_get_client_snr(hapd, txtaddr);
+ 		greylist_get_cmmac();
+-		ap_vlan = hapd->conf->ap_vlan;
++		ap_vlan = htonl(hapd->conf->ap_vlan);
+ 
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_NETWORK_TYPE,
+@@ -860,8 +861,8 @@ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_CM_MAC,
+ 			cmmac, TXT_MAC_ADDR_LEN - 1);
+ 		radius_msg_add_comcast(
+-			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN,
+-			&ap_vlan, 1);
++			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN_32,
++			(u8 *)&ap_vlan, 4);
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_SNR,
+ 			&snr, 1);
+diff --git a/source/hostap-2.9/src/radius/radius.h b/source/hostap-2.9/src/radius/radius.h
+index 435b8a9..91b3ea5 100755
+--- a/source/hostap-2.9/src/radius/radius.h
++++ b/source/hostap-2.9/src/radius/radius.h
+@@ -213,9 +213,9 @@ enum {
+ enum {
+ 	RADIUS_VENDOR_ATTR_COMCAST_NETWORK_TYPE = 133,
+ 	RADIUS_VENDOR_ATTR_COMCAST_CM_MAC = 134,
+-	RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN = 135,
+ 	RADIUS_VENDOR_ATTR_COMCAST_AP_SNR = 136,
+ 	RADIUS_VENDOR_ATTR_COMCAST_REPLY_MESSAGE = 137,
++	RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN_32 = 141,
+ };
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 

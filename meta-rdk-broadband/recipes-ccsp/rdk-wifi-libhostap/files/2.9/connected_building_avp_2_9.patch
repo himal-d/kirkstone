@@ -1,0 +1,100 @@
+Date: 25-Jul-2023
+From: Pramod_Joshi@comcast.com
+Source: COMCAST
+
+--- a/source/hostap-2.9/src/ap/ap_config.h	2023-07-25 21:39:59.188079808 +0000
++++ b/source/hostap-2.9/src/ap/ap_config.h	2023-07-25 21:41:09.491490940 +0000
+@@ -841,6 +841,7 @@
+ 	 */
+ 	u8 mka_psk_set;
+ #endif /* CONFIG_MACSEC */
++	int connected_building_avp;
+ };
+ 
+ /**
+--- a/source/hostap-2.9/src/radius/radius.h	2023-07-25 21:56:46.643531178 +0000
++++ b/source/hostap-2.9/src/radius/radius.h	2023-07-25 21:59:03.598374953 +0000
+@@ -216,6 +216,7 @@
+ 	RADIUS_VENDOR_ATTR_COMCAST_AP_SNR = 136,
+ 	RADIUS_VENDOR_ATTR_COMCAST_REPLY_MESSAGE = 137,
+ 	RADIUS_VENDOR_ATTR_COMCAST_AP_VLAN_32 = 141,
++	RADIUS_VENDOR_ATTR_COMCAST_CONNECTED_BUILDING = 143,
+ };
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 
+--- a/source/hostap-2.9/src/ap/hostapd.c	2023-07-25 22:17:09.813228971 +0000
++++ b/source/hostap-2.9/src/ap/hostapd.c	2023-07-25 22:18:12.152709003 +0000
+@@ -1375,7 +1375,7 @@
+ 		hapd->driver->set_operstate(hapd->drv_priv, 1);
+ 
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-	if (conf->rdk_greylist && !conf->ieee802_1x) {
++	if ((conf->rdk_greylist || conf->connected_building_avp)  && !conf->ieee802_1x) {
+ 		char cmd[128];
+ 
+ 		snprintf(cmd, sizeof(cmd), "wl -i %s eap_restrict 1",
+--- a/source/hostap-2.9/src/ap/ieee802_1x.c	2023-07-25 21:43:01.702541758 +0000
++++ b/source/hostap-2.9/src/ap/ieee802_1x.c	2023-07-25 22:22:34.718514465 +0000
+@@ -868,10 +868,11 @@
+ #endif /* CONFIG_HS20 */
+ 
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-	if (hapd->conf->rdk_greylist) {
++	if (hapd->conf->rdk_greylist ||  hapd->conf->connected_building_avp) {
+ 		u8 secure, snr;
+ 		u32 ap_vlan;
+ 		char txtaddr[TXT_MAC_ADDR_LEN] = {'\0'};
++		char managed_guest_val[32] = "cb01";
+ 
+ 		secure = (hapd->conf->wpa == 0) ? 1 : 2;
+ 
+@@ -896,6 +897,13 @@
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_AP_SNR,
+ 			&snr, 1);
++   
++   	if (hapd->conf->connected_building_avp) {
++		radius_msg_add_comcast(
++			msg, RADIUS_VENDOR_ATTR_COMCAST_CONNECTED_BUILDING,
++			managed_guest_val,strlen(managed_guest_val));
++	  }
++
+ 	}
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 
+@@ -1044,7 +1052,7 @@
+ 			flags |= EAPOL_SM_FROM_PMKSA_CACHE;
+ 	}
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-	if (hapd->conf->rdk_greylist && !hapd->conf->ieee802_1x)
++	if ((hapd->conf->rdk_greylist || hapd->conf->connected_building_avp) && !hapd->conf->ieee802_1x)
+ 		flags |= EAPOL_SM_SKIP_EAP;
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 	return eapol_auth_alloc(hapd->eapol_auth, sta->addr, flags,
+@@ -1302,7 +1310,7 @@
+ #endif /* CONFIG_WPS */
+ 
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-	if (hapd->conf->rdk_greylist && !hapd->conf->ieee802_1x) {
++	if ((hapd->conf->rdk_greylist || hapd->conf->connected_building_avp) && !hapd->conf->ieee802_1x) {
+ 		/*
+ 		 * Need to use IEEE 802.1X/EAPOL state machines for authentication
+ 		 * in the greylist enabled BSS even if IEEE 802.1x/EAPOL is not
+@@ -1368,7 +1376,7 @@
+ 	sta->eapol_sm->eap_if->portEnabled = TRUE;
+ 
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-	if (hapd->conf->rdk_greylist && !hapd->conf->ieee802_1x) {
++	if ((hapd->conf->rdk_greylist || hapd->conf->connected_building_avp) && !hapd->conf->ieee802_1x) {
+ 		/*
+ 		 * Fake IEEE 802.1X/EAPOL state machines to send
+ 		 * Radius Access-Request.
+@@ -2108,7 +2116,7 @@
+ 				      session_timeout_set ?
+ 				      (int) session_timeout : -1);
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
+-		if (hapd->conf->rdk_greylist && !hapd->conf->ieee802_1x)
++		if ((hapd->conf->rdk_greylist || hapd->conf->connected_building_avp) && !hapd->conf->ieee802_1x)
+ 			ieee802_1x_set_sta_authorized(hapd, sta, 1);
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 		break;

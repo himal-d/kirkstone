@@ -1,0 +1,74 @@
+Source: Backport from later version of opensync
+
+--- /src/lib/ow/src/ow_webconfig.c	2023-11-09 05:29:21.728605776 +0000
++++ /src/lib/ow/src/ow_webconfig.c	2023-11-09 05:37:56.858025619 +0000
+@@ -31,6 +31,7 @@
+ {
+     switch (bandwidth) {
+         case WIFI_CHANNELBANDWIDTH_80_80MHZ: return OSW_CHANNEL_80P80MHZ;
++	case WIFI_CHANNELBANDWIDTH_320MHZ:   return OSW_CHANNEL_320MHZ;				     
+         case WIFI_CHANNELBANDWIDTH_160MHZ:   return OSW_CHANNEL_160MHZ;
+         case WIFI_CHANNELBANDWIDTH_80MHZ:    return OSW_CHANNEL_80MHZ;
+         case WIFI_CHANNELBANDWIDTH_40MHZ:    return OSW_CHANNEL_40MHZ;
+--- /src/lib/osw/inc/osw_types.h	2023-11-09 05:38:34.341546669 +0000
++++ /src/lib/osw/inc/osw_types.h	2023-11-09 05:38:44.557416128 +0000
+@@ -25,6 +25,7 @@
+     OSW_CHANNEL_80MHZ,
+     OSW_CHANNEL_160MHZ,
+     OSW_CHANNEL_80P80MHZ,
++    OSW_CHANNEL_320MHZ,
+ };
+ 
+ enum osw_pmf {
+--- /src/lib/osw/src/osw_types.c	2023-11-09 05:39:25.772889463 +0000
++++ /src/lib/osw/src/osw_types.c	2023-11-09 05:39:33.584789640 +0000
+@@ -159,6 +159,7 @@
+         case OSW_CHANNEL_80MHZ: return "80";
+         case OSW_CHANNEL_160MHZ: return "160";
+         case OSW_CHANNEL_80P80MHZ: return "80p80";
++	case OSW_CHANNEL_320MHZ: return "320";			   
+     }
+     return "";
+ }
+@@ -297,6 +298,7 @@
+         case OSW_CHANNEL_80MHZ: return 80;
+         case OSW_CHANNEL_160MHZ: return 160;
+         case OSW_CHANNEL_80P80MHZ: return 0; /* N/A */
++        case OSW_CHANNEL_320MHZ: return 320;				   
+     }
+     return 0;
+ }
+--- /src/lib/osw/src/osw_drv_wifihal_3_0.c	2023-11-09 05:40:15.592254611 +0000
++++ /src/lib/osw/src/osw_drv_wifihal_3_0.c	2023-11-09 05:40:25.468129283 +0000
+@@ -1026,6 +1026,7 @@
+         case WIFI_CHANNELBANDWIDTH_80MHZ: return OSW_CHANNEL_80MHZ;
+         case WIFI_CHANNELBANDWIDTH_160MHZ: return OSW_CHANNEL_160MHZ;
+         case WIFI_CHANNELBANDWIDTH_80_80MHZ: return OSW_CHANNEL_80P80MHZ;
++        case WIFI_CHANNELBANDWIDTH_320MHZ: return OSW_CHANNEL_320MHZ;					     
+     }
+ 
+     LOGW("%s: unknown bandwidth: %d", __func__, w);
+@@ -1041,6 +1042,7 @@
+         case OSW_CHANNEL_80MHZ: return WIFI_CHANNELBANDWIDTH_80MHZ;
+         case OSW_CHANNEL_160MHZ: return WIFI_CHANNELBANDWIDTH_160MHZ;
+         case OSW_CHANNEL_80P80MHZ: return WIFI_CHANNELBANDWIDTH_80_80MHZ;
++	case OSW_CHANNEL_320MHZ: return WIFI_CHANNELBANDWIDTH_320MHZ;			   
+     }
+     LOGW("%s: unknown bandwidth: %d", __func__, w);
+     return WIFI_CHANNELBANDWIDTH_20MHZ;
+@@ -1076,6 +1078,7 @@
+         case WIFI_CHANNELBANDWIDTH_80MHZ:
+         case WIFI_CHANNELBANDWIDTH_160MHZ:
+         case WIFI_CHANNELBANDWIDTH_80_80MHZ:
++	case WIFI_CHANNELBANDWIDTH_320MHZ:    
+             /* N/A on 2.4GHz band */
+             break;
+     }
+@@ -1105,6 +1108,7 @@
+         case WIFI_CHANNELBANDWIDTH_80MHZ: return 80;
+         case WIFI_CHANNELBANDWIDTH_160MHZ: return 160;
+         case WIFI_CHANNELBANDWIDTH_80_80MHZ: return 0; /* N/A */
++        case WIFI_CHANNELBANDWIDTH_320MHZ: return 320;					     
+     }
+     return 0;
+ }

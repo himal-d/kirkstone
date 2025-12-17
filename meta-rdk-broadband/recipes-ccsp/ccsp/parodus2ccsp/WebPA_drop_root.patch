@@ -1,0 +1,70 @@
+Date: August 25, 2020 1:41 PM
+From: Iac5629e0e058f5814b90781dc10d6951b43fc4d1 August 25, 2020 1:41 PM
+Subject: RDKB-29192
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: mkrish802 <Manoj_Krishnan@comcast.com>
+
+Index: git/source/app/privilege.c
+===================================================================
+--- git.orig/source/app/privilege.c
++++ git/source/app/privilege.c
+@@ -1,6 +1,23 @@
+ #include "privilege.h"
++#include "webpa_adapter.h"
++#include "cap.h"
++
++cap_user appcaps;
++bool blocklist_ret = false;
+ 
+ void drop_root_privilege()
+ {
+-
++   appcaps.caps = NULL;
++   appcaps.user_name = NULL;
++   blocklist_ret = isBlocklisted();
++   if(blocklist_ret)
++   {
++       WalInfo("NonRoot feature is disabled\n");
++   }
++   else
++   {
++       WalInfo("NonRoot feature is enabled, dropping root privileges for webpa process\n");
++       init_capability();
++       drop_root_caps(&appcaps);
++   }
+ }
+Index: git/source/app/main.c
+===================================================================
+--- git.orig/source/app/main.c
++++ git/source/app/main.c
+@@ -10,6 +10,7 @@
+ #include "signal.h"
+ #include "webpa_adapter.h"
+ #include "libpd.h"
+ #include "webpa_rbus.h"
++#include "cap.h"
+ #ifdef FEATURE_SUPPORT_WEBCONFIG
+ #include <curl/curl.h>
+ #endif
+@@ -17,6 +18,8 @@
+ #include "breakpad_wrapper.h"
+ #endif
+ 
++extern cap_user appcaps;
++extern bool blocklist_ret;
+ /*----------------------------------------------------------------------------*/
+ /*                             Function Prototypes                            */
+ /*----------------------------------------------------------------------------*/
+@@ -77,6 +80,11 @@ int main()
+ #ifdef FEATURE_SUPPORT_WEBCONFIG
+ curl_global_cleanup();
+ #endif
++        if(!blocklist_ret){
++             update_process_caps(&appcaps);
++             read_capability(&appcaps);
++             WalInfo("CAP_DAC_OVERRIDE removed\n");
++        }
+ 	WalInfo("Exiting webpa main thread!!\n");
+ 	return 1;
+ }

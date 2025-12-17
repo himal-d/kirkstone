@@ -1,0 +1,116 @@
+From 75e942fc2cfc2d9e9715ca5a85af4a678274d95e Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Mon, 24 Apr 2023 14:27:29 +0200
+Subject: [PATCH] EME Gstreamer: Break key waiting on PAUSED->READY state
+ change
+
+Changeing a state can't be completed when decryptor is waiting for a key.
+This can block main thread for max 7sec.
+
+1) Signal key waiting cond to return when decryptor is closing.
+2) Return waiting for CDMProxy for the same case.
+---
+ ...bKitCommonEncryptionDecryptorGStreamer.cpp | 33 ++++++++++++++++---
+ ...WebKitCommonEncryptionDecryptorGStreamer.h |  2 +-
+ 2 files changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+index 18010211875b..df0564c3947f 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+@@ -44,7 +44,7 @@ public:
+         : m_decryptor(decryptor) { }
+     virtual bool isAborting()
+     {
+-        return webKitMediaCommonEncryptionDecryptIsFlushing(m_decryptor);
++        return webKitMediaCommonEncryptionDecryptIsAborting(m_decryptor);
+     }
+     virtual ~CDMProxyDecryptionClientImplementation() = default;
+ private:
+@@ -66,6 +66,7 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
+     Condition condition;
+ 
+     bool isFlushing { false };
++    bool isStopped { true };
+     std::unique_ptr<CDMProxyDecryptionClientImplementation> cdmProxyDecryptionClientImplementation;
+     enum DecryptionState decryptionState { DecryptionState::Idle };
+ };
+@@ -240,13 +241,17 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
+     if (!priv->cdmProxy) {
+         GST_DEBUG_OBJECT(self, "CDM not available, going to wait for it");
+         priv->condition.waitFor(priv->mutex, MaxSecondsToWaitForCDMProxy, [priv] {
+-            return priv->isFlushing || priv->cdmProxy;
++            return priv->isFlushing || priv->cdmProxy || priv->isStopped;
+         });
+         // Note that waitFor() releases the mutex lock internally while it waits, so isFlushing may have been changed.
+         if (priv->isFlushing) {
+             GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
+             return GST_FLOW_FLUSHING;
+         }
++        if (priv->isStopped) {
++            GST_DEBUG_OBJECT(self, "Element is closing");
++            return GST_FLOW_OK;
++        }
+         if (!priv->cdmProxy) {
+             GST_ELEMENT_ERROR(self, STREAM, FAILED, ("CDMProxy was not retrieved in time"), (nullptr));
+             return GST_FLOW_NOT_SUPPORTED;
+@@ -464,11 +469,15 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
+     return GST_BASE_TRANSFORM_CLASS(parent_class)->sink_event(trans, event);
+ }
+ 
+-bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt* self)
++bool webKitMediaCommonEncryptionDecryptIsAborting(WebKitMediaCommonEncryptionDecrypt* self)
+ {
+     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
+     LockHolder locker(priv->mutex);
+-    return priv->isFlushing;
++    if (priv->isFlushing || priv->isStopped) {
++        return true;
++    }
++
++    return false;
+ }
+ 
+ WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt* self)
+@@ -483,10 +492,24 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
+     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
+ 
+     switch (transition) {
+-    case GST_STATE_CHANGE_PAUSED_TO_READY:
++    case GST_STATE_CHANGE_READY_TO_PAUSED: {
++        GST_DEBUG_OBJECT(self, "READY->PAUSED");
++
++        LockHolder locker(priv->mutex);
++        priv->isStopped = false;
++        break;
++    }
++    case GST_STATE_CHANGE_PAUSED_TO_READY: {
+         GST_DEBUG_OBJECT(self, "PAUSED->READY");
++
++        LockHolder locker(priv->mutex);
++        priv->isStopped = true;
+         priv->condition.notifyOne();
++        if (priv->cdmProxy) {
++            priv->cdmProxy->abortWaitingForKey();
++        }
+         break;
++    }
+     default:
+         break;
+     }
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h
+index c8bcb764a5e6..987c9bf7e880 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h
+@@ -46,7 +46,7 @@ typedef struct _WebKitMediaCommonEncryptionDecryptPrivate WebKitMediaCommonEncry
+ 
+ GType webkit_media_common_encryption_decrypt_get_type(void);
+ 
+-bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt*);
++bool webKitMediaCommonEncryptionDecryptIsAborting(WebKitMediaCommonEncryptionDecrypt*);
+ 
+ struct _WebKitMediaCommonEncryptionDecrypt {
+     GstBaseTransform parent;
+-- 
+2.25.1
+

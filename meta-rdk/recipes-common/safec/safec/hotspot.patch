@@ -1,0 +1,19 @@
+Date: Sat, 07 Feb 2022 17:06:56 +0000
+From: Gururaaja ESR <gururaja_erodesriranganramlingham@comcast.com>
+Subject: [PATCH] RDKB-39976 - Unable to set Hotspot Config through Webconfig Via RBUS
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Gururaaja ESR <gururaja_erodesriranganramlingham@comcast.com>
+
+diff --git a/configure.ac b/configure.ac
+--- a/configure.ac
++++ b/configure.ac
+@@ -234,7 +234,7 @@ AC_ARG_ENABLE(strmax,
+ 	[case "${enableval}" in
+ 	@<:@0-9@:>@*) enable_strmax=${enableval} ;;
+ 	*)      AC_MSG_ERROR([bad value ${enableval} for --enable-strmax]) ;;
+-	esac], [enable_strmax="(4UL << 10) /* 4KB */" ])
++	esac], [enable_strmax="(32UL << 10) /* 32KB */" ])
+ 
+ AC_MSG_CHECKING([for --enable-strmax])
+ AC_MSG_RESULT([$enable_strmax])

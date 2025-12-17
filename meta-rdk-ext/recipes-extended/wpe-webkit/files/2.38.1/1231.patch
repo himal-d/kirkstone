@@ -1,0 +1,64 @@
+From 0344a88dc1cbefe89dd995a34309ce38ea5fc76b Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Fri, 10 Nov 2023 16:15:57 +0000
+Subject: [PATCH 1/2] Cancel all async tasks scheduled on destruction
+
+It appears that it is possible for the enqueued task to be dispatched
+long after the owner who enqueued the task is destructed, leading to
+crash. This change tries to avoid that by clearing the tasks from the
+qeueue on destruction.
+---
+ Source/WebCore/platform/AbortableTaskQueue.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/WebCore/platform/AbortableTaskQueue.h b/Source/WebCore/platform/AbortableTaskQueue.h
+index f9fc70b9b2e2..23b1f2182c08 100644
+--- a/Source/WebCore/platform/AbortableTaskQueue.h
++++ b/Source/WebCore/platform/AbortableTaskQueue.h
+@@ -75,6 +75,7 @@ class AbortableTaskQueue final {
+         ASSERT(isMainThread());
+         ASSERT(!m_lock.isHeld());
+         ASSERT(m_channel.isEmpty());
++        startAborting();
+     }
+ 
+     // ===========================
+
+From cee617f0d7bab6e9a05076509ea9424c8f2cd776 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Mon, 13 Nov 2023 15:08:03 +0000
+Subject: [PATCH 2/2] Disconnect notify::caps handler on destruction
+
+---
+ .../graphics/gstreamer/TrackPrivateBaseGStreamer.cpp     | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
+index 85e5890309b1..88dc10cce763 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
+@@ -142,8 +142,10 @@ TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
+ 
+ void TrackPrivateBaseGStreamer::disconnect()
+ {
+-    if (m_stream)
++    if (m_stream) {
+         g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
++        ASSERT(0 == g_signal_handler_find(m_stream.get(), G_SIGNAL_MATCH_UNBLOCKED, 0, 0, nullptr, nullptr, nullptr));
++    }
+ 
+     m_tags.clear();
+ 
+@@ -155,8 +157,11 @@ void TrackPrivateBaseGStreamer::disconnect()
+         m_bestUpstreamPad.clear();
+     }
+ 
+-    if (m_pad)
++    if (m_pad) {
++        g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
++        ASSERT(0 == g_signal_handler_find(m_pad.get(), G_SIGNAL_MATCH_UNBLOCKED, 0, 0, nullptr, nullptr, nullptr));
+         m_pad.clear();
++    }
+ }
+ 
+ void TrackPrivateBaseGStreamer::tagsChanged()

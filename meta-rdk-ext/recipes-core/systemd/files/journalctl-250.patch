@@ -1,0 +1,28 @@
+Date: May 08 08:19:02 2018
+
+From: 1c6933a3e3fc560c852f888b058fce7f51694281 May 09 20:55:06 2018
+
+Subject: [PATCH] DELIA-27630 : Correcting timestamp format for Morty builds
+
+	timestamp format was different in Daisy and Morty builds
+
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: gtheres <Geethu_TheresK2@comcast.com>
+---
+
+diff --git a/src/shared/logs-show.c.orig b/src/shared/logs-show.c
+--- a/src/shared/logs-show.c.orig	2023-01-25 13:42:34.428083892 +0000
++++ b/src/shared/logs-show.c	2023-01-25 13:42:55.348000098 +0000
+@@ -398,7 +398,7 @@
+                 case OUTPUT_SHORT:
+                 case OUTPUT_SHORT_PRECISE:
+ 
+-                        if (strftime(buf, sizeof(buf), "%b %d %H:%M:%S",
++                        if (strftime(buf, sizeof(buf), "%Y %b %d %H:%M:%S",
+                                      localtime_or_gmtime_r(&t, &tm, flags & OUTPUT_UTC)) <= 0)
+                                 return log_error_errno(SYNTHETIC_ERRNO(EINVAL),
+                                                        "Failed to format syslog time");

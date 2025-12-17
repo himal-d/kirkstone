@@ -1,0 +1,108 @@
+Changelog between rdkb-20170508 and rdkb-20170523
+
+
+project rdk/components/generic/crashupload/
+ae70422 DELIA-20701: Core dump upload failure for NRD Process
+
+project rdk/components/generic/rdk_logger/
+0c36a54 RDKB-11769 : Move havester log file creation to ATOM
+5263b1b ARRISXB6-4300: Add MeshAgent logs to log4rc files on XB6
+12b1d5e lightweight log4c appender for rdkbrowser2 and WPE
+68827b6 Bluetooth - Enhance BTRCore and BTRMgr logging
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+25a8ecf8 RDKB-11599 : Log parodus start up with timestamp
+
+project rdkb/components/opensource/ccsp/CcspEPONAgent/
+9205473 RDKB-11491: Revert removal of GNU build tool files in CcspEPONAgent
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+e592afe ARRISXB6-4201 : Memory leak in ccsp-lm-lite
+b1da7e3 RDKB-11331: Atom interface br0 is shown as connected devices in local GUI
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+8d3c7fa RDKB-10182 : MoCA Phy Rates not in the same format using TR181
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+3bf8ab9 XF3-2187 : [xdns] Not Implemented on XF3
+c627114 XF3-2187 : [xdns] Not Implemented on XF3
+127f1b5 XF3-2173: [CFG3] Default value for the maintenance window should be 12AM to 3AM
+6f850b0 RDKB-11351 : Implement xOpsDMUploadLogsNow parameter to upload logs
+194f7cb CISCOXB3-2416 : pam initialized flag was not created
+80c9617 RDKB-7600 : Synchronize System Time with NTP Server.
+cd0641e XF3-2187: [xdns] Not Implemented on XF3
+f1f98ae TCCBR-1213: Removing maintenance window files on factory reset
+486c6dc TCCBR-1168: Webgui factory reset, Delete /data/nvram before reboot
+3e4f7e8 RDKBEMU-427 : upstream dual band support Implemetation for Xfinity wifi
+d32303c RDKB-11172: Removing the syscfg.db file on ATOM
+cae3155 RDKBEMU-434: Added Troubleshooting Feature support to RDK-B Emulator
+832c6f1 RDKB-11188:Device Specific erouter0_ip_sync.sh is being called on all devices
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+2e97a6b RDKB-11619 : SNMP mapping for xOpsDMUploadLogsNow and xOpsDMLogsUploadStatus
+9936bcb ARRISXB6-4124: RDKB Mibs not accessible.
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+1216f06 RDKB-11620 : TR069 mapping for xOpsDMUploadLogsNow and xOpsDMLogsUploadStatus
+1f1bee4 RDKB-11618,AXB6COX-42,AXB6R-9 : "ManagementServer.URL" reports NULL
+e9e815e AXB6SHAW-85,RDKB-11596 : TR69 fault reading PrefixRangeBegin
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+bca0403 ARRISXB6-4259 ARRISXB6-4258: GUI pages showing wrong protocols
+ad1e99c RDKB-11611 : Create a selfheal to restart ntpd .
+08029b9 RDKB-10170: stahealth.sh contains vendor specific code.
+55ae616 RDKBEMU-437 : Modified cosa_wifi_apis.c in ccsp-wifi-agent
+3295b23 RDKBEMU-429 : upstream dual band support  Implemetation for
+7bf47df RDKB-11533: disable radio; reboot; enable radio doesn't work
+67cdbe9 WEBPA-2112 : Track and Modify parodus logs as per webpa telemetry data
+821f2d8 RDKB-11366: self heal check for radio missing
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+8228d4b RDKB-11611 : Create a selfheal to restart ntpd .
+ebed948 RDKB-11577 : SelfHeal recovery mechanism needed for ti_udhcpc and ti_dhcp6c.
+7f610e9 RDKBEMU-438 : Removed Resource_mointor script from test-and-diagnostics
+e5deb64 RDKB-11614 : Selfheal Bootup logs are showing Non-xb3 logs in xb3 devices
+4db8ebb RDKB-11597 : Atom hang is reported as CR crash
+879dd0f TCCBR-1023: Adding zebra and dibbler to selfheal
+f34b6f1 RDKBEMU-426 : Upstream self heal feature implementation
+d5c1791 RDKB-11440:Need to Change Telemetry String for Ping Test Connectivity.
+4e9390d RDKB-10980 : Pass the argument to Speedtest JS
+
+project rdkb/components/opensource/ccsp/Utopia/
+0bd3a90 RDKB-11688 : ntp service registration binary is missing in image.
+335880b RDKB-11609, RDKB-11610 : Register NTP initialization to WAN status.
+9ed72b7 TCXB6-1150: Managed Sites Are Not Blocked
+093da56 RDKB-11589 : "boot_to_XHOME_uptime" is  missing in BootTime.log file
+21ee6c9 RDKB-11594: Hotspot : makes multiple SSID applysettings.
+
+project rdkb/components/opensource/ccsp/hal/
+144d4a3 RDKBCMF-73 Add missing files needed by krogoth builds
+2646ce8 RDKBCMF-73 Restore hal ARM code after hal refactoring
+090f3c9 RDKBEMU-447 : Upstream source-pc folder in hal due to hal-refactoring.
+dfe8a1e RDKB-6539: Cleaned up source code to have source directory.
+47a2dfa RDKB-11707: mesh hal update
+ac6bb7c RDKBEMU-424 : upstream dual band support Implemetation for Xfinity wifi in hal
+
+project rdkb/components/opensource/ccsp/halinterface/
+805b319 RDKBCMF-73 Add foreign option to AM_INIT_AUTOMAKE in configure.ac
+602f6a5 RDKB-5987: Merged changes from generic codebase.
+
+project rdkb/components/opensource/ccsp/sysint/
+71b3628 RDKB-11498  : DCA is sending VOD_ERROR_bootup event without reboot.
+
+project rdkb/components/opensource/ccsp/webui/
+7703d57 RDKB-11439: MOCA diagnostic UI will be updated to use new parameters
+fb7e992 RDKB-11564: Port forward rule ADD Global IPv6 addr is not populated
+abbd969 RDKB-11477, CISCOXB3-2350: remove advanced tab in bridge mode
+
+project rdkb/devices/raspberrypi/hal/
+700ca76 RPI-22: [WIFI] Setting the security mode as WPAWPA2-PSK (TKIP/AES) is making  the WIFI client to connect to the SSID with the Authentication Mode as "WPA-Personal" instead of "WPA2-Personal".
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+73c95ff RDKBEMU-441 : Added Xfinity-wifi support for 5Ghz script in device repo
+0479e2d RDKBEMU-435 : Modified Systemd service files
+b5d1f14 RDKBEMU-430 : Modified BridgeMode,Reset/Restore Gateway,Hotspot,
+0c63632 RDKBEMU-430 : Modified BridgeMode,Reset/Restore Gateway,Hotspot,
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+3f9adac RDKBEMU-431 : Modified PHP files to support troubleshooting

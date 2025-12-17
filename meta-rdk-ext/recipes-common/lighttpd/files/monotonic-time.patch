@@ -1,0 +1,63 @@
+This patch is referred from https://redmine.lighttpd.net/boards/3/topics/6334
+
+diff -aruN lighttpd-1.4.53.orig/src/server.c lighttpd-1.4.53/src/server.c
+--- lighttpd-1.4.53.orig/src/server.c	2023-04-04 16:32:46.150773214 +0000
++++ lighttpd-1.4.53/src/server.c	2023-04-04 22:36:09.065603814 +0000
+@@ -221,6 +221,12 @@
+ }
+ #endif
+ 
++static time_t get_time() {
++    struct timespec time;
++    clock_gettime(CLOCK_MONOTONIC, &time);
++    return time.tv_sec;
++}
++
+ static server *server_init(void) {
+ 	int i;
+ 	server *srv = calloc(1, sizeof(*srv));
+@@ -266,7 +272,7 @@
+ 
+ 	li_rand_reseed();
+ 
+-	srv->cur_ts = time(NULL);
++        srv->cur_ts = get_time();
+ 	srv->startup_ts = srv->cur_ts;
+ 
+ 	srv->conns = calloc(1, sizeof(*srv->conns));
+@@ -983,7 +989,7 @@
+ 	int num_childs = 0;
+ #endif
+ 	size_t i;
+-	time_t idle_limit = 0, last_active_ts = time(NULL);
++        time_t idle_limit = 0, last_active_ts = get_time();
+ #ifdef HAVE_SIGACTION
+ 	struct sigaction act;
+ #endif
+@@ -1566,7 +1572,7 @@
+ 				int status;
+ 
+ 				if (-1 != (pid = wait(&status))) {
+-					srv->cur_ts = time(NULL);
++                                        srv->cur_ts = get_time();
+ 					if (plugins_call_handle_waitpid(srv, pid, status) != HANDLER_GO_ON) {
+ 						if (!timer) alarm((timer = 5));
+ 						continue;
+@@ -1590,7 +1596,7 @@
+ 				} else {
+ 					switch (errno) {
+ 					case EINTR:
+-						srv->cur_ts = time(NULL);
++                                                srv->cur_ts = get_time();
+ 						/**
+ 						 * if we receive a SIGHUP we have to close our logs ourself as we don't 
+ 						 * have the mainloop who can help us here
+@@ -1777,7 +1783,7 @@
+ #endif
+ 
+ 			/* get current time */
+-			min_ts = time(NULL);
++                        min_ts = get_time();
+ 
+ 			if (min_ts != srv->cur_ts) {
+ #ifdef DEBUG_CONNECTION_STATES

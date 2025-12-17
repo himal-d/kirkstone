@@ -1,0 +1,45 @@
+Upstream-Status: pending
+Date: June 30, 2020 1:53 PM
+Source: nopoll
+Subject: nopoll patch
+Signed-off-by: Dave Wolaver <David_Wolaver@cable.comcast.com>
+From: Dave Wolaver <David_Wolaver@cable.comcast.com>
+---
+
+--- git.orig/src/nopoll_conn.c	2020-06-29 11:08:56.350998968 -0400
++++ git/src/nopoll_conn.c	2020-06-30 13:39:35.215649052 -0400
+@@ -301,7 +301,7 @@
+ 		
+ 		/* resolve hosting name */
+ 		if (getaddrinfo (host, port, &hints, &res) != 0) {
+-			nopoll_log (ctx, NOPOLL_LEVEL_DEBUG, "unable to resolve host name %s, errno=%d", host, errno);
++			nopoll_log (ctx, NOPOLL_LEVEL_CRITICAL, "unable to resolve v4 host name %s, errno=%d", host, errno);
+ 			return -1;
+ 		} /* end if */
+ 		break;
+@@ -312,7 +312,7 @@
+ 		
+ 		/* resolve hosting name */
+ 		if (getaddrinfo (host, port, &hints, &res) != 0) {
+-			nopoll_log (ctx, NOPOLL_LEVEL_DEBUG, "unable to resolve host name %s, errno=%d", host, errno);
++			nopoll_log (ctx, NOPOLL_LEVEL_CRITICAL, "unable to resolve v6 host name %s, errno=%d", host, errno);
+ 			return -1;
+ 		} /* end if */
+ 		break;
+@@ -926,7 +926,7 @@
+ 	if (session == NOPOLL_INVALID_SOCKET) {
+ 		/* release connection options */
+ 		__nopoll_conn_opts_release_if_needed (options);
+-		nopoll_log (ctx, NOPOLL_LEVEL_DEBUG, "Failed to connect to remote host %s:%s", host_ip, host_port);
++		nopoll_log (ctx, NOPOLL_LEVEL_CRITICAL, "Failed to connect to remote host %s:%s", host_ip, host_port);
+ 		return NULL;
+ 	} /* end if */
+ 
+@@ -935,6 +935,7 @@
+ 	if (conn == NULL) {
+ 		/* release connection options */
+ 		__nopoll_conn_opts_release_if_needed (options);
++		nopoll_log (ctx, NOPOLL_LEVEL_CRITICAL, "Failed to create connection");
+ 		return NULL;
+ 	} /* end if */
+ 

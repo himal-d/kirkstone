@@ -1,0 +1,43 @@
+From d4d0e96bc4524c025deda400cd44ae8c77bf7664 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Thu, 6 Jul 2023 20:53:27 +0000
+Subject: [PATCH] Fix removal of samples being replaced
+
+SourceBuffer may leave samples in track if pts falls in
+contiguousFrameTolerance.
+---
+ .../WebCore/Modules/mediasource/SourceBuffer.cpp   | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+index 1c00b7dbf747..cdc9f84fa5b6 100644
+--- a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
++++ b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+@@ -1848,7 +1848,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
+ 
+                 MediaTime highestBufferedTime = trackBuffer.buffered.maximumBufferedTime();
+                 MediaTime eraseBeginTime = trackBuffer.highestPresentationTimestamp;
+-                MediaTime eraseEndTime = frameEndTimestamp - contiguousFrameTolerance;
++                MediaTime eraseEndTime = frameEndTimestamp;
+ 
+                 if (eraseEndTime <= eraseBeginTime)
+                     break;
+@@ -1861,6 +1861,18 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
+                     // In any other case, perform a binary search (O(log(n)).
+                     range = trackBuffer.samples.presentationOrder().findSamplesBetweenPresentationTimes(eraseBeginTime, eraseEndTime);
+ 
++                if (range.second != trackBuffer.samples.presentationOrder().end() && !sample.isSync()) {
++                    auto eraseEndTimeMinusTolerance = frameEndTimestamp - contiguousFrameTolerance;
++                    while (range.first != range.second) {
++                        auto& oldSample = *((range.second)->second);
++                        if (oldSample.isSync())
++                            break;
++                        if (eraseEndTimeMinusTolerance > oldSample.presentationTime())
++                            break;
++                        --range.second;
++                    }
++                }
++
+                 if (range.first != trackBuffer.samples.presentationOrder().end())
+                     erasedSamples.addRange(range.first, range.second);
+             } while(false);

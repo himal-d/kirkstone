@@ -1,0 +1,52 @@
+From 5d0d6d64f4767fe9386671d392a8a2407084189a Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Wed, 31 Jul 2024 14:35:12 +0000
+Subject: [PATCH] Fix crash on shutdown in nonCompositedGL mode
+
+Use case: page using nonCompositedGL mode and an iframe
+
+In this scenario, 2 HTMLCanvasElement instances are created leading to
+the creation of 2 WebGLRenderingContext instances (down to the EGL
+context). On page closing sequence, and timing dependent, the
+Threaded Compositor (and therefore the window surface / GL Context)
+may get destroyed before both rendering contexts are released, leading
+to a crash.
+
+In the working case (no crash), the sequence of destroying the cached
+frame (CachedFrame::destroy) consequence of the "ClearCachedPage"
+message, followed by frame loader "detachFromParent" call, ensure that
+both contexts get destroyed before the Threaded Compositor.
+
+In the crash scenario, the sequence consists of a call to the frame
+loader "detachFromParent" due WebProcess::stopRunLoop() invocation
+(UIProcess comms channel disconnection detected), followed by the call
+to the cached frame destruction, now consequence of the call to the
+DeferredPageDestructor (not "ClearCachePage" message).
+
+By giving the page destruction a chance to run before cleaning up the
+drawing area (with associated EGL contexts), used rendering contexts can
+be released before destroying the compositor.
+---
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+index 7a54a3a517dc..f6937139abb6 100644
+--- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
++++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+@@ -1637,10 +1637,11 @@ void WebPage::close()
+ 
+     m_printContext = nullptr;
+     m_mainFrame->coreFrame()->loader().detachFromParent();
+-    m_drawingArea = nullptr;
+ 
+     DeferredPageDestructor::createDeferredPageDestructor(WTFMove(m_page), this);
+ 
++    m_drawingArea = nullptr;
++
+     bool isRunningModal = m_isRunningModal;
+     m_isRunningModal = false;
+ 
+-- 
+2.43.0
+

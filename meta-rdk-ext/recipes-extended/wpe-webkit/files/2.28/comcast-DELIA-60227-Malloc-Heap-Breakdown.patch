@@ -1,0 +1,162 @@
+From 14a84444e1926607325779fbfe91de203e7490b0 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Wed, 22 Feb 2023 12:31:18 +0000
+Subject: [PATCH] comcast - DELIA-60227 - Malloc Heap Breakdown
+
+---
+ Source/WTF/wtf/CMakeLists.txt          | 4 ++++
+ Source/WTF/wtf/DebugHeap.h             | 4 ----
+ Source/bmalloc/CMakeLists.txt          | 6 ++++++
+ Source/bmalloc/bmalloc/BPlatform.h     | 2 ++
+ Source/bmalloc/bmalloc/DebugHeap.cpp   | 2 +-
+ Source/bmalloc/bmalloc/DebugHeap.h     | 4 ++--
+ Source/bmalloc/bmalloc/IsoTLSInlines.h | 2 +-
+ Source/cmake/OptionsWPE.cmake          | 9 +++++++++
+ 8 files changed, 25 insertions(+), 8 deletions(-)
+
+diff --git a/Source/WTF/wtf/CMakeLists.txt b/Source/WTF/wtf/CMakeLists.txt
+index db3421a110fe..02686da4eb98 100644
+--- a/Source/WTF/wtf/CMakeLists.txt
++++ b/Source/WTF/wtf/CMakeLists.txt
+@@ -518,6 +518,10 @@ if (NOT USE_SYSTEM_MALLOC)
+     list(APPEND WTF_LIBRARIES WebKit::bmalloc)
+ endif ()
+ 
++if (ENABLE_MALLOC_HEAP_BREAKDOWN)
++    list(APPEND WTF_LIBRARIES ${MALLOC_ZONE_LIBRARIES})
++endif ()
++
+ list(APPEND WTF_LIBRARIES
+     ICU::data
+     ICU::i18n
+diff --git a/Source/WTF/wtf/DebugHeap.h b/Source/WTF/wtf/DebugHeap.h
+index 562a36788b09..4525c1c23c79 100644
+--- a/Source/WTF/wtf/DebugHeap.h
++++ b/Source/WTF/wtf/DebugHeap.h
+@@ -30,10 +30,8 @@
+ 
+ #if ENABLE(MALLOC_HEAP_BREAKDOWN)
+ #include <mutex>
+-#if OS(DARWIN)
+ #include <malloc/malloc.h>
+ #endif
+-#endif
+ 
+ namespace WTF {
+ 
+@@ -50,9 +48,7 @@ public:
+     WTF_EXPORT_PRIVATE void free(void*);
+ 
+ private:
+-#if OS(DARWIN)
+     malloc_zone_t* m_zone;
+-#endif
+ };
+ 
+ #define DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+diff --git a/Source/bmalloc/CMakeLists.txt b/Source/bmalloc/CMakeLists.txt
+index 02f2e35c6e29..23ad5e752cea 100644
+--- a/Source/bmalloc/CMakeLists.txt
++++ b/Source/bmalloc/CMakeLists.txt
+@@ -142,6 +142,12 @@ set(bmalloc_LIBRARIES
+     ${CMAKE_DL_LIBS}
+ )
+ 
++if (ENABLE_MALLOC_HEAP_BREAKDOWN)
++    list(APPEND bmalloc_LIBRARIES
++        ${MALLOC_ZONE_LIBRARIES}
++    )
++endif ()
++
+ set(bmalloc_INTERFACE_LIBRARIES bmalloc)
+ set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
+ set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
+diff --git a/Source/bmalloc/bmalloc/BPlatform.h b/Source/bmalloc/bmalloc/BPlatform.h
+index ce35c5cc9cbf..f3896c4f121a 100644
+--- a/Source/bmalloc/bmalloc/BPlatform.h
++++ b/Source/bmalloc/bmalloc/BPlatform.h
+@@ -289,7 +289,9 @@
+ #endif
+ 
+ /* Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is. */
++#if !defined(BENABLE_MALLOC_HEAP_BREAKDOWN)
+ #define BENABLE_MALLOC_HEAP_BREAKDOWN 0
++#endif
+ 
+ /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
+ #define ENABLE_PHYSICAL_PAGE_MAP 0
+diff --git a/Source/bmalloc/bmalloc/DebugHeap.cpp b/Source/bmalloc/bmalloc/DebugHeap.cpp
+index e89a42753bc2..40e52330b1a9 100644
+--- a/Source/bmalloc/bmalloc/DebugHeap.cpp
++++ b/Source/bmalloc/bmalloc/DebugHeap.cpp
+@@ -38,7 +38,7 @@ DebugHeap* debugHeapCache { nullptr };
+     
+ DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
+ 
+-#if BOS(DARWIN)
++#if BENABLE_MALLOC_HEAP_BREAKDOWN
+ 
+ DebugHeap::DebugHeap(const LockHolder&)
+     : m_zone(malloc_create_zone(0, 0))
+diff --git a/Source/bmalloc/bmalloc/DebugHeap.h b/Source/bmalloc/bmalloc/DebugHeap.h
+index 35dc53431b9f..1a87012cfd1f 100644
+--- a/Source/bmalloc/bmalloc/DebugHeap.h
++++ b/Source/bmalloc/bmalloc/DebugHeap.h
+@@ -32,7 +32,7 @@
+ #include <mutex>
+ #include <unordered_map>
+ 
+-#if BOS(DARWIN)
++#if BENABLE_MALLOC_HEAP_BREAKDOWN
+ #include <malloc/malloc.h>
+ #endif
+ 
+@@ -56,7 +56,7 @@ public:
+     static DebugHeap* tryGet();
+ 
+ private:
+-#if BOS(DARWIN)
++#if BENABLE_MALLOC_HEAP_BREAKDOWN
+     malloc_zone_t* m_zone;
+ #endif
+     
+diff --git a/Source/bmalloc/bmalloc/IsoTLSInlines.h b/Source/bmalloc/bmalloc/IsoTLSInlines.h
+index 65630af50ba0..b5d2dceca369 100644
+--- a/Source/bmalloc/bmalloc/IsoTLSInlines.h
++++ b/Source/bmalloc/bmalloc/IsoTLSInlines.h
+@@ -30,7 +30,7 @@
+ #include "IsoTLS.h"
+ #include "bmalloc.h"
+ 
+-#if BOS(DARWIN)
++#if BENABLE_MALLOC_HEAP_BREAKDOWN
+ #include <malloc/malloc.h>
+ #endif
+ 
+diff --git a/Source/cmake/OptionsWPE.cmake b/Source/cmake/OptionsWPE.cmake
+index 989c5205232c..a1fdb7c6a7c2 100644
+--- a/Source/cmake/OptionsWPE.cmake
++++ b/Source/cmake/OptionsWPE.cmake
+@@ -91,6 +91,9 @@ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_HOLEPUNCH "Whether to enable GStreamer holepu
+ WEBKIT_OPTION_DEFINE(USE_EXTERNAL_HOLEPUNCH "Whether to enable external holepunch" PRIVATE OFF)
+ WEBKIT_OPTION_DEFINE(ENABLE_INSTANT_RATE_CHANGE "Whether to enable instant rate change" PRIVATE OFF)
+ 
++# Debug memory heap breakdown with malloc-zone allocator
++WEBKIT_OPTION_DEFINE(ENABLE_MALLOC_HEAP_BREAKDOWN "Whether to enable malloc heap breakdown" PRIVATE OFF)
++
+ # LibWebRTC options
+ WEBKIT_OPTION_DEFINE(ENABLE_WEBRTC_VPX "Whether to build libwebrtc with VPX" PRIVATE ON)
+ WEBKIT_OPTION_DEFINE(ENABLE_WEBRTC_OPUS "Whether to build libwebrtc with OPUS" PRIVATE ON)
+@@ -314,3 +317,9 @@ endif()
+ if (USE_WPEWEBKIT_PLATFORM_BROADCOM)
+   add_definitions(-DBROADCOM_PLATFORM=1)
+ endif()
++
++if (ENABLE_MALLOC_HEAP_BREAKDOWN)
++# Enable the same on bmalloc side
++  add_definitions(-DBENABLE_MALLOC_HEAP_BREAKDOWN=1)
++  set(MALLOC_ZONE_LIBRARIES malloc-zone)
++endif()
+-- 
+2.17.1
+

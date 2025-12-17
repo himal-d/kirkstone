@@ -1,0 +1,30 @@
+diff --git a/source/hostap-2.10/hs20/.DS_Store b/source/hostap-2.10/hs20/.DS_Store
+new file mode 100644
+index 0000000..c83ee83
+--- /dev/null
++++ b/source/hostap-2.10/hs20/.DS_Store
+Binary files differ
+diff --git a/source/hostap-2.10/src/.DS_Store b/source/hostap-2.10/src/.DS_Store
+new file mode 100644
+index 0000000..6f5e0fb
+--- /dev/null
++++ b/source/hostap-2.10/src/.DS_Store
+Binary files differ
+diff --git a/source/hostap-2.10/tests/.DS_Store b/source/hostap-2.10/tests/.DS_Store
+new file mode 100644
+index 0000000..ddadf12
+--- /dev/null
++++ b/source/hostap-2.10/tests/.DS_Store
+Binary files differ
+diff --git a/source/hostap-2.10/wpa_supplicant/.DS_Store b/source/hostap-2.10/wpa_supplicant/.DS_Store
+new file mode 100644
+index 0000000..d4260aa
+--- /dev/null
++++ b/source/hostap-2.10/wpa_supplicant/.DS_Store
+Binary files differ
+diff --git a/source/hostap-2.10/wpadebug/.DS_Store b/source/hostap-2.10/wpadebug/.DS_Store
+new file mode 100644
+index 0000000..c1e01ba
+--- /dev/null
++++ b/source/hostap-2.10/wpadebug/.DS_Store
+Binary files differ

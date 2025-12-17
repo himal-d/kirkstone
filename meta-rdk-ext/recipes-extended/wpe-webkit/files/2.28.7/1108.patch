@@ -1,0 +1,58 @@
+From ec0868a53fb06dea6713d7925205355eb69ea51c Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@gmail.com>
+Date: Mon, 26 Jun 2023 13:51:51 +0200
+Subject: [PATCH] Add soft limit to 'BitmapTexturePool' size
+
+---
+ .../graphics/texmap/BitmapTexturePool.cpp     | 24 ++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/texmap/BitmapTexturePool.cpp b/Source/WebCore/platform/graphics/texmap/BitmapTexturePool.cpp
+index 8122048536d3a..e4522e7925962 100644
+--- a/Source/WebCore/platform/graphics/texmap/BitmapTexturePool.cpp
++++ b/Source/WebCore/platform/graphics/texmap/BitmapTexturePool.cpp
+@@ -26,6 +26,7 @@
+ 
+ #include "config.h"
+ #include "BitmapTexturePool.h"
++#include <numeric>
+ 
+ #if USE(TEXTURE_MAPPER_GL)
+ #include "BitmapTextureGL.h"
+@@ -34,7 +35,9 @@
+ namespace WebCore {
+ 
+ static const Seconds releaseUnusedSecondsTolerance { 3_s };
+-static const Seconds releaseUnusedTexturesTimerInterval { 500_ms };
++static const Seconds releaseUnusedSecondsToleranceWhenPixelLimitExceeded { 50_ms };
++static const Seconds releaseUnusedTexturesTimerInterval { 250_ms };
++constexpr uint64_t defaultStoredPixelsLimit { 10 * 1920 * 1080 };
+ 
+ #if USE(TEXTURE_MAPPER_GL)
+ BitmapTexturePool::BitmapTexturePool(const TextureMapperContextAttributes& contextAttributes)
+@@ -75,6 +78,25 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
+     // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
+     MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
+ 
++    static uint64_t storedPixelsLimit = defaultStoredPixelsLimit;
++    std::once_flag onceFlag;
++    std::call_once(onceFlag, []() {
++        String envString(getenv("WPE_BITMAP_TEXTURE_POOL_PIXEL_LIMIT"));
++        if (!envString.isEmpty() && envString.toUInt64() > 0)
++            storedPixelsLimit = envString.toUInt64();
++    });
++    const uint64_t storedPixelsNumber = std::accumulate(
++        m_textures.begin(),
++        m_textures.end(),
++        0,
++        [](const uint64_t accumulator, const auto& textureEntry) {
++            const auto& textureSize = textureEntry.m_texture->size();
++            return accumulator + textureSize.width() * textureSize.height();
++        }
++    );
++    if (storedPixelsNumber >= storedPixelsLimit)
++        minUsedTime = MonotonicTime::now() - releaseUnusedSecondsToleranceWhenPixelLimitExceeded;
++
+     m_textures.removeAllMatching([&minUsedTime](const Entry& entry) {
+         return entry.canBeReleased(minUsedTime);
+     });

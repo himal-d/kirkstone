@@ -1,0 +1,247 @@
+From 73eed5fe7813992474e81a09f4710e3bfa32a61d Mon Sep 17 00:00:00 2001
+From: Moorthy Baskar <moorthy.bs@ltts.com>
+Date: Thu, 5 Nov 2020 10:21:45 +0000
+Subject: [PATCH] cobalt: fix - errors due to gcc 9 or higher version Werror
+ flags
+
+resolved for the errors
+  * -Werror=pessimizing-move
+  * -Werror=deprecated-copy
+  * -Werror=implicit-fallthrough=
+  * -Werror=ignored-qualifiers
+
+Source: RDK-Community
+Upstream-Status: pending
+
+Signed-off-by: Moorthy Baskar <moorthy.bs@ltts.com>
+---
+ src/cobalt/browser/browser.gyp                         |  3 +++
+ .../browser/memory_settings/texture_dimensions.h       |  3 +++
+ src/cobalt/dom/buffer_source.cc                        |  4 ++--
+ src/cobalt/dom/element.cc                              | 10 ++++++++++
+ .../layout/block_formatting_block_container_box.cc     |  3 +++
+ src/cobalt/layout/inline_container_box.cc              |  3 +++
+ src/cobalt/layout/layout_unit.h                        |  3 +++
+ src/cobalt/media_session/media_session_client.cc       |  3 +++
+ src/cobalt/render_tree/color_rgba.h                    |  3 +++
+ src/cobalt/render_tree/composition_node.h              |  3 +++
+ src/cobalt/render_tree/rounded_corners.h               |  7 +++++++
+ src/net/spdy/spdy_session_key.h                        |  3 +++
+ 12 files changed, 46 insertions(+), 2 deletions(-)
+
+diff --git a/src/cobalt/browser/browser.gyp b/src/cobalt/browser/browser.gyp
+index 92009cb220..0d5e51adad 100644
+--- a/src/cobalt/browser/browser.gyp
++++ b/src/cobalt/browser/browser.gyp
+@@ -143,6 +143,9 @@
+         'browser_bindings.gyp:bindings',
+         '<(cobalt_webapi_extension_gyp_target)',
+       ],
++      'cflags' : [
++        '-Wno-pessimizing-move',
++      ],
+       # This target doesn't generate any headers, but it exposes generated
+       # header files (for idl dictionaries) through this module's public header
+       # files. So mark this target as a hard dependency to ensure that any
+diff --git a/src/cobalt/browser/memory_settings/texture_dimensions.h b/src/cobalt/browser/memory_settings/texture_dimensions.h
+index d436d4efa6..93a58c77da 100644
+--- a/src/cobalt/browser/memory_settings/texture_dimensions.h
++++ b/src/cobalt/browser/memory_settings/texture_dimensions.h
+@@ -35,6 +35,9 @@ class TextureDimensions {
+         height_(other.height_),
+         bytes_per_pixel_(other.bytes_per_pixel_) {}
+ 
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  TextureDimensions& operator=(const TextureDimensions&) = default;
++
+   bool operator==(const TextureDimensions& other) const {
+     return width_ == other.width_ && height_ == other.height_ &&
+            bytes_per_pixel_ == other.bytes_per_pixel_;
+diff --git a/src/cobalt/dom/buffer_source.cc b/src/cobalt/dom/buffer_source.cc
+index 74cf56a793..6cfc6cffdd 100644
+--- a/src/cobalt/dom/buffer_source.cc
++++ b/src/cobalt/dom/buffer_source.cc
+@@ -29,13 +29,13 @@ void GetBufferAndSize(const BufferSource& buffer_source, const uint8** buffer,
+         buffer_source.AsType<script::Handle<script::ArrayBufferView> >();
+     *buffer = static_cast<const uint8*>(array_buffer_view->RawData());
+     DCHECK_LT(array_buffer_view->ByteLength(),
+-              static_cast<const size_t>(INT_MAX));
++              std::numeric_limits<int>::max());
+     *buffer_size = static_cast<int>(array_buffer_view->ByteLength());
+   } else if (buffer_source.IsType<script::Handle<script::ArrayBuffer> >()) {
+     script::Handle<script::ArrayBuffer> array_buffer =
+         buffer_source.AsType<script::Handle<script::ArrayBuffer> >();
+     *buffer = static_cast<const uint8*>(array_buffer->Data());
+-    DCHECK_LT(array_buffer->ByteLength(), static_cast<const size_t>(INT_MAX));
++    DCHECK_LT(array_buffer->ByteLength(), std::numeric_limits<int>::max());
+     *buffer_size = static_cast<int>(array_buffer->ByteLength());
+   } else {
+     NOTREACHED();
+diff --git a/src/cobalt/dom/element.cc b/src/cobalt/dom/element.cc
+index 8d70017b7e..4df90244b0 100644
+--- a/src/cobalt/dom/element.cc
++++ b/src/cobalt/dom/element.cc
+@@ -182,6 +182,9 @@ base::Optional<std::string> Element::GetAttribute(
+       if (attr_name == kStyleAttributeName) {
+         return GetStyleAttribute();
+       }
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+     // fall-through if not style attribute name
+     default: {
+       AttributeMap::const_iterator iter = attribute_map_.find(attr_name);
+@@ -189,6 +192,7 @@ base::Optional<std::string> Element::GetAttribute(
+         return iter->second;
+       }
+     }
++    break;
+   }
+ 
+   return base::nullopt;
+@@ -234,6 +238,9 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
+         // necessary.
+         return;
+       }
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+     // fall-through if not style attribute name
+     default: {
+       AttributeMap::iterator attribute_iterator =
+@@ -303,6 +310,9 @@ void Element::RemoveAttribute(const std::string& name) {
+         RemoveStyleAttribute();
+         break;
+       }
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+     // fall-through if not style attribute name
+     default: {
+       attribute_map_.erase(attr_name);
+diff --git a/src/cobalt/layout/block_formatting_block_container_box.cc b/src/cobalt/layout/block_formatting_block_container_box.cc
+index e85367d5d8..5011210ed5 100644
+--- a/src/cobalt/layout/block_formatting_block_container_box.cc
++++ b/src/cobalt/layout/block_formatting_block_container_box.cc
+@@ -50,6 +50,9 @@ void BlockFormattingBlockContainerBox::AddChild(
+         break;
+       }
+     // Fall through if child is out-of-flow.
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+ 
+     case kInlineLevel:
+       // An inline formatting context required,
+diff --git a/src/cobalt/layout/inline_container_box.cc b/src/cobalt/layout/inline_container_box.cc
+index e59dd7f740..cc064ffe20 100644
+--- a/src/cobalt/layout/inline_container_box.cc
++++ b/src/cobalt/layout/inline_container_box.cc
+@@ -56,6 +56,9 @@ bool InlineContainerBox::TryAddChild(const scoped_refptr<Box>& child_box) {
+         return false;
+       }
+       // Fall through if out-of-flow.
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+ 
+     case kInlineLevel:
+       // If the inline container box already contains a line break, then no
+diff --git a/src/cobalt/layout/layout_unit.h b/src/cobalt/layout/layout_unit.h
+index 1ec6495826..e7af58d963 100644
+--- a/src/cobalt/layout/layout_unit.h
++++ b/src/cobalt/layout/layout_unit.h
+@@ -57,6 +57,9 @@ class LayoutUnit {
+ #endif
+   }
+ 
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  LayoutUnit(const LayoutUnit&) = default;
++
+   float toFloat() const {
+     return static_cast<float>(value_) / kFixedPointRatio;
+   }
+diff --git a/src/cobalt/media_session/media_session_client.cc b/src/cobalt/media_session/media_session_client.cc
+index c3c6fe8d72..a8b3736da7 100644
+--- a/src/cobalt/media_session/media_session_client.cc
++++ b/src/cobalt/media_session/media_session_client.cc
+@@ -137,6 +137,9 @@ MediaSessionClient::ComputeAvailableActions() const {
+       result[kMediaSessionActionSeekforward] = false;
+       result[kMediaSessionActionSeekto] = false;
+       result[kMediaSessionActionStop] = false;
++#if (__GNUC__ >= 7)
++      [[gnu::fallthrough]];
++#endif
+     // Fall-through intended (None case falls through to Paused case).
+     case kMediaSessionPlaybackStatePaused:
+       // "Otherwise, remove pause from available actions."
+diff --git a/src/cobalt/render_tree/color_rgba.h b/src/cobalt/render_tree/color_rgba.h
+index d17926ef35..36ea916318 100644
+--- a/src/cobalt/render_tree/color_rgba.h
++++ b/src/cobalt/render_tree/color_rgba.h
+@@ -39,6 +39,9 @@ struct ColorRGBA {
+  public:
+   ColorRGBA() : r_(0), g_(0), b_(0), a_(0) {}
+ 
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  ColorRGBA(const ColorRGBA&) = default;
++
+   ColorRGBA(float red, float green, float blue) {
+     CheckRange(red);
+     r_ = red;
+diff --git a/src/cobalt/render_tree/composition_node.h b/src/cobalt/render_tree/composition_node.h
+index 4d71a8c8eb..4bb2799d22 100644
+--- a/src/cobalt/render_tree/composition_node.h
++++ b/src/cobalt/render_tree/composition_node.h
+@@ -62,6 +62,9 @@ class CompositionNode : public Node {
+    public:
+     DECLARE_AS_MOVABLE(Builder);
+ 
++    // gcc 9 or higher expects copy style nstructors to be defined if used
++    Builder& operator=(const Builder&) = default;
++
+     Builder() {}
+     explicit Builder(const math::Vector2dF& offset) : offset_(offset) {}
+     Builder(Node* node, const math::Vector2dF& offset) : offset_(offset) {
+diff --git a/src/cobalt/render_tree/rounded_corners.h b/src/cobalt/render_tree/rounded_corners.h
+index 9094bc14c8..ec6366c1ae 100644
+--- a/src/cobalt/render_tree/rounded_corners.h
++++ b/src/cobalt/render_tree/rounded_corners.h
+@@ -39,6 +39,9 @@ struct RoundedCorner {
+                          std::max(0.0f, vertical - y));
+   }
+ 
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  RoundedCorner& operator=(const RoundedCorner&) = default;
++
+   bool operator==(const RoundedCorner& other) const {
+     return horizontal == other.horizontal && vertical == other.vertical;
+   }
+@@ -55,6 +58,10 @@ struct RoundedCorner {
+ // RoundedCorners represents 4 rounded corners of an rectangle. Top left, top
+ // right, bottom right and bottom left.
+ struct RoundedCorners {
++
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  RoundedCorners& operator=(const RoundedCorners&) = default;
++
+   explicit RoundedCorners(const RoundedCorner& corner)
+       : top_left(corner),
+         top_right(corner),
+diff --git a/src/net/spdy/spdy_session_key.h b/src/net/spdy/spdy_session_key.h
+index 3f94280db5..53af131ca3 100644
+--- a/src/net/spdy/spdy_session_key.h
++++ b/src/net/spdy/spdy_session_key.h
+@@ -25,6 +25,9 @@ class NET_EXPORT_PRIVATE SpdySessionKey {
+ 
+   ~SpdySessionKey();
+ 
++  // gcc 9 or higher expects copy style nstructors to be defined if used
++  SpdySessionKey& operator=(const SpdySessionKey&) = default;
++
+   // Comparator function so this can be placed in a std::map.
+   bool operator<(const SpdySessionKey& other) const;
+ 
+-- 
+2.17.1
+

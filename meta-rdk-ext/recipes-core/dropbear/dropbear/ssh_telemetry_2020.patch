@@ -1,0 +1,42 @@
+Date: Nov 11, 2022 10:23 AM 
+
+From: d028e9e6525c9deed35393be7ef46a7f01c9926f Mar 16, 2022
+
+Subject: [DELIA-53801] [SECURITY] SSH command logging is missing Telemetry 2.0 instrumentation
+	This patch is made compatible to kirkstone Yocto version.
+	Initial patch signed off by Lakshmi, Piramanayagam Moneka
+
+Source: COMCAST
+
+License: LGPL-2.0-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Arjun <arjun_daasuramdass@comcast.com>
+---
+--- dropbear-2020.81/svr-authpubkey.c.orig	2022-11-11 04:48:23.547032150 +0000
++++ dropbear-2020.81/svr-authpubkey.c	2022-11-11 04:53:28.677406163 +0000
+@@ -64,6 +64,7 @@
+ #include "ssh.h"
+ #include "packet.h"
+ #include "algo.h"
++#include <telemetry_busmessage_sender.h>
+ 
+ #if DROPBEAR_SVR_PUBKEY_AUTH
+ 
+@@ -201,6 +202,7 @@
+ 	/* ... and finally verify the signature */
+ 	fp = sign_key_fingerprint(keyblob, keybloblen);
+ 	if (buf_verify(ses.payload, key, sigtype, signbuf) == DROPBEAR_SUCCESS) {
++		ssh_logging("SSH_connection_split %s\n", ses.authstate.pw_name);
+ 		dropbear_log(LOG_NOTICE,
+ 				"Pubkey auth succeeded for '%s' with key %s from %s",
+ 				ses.authstate.pw_name, fp, svr_ses.addrstring);
+@@ -213,6 +215,7 @@
+ #endif
+                 
+ 	} else {
++		ssh_logging("Illegal_SSH_connection %s\n", ses.authstate.pw_name);
+ 		dropbear_log(LOG_WARNING,
+ 				"Pubkey auth bad signature for '%s' with key %s from %s",
+ 				ses.authstate.pw_name, fp, svr_ses.addrstring);

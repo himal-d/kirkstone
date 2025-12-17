@@ -1,0 +1,18 @@
+[Unit]
+Description=LAN Interface
+After=brcm-rg.service  board-access-broadband.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+#ExecStartPre=/sbin/ifconfig erouter0 up
+ExecStartPre=sh -c '/lib/rdk/prepare_dhcpv6_config.sh'
+ExecStart=sh -c 'sleep 10; dibbler-client start &'
+ExecStart=sh -c ' ifconfig erouter0; sleep 5; if [ "$(pidof dibbler-client start)" != "" ];then /sbin/udhcpc -b -i erouter0 -p /tmp/udhcpc.erouter0.pid -V eRouter1.0; else dibbler-client start; fi'
+ExecStart=sh -c 'sleep 5; /lib/rdk/default-time-setter-broadband.sh'
+ExecStop=dibbler-client stop
+ExecStop=/sbin/ifconfig eth0 down
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,109 @@
+Changelog between rdkb-20170130 and rdkb-20170213
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+c131f0b3 RDKB-10101, RDKB-10146 - Remove the PID number from the coredump file name
+cf9308a1 RDKB-7497: Approval Cisco Proprietary Copyright.
+4bab268b RDKB-10101: Remove the PID number from the coredump name
+2e96212d RDKB-8751: Devices with multiple CR crashes in a day.
+645350d0 ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+0375b65 RDKB-9837: Armconsole is flooded with ARP messages causing frequent log uploads
+4963d0c TCCBR-491: Clients online are not shown in Connected Devices page.
+3e744c1 RDKB-9678 : Inconsistency in updating IP Addresses
+503debd RDKB-9931: Device.Hosts.Host.{i}.AssociatedDevice returning wrong value
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+5f05961 RDKB-7044 : Develop Code - Boot Up information
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+f5c4030 RDKB-7497: Approval Cisco Proprietary Copyright.
+0438233 RDKB-10105 : CcspMoCA - Crash
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+9ceb5d4 RDKBEMU-352 : Implementation of Device information of software version
+66454f6 TCCBR-456: TR69 function is not working
+d2efef6 XSMART-407 : Missing Alarm TR-181 entries
+46b111f RDKB-10134 : Remove excessive logging from PandM
+3268623 RDKB-8933:Log timestamp when the device enters into/out captive portal
+060b4a1 RDKB-10139 : Consistent RSS Mem increase in CcspPandMSsp process
+b48502c RDKB-5369 :Too many "IOCTL failure" flood the console if not connected
+e22e601 TCCBR-412: Adding CBR specific flags to initialize ethernet ports
+94bab7f RDKB-7497: Approval Cisco Proprietary Copyright.
+f40bcdb TCCBR-456: Correcting device details
+b327563 RDKBEMU-349 : Implementation of XFINITY-Network WebUI in ccsp-pand-m.
+d2c3069 RDKB-1086 : [HN Reliability] Duplicate DHCP Server Detection (XB).
+3089027 RDKCOM-41 Fix a compilation issue
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+f941717 RDKB-10125 : Remove excessive logging from RDKB components
+baba7a9 RDKB-7497: Approval Cisco Proprietary Copyright.
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+bbfdd50 RDKB-10135 : Remove excessive logging from TR069
+eded8a5 RDKB-7497: Approval Cisco Proprietary Copyright.
+c040bb6 RDKB-9941 :  To create TR069 parameter(MultipleGW) for DHCPsrv detection.
+fa81d18 RDKB-10062 : Expose xHost parameter to Tr69
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+4f067b6 RDKB-10115, RDKB-10138, RDKB-10137: Build flag for ATM
+3b4c649 RDKB-7497: Approval Cisco Proprietary Copyright.
+a35fc38 RDKB-10101: Remove the PID number from the coredump name
+2212977 TCCBR-379: CCSP WiFi Agent broadcom ARM changes move to generic
+abf336d RDKCOM-33 Add support for RDKB RaspberryPi Platform
+ebefffd RDKBEMU-341 : Implementation of FactoryReset in ccsp-wifi
+d86b30f RDKB-8068 : Unable to set ALL supported security modes
+a98ea9d Revert "ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes"
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+d5bb5a2 RDKB-8751: Devices with multiple CR crashes in a day.
+afe07b9 RDKB-9949 : SECVULN: TestAndDiagnostic - Command Injection
+9e9fc9d Revert "Revert "ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes""
+d2623bd RDKB-1086 : [HN Reliability] Duplicate DHCP Server Detection (XB).
+
+project rdkb/components/opensource/ccsp/Utopia/
+891b8ad ARRISXB6-2998: Unable to access admin page-http://10.0.0.1
+fda8f3a ARRISXB6-3458 : brlan0 mac address changing on every boot of XB6
+296c1c3 ARRISXB6-2998: Unable to access admin page-http://10.0.0.1
+0a07eec RDKB-1086 : [HN Reliability] Duplicate DHCP Server Detection (XB).
+4ffc1c8 RDKB-7044 : Develop Code - Boot Up information
+d5a3b6c RDKB-7988: Utopia contains prototype similar to libupnp.
+f474a6c JIRA: RDKCMF-5303 Add ccsp_common to LDFLAGS, in order to support breakpad
+f534214 RDKB-8843, RDKB-8845, RDKB-9358 : xDNS DualStack support - Utopia changes
+0be7bb3 RDKB-8496: Utopia contains file with incorrect Copyright Header.
+ff7027f TCCBR-508-Iptable-restore not working
+
+project rdkb/components/opensource/ccsp/hal/
+b7362e7 RDKBEMU-355 : Modified setup.sh to support ccsp-tr069-pa feature
+40abc33 RDKBEMU-351 : Implementation of Device information of software version
+8889bcc RDKBEMU-348 : Implementation of XFINITY-Network WebUI in Hal
+80c3a13 RDKB-7497: Approval Cisco Proprietary Copyright.
+
+project rdkb/components/opensource/ccsp/halinterface/
+e60df75 RDKB-5987: Merged changes from generic codebase.
+
+project rdkb/components/opensource/ccsp/hotspot/
+e836820 RDKBEMU-350 : upstream xfinity-wifi functionality with DNSMASQ support
+8b85613 RDKB-7497: Approval Cisco Proprietary Copyright.
+9dad28a RDKCOM-37 Fix initialization from incompatible pointer type error
+
+project rdkb/components/opensource/ccsp/sysint/
+783b2d5 CISCOXB3-1803 :  Moving opsLogUpload.sh to generic area sysint/generic.
+8f366a5 RDKB-9748 : tar ball name having incorrect timestamps
+
+project rdkb/components/opensource/ccsp/webui/
+87e7482 RDKB-9600: Develop Code - [XB Cloud] Update The Block Page HTML
+9edbe95 RDKB-10088: Few GUI MoCA diagnostic values are not matching with SNMP
+1e85b55 RDKB-9149: parental control Blocked Sitesâ€‹ & Blocked Keywords
+9104896 ARRISXB6-3021: [RDKB Flow Down] DFS & GUI channel selection issue
+4c8f89c RDKB-9584: Incorrect error message when DHCP ip give out of range
+
+project rdkb/devices/raspberrypi/hal/
+ec3889c RDKBCMF-39 :Country code is not getting set at boot time for 5Gz in case of dual band on RaspberryPi Platform.
+cf36d86 RDKBCMF-40:Wifi Hal changes for Channel and Encryption mode
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+7dc3834 RDKBEMU-353 : Added Ccsptr069 service file to bring up CcspTr069
+eae3007 RDKBEMU-347 : Modified COSAXCalibur.XML to support Xfinity-Network

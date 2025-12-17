@@ -1,0 +1,37 @@
+Date: Dec 09 11:24:28 2022
+
+Subject: ipv6logconv/ipv6logconv.{h,c}: fix multiple definition of 'cache_lru_limit'
+         https://github.com/pbiering/ipv6calc/commit/8c7eea58f2034113ae91ff7adc2bda72465b7d1a
+
+Source: Upstream
+
+Signed-off-by: Rakhil P E <Rakhil_PuthiyaveettilEdachena@comcast.com>
+---
+
+Index: ipv6calc-0.99.0/ipv6logconv/ipv6logconv.c
+===================================================================
+--- ipv6calc-0.99.0.orig/ipv6logconv/ipv6logconv.c
++++ ipv6calc-0.99.0/ipv6logconv/ipv6logconv.c
+@@ -58,7 +58,7 @@ static void lineparser(const long int ou
+ /* LRU cache */
+
+ #define CACHE_LRU_SIZE 200
+-
++int cache_lru_limit;
+ static int      cache_lru_max = 0;
+ static int      cache_lru_last = 0;
+ static char     cache_lru_key_token[CACHE_LRU_SIZE][NI_MAXHOST];
+Index: ipv6calc-0.99.0/ipv6logconv/ipv6logconv.h
+===================================================================
+--- ipv6calc-0.99.0.orig/ipv6logconv/ipv6logconv.h
++++ ipv6calc-0.99.0/ipv6logconv/ipv6logconv.h
+@@ -20,8 +20,6 @@
+ #define DEBUG_ipv6logconv_general      0x00000001l
+ #define DEBUG_ipv6logconv_processing   0x00000002l
+
+-/* prototyping */
+-int cache_lru_limit;
+-
++extern int cache_lru_limit;
+ extern int feature_reg;
+ extern int feature_ieee;

@@ -1,0 +1,79 @@
+##########################################
+Date: April 4 2022 10:47 PM
+From: c469f3c2954be67787915fead4f937843c33bb0e
+Subject: Hostapd handling for RadiusGreylist
+Source: Comcast
+Upstream-Status: Pending
+Signed-off-by: Tamilarasi Ganesan <tamilarasi_ganesan@comcast.com>
+##########################################
+diff --git a/source/hostap-2.10/src/ap/greylist.c b/source/hostap-2.10/src/ap/greylist.c
+index 06fa838..83db1dd 100644
+--- a/source/hostap-2.10/src/ap/greylist.c
++++ b/source/hostap-2.10/src/ap/greylist.c
+@@ -42,7 +42,7 @@ static const char *wifi_health_log = "/rdklogs/logs/wifihealth.txt";
+ static const char *greylist_file = "/nvram/greylist_mac.txt";
+ 
+ static void greylist_log_to_file(char *fmt, ...);
+-static int greylist_get_cmmac();
++int greylist_get_cmmac();
+ static size_t greylist_delete_line(char *buffer, size_t size, const char *txtaddr);
+ static void greylist_delete_from_file(struct hapd_interfaces *interfaces, const char *txtaddr);
+ static void greylist_timeout(void *eloop_ctx, void *timeout_ctx);
+@@ -148,7 +148,7 @@ static void greylist_log_to_file(char *fmt, ...)
+ /**
+  * greylist_get_cmmac - Call the script to get cm mac of the gateway
+  */
+-static int greylist_get_cmmac()
++int greylist_get_cmmac()
+ {
+ 	FILE *fp;
+ 	const char *cmd = "/usr/sbin/deviceinfo.sh -cmac";
+@@ -763,4 +763,4 @@ u8 greylist_get_client_snr(struct hostapd_data *hapd, const char *txtaddr)
+ 	wpa_printf(MSG_DEBUG, "GREYLIST: %s: txtaddr=%s rssi=%d nf=%d snr=%u\n",
+ 			__func__, txtaddr, rssi, nf, snr);
+ 	return snr;
+-}
+\ No newline at end of file
++}
+diff --git a/source/hostap-2.10/src/common/ieee802_11_defs.h b/source/hostap-2.10/src/common/ieee802_11_defs.h
+index 1aa9d6a..659b719 100644
+--- a/source/hostap-2.10/src/common/ieee802_11_defs.h
++++ b/source/hostap-2.10/src/common/ieee802_11_defs.h
+@@ -272,7 +272,7 @@
+ #define WLAN_REASON_MAC_ADDRESS_ALREADY_EXISTS_IN_MBSS 64
+ #define WLAN_REASON_MESH_CHANNEL_SWITCH_REGULATORY_REQ 65
+ #define WLAN_REASON_MESH_CHANNEL_SWITCH_UNSPECIFIED 66
+-
++#define WLAN_RADIUS_GREYLIST_REJECT 100
+
+ /* Information Element IDs (IEEE Std 802.11-2016, 9.4.2.1, Table 9-77) */
+ #define WLAN_EID_SSID 0
+diff --git a/source/hostap-2.10/src/ap/ieee802_1x.c b/source/hostap-2.10/src/ap/ieee802_1x.c
+index 739036c..57efb68 100644
+--- a/source/hostap-2.10/src/ap/ieee802_1x.c
++++ b/source/hostap-2.10/src/ap/ieee802_1x.c
+@@ -849,6 +849,8 @@ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 		os_snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+ 		snr = greylist_get_client_snr(hapd, txtaddr);
+ 
++		greylist_get_cmmac();
++
+ 		ap_vlan = hapd->conf->ap_vlan;
+ 
+ 		radius_msg_add_comcast(
+@@ -2126,12 +2128,13 @@ ieee802_1x_receive_auth(struct radius_msg *msg, struct radius_msg *req,
+ 						   "RADIUS server indicated GREYLIST in Access-Reject for "
+ 						   MACSTR, MAC2STR(sta->addr));
+ 					snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+-                                        greylist_add(hapd, txtaddr, true);
++                                       // greylist_add(hapd, txtaddr, true);
+ 
++					sta->disconnect_reason_code = WLAN_RADIUS_GREYLIST_REJECT;
+ 					if (!hapd->conf->ieee802_1x) {
+ 						/* For the secure mode, EAPOL SM will handle the disconnect */
+ 						ap_sta_disconnect(hapd, sta, sta->addr,
+-								WLAN_REASON_UNSPECIFIED);
++								WLAN_RADIUS_GREYLIST_REJECT);
+ 					}
+ 				}
+ 			}

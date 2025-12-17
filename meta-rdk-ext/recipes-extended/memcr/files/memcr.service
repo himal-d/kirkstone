@@ -1,0 +1,18 @@
+[Unit]
+Description=Memcr checpoint restore service
+
+[Service]
+Environment=DUMPSDIR=/media/apps/memcr
+Environment=WORKDIR=/tmp/memcr
+Environment=LOCATOR=/tmp/memcrcom
+Environment=TIMEOUT=20
+
+ExecStartPre=/bin/sh -c '/bin/mkdir -p ${WORKDIR}; /bin/chmod -R 777 ${WORKDIR}'
+ExecStartPre=/bin/sh -c '/bin/mkdir -p ${DUMPSDIR}; /bin/chmod -R 777 ${DUMPSDIR}'
+ExecStartPre=/usr/bin/find ${DUMPSDIR} -mindepth 1 -exec rm {} \;
+ExecStartPre=/usr/bin/find ${WORKDIR} -name "memcr*" -exec rm {} \;
+ExecStart=/usr/bin/memcr -d ${DUMPSDIR} -S ${WORKDIR} -l ${LOCATOR} -f -z -e -t ${TIMEOUT}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

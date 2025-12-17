@@ -1,0 +1,219 @@
+Source: Referred from comcast version of device-vendor-opensync-rdk
+
+--- a/rootfs/common/usr/opensync/scripts/opensync.init	2024-01-10 09:10:13.026825536 +0000
++++ b/rootfs/common/usr/opensync/scripts/opensync.init	2024-01-25 05:19:52.509833521 +0000
+@@ -21,6 +21,8 @@
+ LAN_DHCP_END=$(syscfg get dhcp_end)
+ LAN_BRIDGE=$CONFIG_RDK_LAN_BRIDGE_NAME
+ 
++SYSCFG_OVS="mesh_ovs_enable"
++
+ . $CONFIG_TARGET_PATH_SCRIPTS/platform.funcs
+ 
+ # list of all tables that will be removed from OVSDB when stopping OpenSync
+@@ -52,15 +54,83 @@
+ }
+ 
+ ovsdb_cleanup() {
++
++    if [ "$DEVICE_MODE" == "1" ]; then
++        OVSDB_TABLES="Manager SSL AWLAN_Node Wifi_Stats_Config Wifi_Test_Config Wifi_Test_State Band_Steering_Config"
++        /usr/opensync/tools/ovsh d Wifi_VIF_Config -w mode!=sta
++        /usr/opensync/tools/ovsh d Wifi_VIF_State -w mode!=sta
++    else
++        OVSDB_TABLES="Wifi_VIF_Config Wifi_VIF_State Manager SSL AWLAN_Node Wifi_Stats_Config Band_Steering_Config"
++    fi
++
+     for table in $CLEAR_OVSDB_TABLES; do
++        echo "${OPENSYNC_TOOLS_DIR}/ovsh d $table" 
+         ${OPENSYNC_TOOLS_DIR}/ovsh d $table
+     done
+ 
++    # stop the connection to the controller
++    ${OPENSYNC_TOOLS_DIR}/ovsh u Manager target:=""
+     ${OPENSYNC_TOOLS_DIR}/ovsh d Wifi_Inet_Config -w if_type=="gre"
+     ${OPENSYNC_TOOLS_DIR}/ovsh d Wifi_Inet_Config -w if_type=="vlan"
+ }
+ 
++create_wifi_ovsdbschema() {
++    NVRAM_WIFIDIR="/nvram/wifi"
++    NVRAM_WIFIDB="${NVRAM_WIFIDIR}/rdkb-wifi.db"
++    SECURE_WIFIDIR="/opt/secure/wifi"
++    SECURE_WIFIDB="${SECURE_WIFIDIR}/rdkb-wifi.db"
++    SCHEMA_WIFIDB="/usr/ccsp/wifi/rdkb-wifi.ovsschema"
++    ONEWIFI_SCHEMA_DEF_VERSION="100007"
++    ONEWIFI_MIGRATION_FLAG="/nvram/wifi_db_update_required"
++    ONEWIFI_DB_OLD_VERSION_FILE="/tmp/wifi_db_old_version"
++    if [ ! -d "$NVRAM_WIFIDIR" ];then
++        echo "wifi db dir not present, creating one"
++        mkdir $NVRAM_WIFIDIR
++    fi
++    if [ ! -d "$SECURE_WIFIDIR" ];then
++        echo "wifi db dir $SECURE_WIFIDIR not present, creating one"
++        mkdir "$SECURE_WIFIDIR"
++    fi
++    if [ -f "$NVRAM_WIFIDB" ];then
++        if [ -f "$SECURE_WIFIDB" ];then
++            if [[ "$NVRAM_WIFIDB" -nt "$SECURE_WIFIDB" ]];then
++                echo "$NVRAM_WIFIDB is newer, copying it to $SECURE_WIFIDB"
++                cp "$NVRAM_WIFIDB" "$SECURE_WIFIDB"
++            fi
++        else
++            echo "$SECURE_WIFIDB not present, copying from $NVRAM_WIFIDB"
++            cp "$NVRAM_WIFIDB" "$SECURE_WIFIDB"
++        fi
++    fi
++    if [ ! -f "$SECURE_WIFIDB" ];then
++        echo "wifi db file is not present,creating the same"
++        ovsdb-tool create $SECURE_WIFIDB $SCHEMA_WIFIDB
++        ver=`ovsdb-tool db-version $SECURE_WIFIDB | tr -d '.' | tr -d '\r\n'`
++    else
++        ver=`ovsdb-tool db-version $SECURE_WIFIDB | tr -d '.' | tr -d '\r\n'`
++        if [ "$ONEWIFI_SCHEMA_DEF_VERSION" -gt "$ver" ]; then
++            echo "wifi db file is having old version, creating the new one"
++            rm -rf $SECURE_WIFIDB
++            ovsdb-tool create $SECURE_WIFIDB $SCHEMA_WIFIDB
++            touch $ONEWIFI_MIGRATION_FLAG
++        else
++            echo "wifi db file is present, convert to new version"
++            ovsdb-tool convert $SECURE_WIFIDB $SCHEMA_WIFIDB
++        fi
++    fi
++    cp $SECURE_WIFIDB ${OVS_ETC_DIR}/rdkb-wifi.db
++    echo $ver > $ONEWIFI_DB_OLD_VERSION_FILE
++    touch /tmp/db_consolidated
++}
++
+ ovs_start() {
++    run_wifidb=false
++    if [ "$1" == "bootup" ] && [ `syscfg get $SYSCFG_OVS` != "true" ] &&
++       [ ! -f /etc/onewifi_enabled ] && [ ! -f /etc/WFO_enabled ];then 
++        echo "mesh ovs is disabled, disabling ovsdb-server and ovs-vswitchd during bootup"
++        return 0 
++    fi 
++
+     if [ ! -d ${OVS_RUN_DIR} ]; then
+         mkdir -p ${OVS_RUN_DIR} && chown ${RUN_USER} ${OVS_RUN_DIR}
+     fi
+@@ -72,7 +142,10 @@
+     echo "Starting OpenSync OVSDB management"
+ 
+     # reset non-persistent DB
+-    cp -f ${OPENSYNC_ETC_DIR}/conf.db.bck ${OVS_ETC_DIR}/conf.db && chown ${RUN_USER} ${OVS_ETC_DIR}/conf.db
++    if [ ! -f ${OVS_ETC_DIR}/opensync_conf.db ]; then
++         echo "Reseting ovsdb-server configuration"
++         cp -f ${OPENSYNC_ETC_DIR}/conf.db.bck ${OVS_ETC_DIR}/opensync_conf.db && chown ${RUN_USER} ${OVS_ETC_DIR}/opensync_conf.db
++    fi	
+ 
+     # ovsdb-server start against non-persistent DB
+     for x in /usr/sbin/ovsdb-server /tmp/plume_dnld/usr/sbin/ovsdb-server; do
+@@ -85,17 +158,63 @@
+         echo "ERROR: Unable to locate ovsdb-server binary"
+         return 1
+     fi
+-    start-stop-daemon -c ${RUN_USER} -S -b -x ${OVSDB_SERVER} -- \
+-        --remote=punix:${OVS_RUN_DIR}/db.sock \
+-        --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
+-        --private-key=db:Open_vSwitch,SSL,private_key \
+-        --certificate=db:Open_vSwitch,SSL,certificate \
+-        --ca-cert=db:Open_vSwitch,SSL,ca_cert \
+-        --pidfile=${OVS_RUN_DIR}/ovsdb-server.pid \
+-        --log-file=/dev/null \
+-        --unixctl=${OVS_RUN_DIR}/ovsdb-server.ctl \
+-        ${OVS_ETC_DIR}/conf.db
+ 
++    if [ "$1" == "bootup" ] && [ -f /etc/onewifi_enabled ];then
++            create_wifi_ovsdbschema
++            run_wifidb=true
++    fi
++
++    if $run_wifidb ; then
++            start-stop-daemon -c ${RUN_USER} -S -x ${OVSDB_SERVER} -- \
++               --remote=punix:${OVS_RUN_DIR}/db.sock \
++               --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
++               --private-key=db:Open_vSwitch,SSL,private_key \
++               --certificate=db:Open_vSwitch,SSL,certificate \
++               --ca-cert=db:Open_vSwitch,SSL,ca_cert \
++               --pidfile=${OVS_RUN_DIR}/ovsdb-server.pid \
++               --detach \
++               --monitor \
++               --log-file=/dev/null \
++               --unixctl=${OVS_RUN_DIR}/ovsdb-server.ctl \
++               ${OVS_ETC_DIR}/opensync_conf.db \
++               ${OVS_ETC_DIR}/rdkb-wifi.db
++    else 
++       start-stop-daemon -c ${RUN_USER} -S -x ${OVSDB_SERVER} -- \
++               --remote=punix:${OVS_RUN_DIR}/db.sock \
++               --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
++               --private-key=db:Open_vSwitch,SSL,private_key \
++               --certificate=db:Open_vSwitch,SSL,certificate \
++               --ca-cert=db:Open_vSwitch,SSL,ca_cert \
++               --pidfile=${OVS_RUN_DIR}/ovsdb-server.pid \
++               --detach \
++               --monitor \
++               --log-file=/dev/null \
++               --unixctl=${OVS_RUN_DIR}/ovsdb-server.ctl \
++               ${OVS_ETC_DIR}/opensync_conf.db
++    fi
++
++    if [ "$1" == "bootup" ];then
++        # Run ovs-vswitchd additionally during bootup
++         echo "Starting ovs-vswitch during bootup" >> $LOGS
++         modprobe openvswitch
++         if [ ! `pidof ovs-vswitchd` ] ; then
++             echo "bring up ovs-vswitchd in bootup"
++             mkdir -p ${OVS_RUN_DIR}
++             ovs-vswitchd --pidfile=${OVS_RUN_DIR}/ovs-vswitchd.pid \
++                --log-file=/dev/null \
++                --detach
++             echo "ovs-vswitchd started"
++             echo `ovs-vsctl show`
++         fi
++        if [ "$DEVICE_MODE" == "1" ]; then
++            #Clear few Wifi tables, since onewifi will take care of them internally .
++            /usr/opensync/tools/ovsh d Wifi_Radio_Config
++            /usr/opensync/tools/ovsh d Wifi_VIF_Config
++            /usr/opensync/tools/ovsh d Wifi_Credential_Config
++        fi
++    fi
++: '
++    #Need to revisit the below piece of code
+     # ovs-vswitchd (optional: If found)
+     for x in /usr/sbin/ovs-vswitchd /tmp/plume_dnld/usr/sbin/ovs-vswitchd; do
+         if [ -x "$x" ]; then
+@@ -107,10 +226,19 @@
+         echo "Starting OVS Switch Daemon"
+         start-stop-daemon -c ${RUN_USER} -S -b -x ${OVS_VSWITCHD} -- \
+         --pidfile=${OVS_RUN_DIR}/ovs-vswitchd.pid
+-    fi
++    fi 
++'
+ }
+ 
+ ovs_stop() {
++
++   if [ "`syscfg get $SYSCFG_OVS`" == "true" ] || [ -f /etc/onewifi_enabled ] ||
++                        [ -f /etc/WFO_enabled ] || [ -d /sys/module/openvswitch ];then
++        # When Mesh is disabled and OVS is Enabled. See TCXB7-4323
++        ovsdb_cleanup
++        echo "Skipping stopping ovsdb-server and vswitchd"
++        return 0
++    fi
+     echo "Stopping OpenSync OVSDB management"
+ 
+     # ovs-vswitchd
+@@ -172,7 +300,7 @@
+ action() {
+     case "$1" in
+         "ovs-start")
+-            ovs_start
++            ovs_start $2
+             RET=$?
+             ;;
+ 
+@@ -209,4 +337,4 @@
+     return $RET
+ }
+ 
+-action "$1"
++action "$1" "$2"

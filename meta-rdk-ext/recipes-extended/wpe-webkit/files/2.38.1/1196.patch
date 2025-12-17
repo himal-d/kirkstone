@@ -1,0 +1,216 @@
+From 7b3682a9e84d54173e266967b72c2c27f1c18a66 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Wed, 20 Sep 2023 04:32:38 +0000
+Subject: [PATCH 1/3] Update position to help sink elements that relies on
+ Segment.position
+
+---
+ .../graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+index ca4d7c2924d5..f04865773bee 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+@@ -172,7 +172,7 @@ struct Stream : public ThreadSafeRefCounted<Stream> {
+             : pendingInitialCaps(WTFMove(initialCaps))
+         {
+             gst_segment_init(&segment, GST_FORMAT_TIME);
+-            segment.start = segment.time = startTime;
++            segment.position = segment.start = segment.time = startTime;
+             segment.rate = rate;
+             ASSERT(pendingInitialCaps);
+         }
+@@ -625,7 +625,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
+         streamingMembers->segment.base = 0;
+         streamingMembers->segment.rate = priv->rate;
+-        streamingMembers->segment.start = streamingMembers->segment.time = priv->startTime;
++        streamingMembers->segment.position = streamingMembers->segment.start = streamingMembers->segment.time = priv->startTime;
+     } else {
+         // In the case of non-seeking flushes we don't reset the timeline, so instead we need to increase the `base` field
+         // by however running time we're starting after the flush.
+@@ -646,7 +646,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+                 GST_TIME_ARGS(pipelineRunningTime), GST_TIME_ARGS(pipelineStreamTime));
+             streamingMembers->segment.base = pipelineRunningTime;
+ 
+-            streamingMembers->segment.start = streamingMembers->segment.time = static_cast<GstClockTime>(pipelineStreamTime);
++            streamingMembers->segment.position = streamingMembers->segment.start = streamingMembers->segment.time = static_cast<GstClockTime>(pipelineStreamTime);
+         }
+     }
+ 
+
+From e659fb0b8fc73e0e2ab019837b110a539af957c5 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Tue, 26 Sep 2023 09:34:52 +0000
+Subject: [PATCH 2/3] Fix hasPoppedFirstObject flag to help avoid any
+ unnecessary flush
+
+---
+ .../graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp    | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+index f04865773bee..18828e3d6c25 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+@@ -667,6 +667,11 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+         gst_pad_push_event(stream->pad.get(), gst_event_new_flush_stop(isSeekingFlush));
+         GST_DEBUG_OBJECT(stream->pad.get(), "FLUSH_STOP sent.");
+ 
++        {
++            DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
++            streamingMembers->hasPoppedFirstObject = false;
++        }
++
+         GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
+         gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.get(), nullptr);
+     }
+
+From 91573329077e1219d306f088db62f3cf717686dc Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Tue, 26 Sep 2023 09:43:20 +0000
+Subject: [PATCH 3/3] Pass currentTime / seekTime to flush to configure segment
+ properly
+
+SourceBufferPrivateGStreamer::flush() -> webKitMediaSrcFlush() during a
+seek would alter the segment position undesirably (with current playback
+time).
+
+Unconditionally skiping webKitMediaSrcFlush() from
+SourceBufferPrivateGStreamer::flush() if seek is in progress would
+break case where sample replacement is done by app before any ongoing
+seek is completed
+(https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/1060)
+
+The change allows segment to be updated with time provided by
+PlayerPrivate, which inturns sends correct time based on seek
+---
+ .../mse/SourceBufferPrivateGStreamer.cpp      |  2 +-
+ .../mse/WebKitMediaSourceGStreamer.cpp        | 19 +++++++------------
+ .../mse/WebKitMediaSourceGStreamer.h          |  2 +-
+ 3 files changed, 9 insertions(+), 14 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+index a5b03ad1efff..5cc244d4f42d 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+@@ -151,7 +151,7 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
+     }
+ 
+     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%s'", trackId.string().utf8().data());
+-    webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), trackId);
++    webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), trackId, toGstClockTime(m_playerPrivate.currentMediaTime()));
+ }
+ 
+ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackId)
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+index 18828e3d6c25..e8c853587609 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+@@ -96,7 +96,7 @@ static gboolean webKitMediaSrcActivateMode(GstPad*, GstObject*, GstPadMode, gboo
+ static void webKitMediaSrcLoop(void*);
+ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomString& name);
+ static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParamSpec*);
+-static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
++static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush, GstClockTime time);
+ static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
+ 
+ #define webkit_media_src_parent_class parent_class
+@@ -343,7 +343,7 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
+     GST_DEBUG_OBJECT(source, "Tearing down stream '%s'", name.string().utf8().data());
+ 
+     // Flush the source element **and** downstream. We want to stop the streaming thread and for that we need all elements downstream to be idle.
+-    webKitMediaSrcStreamFlush(stream, false);
++    webKitMediaSrcStreamFlush(stream, false, GST_CLOCK_TIME_NONE);
+     // Stop the thread now.
+     gst_pad_set_active(stream->pad.get(), false);
+ 
+@@ -573,7 +573,7 @@ static void webKitMediaSrcLoop(void* userData)
+         ASSERT_NOT_REACHED();
+ }
+ 
+-static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
++static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush, GstClockTime time)
+ {
+     ASSERT(isMainThread());
+     bool skipFlush = false;
+@@ -630,12 +630,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+         // In the case of non-seeking flushes we don't reset the timeline, so instead we need to increase the `base` field
+         // by however running time we're starting after the flush.
+ 
+-        GstClockTime pipelineStreamTime;
+-        gst_element_query_position(findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source))).get(), GST_FORMAT_TIME,
+-            reinterpret_cast<gint64*>(&pipelineStreamTime));
+-        GST_DEBUG_OBJECT(stream->source, "pipelineStreamTime from position query: %" GST_TIME_FORMAT, GST_TIME_ARGS(pipelineStreamTime));
+-        // GST_CLOCK_TIME_NONE is returned when the pipeline is not yet pre-rolled (e.g. just after a seek). In this case
+-        // we don't need to adjust the segment though, as running time has not advanced.
++        GstClockTime pipelineStreamTime = time;
+         if (GST_CLOCK_TIME_IS_VALID(pipelineStreamTime)) {
+             DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
+             // We need to increase the base by the running time accumulated during the previous segment.
+@@ -680,13 +675,13 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+         stream->track->trackId().string().utf8().data(), boolForPrinting(isSeekingFlush));
+ }
+ 
+-void webKitMediaSrcFlush(WebKitMediaSrc* source, const AtomString& streamName)
++void webKitMediaSrcFlush(WebKitMediaSrc* source, const AtomString& streamName, GstClockTime time)
+ {
+     ASSERT(isMainThread());
+     GST_DEBUG_OBJECT(source, "Received non-seek flush request for stream '%s'.", streamName.string().utf8().data());
+     Stream* stream = source->priv->streamByName(streamName);
+ 
+-    webKitMediaSrcStreamFlush(stream, false);
++    webKitMediaSrcStreamFlush(stream, false, time);
+ }
+ 
+ static void webKitMediaSrcSeek(WebKitMediaSrc* source, uint64_t startTime, double rate)
+@@ -697,7 +692,7 @@ static void webKitMediaSrcSeek(WebKitMediaSrc* source, uint64_t startTime, doubl
+     GST_DEBUG_OBJECT(source, "Seek requested to time %" GST_TIME_FORMAT " with rate %f.", GST_TIME_ARGS(startTime), rate);
+ 
+     for (const RefPtr<Stream>& stream : source->priv->streams.values())
+-        webKitMediaSrcStreamFlush(stream.get(), true);
++        webKitMediaSrcStreamFlush(stream.get(), true, startTime);
+ }
+ 
+ static int countStreamsOfType(WebKitMediaSrc* source, WebCore::TrackPrivateBaseGStreamer::TrackType type)
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h
+index a55a56f906dc..d911a9dd393b 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h
+@@ -63,7 +63,7 @@ GType webkit_media_src_get_type(void);
+ 
+ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<WebCore::MediaSourceTrackGStreamer>>& tracks);
+ 
+-void webKitMediaSrcFlush(WebKitMediaSrc*, const AtomString& streamName);
++void webKitMediaSrcFlush(WebKitMediaSrc*, const AtomString& streamName, GstClockTime time);
+ 
+ G_END_DECLS
+ 
+
+From d4c9360b391cc09ecd7ed820279dcf9884ef51ec Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@sky.uk>
+Date: Mon, 23 Oct 2023 10:01:47 -0400
+Subject: [PATCH] Fix invalid segment start after rebuffering
+
+---
+ .../graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp      | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+index e2b40b1979f0..eddc1d6d8079 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+@@ -829,6 +829,9 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush, GstCl
+         }
+     }
+ 
++    if (!isSeekingFlush && skipFlush)
++        return;
++
+     if (!skipFlush) {
+         // Signal the loop() function to stop waiting for any condition variable, pause the task and return,
+         // which will keeping the streaming thread idle.
+-- 
+2.41.0
+

@@ -1,0 +1,39 @@
+From b5845418e58304a8f98ed135d3969033c42d8434 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Fri, 17 May 2024 22:00:24 +0000
+Subject: [PATCH] [MSE][GStreamer] take playbin's states lock when sending seek
+ event
+
+This fixes possible race between application (triggering another seek
+from 'seeked' event) and 'state chagne' continuation (triggered by
+playbin).
+
+Top level bin element does change the state as result of
+'async-done' handling from previous seek request(see
+gst_bin_continue_func in gstbin.c). Which may race with handling of
+'async-start' posted by sinks on flushing seek. And may leave
+the pipeline in inconsistent state and 'hanging' seek that never
+finishes.
+
+By taking the states lock of top level bin element player will wait
+for possible state change continuation to complete before sending next
+seek event.
+---
+ .../graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp   | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index de6dbfc6d59c..375ce00b49c1 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -268,8 +268,10 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
+ 
+     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
+     // to the source element, rather than letting playbin do the routing.
++    GST_STATE_LOCK (pipeline());
+     gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
+         GST_SEEK_TYPE_SET, toGstClockTime(m_seekTime), GST_SEEK_TYPE_NONE, 0);
++    GST_STATE_UNLOCK (pipeline());
+     invalidateCachedPosition();
+ 
+     // Notify MediaSource and have new frames enqueued (when they're available).

@@ -1,0 +1,20 @@
+###################################################################
+Date: <May 10 2023>
+Source: Deutsche Telekom AG
+Changes copyright 2023-2024 Deutsche Telekom AG
+###################################################################
+
+Index: git/src/nopoll_conn.c
+===================================================================
+--- git.orig/src/nopoll_conn.c
++++ git/src/nopoll_conn.c
+@@ -2418,8 +2418,8 @@ void nopoll_conn_unref (noPollConn * con
+ 		nopoll_free (conn->handshake->websocket_accept);
+ 		nopoll_free (conn->handshake->expected_accept);
+ 		nopoll_free (conn->handshake->cookie);
+-		nopoll_free (conn->handshake);
+ 		nopoll_free (conn->handshake->redirectURL);
++                nopoll_free (conn->handshake);
+ 	} /* end if */
+ 
+ 	/* release connection options if defined and reuse flag is not defined */

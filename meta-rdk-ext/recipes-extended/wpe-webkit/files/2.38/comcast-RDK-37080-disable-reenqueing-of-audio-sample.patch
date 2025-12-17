@@ -1,0 +1,26 @@
+From cd2890d17db33974e2fcc587b050861b5ab5ebdd Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Wed, 22 Jun 2022 12:57:24 +0000
+Subject: [PATCH] comcast - RDK-37080: disable reenqueing of audio
+ samples replaced on append
+
+---
+ Source/WebCore/platform/graphics/SourceBufferPrivate.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/SourceBufferPrivate.cpp b/Source/WebCore/platform/graphics/SourceBufferPrivate.cpp
+index 4d74f7efad31..69215bfdbd92 100644
+--- a/Source/WebCore/platform/graphics/SourceBufferPrivate.cpp
++++ b/Source/WebCore/platform/graphics/SourceBufferPrivate.cpp
+@@ -1005,7 +1005,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
+             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
+             // not yet displayed samples.
+             MediaTime currentTime = currentMediaTime();
+-            if (trackBuffer.highestEnqueuedPresentationTime().isValid() && currentTime < trackBuffer.highestEnqueuedPresentationTime()) {
++            if (trackBuffer.highestEnqueuedPresentationTime().isValid() && currentTime < trackBuffer.highestEnqueuedPresentationTime() && !hasAudio()) {
+                 PlatformTimeRanges possiblyEnqueuedRanges(currentTime, trackBuffer.highestEnqueuedPresentationTime());
+                 possiblyEnqueuedRanges.intersectWith(erasedRanges);
+                 if (possiblyEnqueuedRanges.length())
+-- 
+2.25.1
+

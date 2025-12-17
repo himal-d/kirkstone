@@ -1,0 +1,27 @@
+Date: Dec 28, 2017 4:28 PM
+
+From: 5ffdf22fdb6c86b83d7aa38b61563e33afad0901 Jan 10, 2018 3:50 AM
+
+Subject: [PATCH]RDKB-12395 : Upgrading  lighttpd to 1.4.45, adding openssl and zlib
+	
+	Incorporate security fixes in latest version.
+	
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Prakash KAPPESANNANAGAPPA <Prakash_KAPPESANNANAGAPPA@comcast.com>
+---
+
+diff --git a/src/mod_authn_file.c b/src/mod_authn_file.c
+index 023a58a..d1cb0db 100644
+--- a/src/mod_authn_file.c
++++ b/src/mod_authn_file.c
+@@ -16,6 +16,7 @@
+
+ #include "base.h"
+
++#undef USE_OPENSSL
+ #ifdef USE_OPENSSL
+ #include "base64.h"
+ #include <openssl/md4.h>

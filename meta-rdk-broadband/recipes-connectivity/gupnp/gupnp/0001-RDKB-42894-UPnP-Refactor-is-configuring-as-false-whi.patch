@@ -1,0 +1,54 @@
+From 4b299890d0b33ce7cf31a7aada650dfb35791793 Mon Sep 17 00:00:00 2001
+From: Manish Lepuru <manish_lepuru@Comcast.com>
+Date: Mon, 12 Sep 2022 12:21:42 +0000
+Subject: [PATCH] RDKB-42894:UPnP Refactor is configuring as false while
+ starting IDM
+
+Reason for change: refactor rfc should not be set to false if wan-status is stopped
+Test Procedure:
+ 1. Enable UPnP and refactor RFC
+ 2. sysevent set wan-status stopped
+ 3. systemctl restart xcal-device xupnp
+ 4. certificates should be generated under tmp folder
+ 5. self and peer device discovery should success
+Risks: High
+Signed-off-by:manish_lepuru@comcast.com
+
+Change-Id: Ib21a8bbe2c6dc6a45644a0adaef234fce9c63ebb
+---
+ libgupnp/gupnp-context.c | 6 +++++-
+ libgupnp/gupnp-context.h | 3 ++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/libgupnp/gupnp-context.c b/libgupnp/gupnp-context.c
+index 1518e43..c2dfef5 100644
+--- a/libgupnp/gupnp-context.c
++++ b/libgupnp/gupnp-context.c
+@@ -430,7 +430,11 @@ gupnp_context_set_tls_params(GUPnPContext *context, const char *cert_file, const
+            }
+        }
+ }
+-
++void gupnp_set_cert_flags(unsigned int flags)
++{
++    g_message("gupnp cflags=%u",flags);
++    soup_set_certificate_flags(flags);
++}
+ 
+ 
+ 
+diff --git a/libgupnp/gupnp-context.h b/libgupnp/gupnp-context.h
+index 0a5402d..a4e6802 100644
+--- a/libgupnp/gupnp-context.h
++++ b/libgupnp/gupnp-context.h
+@@ -147,7 +147,8 @@ gupnp_context_set_tls_params           (GUPnPContext *context,
+                                           const char * cert_file,
+                                           const char *key_file,
+                                           GTlsInteraction *xupnp_tlsinteraction);
+-
++void
++gupnp_set_cert_flags(unsigned int flags);
+ G_END_DECLS
+ 
+ #endif /* __GUPNP_CONTEXT_H__ */
+

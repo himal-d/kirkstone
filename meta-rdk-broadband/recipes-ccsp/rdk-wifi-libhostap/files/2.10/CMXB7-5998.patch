@@ -1,0 +1,13 @@
+diff --git a/source/hostap-2.10/src/ap/ieee802_1x.c b/source/hostap-2.10/src/ap/ieee802_1x.c
+index 8e6bdc2..8fd73a2 100644
+--- a/source/hostap-2.10/src/ap/ieee802_1x.c
++++ b/source/hostap-2.10/src/ap/ieee802_1x.c
+@@ -1477,7 +1477,7 @@ void ieee802_1x_free_station(struct hostapd_data *hapd, struct sta_info *sta)
+ 	eloop_cancel_timeout(ieee802_1x_wnm_notif_send, hapd, sta);
+ #endif /* CONFIG_HS20 */
+ 
+-	if (sta->pending_eapol_rx) {
++	if (sta->pending_eapol_rx && sta->pending_eapol_rx->buf) {
+ 		wpabuf_free(sta->pending_eapol_rx->buf);
+ 		os_free(sta->pending_eapol_rx);
+ 		sta->pending_eapol_rx = NULL;

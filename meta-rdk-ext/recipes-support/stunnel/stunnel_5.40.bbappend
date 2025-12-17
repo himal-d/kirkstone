@@ -1,0 +1,10 @@
+inherit logrotate
+
+LOGROTATE_NAME="stunnel"
+LOGROTATE_LOGNAME_stunnel="stunnel.log"
+#HDD_ENABLE
+LOGROTATE_SIZE_stunnel="1572864"
+LOGROTATE_ROTATION_stunnel="3"
+#HDD_DISABLE
+LOGROTATE_SIZE_MEM_stunnel="1572864"
+LOGROTATE_ROTATION_MEM_stunnel="3"

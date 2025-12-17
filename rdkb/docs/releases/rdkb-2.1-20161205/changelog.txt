@@ -1,0 +1,103 @@
+Changelog between rdkb-2.1-20161121 and rdkb-2.1-20161205
+
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+aaebb70 Revert "RDKB-8912 : Ccsp PandM Deadlock cases"
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+e5312334 ARRISXB6-2922 : [stable2]Intermittent CcspMtaAgent crash
+13cb4629 RDKB-6803: Exclude Redundant XCONF Queries From Broadband Devices
+23553540 ARRISXB6-2921: [RDKB Flow Down] bbhm patch file should be only for Arris
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+2d74f72 RDKB-8968 :  remove redundant log in LM
+50858a4 RDKB-9333 : LmLite reporting of connected client is not correct always
+4d5f8d5 RDKB-9322 : WebPA and Harvester should use CM Agent parameter to get CM MAC.
+158fd6e RDKB-9098 : Traffic report is not updating rxtx counter values for CPE
+fe303c2 RDKB-9025 : Removing HardCoded Paths for Component Discovery
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+9f8aea7 RDKB-9236: Admin and MSO GUI is showing UTC Time
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+ac768a4 RDKBEMU-287 : Updated DMZ Implemetation in ccsp-p-and-m
+fe04fa5 Revert "RDKB-8912 : Ccsp PandM Deadlock cases"
+e76ec29 RDKB-9278 : Captive Portal page is not coming up after Factory Reset the device
+1dc66ea RDKBEMU-270 : Upstream Emulator Specific Ccsp-p-and-m Implementation
+f324bc8 WEBPA-1428 : XDNS - CcspPandM Changes, XDNS Feature enable/disable flag
+312838f RDKBEMU-265 : Added PSM support to Firewall in ccsp-p-and-m
+95c2b1e RDKB-9236: Admin and MSO GUI is showing UTC Time
+01e4422 RDKBEMU-264 : Added PSM support to Advanced Configurations in ccsp-p-and-m
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+b495cd0 Revert "WEBPA-1432 : Add webpa parameters to psm db"
+33c8038 WEBPA-1432 : Add webpa parameters to psm db
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+ecdb216 RDKB-7712: Increased timeout.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+fbc5cd2 RDKB-9341:Out of bound array access in WifiAgent
+072b9d2 RDKB-9348 :  add total device count per band(telemetry)
+777a328 RDKBEMU-277 : PSM support for WiFi Parameter(Channel) and Updated
+e88b1d1 RDKBEMU-255 : WIFI factory reset is not reverting the WIFI
+0c0fe09 RDKB-9152 : Handle maxInstance entry for X_CISCO_COM_MacFilterTable
+e7c7751 ARRISXB3-5391: Wifi LED staying on when disabled after a power cycle.
+ad4a4f3 RDKB-9233,RDKB-9229: [FIELD] CcspWifi process is not running in 2.3s9
+ee0697a ARRISXB6-2881 : WiFi 160MHz setting is not persistent after reboot
+4a7adfd RDKB-7153 : Develop Code - Add ATM Tr181 into wifi agent
+
+project rdkb/components/opensource/ccsp/GwProvApp-ePON/
+6cbbdb7 XF3-1555 : Arris need to remove offset setting to system date
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+2bd1a51 RDKB-9144 : Frequency for DCA execution is configurable when Diagnostic Mode.
+85cb25b RDKB-9335 : Create self heal approach to restart ti_dhcp6c
+f8279c9 RDKB-9337 : Add CcspXdnsSsp in SelfHeal Script
+5fddc96 RDKB-5197 : [Self Heal] Check DNS is able to resolve periodically.
+5ef11f7 RDKB-9286 : 2 instances of Selfheal scripts running when restarting TandD.
+0580c28 RDKB-8600 :IPPing.MinimumResponseTime is not accurate
+242f391 ARRISXB6-2909: Correct self healing logic for xb6
+ae9155d RDKB-9097: CcspWecbController is crashed and the process is not coming up
+
+project rdkb/components/opensource/ccsp/Utopia/
+6410692 CISCOXB3-1721 : [Nightly][Master only] LAN and WLAN clients is not getting IP
+e8fad15 RDKB-9316 : Exclude XDNS for Other Platforms. Use conditional flag for XB3
+d692381 RDKB-9275 : [Bridge Mode Issues]XConf upgrade is failing on 2.3p1s1 and 2.3p1s2
+56005b2 RDKB-5197 : [Self Heal] Check DNS is able to resolve periodically.
+44b3b72 ARRISXB6-2534: xi5 stop streaming after some time
+8507f3d WEBPA-1427 : XDNS - Utopia Changes, Firewall and dhcp_server script
+50a4e0a RDKB-9227 :  Port Forwarding is not functioning on 2.3p2.
+a701004 ARRISXB6-2413 : When in IPv4 only mode, erouter0 still has IPv6 connectivity
+
+project rdkb/components/opensource/ccsp/hal/
+5f5b9b1 RDKBEMU-275 : To add Emulator specific setup scripts modification
+
+project rdkb/components/opensource/ccsp/halinterface/
+6899967 RDKB-5987: Merged latest changes to hal-firewall
+743bb51 RDKB-5987: Added support for new platform methods.
+
+project rdkb/components/opensource/ccsp/standalone/
+7b6a5d8 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/utilities/
+49980e7 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/webui/
+8b72978 RDKB-8944: Validation against XSS for Advanced sub menu
+f88e59a RDKB-9324: Able to add Dynamic DNS when the feature is disabled
+5e1e239 RDKB-9284, RDKB-9323: CM DHCP table is having all zero values in MSO
+c0f5255 RDKB-9226: Parental Control show rules in GUI
+9e10fd1 RDKB-9225: Parental Control Blocked Keywordsâ€‹ Edit
+88cc347 RDKB-8046: RSSI value doesnâ€™t update on XB3 GUI during refresh
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+a50546f RDKBEMU-276 : Emulator Specific PSM XML Updation
+c4598a7 RDKBEMU-274 : To Modify Reset/Restore Gateway and Network Setup Scripts
+30d44a1 RDKBEMU-271 : Updated PSM XML
+d853255 RDKBEMU-267 : To Add Reset/Restore Gateway Scripts to support External-source
+d9b6605 RDKBEMU-269 : Added Header to all bridgeMode scripts to support
+2373998 RDKBEMU-266 : Emulator Specific PSM XML Updation
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+fa6d470 RDKBEMU-263 : Emulator specific php modification to support

@@ -1,0 +1,22 @@
+Date: 29-April-2020
+From: kathiravan.eswaran@sky.uk
+Source: Backport from https://w1.fi/cgit/hostap/commit/src/ap/wpa_auth.c?h=hostap_2_10&id=a803ba4f9d41d72650f04ae9f43df5ffa2d9a5dc
+
+diff --git a/source/hostap-2.9/src/ap/wpa_auth.c b/source/hostap-2.9/src/ap/wpa_auth.c
+index dcb2bf5..c056f4f 100755
+--- a/source/hostap-2.9/src/ap/wpa_auth.c
++++ b/source/hostap-2.9/src/ap/wpa_auth.c
+@@ -3490,10 +3490,11 @@ SM_STEP(WPA_PTK)
+ 		else if (sm->TimeoutCtr >
+ 			 sm->wpa_auth->conf.wpa_pairwise_update_count) {
+ 			wpa_auth->dot11RSNA4WayHandshakeFailures++;
++			sm->disconnect_reason = WLAN_REASON_4WAY_HANDSHAKE_TIMEOUT;
+ 			wpa_auth_vlogger(
+ 				sm->wpa_auth, sm->addr, LOGGER_DEBUG,
+-				"PTKSTART: Retry limit %u reached",
+-				sm->wpa_auth->conf.wpa_pairwise_update_count);
++				"PTKSTART: Retry limit %u reached, deauth reason code=%u",
++				sm->wpa_auth->conf.wpa_pairwise_update_count,sm->disconnect_reason);
+ 			SM_ENTER(WPA_PTK, DISCONNECT);
+ 		} else if (sm->TimeoutEvt)
+ 			SM_ENTER(WPA_PTK, PTKSTART);

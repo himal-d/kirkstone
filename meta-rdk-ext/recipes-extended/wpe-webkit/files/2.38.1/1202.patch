@@ -1,0 +1,133 @@
+From b1d3923581e0672ce573e4da6ac3b0e576cc5ba5 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Fri, 29 Sep 2023 12:07:04 +0200
+Subject: [PATCH] webgl: Manually sync GL commands for webgl
+
+Some platforms seem to have an issue with syncing GL operations among threads
+that results with different graphics artifacts (blinking, rendering old content, etc).
+
+This patch uses GLFenceSync for Nicosia webgl that has less
+perormance penalty than glFinish().
+If GLsync API is not availabe use glFinish() still.
+---
+ .../nicosia/texmap/NicosiaGCGLLayer.cpp       | 43 ++++++++++++++++++-
+ .../TextureMapperPlatformLayerBuffer.cpp      |  4 +-
+ .../texmap/TextureMapperPlatformLayerBuffer.h |  6 +--
+ Source/cmake/OptionsWPE.cmake                 |  6 +++
+ 4 files changed, 53 insertions(+), 6 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp b/Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp
+index 608f7a9c8568..dcffad4e38fe 100644
+--- a/Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp
++++ b/Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp
+@@ -43,6 +43,43 @@ namespace Nicosia {
+ 
+ using namespace WebCore;
+ 
++#if USE(FORCE_WEBGL_BUFFER_SYNC)
++
++#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
++#define HAS_GL_SYNC_API
++#endif // HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
++class BufferGLSync : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder
++{
++public:
++    BufferGLSync() {
++#if defined(HAS_GL_SYNC_API)
++        m_sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
++        glFlush();
++#else
++        // Just call glFinish() if sync api is not available
++        glFinish();
++#endif
++    }
++
++#if defined(HAS_GL_SYNC_API)
++    void waitForCPUSync() override {
++        if (!m_sync)
++            return;
++        glWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
++        glDeleteSync(m_sync);
++        m_sync = nullptr;
++    }
++    virtual ~BufferGLSync() {
++        if (!m_sync)
++            return;
++        glDeleteSync(m_sync);
++    }
++private:
++    GLsync m_sync = nullptr;
++#endif
++};
++#endif // USE(FORCE_WEBGL_BUFFER_SYNC)
++
+ static std::unique_ptr<GLContext> s_windowContext;
+ 
+ static void terminateWindowContext()
+@@ -132,7 +169,11 @@ void GCGLLayer::swapBuffersIfNeeded()
+         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
+         Locker locker { proxy.lock() };
+         ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+-        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
++        auto buffer = makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat);
++#if USE(FORCE_WEBGL_BUFFER_SYNC)
++        buffer->setUnmanagedBufferDataHolder(makeUnique<BufferGLSync>());
++#endif // USE(FORCE_WEBGL_BUFFER_SYNC)
++        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(buffer));
+     }
+ 
+     m_context.markLayerComposited();
+diff --git a/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp b/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
+index cdda01d15ff8..41de0ccdb491 100644
+--- a/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
++++ b/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
+@@ -124,10 +124,10 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
+         return;
+     }
+ 
+-#if USE(GSTREAMER_GL)
++#if USE(GSTREAMER_GL) || USE(FORCE_WEBGL_BUFFER_SYNC)
+     if (m_unmanagedBufferDataHolder)
+         m_unmanagedBufferDataHolder->waitForCPUSync();
+-#endif // USE(GSTREAMER_GL)
++#endif // USE(GSTREAMER_GL) || USE(FORCE_WEBGL_BUFFER_SYNC)
+ 
+     WTF::switchOn(m_variant,
+         [&](const RGBTexture& texture) {
+diff --git a/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h b/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h
+index 529aaddf38ab..b5060b6939f6 100644
+--- a/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h
++++ b/Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h
+@@ -77,9 +77,9 @@ public:
+         UnmanagedBufferDataHolder() = default;
+         virtual ~UnmanagedBufferDataHolder() = default;
+ 
+-#if USE(GSTREAMER_GL)
+-        virtual void waitForCPUSync() = 0;
+-#endif // USE(GSTREAMER_GL)
++#if USE(GSTREAMER_GL) || USE(FORCE_WEBGL_BUFFER_SYNC)
++        virtual void waitForCPUSync() {};
++#endif // USE(GSTREAMER_GL) || USE(FORCE_WEBGL_BUFFER_SYNC)
+     };
+ 
+     bool hasManagedTexture() const { return m_hasManagedTexture; }
+diff --git a/Source/cmake/OptionsWPE.cmake b/Source/cmake/OptionsWPE.cmake
+index 7724e5787c5a..f92914fcab06 100644
+--- a/Source/cmake/OptionsWPE.cmake
++++ b/Source/cmake/OptionsWPE.cmake
+@@ -365,6 +365,12 @@ SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
+ SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
+ SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
+ 
++if (USE_WPEWEBKIT_PLATFORM_REALTEK OR USE_WPEWEBKIT_PLATFORM_AMLOGIC)
++    if (USE_NICOSIA AND USE_COORDINATED_GRAPHICS AND USE_TEXTURE_MAPPER)
++        SET_AND_EXPOSE_TO_BUILD(USE_FORCE_WEBGL_BUFFER_SYNC TRUE)
++    endif ()
++endif ()
++
+ # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
+ if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")
+     SET_AND_EXPOSE_TO_BUILD(HAVE_GURI 1)
+-- 
+2.25.1
+

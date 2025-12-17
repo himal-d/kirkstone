@@ -1,0 +1,60 @@
+From 90473eeefebbda6359ec6572733facbbcf9899fc Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Wed, 19 Jul 2023 13:44:01 +0000
+Subject: [PATCH] comcast : BCOM-6804 : No Decoder available errors during apps
+ playback
+
+---
+ Source/WebCore/Modules/mediasource/SourceBuffer.cpp      | 3 ++-
+ .../platform/graphics/gstreamer/mse/PlaybackPipeline.cpp | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+index 615d8b7d90aa..fdda0ce39973 100644
+--- a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
++++ b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+@@ -2268,7 +2268,6 @@ void SourceBuffer::trySignalAllSamplesEnqueued()
+ 
+ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomString& trackID, const MediaTime& time)
+ {
+-    m_private->flush(trackID);
+     trackBuffer.decodeQueue.clear();
+ 
+     trackBuffer.highestEnqueuedPresentationTime = MediaTime::invalidTime();
+@@ -2302,6 +2301,8 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomStr
+         trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTFMove(copy)));
+     }
+ 
++    m_private->flush(trackID);
++
+     // Fill the decode queue with the remaining samples.
+     for (auto iter = currentSampleDTSIterator; iter != trackBuffer.samples.decodeOrder().end(); ++iter)
+         trackBuffer.decodeQueue.insert(*iter);
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/PlaybackPipeline.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/PlaybackPipeline.cpp
+index 40fcade87345..8c775ea9e795 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/PlaybackPipeline.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/PlaybackPipeline.cpp
+@@ -336,12 +336,19 @@ void PlaybackPipeline::flush(AtomString trackId)
+ 
+     GST_DEBUG_OBJECT(appsrc, "flush: trackId=%s", trackId.string().utf8().data());
+ 
+-    if (GST_STATE(pipeline()) < GST_STATE_PAUSED) {
++    int counter = 5; // wait for 500msec for PAUSED state transition
++    while (counter-- > 0 && GST_STATE(pipeline()) < GST_STATE_PAUSED) {
++        GST_WARNING("Pipeline is still < PAUSED, trackId=%s, counter=%d", trackId.string().utf8().data(), counter);
+         // Flushing at early stage may result in playback failure with 'not-linked' reason.
+         // So, lets give pipeline some time to complete pre-roll before flushing this track.
+         gst_element_get_state(pipeline(), nullptr, nullptr, 100 * GST_MSECOND);
+     }
+ 
++    if (GST_STATE(pipeline()) < GST_STATE_PAUSED) {
++        GST_WARNING("Pipeline is still < PAUSED, trackId=%s, skipping flush", trackId.string().utf8().data());
++        return;
++    }
++
+     gint64 position = GST_CLOCK_TIME_NONE;
+     GRefPtr<GstQuery> query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
+     if (gst_element_query(pipeline(), query.get()))
+-- 
+2.17.1
+

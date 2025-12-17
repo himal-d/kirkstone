@@ -1,0 +1,23 @@
+---
+ client/agent.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/client/agent.c b/client/agent.c
+index 70c3248..29586fc 100644
+--- a/client/agent.c
++++ b/client/agent.c
+@@ -231,12 +231,7 @@ static DBusMessage *request_authorization(DBusConnection *conn,
+ 	dbus_message_get_args(msg, NULL, DBUS_TYPE_OBJECT_PATH, &device,
+ 							DBUS_TYPE_INVALID);
+ 
+-	bt_shell_prompt_input("agent", "Accept pairing (yes/no):",
+-					confirm_response, conn);
+-
+-	pending_message = dbus_message_ref(msg);
+-
+-	return NULL;
++	return dbus_message_new_method_return(msg);
+ }
+ 
+ static DBusMessage *authorize_service(DBusConnection *conn,
+-- 

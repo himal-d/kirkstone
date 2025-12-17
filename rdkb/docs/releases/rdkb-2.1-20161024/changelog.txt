@@ -1,0 +1,196 @@
+Changelog between rdkb-2.1-20161024 and rdkb-2.1-20161010
+
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+57f11cc RDKB-8573: Added sd_notify support.
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+b9feff8 ARRISXB6-2606: [systemd] Remove utopiaSshd.service
+4b2a812 RDKB-8504: Telemetry, bandutilization log
+790641e RDKB-8570 RDK-B: file with RDKM proprietary Header
+f5f6bfc Revert "RDKB-5133: sd_notify"
+9ff5949 RDKB-5133: sd_notify
+4f9dc10 ARRISXB6-2571: NVRAM Monitor: Move Device Specific Conf File to Device Layer
+80a5930 RDKB-7451 : Security issues found on Static Analysis in diagnostics Component.
+8796eca ARRISXB6-2540,ARRISXB6-2507 : nvram disk usage monitoring
+5dbe2d9 RDKB-8098: Enable systemd notify in CCSP P-and-M
+5a8aad9 Revert "RDKB-7942: [systemd] Services Should Use device.properties over conf files"
+dcfd87b RDKB-8145: wifi telemetry log
+
+project rdkb/components/opensource/ccsp/CcspCr/
+8ba818e RDKB-8201: Added sd_notify support.
+b1e47e6 RDKB-8201: Added sd_notify support.
+2553d87 Revert "RDKB-6376 RDKB-8201: Added sd_notify support."
+5636b68 RDKB-6376 RDKB-8201: Added sd_notify support.
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+37133f8 RDKB-7436 : Security issues found on Static Analysis in ccsp-dmcli Component.
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+c5477f7 RDKB-7468 : Security issues found on Static Analysis in home security Component.
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+fcef0f5 RDKB-8551 : Ccsp Deadlock cases increased in 2.2p12s4
+2f08d4d RDKB-8104 : Removing Time zone offset calculation for CcspLMLite
+eaebef0 RDKB-8215: Remove bclientready print from Armconsolelog.txt and LM.txt
+d0ca080 RDKB-8423: Host table get query is taking more time
+b94d0c6 RDKB-8289 : Ethernet device shows no Parent/DeviceType value
+1ddd538 RDKB-8090 : Sometimes Device.Hosts.Host.{i}.Layer1Interface shows "Wifi"
+c1ba1ee RDKB-7847 : Non Comcast Extenders incorrect status in Host Table
+6c38d0b RDKB-8088 : Offline device is reporting "WIFI" as layer1interface value
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+0974677 RDKB-8626: Invalid single digit time in parental control rule while migration
+f81a510 RDKB-8507: Create a binary/library to convert local time to UTC and UTC-Local
+581a861 RDKB-7441 : Security issues found on Static Analysis in ccsp-misc Component.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+f8c769b RDKB-8584 : Add more debug logs in CcspPandM.
+1d4203b CISCOXB3-1532: DHCPv6 stateful service failure
+944513e RDKB-7857: Time zone offset calculation for parental control.
+1288c64 RDKB-8103 : 100% CPU usage due to flooding of logs in WECB logs
+c3306b4 RDKB-8185: Static page to indicate a device is blocked to be implemented locally
+aa86967 RDKB-8098: Enable systemd notify in CCSP P-and-M
+0d0856a XF3-1556: [CFG-3]Not able to error:cannot get password from backend
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+2832768 RDKB-8542: Added sd_notify support.
+4e0ce2d Revert "RDKB-6376 RDKB-8542: Added sd_notify support."
+08721f3 RDKB-6376 RDKB-8542: Added sd_notify support.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+c5887bd RDKB-8160 :Unable to set the value of oid for Security Mode to 5
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+9b3bced ARRISXB6-2588 : Tr069 process crash
+e3fcb04 RDKB-7333 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+7540398 CISCOXB3-1142 : HDM failing for GetParamtersValues
+469ade2 RDKB-7326 : Security issues found on Static Analysis in TR069-PA Component.
+f528af4 RDKB-7336 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+671b600 RDKB-7335 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+270945a RDKB-7334 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+ea7fbd9 RDKB-7331 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+75ca743 RDKB-7329 : Security issues found on Static Analysis in ccsp-tr069-pa Component.
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+b9fa499 RDKB-7440 : Security issues found on Static Analysis in wecb Component.
+7825d1b RDKB-7439 : Security issues found on Static Analysis in wecb Component.
+07a8459 RDKB-7438 : Security issues found on Static Analysis in wecb Component.
+d06b75f RDKB-8105: Changed selected debug output to be printed less frequently.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+d9e8bef RDKB-8625: increate BS print frequency
+39066a4 RDKB-8202:  Added sd_notify support.
+89204f7 RDKB-8504: Telemetry, bandutilization log
+be0aee0 RDKB-8202:  Added sd_notify support.
+7d84b03 RDKB-8581: removing unnecessary print
+ad349fc RDKB-8504: Telemetry, bandutilization log
+892709a Revert "RDKB-8202: sd_notify"
+62cc6dc RDKB-8202: sd_notify
+22c1a24 RDKB-5832: Prevent private wifi connected devices from connecting to xfinitywifi
+f788c57 RDKB-5832: Prevent private wifi connected devices from connecting to xfinitywifi
+4af309f RDKB-8131: telemetry marker for death reason 2
+369f6d5 ARRISXB6-2474: [RDKB log][WiFi] Health Cron Job integration
+376b68d RDKB-8145: wifi telemetry log
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+7ed3399 RDKB-8115 : prints that coming on log when syseventd killed.
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+0e05147 RDKB-8597: Make downstream CPU % parsing independent of the position
+7825733 RDKB-6529 : RDK-B: TestAndDiagnostic unknown origin of source code in diag.c
+d842dfd RDKB-8534: Time zone offset calculation for selfheal
+84042d4 RDKB-8578: Self Heal reboot for high cpu usage by downstream manager
+f6bdc09 RDKB-7784 : Develop TR-181 parameter to enable and run speedtest2
+4171552 ARRISXB6-2572 : [RDKB Flow Down] 100% CPU usage due to flooding
+82b4455 RDKB-7450 : Security issues found on Static Analysis in diagnostics Component.
+c7a4002 RDKB-7458 : Security issues found on Static Analysis in diagnostics Component.
+0cd3812 RDKB-7457 : Security issues found on Static Analysis in diagnostics Component.
+9c8a0a7 RDKB-7456 : Security issues found on Static Analysis in diagnostics Component.
+0715674 RDKB-7455 : Security issues found on Static Analysis in diagnostics Component.
+e8306a2 RDKB-7454 : Security issues found on Static Analysis in diagnostics Component.
+0b91cf5 RDKB-7453 : Security issues found on Static Analysis in diagnostics Component.
+88da38f RDKB-7452 : Security issues found on Static Analysis in diagnostics Component.
+a39cf76 RDKB-7784 : Develop TR-181 parameter to enable and run speedtest2
+142f969 RDKB-8103 : 100% CPU usage due to flooding of logs in WECB logs
+47e23fb RDKB-7784 : Develop TR-181 parameter to enable and run speedtest2
+1a647d6 Revert "RDKB-7945 : [systemd][Field] Monitor tmpfs partition usage for selfheal."
+
+project rdkb/components/opensource/ccsp/Utopia/
+75c985d ARRISXB6-2623,ARRISXB6-2626 : [Axb6][logging]NVRAM sync and logupload
+00cbe2e ARRISXB6-2524 : Ethernet and wireless client sometime doesn't get IP
+7be4f31 RDKB-7305 : [Field] High CPU Usage by syseventd
+5ef460a RDKB-7305 : High CPU Usage by syseventd
+216e19c WEBPA-1315 : Set reboot reason as "factory-reset" from utopia_init.sh
+39ca8b5 RDKB-8185: Static page to indicate a device is blocked to be implemented locally
+aa5e711 RDKB-5533: DHCP range corrupted in Database
+48c248b CISCOXB3-1534 : Update path for zebra conf
+eb6faed RDKB-8186 : Integrate breakpad to syseventd daemon
+bb0ce48 CISCOXB3-1510,RDKB-7944: Utopia contains incorrect Cisco copyrights
+82c5206 RDKB-7999 : Reboot the device if CCSP Wifi dmcli parameters are failing.
+96955c2 RDKB-7835 : SECVULN: dropbear - Legal/Compliance - No SSH Banner (CVSS 5.8).
+679e61a RDKB-7501 :  CCSP components are not registered with the CR after a Atom restart
+e4f9046 RDKB-7938: Add CONTRIBUTING.md file to repository
+6773b19 ARRISXB6-2418 :Set the IP address for br106
+ae51089 ARRISXB6-1829 :Set Lost and Found ssid
+890985f RDKB-7145 : Security issues found on Static Analysis in Utopia Component.
+670459d ARRISXB6-1829 :Set Lost and Found passphrase
+a8536f1 RDKB-7416: dnsmasq always consuming more than 15% CPU leading to High CPU Usage
+cdc328f RDKB-6828 :BCI migration to Ciscoxb3 Yocto
+cce485e RDKB-7709 : iptable corrupted and No log uploads for the past 2 days
+53bc283 RDKB-5686, RDKB-7607, RDKB-7615:
+8f9f274 RDKB-7639: block device broken for IPv6
+
+project rdkb/components/opensource/ccsp/hal/
+a13198c RDKB-7556: Broadcom requested an author change for DPoE
+a2b2f41 RDKB-7552 : Doxygen Documentation for RDK-B WiFi HAL.
+
+project rdkb/components/opensource/ccsp/hotspot/
+711a7ad RDKB-7435 : Security issues found on Static Analysis in ccsp-hotspot Component.
+537bbdc RDKB-5980: ISC License needs to be added to Hotspot License
+
+project rdkb/components/opensource/ccsp/webui/
+1d0e043 RDKB-8059: UI does not reflect the correct details
+e37446d ARRISXB6-2123: "Parental control-> Report" failed to Generate
+23fc209 RDKB-8565: check & uncheck "Prefer Private Connection" not working
+022e4be RDKB-7693: Redirect to block page doesn't work
+d5570b7 ARRISXB3-5277: cleanup pem keys from repo.
+f76adee ARRISXB6-2444: Add b/g/n mode to XB6
+5d3db47 ARRISXB6-1379: XB6: Web UI for battery status needs to be updated
+62bde7d RDKB-7510: smartpagintor.js licensed under EGrappler License
+7a6aec5 RDKB-7802: Command Injection Vulnerability
+1991487 ARRISXB6-2436: [WEBGUI] Download log option under Troubleshooting > Logs
+91b5c1d RDKB-7955: "$_REQUEST" should be changed to "$_POST"
+4ea3c81 RDKB-7927: Traceroute and IP address connectivity do not function
+9bed0b6 ARRISXB6-2431: Fix UI redraw on band steering
+6327dd0 XF3-1531: Fix UI redraw on band steering
+fbe0bef ARRISXB6-2345: [WFA] WPS 2.0 case 4.2.4 failed
+ae5747f RDKB-7938: Add CONTRIBUTING.md file to repository
+7b85a51 RDKB-7869: GUI output encoding for untrusted input
+7153288 ARRISXB6-2409: change the Recommended string to new default
+4a7025a ARRISXB6-2329: [WFA] WPS 2.0 case 4.1.8 failed
+fbade22 ARRISXB6-2329: [WFA] WPS 2.0 case 4.1.8 failed
+eeaddfe ARRISXB6-2373: Change bandsteering gui field text from rssi threshhold
+d491220 ARRISXB3-5167: change the Recommended string to new default
+f8e9940 RDKB-7772 : Change bandsteering gui field text from rssi threshhold
+0ed1290 RDKB-7798: HS Port Forwarding is accessible by admin
+e1b98da RDKB-7800: Trusted Computers state issue
+a5f19f6 RDKB-7780: XSS - Implementing input handling audit for "$_GET"
+661aed0 RDKB-7797: Delete functionality is broken as aresult of CSRF changes
+99e34bd RDKB-7705: Redesign Static page shown when Cloud feature is enabled
+d8e30d3 ARRISXB6-2271 : System logs download failed
+7462f8b ARRISXB6-2066: [WiFi]160MHz BW Needs to Be Implemented E2E
+b78194a RDKB-6806: GUI changes for mod_csrf
+a082a9c RDKB-7585: CloudUI to TRUE disables all the advanced features in local UI
+5fd6428 RDKB-5649: GUI - add "Prefer private connection" check
+92fbdc0 RDKB-7572 : GUI Changes for - Cloud redirection
+7d580a1 ARRISXB6-2066:Need 160MHz BW listed in GUI
+6c52aff ARRISXB6-2066:Need 160MHz BW listed in GUI
+af14171 ARRISXB6-2201:[RDKB] [GUI] Down Flow GUI Fixes
+d110b82 RDKB-4584, RDKB-6626: Config Wi-Fi param is not implemented on IE9
+2bbcace XF3-1372: Move missing files from XF3 into repo
+0dcd31b RDKB-6526: Security issues on ARRIS-XB3 GUI, XFINITY Network page
+d93a8ea RDKB-6442: Security issues on ARRIS-XB3 GUI, Connection > MoCA
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+1fb13fe ARRISXB3-5277: cleanup pem keys from repo.

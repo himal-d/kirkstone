@@ -1,0 +1,1336 @@
+From: Ben Gray <ben.gray@sky.uk>
+Date: Mon 20 Nov 2023 09:22:53 GMT
+Subject: [PATCH] Add support for wayland input_fd monitor
+Source: SKY
+License: MIT & LGPLv2.1+
+Upstream-Status: Pending
+
+diff --git a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -18,12 +18,14 @@ libmanette_module = 'manette-' + libmanette_api_version
+ glib_version = '>= 2.50'
+ gudev_version = '>= 1.0'
+ libevdev_version = '>= 1.4.5'
++wayland_client_version ='>= 1.18.0'
+ 
+ gio = dependency ('gio-2.0', version: glib_version)
+ glib = dependency ('glib-2.0', version: glib_version)
+ gobject = dependency ('gobject-2.0', version: glib_version)
+ gudev = dependency ('gudev-1.0', version: gudev_version, required : get_option('gudev'))
+ libevdev = dependency ('libevdev', version: libevdev_version)
++wayland_client = dependency ('wayland-client', version: wayland_client_version, required : get_option('wayland-inputfd'))
+ 
+ config_h = configuration_data()
+ 
+@@ -54,6 +56,7 @@ summary(
+     'Documentation': get_option('doc'),
+     'Introspection': get_option('introspection'),
+     'Vala bindings': get_option('vapi'),
++    'Wayland-inputfd': get_option('wayland-inputfd'),
+   }, section: 'Documentation and introspection')
+ summary(
+   {
+diff --git a/meson_options.txt b/meson_options.txt
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -13,6 +13,8 @@ option('introspection', type: 'boolean', value: 'true',
+   description : 'Build introspection data (requires gobject-introspection)')
+ option('vapi', type: 'boolean', value: 'true',
+   description : 'Build Vala bindings (requires vapigen and introspection option)')
++option('wayland-inputfd', type: 'boolean', value: 'false',
++  description : 'Enable wayland-inputfd protocol support for getting devices')
+ 
+ # Dependencies
+ option('gudev', type: 'feature', value: 'auto',
+diff --git a/src/manette-device-private.h b/src/manette-device-private.h
+--- a/src/manette-device-private.h
++++ b/src/manette-device-private.h
+@@ -27,8 +27,8 @@
+ 
+ G_BEGIN_DECLS
+ 
+-ManetteDevice *manette_device_new (const gchar  *filename,
+-                                   GError      **error);
++ManetteDevice *manette_device_new (int      fd,
++                                   GError **error);
+ int manette_device_get_product_id (ManetteDevice *self);
+ int manette_device_get_vendor_id (ManetteDevice *self);
+ int manette_device_get_bustype_id (ManetteDevice *self);
+@@ -36,5 +36,8 @@ int manette_device_get_version_id (ManetteDevice *self);
+ const gchar *manette_device_get_guid (ManetteDevice *self);
+ void manette_device_set_mapping (ManetteDevice  *self,
+                                  ManetteMapping *mapping);
++void manette_device_change_fd (ManetteDevice *self,
++                               int            fd);
++gboolean manette_device_revoked (ManetteDevice *self);
+ 
+ G_END_DECLS
+diff --git a/src/manette-device.c b/src/manette-device.c
+--- a/src/manette-device.c
++++ b/src/manette-device.c
+@@ -58,7 +58,6 @@ struct _ManetteDevice
+   GObject parent_instance;
+ 
+   gint fd;
+-  glong event_source_id;
+   GMutex poll_id_mutex;
+   GSource *event_src;
+   struct libevdev *evdev_device;
+@@ -66,6 +65,7 @@ struct _ManetteDevice
+   guint8 abs_map[ABS_MAX];
+   struct input_absinfo abs_info[ABS_MAX];
+   gchar *guid;
++  gboolean has_rumble;
+ 
+   ManetteMapping *mapping;
+ 
+@@ -226,14 +226,10 @@ remove_event_source (ManetteDevice *self)
+ {
+   g_assert (self != NULL);
+ 
+-  if (self->event_source_id < 0)
+-    return;
+-
+-  g_source_remove ((guint) self->event_source_id);
+-  self->event_source_id = -1;
+   if (self->event_src) {
+     g_source_destroy (self->event_src);
+-    g_source_unref(self->event_src);
++    g_source_unref (self->event_src);
++    self->event_src = NULL;
+   }
+ }
+ 
+@@ -357,7 +353,6 @@ manette_device_class_init (ManetteDeviceClass *klass)
+ static void
+ manette_device_init (ManetteDevice *self)
+ {
+-  self->event_source_id = -1;
+   self->rumble_effect.type = FF_RUMBLE;
+   self->rumble_effect.id = -1;
+ }
+@@ -399,6 +394,20 @@ centered_absolute_value (struct input_absinfo *abs_info,
+   return ((gdouble) value_centered) / ((gdouble) divisor);
+ }
+ 
++static gboolean
++evdev_has_rumble (int fd)
++{
++  gulong features[4];
++
++  if (ioctl (fd, EVIOCGBIT (EV_FF, sizeof (gulong) * 4), features) == -1)
++    return FALSE;
++
++  if (!((features[FF_RUMBLE / (sizeof (glong) * 8)] >> FF_RUMBLE % (sizeof (glong) * 8)) & 1))
++    return FALSE;
++
++  return TRUE;
++}
++
+ static void
+ on_evdev_event (ManetteDevice      *self,
+                 struct input_event *evdev_event)
+@@ -488,7 +497,7 @@ poll_events (GIOChannel    *source,
+ 
+ /**
+  * manette_device_new: (skip)
+- * @filename: the filename of the device
++ * @fd: the file descriptor of open input device
+  * @error: return location for a #GError, or %NULL
+  *
+  * Creates a new #ManetteDevice.
+@@ -496,8 +505,8 @@ poll_events (GIOChannel    *source,
+  * Returns: (transfer full): a new #ManetteDevice
+  */
+ ManetteDevice *
+-manette_device_new (const gchar  *filename,
+-                    GError      **error)
++manette_device_new (int      fd,
++                    GError **error)
+ {
+   g_autoptr (ManetteDevice) self = NULL;
+   g_autoptr (GIOChannel) channel = NULL;
+@@ -505,29 +514,18 @@ manette_device_new (const gchar  *filename,
+   gint axes_number;
+   guint i;
+ 
+-  g_return_val_if_fail (filename != NULL, NULL);
++  g_return_val_if_fail (fd >= 0, NULL);
+ 
+   self = g_object_new (MANETTE_TYPE_DEVICE, NULL);
+ 
+-  self->fd = open (filename, O_RDWR | O_NONBLOCK, (mode_t) 0);
+-  if (self->fd < 0) {
+-    g_set_error (error,
+-                 G_FILE_ERROR,
+-                 g_file_error_from_errno (errno),
+-                 "Unable to open “%s”: %s",
+-                 filename,
+-                 strerror (errno));
+-
+-    return NULL;
+-  }
++  self->fd = fd;
+ 
+   self->evdev_device = libevdev_new ();
+   if (libevdev_set_fd (self->evdev_device, self->fd) < 0) {
+     g_set_error (error,
+                  G_FILE_ERROR,
+                  g_file_error_from_errno (errno),
+-                 "Evdev is unable to open “%s”: %s",
+-                 filename,
++                 "Evdev is unable to use fd: %s",
+                  strerror (errno));
+ 
+     return NULL;
+@@ -537,21 +535,19 @@ manette_device_new (const gchar  *filename,
+     g_set_error (error,
+                  G_FILE_ERROR,
+                  G_FILE_ERROR_FAILED,
+-                 "“%s” is not a game controller.",
+-                 filename);
++                 "Device is not a game controller.");
+ 
+     return NULL;
+   }
+ 
+-  self->event_source_id = -1;
+   self->event_src = NULL;
+   g_mutex_init (&self->poll_id_mutex);
+ 
+   // Poll the events in the thread context.
+   channel = g_io_channel_unix_new (self->fd);
+   self->event_src = g_io_create_watch (channel,G_IO_IN);
+-  g_source_set_callback (self->event_src,(GSourceFunc) poll_events,self, NULL);
+-  self->event_source_id = g_source_attach (self->event_src,g_main_context_get_thread_default());
++  g_source_set_callback (self->event_src, (GSourceFunc) poll_events,self, NULL);
++  g_source_attach (self->event_src, g_main_context_get_thread_default ());
+   buttons_number = 0;
+ 
+   // Initialize the axes buttons and hats.
+@@ -587,9 +583,76 @@ manette_device_new (const gchar  *filename,
+     }
+   }
+ 
++  // Check if rumble is supported
++  self->has_rumble = evdev_has_rumble (self->fd);
++
+   return g_steal_pointer (&self);
+ }
+ 
++/**
++ * manette_device_change_fd: (skip)
++ * @self: a #ManetteDevice
++ * @fd: the new evdev fd to use for the device.
++ *
++ * Replaces the fd for the evdev, the old fd will be closed by this call.
++ *
++ */
++void
++manette_device_change_fd (ManetteDevice  *self,
++                          int             fd)
++{
++  g_autoptr (GIOChannel) channel = NULL;
++  struct input_event evdev_event;
++
++  g_return_if_fail (MANETTE_IS_DEVICE (self));
++  g_return_if_fail (fd >= 0);
++
++  remove_event_source (self);
++  close (self->fd);
++
++  self->fd = fd;
++
++  // Change the fd in libevdev and resync events
++  libevdev_change_fd (self->evdev_device, fd);
++  libevdev_next_event (self->evdev_device,
++                       LIBEVDEV_READ_FLAG_FORCE_SYNC,
++                       &evdev_event);
++  while (libevdev_next_event (self->evdev_device,
++                              LIBEVDEV_READ_FLAG_SYNC,
++                              &evdev_event) == LIBEVDEV_READ_STATUS_SYNC)
++    ; // noop
++
++  // Add a new poll for the new fd
++  channel = g_io_channel_unix_new (self->fd);
++  self->event_src = g_io_create_watch (channel, G_IO_IN);
++  g_source_set_callback (self->event_src, (GSourceFunc) poll_events, self, NULL);
++  g_source_attach (self->event_src, g_main_context_get_thread_default ());
++}
++
++/**
++ * manette_device_revoked: (skip)
++ * @self: a #ManetteDevice
++ *
++ * Returns TRUE if the device has been revoked via the EVIOCREVOKE
++ * ioctl.
++ *
++ * Returns: whether the device has been revoked or not.
++ */
++gboolean manette_device_revoked (ManetteDevice *self)
++{
++  int driver_version;
++
++  g_return_val_if_fail (MANETTE_IS_DEVICE (self), TRUE);
++  g_return_val_if_fail (self->fd >= 0, TRUE);
++
++  // When an input event device is revoked all ioctl calls fail with
++  // ENODEV errno
++  if (ioctl (self->fd, EVIOCGVERSION, &driver_version) == -1)
++    return (errno == ENODEV) ? TRUE : FALSE;
++  else
++    return FALSE;
++}
++
+ /**
+  * manette_device_get_guid:
+  * @self: a #ManetteDevice
+@@ -815,17 +878,9 @@ manette_device_remove_user_mapping (ManetteDevice *self)
+ gboolean
+ manette_device_has_rumble (ManetteDevice *self)
+ {
+-  gulong features[4];
+-
+   g_return_val_if_fail (MANETTE_IS_DEVICE (self), FALSE);
+ 
+-  if (ioctl (self->fd, EVIOCGBIT (EV_FF, sizeof (gulong) * 4), features) == -1)
+-    return FALSE;
+-
+-  if (!((features[FF_RUMBLE / (sizeof (glong) * 8)] >> FF_RUMBLE % (sizeof (glong) * 8)) & 1))
+-    return FALSE;
+-
+-  return TRUE;
++  return self->has_rumble;
+ }
+ 
+ /**
+diff --git a/src/manette-monitor.c b/src/manette-monitor.c
+--- a/src/manette-monitor.c
++++ b/src/manette-monitor.c
+@@ -32,10 +32,17 @@
+ #else
+  #include <gio/gio.h>
+ #endif
++#include <errno.h>
++#include <fcntl.h>
++#include <unistd.h>
+ #include "manette-device-private.h"
+ #include "manette-mapping-manager-private.h"
+ #include "manette-monitor-iter-private.h"
+ 
++#ifdef WAYLAND_INPUTFD_ENABLED
++ #include "manette-wayland-inputfd-private.h"
++#endif
++
+ #ifndef GUDEV_ENABLED
+ #define INPUT_DIRECTORY "/dev/input"
+ #endif
+@@ -45,7 +52,9 @@ struct _ManetteMonitor {
+ 
+   GHashTable *devices;
+   ManetteMappingManager *mapping_manager;
+-#ifdef GUDEV_ENABLED
++#if defined(WAYLAND_INPUTFD_ENABLED)
++  ManetteWaylandInputFd *wayland_inputfd;
++#elif defined(GUDEV_ENABLED)
+   GUdevClient *client;
+ #else
+   GFileMonitor *monitor;
+@@ -93,22 +102,24 @@ load_mapping (ManetteMonitor *self,
+ }
+ 
+ static void
+-add_device (ManetteMonitor *self,
+-            const gchar    *filename)
++add_device_with_fd (ManetteMonitor *self,
++                    const gchar    *name,
++                    int             fd)
+ {
+   g_autoptr (ManetteDevice) device = NULL;
+   g_autoptr (GError) error = NULL;
+ 
+   g_assert (self != NULL);
+-  g_assert (filename != NULL);
++  g_assert (name != NULL);
+ 
+-  if (g_hash_table_contains (self->devices, filename))
++  if (g_hash_table_contains (self->devices, name)) {
++    close (fd);
+     return;
++  }
+ 
+-  device = manette_device_new (filename, &error);
++  device = manette_device_new (fd, &error);
+   if (G_UNLIKELY (error != NULL)) {
+-    if (!g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NXIO))
+-      g_debug ("Failed to open %s: %s", filename, error->message);
++    g_debug ("Failed to create ManetteDevice: %s", error->message);
+ 
+     return;
+   }
+@@ -116,11 +127,34 @@ add_device (ManetteMonitor *self,
+   load_mapping (self, device);
+ 
+   g_hash_table_insert (self->devices,
+-                       g_strdup (filename),
++                       g_strdup (name),
+                        g_object_ref (device));
+   g_signal_emit (self, signals[SIG_DEVICE_CONNECTED], 0, device);
+ }
+ 
++static void
++add_device (ManetteMonitor *self,
++            const gchar    *filename)
++{
++  int fd;
++
++  g_assert (self != NULL);
++  g_assert (filename != NULL);
++
++  if (g_hash_table_contains (self->devices, filename))
++    return;
++
++  fd = open (filename, O_CLOEXEC | O_RDWR | O_NONBLOCK, (mode_t) 0);
++  if (fd < 0) {
++    if (errno != ENXIO)
++      g_debug ("Failed to open %s: %s", filename, strerror (errno));
++
++    return;
++  }
++
++  add_device_with_fd (self, filename, fd);
++}
++
+ static void
+ remove_device (ManetteMonitor *self,
+                const gchar    *filename)
+@@ -138,7 +172,89 @@ remove_device (ManetteMonitor *self,
+   g_object_unref (device);
+ }
+ 
+-#ifdef GUDEV_ENABLED /* BACKEND GUDEV */
++#if defined(WAYLAND_INPUTFD_ENABLED) /* BACKEND WAYLAND */
++
++static void
++wayland_inputfd_device_focus_in_cb (ManetteWaylandInputFd *sender,
++                                    const gchar           *uuid,
++                                    gint                   fd,
++                                    ManetteMonitor        *self)
++{
++  int dup_fd;
++  ManetteDevice *device;
++
++  // Need to dup fd as the caller owns it and will probably close it
++  // after this callback
++  dup_fd = fcntl (fd, F_DUPFD_CLOEXEC, 3);
++  if (dup_fd < 0)
++    return;
++
++  device = g_hash_table_lookup (self->devices, uuid);
++  if (device == NULL) {
++    add_device_with_fd (self, uuid, dup_fd);
++
++    // Check if the device is revoked, if so we may not have got all
++    // the device info, so immediately remove the device and wait
++    // till we get a focus_in event again with a new fd
++    device = g_hash_table_lookup (self->devices, uuid);
++    if (device && manette_device_revoked (device))
++      remove_device (self, uuid);
++
++  } else {
++    manette_device_change_fd (device, dup_fd);
++  }
++}
++
++static void
++wayland_inputfd_device_removed_cb (ManetteWaylandInputFd *sender,
++                                   const gchar           *uuid,
++                                   ManetteMonitor        *self)
++{
++  remove_device (self, uuid);
++}
++
++static void
++coldplug_devices (ManetteMonitor *self)
++{
++  // No need to do anything here as the wayland protocol emits events
++  // for devices already added when you connect.
++}
++
++static void
++init_backend (ManetteMonitor *self)
++{
++  g_autoptr (GError) error = NULL;
++
++  self->wayland_inputfd = manette_wayland_inputfd_new (&error);
++  if (G_UNLIKELY (error != NULL)) {
++    g_debug ("%s", error->message);
++
++    return;
++  }
++
++  // We ignore the 'device-added' signal as we only tell the client about the
++  // device when it has the focus, this is bcause we only get the evdev fd
++  // when have the focus and a ManetteDevice wraps an fd.
++
++  g_signal_connect_object (self->wayland_inputfd,
++                           "device-focus-in",
++                           (GCallback) wayland_inputfd_device_focus_in_cb,
++                           self,
++                           0);
++
++  // Also ignore the 'device-focus-out' signal for now, as the device can
++  // still hold a revoked fd, it will receive a new fd if / when device goes
++  // in focus again.
++
++  g_signal_connect_object (self->wayland_inputfd,
++                           "device-removed",
++                           (GCallback) wayland_inputfd_device_removed_cb,
++                           self,
++                           0);
++
++}
++
++#elif defined(GUDEV_ENABLED) /* BACKEND GUDEV */
+ 
+ static void
+ add_device_for_udev_device (ManetteMonitor *self,
+@@ -425,7 +541,9 @@ manette_monitor_finalize (GObject *object)
+ {
+   ManetteMonitor *self = MANETTE_MONITOR (object);
+ 
+-#ifdef GUDEV_ENABLED
++#if defined(WAYLAND_INPUTFD_ENABLED)
++  g_clear_object (&self->wayland_inputfd);
++#elif defined(GUDEV_ENABLED)
+   g_clear_object (&self->client);
+ #else
+   g_clear_object (&self->monitor);
+diff --git a/src/manette-wayland-inputfd-private.h b/src/manette-wayland-inputfd-private.h
+new file mode 100644
+--- /dev/null
++++ b/src/manette-wayland-inputfd-private.h
+@@ -0,0 +1,37 @@
++/* manette-wayland-inputfd.h
++ *
++ * Copyright (C) 2023 Sky UK
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation; either version 2.1 of the
++ * License, or (at your option) any later version.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#pragma once
++
++#if !defined(__MANETTE_INSIDE__) && !defined(MANETTE_COMPILATION)
++# error "Only <libmanette.h> can be included directly."
++#endif
++
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++#define MANETTE_TYPE_WAYLAND_INPUTFD (manette_wayland_inputfd_get_type())
++
++G_DECLARE_FINAL_TYPE (ManetteWaylandInputFd, manette_wayland_inputfd, MANETTE, WAYLAND_INPUTFD, GObject)
++
++
++ManetteWaylandInputFd *manette_wayland_inputfd_new (GError **error);
++
++G_END_DECLS
++
+diff --git a/src/manette-wayland-inputfd.c b/src/manette-wayland-inputfd.c
+new file mode 100644
+--- /dev/null
++++ b/src/manette-wayland-inputfd.c
+@@ -0,0 +1,467 @@
++/* manette-wayland-inputfd.c
++ *
++ * Copyright (C) 2023 Sky UK
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation; either version 2.1 of the
++ * License, or (at your option) any later version.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "manette-wayland-inputfd-private.h"
++#include "inputfd-v1-client-protocol.h"
++
++#include <wayland-client.h>
++
++#include <unistd.h>
++
++struct _ManetteWaylandInputFd {
++  GObject parent_instance;
++
++  GSource *source;
++  struct wl_display *display;
++  struct wl_registry *registry;
++  struct wl_seat *seat;
++  struct wp_inputfd_manager_v1 *manager;
++  struct wp_inputfd_seat_evdev_v1 *seat_evdev;
++
++  GHashTable *devices;
++};
++
++G_DEFINE_TYPE (ManetteWaylandInputFd, manette_wayland_inputfd, G_TYPE_OBJECT)
++
++enum {
++  SIG_DEVICE_ADDED,
++  SIG_DEVICE_FOCUS_IN,
++  SIG_DEVICE_FOCUS_OUT,
++  SIG_DEVICE_REMOVED,
++  N_SIGNALS,
++};
++
++static guint signals[N_SIGNALS];
++
++struct ManetteWaylandDevice_ {
++  gchar *uuid;
++  gchar *name;
++  guint vendor_id;
++  guint product_id;
++};
++
++typedef struct ManetteWaylandDevice_ ManetteWaylandDevice;
++
++/* Private */
++
++static void
++manette_wayland_device_free (ManetteWaylandDevice *device)
++{
++  if (device) {
++    g_free (device->uuid);
++    g_free (device->name);
++    g_free (device);
++  }
++}
++
++static void
++manette_wayland_inputfd_init (ManetteWaylandInputFd *self)
++{
++}
++
++
++static void
++wayland_inputfd_device_evdev_name (void                              *data,
++                                   struct wp_inputfd_device_evdev_v1 *device_evdev,
++                                   const char                        *name)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (device) {
++    g_free (device->name);
++    device->name = g_strdup (name);
++
++  } else {
++    device = g_new0 (ManetteWaylandDevice, 1);
++    device->uuid = g_uuid_string_random ();
++    device->name = g_strdup (name);
++
++    g_hash_table_insert (self->devices,
++                         device_evdev,
++                         device);
++  }
++}
++
++static void
++wayland_inputfd_device_evdev_usb_id (void                              *data,
++                                     struct wp_inputfd_device_evdev_v1 *device_evdev,
++                                     uint32_t                           vid,
++                                     uint32_t                           pid)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (device) {
++    device->vendor_id = vid;
++    device->product_id = pid;
++
++  } else {
++    device = g_new0 (ManetteWaylandDevice, 1);
++    device->uuid = g_uuid_string_random ();
++    device->vendor_id = vid;
++    device->product_id = pid;
++
++    g_hash_table_insert (self->devices,
++                         device_evdev,
++                         device);
++  }
++}
++
++static void
++wayland_inputfd_device_evdev_done (void                              *data,
++                                   struct wp_inputfd_device_evdev_v1 *device_evdev)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (!device) {
++    device = g_new0 (ManetteWaylandDevice, 1);
++    device->uuid = g_uuid_string_random ();
++
++    g_hash_table_insert (self->devices,
++                         device_evdev,
++                         device);
++  }
++
++  g_signal_emit (self, signals[SIG_DEVICE_ADDED], 0,
++                 device->uuid, device->name,
++                 device->vendor_id, device->product_id);
++}
++
++static void
++wayland_inputfd_device_evdev_removed (void                              *data,
++                                      struct wp_inputfd_device_evdev_v1 *device_evdev)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++  gchar *uuid;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (device) {
++    uuid = device->uuid;
++    device->uuid = NULL;
++
++    g_hash_table_remove (self->devices, device_evdev);
++
++    g_signal_emit (self, signals[SIG_DEVICE_REMOVED], 0, uuid);
++    g_free (uuid);
++  }
++
++  wp_inputfd_device_evdev_v1_destroy (device_evdev);
++}
++
++static void
++wayland_inputfd_device_evdev_focus_in (void                              *data,
++                                       struct wp_inputfd_device_evdev_v1 *device_evdev,
++                                       uint32_t                           serial G_GNUC_UNUSED,
++                                       int32_t                            fd,
++                                       struct wl_surface                 *surface G_GNUC_UNUSED)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (device) {
++    g_signal_emit (self, signals[SIG_DEVICE_FOCUS_IN], 0, device->uuid, fd);
++
++    if (fd >= 0)
++      close (fd);
++  }
++}
++
++static void
++wayland_inputfd_device_evdev_focus_out (void                              *data,
++                                        struct wp_inputfd_device_evdev_v1 *device_evdev)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++  ManetteWaylandDevice *device;
++
++  device = g_hash_table_lookup (self->devices, device_evdev);
++  if (device) {
++    g_signal_emit (self, signals[SIG_DEVICE_FOCUS_OUT], 0, device->uuid);
++  }
++}
++
++static const struct wp_inputfd_device_evdev_v1_listener
++wayland_inputfd_device_evdev_listener = {
++  .name = wayland_inputfd_device_evdev_name,
++  .usb_id = wayland_inputfd_device_evdev_usb_id,
++  .done = wayland_inputfd_device_evdev_done,
++  .removed = wayland_inputfd_device_evdev_removed,
++  .focus_in = wayland_inputfd_device_evdev_focus_in,
++  .focus_out = wayland_inputfd_device_evdev_focus_out
++};
++
++static void
++wayland_inputfd_evdev_added (void                              *data,
++                             struct wp_inputfd_seat_evdev_v1   *evdev_seat G_GNUC_UNUSED,
++                             struct wp_inputfd_device_evdev_v1 *evdev_device)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++
++  // wait till we've received all the device info and a 'done' event before
++  // signalling a new device is added
++
++  wp_inputfd_device_evdev_v1_add_listener (evdev_device,
++                                           &wayland_inputfd_device_evdev_listener,
++                                           self);
++  wp_inputfd_device_evdev_v1_set_user_data (evdev_device,
++                                            self);
++}
++
++static const struct wp_inputfd_seat_evdev_v1_listener
++wayland_inputfd_seat_evdev_listener = {
++  .device_added = wayland_inputfd_evdev_added,
++};
++
++
++static void
++wayland_seat_capabilities (void           *data G_GNUC_UNUSED,
++                           struct wl_seat *wl_seat G_GNUC_UNUSED,
++                           uint32_t        capabilities G_GNUC_UNUSED)
++{
++}
++
++static void
++wayland_seat_name (void           *data G_GNUC_UNUSED,
++                   struct wl_seat *wl_seat G_GNUC_UNUSED,
++                   const char     *name G_GNUC_UNUSED)
++{
++}
++
++static const struct wl_seat_listener
++wayland_seat_listener = {
++  .capabilities = wayland_seat_capabilities,
++  .name = wayland_seat_name,
++};
++
++
++static void
++wayland_registry_global (void               *data,
++                         struct wl_registry *registry,
++                         uint32_t            name,
++                         const char         *interface,
++                         uint32_t            version)
++{
++  ManetteWaylandInputFd *self = (ManetteWaylandInputFd*) data;
++
++  if (strcmp (interface, wl_seat_interface.name) == 0) {
++    self->seat = (struct wl_seat*) wl_registry_bind (registry,
++                                                     name,
++                                                     &wl_seat_interface,
++                                                     version);
++    wl_seat_add_listener (self->seat, &wayland_seat_listener, self);
++
++  } else if (strcmp (interface, wp_inputfd_manager_v1_interface.name) == 0) {
++    self->manager = (struct wp_inputfd_manager_v1*) wl_registry_bind (registry,
++                                                                      name,
++                                                                      &wp_inputfd_manager_v1_interface,
++                                                                      version);
++  }
++
++  if (!self->seat_evdev && self->seat && self->manager) {
++    self->seat_evdev = wp_inputfd_manager_v1_get_seat_evdev (self->manager,
++                                                             self->seat);
++    wp_inputfd_seat_evdev_v1_add_listener (self->seat_evdev,
++                                           &wayland_inputfd_seat_evdev_listener,
++                                           self);
++
++    wl_display_flush (self->display);
++  }
++}
++
++static void
++wayland_registry_global_remove(void               *data,
++                               struct wl_registry *registry,
++                               uint32_t            name)
++{
++  // TODO: clean-up needed
++
++}
++
++static const struct wl_registry_listener
++wayland_registry_listener = {
++  .global = wayland_registry_global,
++  .global_remove = wayland_registry_global_remove,
++};
++
++static gboolean
++wayland_socket_event (GIOChannel            *source G_GNUC_UNUSED,
++                      GIOCondition           condition G_GNUC_UNUSED,
++                      ManetteWaylandInputFd *self)
++{
++  if (wl_display_dispatch (self->display) < 0) {
++    g_debug ("Wayland dispatch failed");
++    return G_SOURCE_REMOVE;
++  }
++
++  return G_SOURCE_CONTINUE;
++}
++
++/* Public */
++
++/**
++ * manette_wayland_inputfd_new:
++ *
++ * Creates a new #ManetteWaylandInputFd object connected to the
++ * wayland display, if couldn't connect or any other error occurred
++ * then NULL is returned.
++ *
++ * Returns: (transfer full): a new #ManetteWaylandInputFd
++ */
++ManetteWaylandInputFd *
++manette_wayland_inputfd_new (GError **error)
++{
++  g_autoptr (ManetteWaylandInputFd) self = NULL;
++  g_autoptr (GIOChannel) channel = NULL;
++
++  self = (ManetteWaylandInputFd*) g_object_new (MANETTE_TYPE_WAYLAND_INPUTFD, NULL);
++
++  self->devices = g_hash_table_new_full (g_direct_hash, g_direct_equal,
++                                         NULL, (GDestroyNotify)manette_wayland_device_free);
++
++  self->display = wl_display_connect (NULL);
++  if (!self->display) {
++    g_set_error (error,
++                 G_FILE_ERROR,
++                 G_FILE_ERROR_FAILED,
++                 "failed to connect to wayland display");
++
++    return NULL;
++  }
++
++  channel = g_io_channel_unix_new (wl_display_get_fd (self->display));
++  self->source = g_io_create_watch (channel, G_IO_IN | G_IO_ERR | G_IO_HUP);
++  g_source_set_callback (self->source, (GSourceFunc) &wayland_socket_event, self, NULL);
++  g_source_attach (self->source, g_main_context_get_thread_default ());
++
++
++  self->registry = wl_display_get_registry (self->display);
++  if (!self->registry) {
++    g_set_error (error,
++                 G_FILE_ERROR,
++                 G_FILE_ERROR_FAILED,
++                 "failed to get wl_registry");
++
++    wl_display_disconnect(self->display);
++    return NULL;
++  }
++
++  wl_registry_add_listener (self->registry, &wayland_registry_listener, self);
++  wl_display_flush (self->display);
++
++  return g_steal_pointer (&self);
++}
++
++/* Type */
++
++static void
++manette_wayland_inputfd_finalize (GObject *object)
++{
++  ManetteWaylandInputFd *self = MANETTE_WAYLAND_INPUTFD (object);
++
++  if (self->source) {
++    g_source_destroy (self->source);
++    g_source_unref (self->source);
++  }
++
++  if (self->registry)
++    wl_registry_destroy (self->registry);
++  if (self->display)
++    wl_display_disconnect (self->display);
++
++  g_clear_pointer (&self->devices, g_hash_table_unref);
++
++  G_OBJECT_CLASS (manette_wayland_inputfd_parent_class)->finalize (object);
++}
++
++static void
++manette_wayland_inputfd_class_init (ManetteWaylandInputFdClass *klass)
++{
++  manette_wayland_inputfd_parent_class = g_type_class_peek_parent (klass);
++  G_OBJECT_CLASS (klass)->finalize = manette_wayland_inputfd_finalize;
++
++  /**
++   * ManetteWaylandInputFd::device-added:
++   * @self: a #ManetteWaylandInputFd
++   * @uuid: uuid for the device
++   * @name: the device name string
++   * @vid: the device usb vendor id
++   * @pid: the device usb product id
++   *
++   * Emitted when a device is added.
++   */
++  signals[SIG_DEVICE_ADDED] =
++    g_signal_new ("device-added",
++                  MANETTE_TYPE_WAYLAND_INPUTFD,
++                  G_SIGNAL_RUN_LAST,
++                  0, NULL, NULL, NULL,
++                  G_TYPE_NONE, 4,
++                  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
++
++  /**
++   * ManetteWaylandInputFd::device-focus-in:
++   * @self: a #ManetteWaylandInputFd
++   * @uuid: uuid for the device
++   * @fd: the evdev file descriptor
++   *
++   * Emitted when a device has the focus.
++   */
++  signals[SIG_DEVICE_FOCUS_IN] =
++    g_signal_new ("device-focus-in",
++                  MANETTE_TYPE_WAYLAND_INPUTFD,
++                  G_SIGNAL_RUN_LAST,
++                  0, NULL, NULL, NULL,
++                  G_TYPE_NONE, 2,
++                  G_TYPE_STRING, G_TYPE_INT);
++
++  /**
++   * ManetteWaylandInputFd::device-focus-out:
++   * @self: a #ManetteWaylandInputFd
++   * @uuid: uuid for the device
++   *
++   * Emitted when a device has lost focus.
++   */
++  signals[SIG_DEVICE_FOCUS_OUT] =
++    g_signal_new ("device-focus-out",
++                  MANETTE_TYPE_WAYLAND_INPUTFD,
++                  G_SIGNAL_RUN_LAST,
++                  0, NULL, NULL, NULL,
++                  G_TYPE_NONE, 1,
++                  G_TYPE_STRING);
++
++  /**
++   * ManetteWaylandInputFd::device-removed:
++   * @self: a #ManetteMonitor
++   * @uuid: uuid for the device
++   *
++   * Emitted when a device has been removed
++   */
++  signals[SIG_DEVICE_REMOVED] =
++    g_signal_new ("device-removed",
++                  MANETTE_TYPE_WAYLAND_INPUTFD,
++                  G_SIGNAL_RUN_LAST,
++                  0, NULL, NULL, NULL,
++                  G_TYPE_NONE, 1,
++                  G_TYPE_STRING);
++
++}
+diff --git a/src/meson.build b/src/meson.build
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -63,6 +63,36 @@ if gudev.found()
+   libmanette_deps += [ gudev ]
+ endif
+ 
++
++if get_option('wayland-inputfd')
++  wayland_scanner = find_program('wayland-scanner')
++  client_header = custom_target('inputfd-v1 client header',
++    input: 'protocols/inputfd-v1.xml',
++    output: 'inputfd-v1-client-protocol.h',
++    command: [
++      wayland_scanner,
++      'client-header',
++      '@INPUT@', '@OUTPUT@',
++    ]
++  )
++  protocol_code = custom_target('inputfd-v1 source',
++    input: 'protocols/inputfd-v1.xml',
++    output: 'inputfd-v1-protocol.c',
++    command: [
++      wayland_scanner,
++      'private-code',
++      '@INPUT@', '@OUTPUT@',
++    ]
++  )
++  libmanette_sources += [
++    client_header,
++    protocol_code,
++    'manette-wayland-inputfd.c',
++  ]
++  libmanette_deps += [ wayland_client ]
++  libmanette_c_args += [ '-DWAYLAND_INPUTFD_ENABLED' ]
++endif
++
+ libmanette_lib = shared_library(
+   libmanette_module,
+   libmanette_sources,
+diff --git a/src/protocols/inputfd-v1.xml b/src/protocols/inputfd-v1.xml
+new file mode 100644
+--- /dev/null
++++ b/src/protocols/inputfd-v1.xml
+@@ -0,0 +1,268 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<protocol name="inputfd_v1">
++  <copyright>
++    Copyright 2017 © Red Hat, Inc.
++
++    Permission is hereby granted, free of charge, to any person
++    obtaining a copy of this software and associated documentation files
++    (the "Software"), to deal in the Software without restriction,
++    including without limitation the rights to use, copy, modify, merge,
++    publish, distribute, sublicense, and/or sell copies of the Software,
++    and to permit persons to whom the Software is furnished to do so,
++    subject to the following conditions:
++
++    The above copyright notice and this permission notice (including the
++    next paragraph) shall be included in all copies or substantial
++    portions of the Software.
++
++    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++    NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++    BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++    ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++    SOFTWARE.
++  </copyright>
++
++  <description summary="Wayland protocol for direct fd access to input devices">
++    This description provides a high-level overview of the interfaces
++    in this protocol. For details, see the protocol specification.
++
++    Some input devices do not interact with the windowing system. Examples
++    of such input devices are gaming controllers or 3D mice. In many cases,
++    a client requires direct access to the device to access or interpret
++    device-specific functionality.
++
++    This interface provides client access to input devices via a file
++    descriptor (fd). The compositor may restrict the type of device
++    accessible and it may restrict specific events from being sent to the
++    client (e.g.  by masking the Home button on a gamepad). Otherwise, a
++    client should treat the device as if opened manually.
++
++    Multiple input devices may exists and be assigned to different seats.
++    The top-level object of this protocol is a wp_inputfd_manager. A client
++    must request the desired interface for a given seat. This object then
++    provides the list of devices for that category that match the fd type of
++    that interface. At the moment, only the evdev fd type is supported but in
++    the future, a device may be accessible via multiple fd interfaces.
++
++    Once a compositor deems a device to be focused on the client or on a
++    client's surface it sends a focus_in event with a file descriptor for
++    this device. A compositor may arbitrarily revoke access
++    to the device by sending a wp_inputfd.focus_out. Additionally, a
++    compositor may invoke system functionality to restrict access to the
++    file descriptor, e.g. by using EVIOCREVOKE on an evdev fd.
++
++    Otherwise, a client should treat the file descriptor as direct access to
++    the device for the duration of it having access.
++
++    Warning! The protocol described in this file is experimental and
++    backward incompatible changes may be made. Backward compatible changes
++    may be added together with the corresponding interface version bump.
++    Backward incompatible changes are done by bumping the version number in
++    the protocol and interface names and resetting the interface version.
++    Once the protocol is to be declared stable, the 'z' prefix and the
++    version number in the protocol and interface names are removed and the
++    interface version number is reset.
++  </description>
++
++  <interface name="wp_inputfd_manager_v1" version="1">
++    <description summary="controller object for direct fd access input devices">
++      An object that provides access to the input devices available for
++      direct fd access on this system. All input devices are associated with
++      a seat, to get access to the actual devices use
++      wp_inputfd_manager.get_seat_evdev.
++    </description>
++
++    <request name="get_seat_evdev">
++      <description summary="get the evdev seat for receiving device notifications">
++	Get the wp_inputfd_seat_evdev object for the given seat. This object
++	provides access to all exposed devices in this seat via
++	evdev-compatible file descriptors.
++
++	The decision which device is available through this interface is
++	made by the compositor. The protocol makes no guarantees whether a
++	specific device is available through this interface.
++      </description>
++      <arg name="inputfd_seat" type="new_id" interface="wp_inputfd_seat_evdev_v1"/>
++      <arg name="seat" type="object" interface="wl_seat" summary="The wl_seat object to retrieve the input devices for" />
++    </request>
++
++    <request name="destroy" type="destructor">
++      <description summary="release the memory for the inputfd manager object">
++	Destroy the wp_inputfd_manager object. Objects created from this
++	object are unaffected and should be destroyed separately.
++      </description>
++    </request>
++  </interface>
++
++  <interface name="wp_inputfd_seat_evdev_v1" version="1">
++    <description summary="controller object for input devices of a seat">
++      An object that provides access to the input devices available on this
++      seat via an evdev-compatible file descriptor. After binding to this
++      interface, the compositor immediately sends a set of
++      wp_inputfd_seat_evdev.device_added events for currently available
++      devices and later whenever a new device becomes available.
++    </description>
++
++    <request name="destroy" type="destructor">
++      <description summary="release the memory for the inputfd seat object">
++	Destroy the wp_inputfd_seat_evdev object. Objects created from this
++	object are unaffected and should be destroyed separately.
++      </description>
++    </request>
++
++    <event name="device_added">
++      <description summary="new device notification">
++	This event is sent whenever a new device becomes available on
++	this seat. This event only provides the object id of the devices,
++	any static information about the device (device name,
++	vid/pid, etc.) is sent through the wp_inputfd_device_evdev interface.
++
++	Which devices are compatible input devices for this seat is a
++	decision made by the compositor, the protocol makes no guarantee
++	that any specific device becomes available to a client.
++      </description>
++      <arg name="id" type="new_id" interface="wp_inputfd_device_evdev_v1"
++	summary="the newly added device"/>
++    </event>
++  </interface>
++
++  <interface name="wp_inputfd_device_evdev_v1" version="1">
++    <description summary="evdev-compatible inputfd device">
++      The wp_inputfd_device_evdev interface represents one device node
++      in the Linux kernel evdev interface. The fd passed to the client
++      supports the ioctls and read/write commands of that interface. The
++      protocol makes no guarantees which ioctls are available on the fd,
++      this decision is made by the kernel.
++
++      A device has a number of static characteristics, e.g. device
++      name and pid/vid. These capabilities are sent in an event sequence
++      immediately after the wp_inputfd_seat.device_added event. This initial
++      event sequence is terminated by a wp_inputfd_device_evdev.done event. This
++      sequence is sent only once and always before the first
++      wp_inputfd_device.focus_in event.
++
++      A device is the representation of a logical device as exposed by the
++      underlying system and may only represent parts of a single physical
++      input device. It is the client's task to identify the device as part
++      of a physical device and to group the logical devices together as
++      appropriate.
++    </description>
++
++    <request name="destroy" type="destructor">
++      <description summary="destroy the inputfd object">
++	This destroys the client's resource for this inputfd object.
++      </description>
++    </request>
++
++    <event name="name">
++      <description summary="device name">
++	The name is a UTF-8 encoded string with the device's name, intended
++	for presentation to the user.
++
++	This event is sent in the initial burst of events before the
++	wp_inputfd_device_evdev.done event.
++
++	This event is optional, if the required information is not available
++	for this device the event is omitted.
++      </description>
++      <arg name="name" type="string" summary="the device name"/>
++    </event>
++
++    <event name="usb_id">
++      <description summary="device USB vendor/product id">
++	This event is sent in the initial burst of events before the
++	wp_inputfd_device_evdev.done event.
++
++	This event is optional, if the required information is not available
++	for this device the event is omitted.
++      </description>
++      <arg name="vid" type="uint" summary="USB vendor id"/>
++      <arg name="pid" type="uint" summary="USB product id"/>
++    </event>
++
++    <event name="done">
++      <description summary="device description events sequence complete">
++	This event is sent immediately to signal the end of the initial
++	burst of descriptive events. A client may consider the static
++	description of the device to be complete and finalize
++	initialization of the device.
++      </description>
++    </event>
++
++    <event name="removed">
++      <description summary="device removed event">
++	Sent when the device has been removed from the system.
++
++	If the client currently has the device focus, a
++	wp_inputfd_device_evdev.focus_out event is sent before the removed
++	event. See wp_inputfd_device.focus_in for more details.
++
++	When this event is received, the client must
++	wp_inputfd_device_evdev.destroy the object.
++      </description>
++    </event>
++
++    <event name="focus_in">
++      <description summary="input fd device focus in event">
++	Notification that this client now has the focus and/or access to
++	this device. How focus is set is left to the
++	compositor. For example, a compositor may tie joystick focus to the
++	wl_pointer focus of this seat. The protocol does not guarantee that
++	any specific client ever receives the focus for a device.
++
++	The client is passed a file descriptor with access to this
++	device. This file descriptor is valid until a subsequent
++	wp_inputfd_device_evdev.focus_out event. Upon
++	wp_inputfd_device_evdev.focus_out, the compositor may revoke the fd
++	and further operations will fail.
++
++	However, due to potential race conditions a client must be able to
++	handle errors as if it opened the fd itself. No guarantee is given
++	that the wp_inputfd_device_evdev.focus_out event or
++	wp_inputfd_device_evdev.removed event are sent before the client
++	encounters an error on the file descriptor.
++
++	A compositor guarantees the file descriptor for a
++	wp_inputfd_device_evdev refers to the same kernel device after each
++	focus_in event. In other words, any constant information about the
++	device obtained through the fd (e.g. the EVIOCGPROP ioctl) is
++	the same after each focus in event. Thus, a client needs to do so
++	only once at the first focus_in. This guarantee does not extend to
++	information that the kernel may change at runtime (e.g. the
++	EVIOCGABS ioctl).
++
++	If applicable, this event contains the surface that has the focus.
++	In some cases, the focus may not be tied to a specific client surface
++	but is given to the client independent of any surface. In that case,
++	the surface is null.
++
++	The protocol guarantees that focus_in and focus_out always come in
++	pairs. If the client currently has the focus and the device is
++	removed, a focus_out event is sent to the client before the
++	wp_inputfd_device_evdev.removed event.
++      </description>
++      <arg name="serial" type="uint"/>
++      <arg name="fd" type="fd" summary="file descriptor to the device"/>
++      <arg name="surface" type="object" interface="wl_surface"
++	summary="The current surface that has the device's focus" allow-null="true"/>
++    </event>
++
++    <event name="focus_out">
++      <description summary="input fd device focus out event">
++	Notification that this client no longer has focus and/or access to
++	this device. Further reads from this device's file descriptor
++	may fail. The client must close(2) the file descriptor received in
++	the wp_inputfd_device_evdev.focus_in event.
++
++	This event does not mean the device was removed, merely that the
++	device is focused elsewhere. For device removal, see
++	wp_inputfd_device_evdev.removed.
++
++	See wp_inputfd_device_evdev.focus_in for more details.
++      </description>
++    </event>
++  </interface>
++</protocol>

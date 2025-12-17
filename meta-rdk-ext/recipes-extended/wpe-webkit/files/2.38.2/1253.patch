@@ -1,0 +1,68 @@
+From 55890f945dc2f11f00b3606d1213a803207fbf96 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Fri, 8 Dec 2023 17:08:31 +0000
+Subject: [PATCH] Blob should report memory cost
+
+Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+---
+ Source/WebCore/fileapi/Blob.cpp | 6 ++++++
+ Source/WebCore/fileapi/Blob.h   | 4 ++++
+ Source/WebCore/fileapi/Blob.idl | 1 +
+ 3 files changed, 11 insertions(+)
+
+diff --git a/Source/WebCore/fileapi/Blob.cpp b/Source/WebCore/fileapi/Blob.cpp
+index 2e38e6fe2847f..ae3fd171d69e2 100644
+--- a/Source/WebCore/fileapi/Blob.cpp
++++ b/Source/WebCore/fileapi/Blob.cpp
+@@ -155,6 +155,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
+     , m_type(contentType)
+     , m_size(data.size())
+     , m_internalURL(BlobURL::createInternalURL())
++    , m_memoryCost(data.size())
+ {
+     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
+ }
+@@ -383,4 +384,9 @@ WebCoreOpaqueRoot root(Blob* blob)
+     return WebCoreOpaqueRoot { blob };
+ }
+ 
++size_t Blob::memoryCost() const
++{
++    return m_memoryCost;
++}
++
+ } // namespace WebCore
+diff --git a/Source/WebCore/fileapi/Blob.h b/Source/WebCore/fileapi/Blob.h
+index 9da60a1e76961..613003af3c8b2 100644
+--- a/Source/WebCore/fileapi/Blob.h
++++ b/Source/WebCore/fileapi/Blob.h
+@@ -121,6 +121,8 @@ class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Bl
+     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
+     BlobURLHandle handle() const;
+ 
++    size_t memoryCost() const;
++
+ protected:
+     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
+     Blob(ScriptExecutionContext&, Vector<BlobPartVariant>&&, const BlobPropertyBag&);
+@@ -153,6 +155,8 @@ class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Bl
+     URL m_internalURL;
+ 
+     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
++
++    std::atomic<size_t> m_memoryCost { 0 };
+ };
+ 
+ WebCoreOpaqueRoot root(Blob*);
+diff --git a/Source/WebCore/fileapi/Blob.idl b/Source/WebCore/fileapi/Blob.idl
+index 5c257903e1d09..ec39356ef72f5 100644
+--- a/Source/WebCore/fileapi/Blob.idl
++++ b/Source/WebCore/fileapi/Blob.idl
+@@ -36,6 +36,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
+     Exposed=(Window,Worker),
+     GenerateIsReachable=Impl,
+     CustomToJSObject,
++    ReportExtraMemoryCost,
+ ] interface Blob {
+     [CallWith=CurrentScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
+ 

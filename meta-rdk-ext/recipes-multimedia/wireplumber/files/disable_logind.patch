@@ -1,0 +1,13 @@
+diff --git a/src/config/bluetooth.lua.d/50-bluez-config.lua b/src/config/bluetooth.lua.d/50-bluez-config.lua
+index c3c2e288..e58c4472 100644
+--- a/src/config/bluetooth.lua.d/50-bluez-config.lua
++++ b/src/config/bluetooth.lua.d/50-bluez-config.lua
+@@ -55,7 +55,7 @@ bluez_monitor.properties = {
+   -- pipewire and wireplumber).
+   -- This requires access to the D-Bus user session; disable if you are running
+   -- a system-wide instance of wireplumber.
+-  ["with-logind"] = true,
++  ["with-logind"] = false,
+ }
+ 
+ bluez_monitor.rules = {

@@ -1,0 +1,42 @@
+SUMMARY = "OpenThread Border Router POSIX Daemon"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=87109e44b2fda96a8991f27684a7349c"
+
+SRC_URI = "gitsm://github.com/openthread/ot-br-posix.git;branch=main;protocol=https \
+           file://0001-disable-tests.patch \
+	   file://ot-br-posix.service \
+	   file://otbr-agent-wrapper.sh \
+          "
+SRCREV = "9537b07470dc1cd98ee6c5e3e4486c7ba2223966"
+
+S = "${WORKDIR}/git"
+
+DEPENDS = "boost dbus avahi ot-daemon"
+RDEPENDS_${PN} += "bash ipset"
+
+inherit cmake systemd
+
+EXTRA_OECMAKE = "\
+    -DOTBR_ENABLE_BORDER_ROUTING=ON \
+    -DOTBR_ENABLE_DNSSD_DISCOVERY_PROXY=ON \
+    -DOTBR_ENABLE_NCP=OFF \
+    -DOTBR_ENABLE_CLI=OFF \
+    -DOTBR_ENABLE_NAT64=OFF \
+    -DOTBR_ENABLE_UMDNS=OFF \
+    -DOTBR_ENABLE_BACKBONE_ROUTER=OFF \
+    -DOTBR_ENABLE_VENDOR_EXTENSION=OFF \
+    -DOTBR_ENABLE_TESTS=OFF \
+"
+
+SYSTEMD_SERVICE:${PN} = "ot-br-posix.service"
+SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+
+FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh"
+
+do_install:append() {
+    install -d ${D}/usr/local/bin
+    install -m 0755 ${WORKDIR}/otbr-agent-wrapper.sh ${D}/usr/local/bin/otbr-agent-wrapper.sh
+
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${THISDIR}/files/ot-br-posix.service ${D}${systemd_system_unitdir}/
+}

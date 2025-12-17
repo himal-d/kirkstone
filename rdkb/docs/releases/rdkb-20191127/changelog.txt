@@ -1,0 +1,423 @@
+Changelog between rdkb-20191030 and rdkb-20191127
+
+
+
+project rdk/components/generic/crashupload/
+6d4467b DELIA-38478 : Incorrect date tagging in crash dump URL.
+
+project rdk/components/generic/dca/
+e72dd10 TCXB6-7576: Observed multiple redundant markers appears every 15 mins
+9e92746 RDKB-25177: Used existing alternate method for top
+325969c RDKBCMF-229: tr181 multi-instance return values are now returned in a json array.
+5e79db5 RDKB-24137 : Extending dca for code reuse in telemetry 2.0
+
+project rdk/components/generic/dcm/
+f851050 RDKB-24381 :Modify RFC script
+
+project rdk/components/generic/rdk_logger/
+160e386 RDKB-24315: Integrate Telemetry 2.0 with RDK logger and use RDK_LOG
+544d0c0 RDKC-5604: Create service and add log rotation for iav encoder
+
+project rdk/components/generic/rdm/
+87c1f67 CISCOXB3-5879, DELIA-39098 : Proper cleanup for error scenarios
+257b13b RDKB-23505 : Enforce HTTPs download for Downloadable modules (XB3)
+c61e509 RDKALL-2004: Convert RDK download manager to use json instead of xml
+
+project rdk/components/generic/rfc/
+6dab585 RDKB-25053 : "-eq:unary operator expected" syntax error in Consolelog.txt.0
+0f24e25 RDKB-24381 :Modify RFC script
+25471b3 RDKB-24325 : RFC Setting is Failing for parameter with space inbetween
+7dbf8d1 RDKALL-839 Change CI Xconf endpoint URL for RFC
+
+project rdk/components/generic/xupnp/
+d7e3ebe RDK-25423 : Enabling minidump for xupnp on rdkv
+eca1093 RDKB-24530:No discover or output.json log files in /rdklogs/logs
+1053a8c RDK-23122,DELIA-37729,DELIA-37769: Refactoring of xcal code.
+
+project rdkb/components/generic/CcspLogAgent/
+290a1be ARRISXB6-10312: [SDK7.2] [3.7p2s4] Bootimers high as
+
+project rdkb/components/generic/harvester/
+badf61d RDKB-19596 : Build error in harvester
+c54a02d RDKB-24886 : Need to remove unnecessary psm set calls from traffic reporting
+
+project rdkb/components/generic/startParodus/
+a566fb7 RDKB-24722 : Enclose parodus parameters in quotes and fix Morty build fail
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+4ad48c6 ARRISXB3-9504 : CcspCMAgentSsp app crash due to _stdio_fopen signature
+c3ffbdd INTEL-401 BootFileName buffer is 64Byte but RFC support 255 bytes
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+3537867a RDKB-13484: Tweak moca bridge setup for XF3
+9c8e69cf CISCOXB3-5904, RDKB-25677: XconfHttpDl high CPU
+f10a6ee8 RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+fb6be021 RDKB-328 Common library : dmcli is not throwing any error even when you returning error code ( -1 , in case of get VLAN Name)
+ab74932e TCCBR-3983 : Observed CcspTr069PaSsp: No such file or directory in Console Logs
+6daca32e RDKB-25282 : Crash while exiting from ccsp message bus.
+bd499fdf TCCBR-4047 : Observed Email Notification
+e6789d5c RDKB-25140: [systemd] No log is logged for
+54945cfa RDKB-24883: Image upgrade failed via WebPA [RDKPortal] in ETHWAN mode
+715f9953 RDKB-24722 : Interpret quotes in parodus startup command
+4d5940f0 BWGRDK-486: SNMP get commands return wrong values for Wireless SSIDs
+be6ba7e5 ARRISXB6-10312: [SDK7.2] [3.7p2s4] Bootimers high as
+4049476d BWGRDK-453 : Observing HomeSecurity_process crash
+b8dbb921 RDKB-21091: Add various Reboot reasons in OnBoarding logs
+6b9d702b RDKB-22388 : Adding a custom signal in CCSP to send Telemetry events
+38a16a13 RDKB-24052 : Bootstrap parameter update handling
+
+project rdkb/components/opensource/ccsp/CcspEthAgent/
+3b1db70 RDKB-21091: Add various Reboot reasons in OnBoarding logs
+cd39e36 REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+4233089 RDKCOM-1094: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+c010012 RDKB-24886 : Need to remove unnecessary psm set calls from traffic reporting
+f007943 RDKB-21265: Add OnBoarding logs in CcspLMLite
+6f0e6ec REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+4d7d798 RDKCOM-1093: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+6478a8a RDKB-25047 : Change fragmentation calculation
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+8a57918 RDKB-13484: Fix moca isolation for XF3 platforms
+e59dfc6 XF3-5279:MOCA status not retained across reboot.
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+43fda8e RDKB-25362: Continous CcspMtaAgentSsp crash
+3e3a297 INTEL-401 BootFileName buffer is 64Byte but RFC support 255 bytes
+2119a5b RDKB-24551: eMTA is not obtaining IPv6 Global Address in ethwan mode
+d3b6845 RDKB-24052 : Bootstrap parameter update handling
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+5922b1b SKYH4-1964 : DHCPv4 Server Pool MinAddress is 192.168.0.10.
+92ba688 RDKB-25857 : brlan0 is not having global ipv6 address
+c9bbe50 RDKB-24861 : To fix activation tar being created in test devices
+560e9ca TCXB6-7240 DHCPv6 lease time on LAN longer than WAN lease time
+098dee0 SKYH4-1809 : Correct Sky branding information
+f5fe873 SKYH4-1934 : NTP values are not available in partners_defaults.json.
+c15f0ef RDKCOM-1127: REFPLTB-359: Admin login DMLs not working as expected for RPI a...
+fca6769 RDKB-23505 : Enforce HTTPs download for Downloadable modules (XB3)
+e82be36 RDKB-13484 : Adding TR181 parameters for Home Lan Isolation on XF3
+be7c60d SKYH4-342 : CcspPAM requesting invalid interfaces.
+07729b2 AXB3RETAIL-158,AXB3RETAIL-153:partners_defaults.json update
+c9ebacf RDKALL-1352: RFC to Disable Forward SSH
+e612700 RDKB-25004 : Observing continuous rdkfwupgrader crashes after CDL.
+848b41f ARRISXB6-10223 Observed PAM process crash every three hours
+d26345f RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+893b1aa SKYH4-1780: IPV6 State in wanshow is down if the lease period is changed.
+09cf743 INTEL-385 Port forwarding and Port triggering etc. are not working in sudo bridge mode for brlan1 and multilan bridges
+6c32839 RDKB-349  Routing : Device.Routing.Router.1.Enable with value false doesn't take effect
+32155f6 INTEL-362: Ethernet DataModel mapping is not correct for Ariss Xb6 and PUMA7
+f4f0396 RDKCOM-960: Ethernet DataModel mapping is not correct for Ariss Xb6 and PUMA7
+7996fb1 TCXB7-724,TCXB7-738,TCXB7-739,TCXB7-720 [CcspPandM] Upflow XB7 patches
+a21ee84 RDKB-25343 : CcspPandMSsp using high CPU, memory leaks
+e9ffed0 ARRISXB3-9441 : CcspPandMSsp Crash with Signature CosaDmlDhcpcGetInfo
+d0866e3 RDKB-25093 : Update partners_defaults.json with Cox branding changes
+927302e RDKB-24539: Onboard atom log problem even after factory reset
+69f3ef3 SKYH4-1621: Hardware LAN page is getting slow while loading.
+fbcfc61 RDKB-24957: Observed "zebra is not running, restarting the zebra"
+eb886b4 SKYH4-1453 : Add Sky branding for Hub4
+fd4b1d6 SKYH4-1592 : Implement LanIpv6UlaPrefix data model to hold ULA prefix
+77809e4 SKYH4-1710 : Remove pam-sky-dhcpv6s-fixes.patch due to RDKB build failure
+3b421d2 SKYH4-1658 : Ping to gateway IPv6.
+259278b RDKB-23302 : Line goes into scroll mode
+5488fdf RDKB-20828,RDKB-21306,RDKB-21607 : Add OnBoarding logs in CcspPandM
+1d349cf RDKB-24137 : RFC control for telemetry 2.0
+07dbec8 RDKB-10570: RFC implementation to support refactored UPnP services on XB
+848b5bb RDKALL-1204 : Bootstrap parameter update handling
+94fd4a4 REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+56aa636 RDKCOM-1092: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+c3c1322 SKYH4-1573 : ULA address is not assigned to connected clients on reboot
+4998aff RDKB-24421 Code Development - Adv PC for XB7.
+20fff91 REFPLTB-407 : Added RPI macro to execute the Firmware start and end time
+721fc3c RDKBCMF-232: GUI was showing wrong link local IPv6 address
+bc4ff62 RDKBCMF-231: DMCLI is returning invalid IPV4 address
+4f7ab96 RDKCOM-1108: REFPLTB-407 : Added RPI macro to execute the Firmware start and...
+ff71982 RDKCOM-1091 : DMCLI is returning invalid IPV4 address
+c1cd650 RDKCOM-1103 : GUI was showing wrong link local IPv6 address
+3642c01 RDKALL-839: Change CI Xconf endpoint URL for RFC and DCM
+bbd9ffd SKYH4-1587: Map-T datamodel values for IP prefix differ.
+e4d1542 TCCBR-4087 TCCBR-4169 TCCBR-4170 : Restore saved configuration
+cf78ef9 RDKB-22720: Duplicate parameter "X_RDKCENTRAL-COM_EnableXDNS' in CcspPandM
+e701dec RDKB-24148:Footer link format is different for videotron.
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+a022692 RDKB-24884 : PSM set operation with same value should not update bbhm xml
+773c2d3 RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+529d62d RDKB-24659 : Factory Reset via snmp MIB throws error
+a39b5cb RDKB-24367: Error in Mib file
+a0613b2 Revert "RDKCOM-996: RDKB ccsp-snmp-pa agent leaks memory while running RDKB MIB"
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+b5adcfb RDKB-22486 : Observed CcspTr069PaSsp app crash with free signature
+5bec7c4 RDKB-13484 : Adding TR069 parameters for Home Lan Isolation on XF3
+8f6e2a7 RDKB-24052 : Bootstrap parameter update handling
+233a293 RDKBSUP-357 - TR069 PA - Persistence of "VALUE CHANGE" events across reboots or PA restart
+c6e9d61 RDKCOM-1111: RDKBSUP-357 - TR069 PA - Persistence of "VALUE CHANGE" events a...
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+9f68bca RDKB-25565: Reduce logging in CcspWifiAgent
+48ddbeb TCXB6-7562,TCXB6-7573 : Correcting error in wifihealth data to T2
+617656d XF3-5357 : [Field][XF3] Additional logging required WiFi related markers
+e3977c4 SKYH4-1942 : UNII-2 DFS channels are not available.
+a4bfe01 TCCBR-4347 : wifi Additional markers/logs strings required
+c183e01 RDKB-25513: dmcli support for wifi_down and wifi_init
+fab7c95 RDKB-21403: Set syscfg.db(/nvram or /opt/secure/data) based on UpdateNvram
+74da17f RDKB-24640 : Adding selfheal to handle high 5GHz band utilization
+4702683 RDKB-13752: "Telnet script not found" error in AtomConsole logs
+12727c5 SKYH4-1756 : Not able to Disable WPS Pin in GUI,If already in Enable state.
+1a33318 RDKB-19877 : Macfilter not getting updated
+c438916 RDKB-24730 : Mismatch in DMCLI and HAL for specific parameters
+b84441a RDKB-24987 : Telemetry marker for WIFI_RXTXCLIENTDELTA
+9ffa1ad TCCBR-4238 : Xfinity wifi down after bridge mode
+851f104 RDKB-25482 : CcspWifiSsp crashed after changing Private SSID's
+5ed0edb TCXB7-1001,TCXB7-720 : upflow mesh_setip_xb7.patch
+ef5ec5a ARRISXB3-9461 : removing old logic
+2a8da44 RDKB-19736, RDKB-21027: Beacon and Neighbor Report (XF3/CFG3/CBR)
+bb9b5bb TCXB7-740: Upstreaming CGM4331_specific_flag_added.patch changes.
+e838376 SKYH4-1750 : WFA- Configuration Security mode via ER is not updating in GUI.
+7425cdc SKYH4-1443: Connected/Disconnected list is not sync in connected device page.
+c2acc27 RDKB-25088: [Field-Reported] XB6 3.12 release,
+0f224fb RDKB-24374: MAC Address is wrongly displayed - fix
+d3cf8f4 ARRISXB3-9095 : Mesh MTU changes
+4560d6c RDKB-21263 : Add OnBoarding logs in CcspWiFiAgent
+7ae142e RDKB-24137 : Conditional eventing for telemetry 2.0
+5bc45a4 SKYH4-1458: WFA- External Registrar via Ethernet is not working for 5Ghz.
+bb4ed94 RDKB-24052 : Bootstrap parameter update handling
+5dcf6dc REFPLTB-392 : Added PreferPrivate_Conn api call in WiFiAgent
+7fc75ac RDKCOM-1112: REFPLTB-392 : Added PreferPrivate_Conn api call in WiFiAgent
+9b33f6f ARRISXB3-9473:Observed "cat: write error: Broken pipe".
+dc95e59 TCCBR-4030 : Observed failures in the Xfinity wifi uptime after reboot
+cde2567 SKYH4-1233: Discrepancy in operating modes behavior for 2.4 GHz and 5 GHz.
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+7ad3ff9 RDKB-24554 : Handle Led behavior for no internet
+0a6ae34 RDKB-25090 : Observed log print "sh: =: argument expected"
+
+project rdkb/components/opensource/ccsp/GwProvApp-EthWan/
+92bd2fc RDKB-24554 : Handle Led behavior for no internet
+79ae261 REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+f3294e5 RDKCOM-1095: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+
+project rdkb/components/opensource/ccsp/GwProvApp-ePON/
+49c5947 XF3-5281 : Firewall crash
+99fd21f RDKB-17536 : ccsp-gwprovapp-epon build error
+53fb0e7 XF3-5230 :wan-stop event not received while epon down.
+
+project rdkb/components/opensource/ccsp/MeshAgent/
+e544e8d RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+a0d09be RDKB-20980 : Channel bw notfication handling
+e241df3 ARRISXB3-9461 : Removal of old logic
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+42516f0 CISCOXB3-5806 : Observing multiple instance of
+b8f4afb RDKB-25254 : [TandD]-"cat: write error: Broken pipe" error
+c7a445e REFPLTB-304 : [TDK]Default value of most parameters under
+0b8f783 RDKB-25226 : Limiting CcspHotspot restart from selfheal
+9a6fad4 REFPLTB-401: Device.IP.Diagnostics.X_CISCO_COM_ARP.ARPTableNumberOfEntries always returns 0 even if clients are connected
+58db9a7 TCXB7-885:[Ethwan][Intermittent] Unable to SSH to IPv6 address; ipv4 works
+c070a3a TCXB6-7566 RDKB-25728: Correcting errors in load avg comaprison
+39d74e1 ARRISXB3-9502 : Observed "sh: 1: unknown operand" error in SelfHeal.log
+334b4ff CISCOXB3-5885,RDKB-25563: Disable SSDP scanning in legacy Agent.
+b6ada41 RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+8c40e7a REFPLTB-423 : Corrected Device.IP.Diagnostics.IPPing.DiagnosticsState to return Error_CannotResolveHostName when empty string is set as hostname
+9c9a78e RDKB-326 : Send out  "8 DIAGNOSTICS COMPLETE" event to ACS once IPPing/TraceRoute test completed
+033c4f3 TCCBR-4286 : SYS_SH_WIFIAGENT_restart - Triggering dmcli crash (2G, 5G)
+7839b19 RDKB-25263 : Update Self Heal Logging
+9472708 RDKB-22765 : Strip mesh pod from rx/tx data
+12c8e49 RDKB-24328 Device ping to gateway failed
+96be435 RDKB-24194: [Self Heal] [TAD] XB7s will utilize Box Type XB6
+576e428 TCCBR-4232 : Adding selfheal for zombie dnsmasq
+afec140 XF3-5270 : RF_ERROR_IPV6PingFailed error spiking up with 3.6p2s1
+5f0df08 CISCOXB3-5555,CISCOXB3-5842 : "write error: Broken pipe" error for cat and echo
+db48906 BWGRDK-453 : Observing HomeSecurity_process crash
+47d8810 RDKB-23356 : TR181 parameter implementation for iPerf server mode
+05e5ad3 TCXB6-6468 Device did not reboot in maintenance window after syseventd crash
+f500be2 RDKB-25047 : Change fragmentation calculation
+38f3092 RDKB-21091: Add various Reboot reasons in OnBoarding logs
+5736e1a RDKB-24137 : Conditional eventing for telemetry 2.0
+4df43da ARRISXB3-9482 : RM snmp_subagent process not running , restarting it.
+52006b5 REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+9a6fb35 RDKCOM-1096: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+
+project rdkb/components/opensource/ccsp/Utopia/
+ed8ecd3 RDKB-25226 : Limiting CcspHotspot restart from selfheal
+80c18f9 RDKB3939-931,BWGRDK-155: could not ssh into box during test
+5268256 RDKB-23669 : Enabled Xfinity ssids get disabled as OutOfService
+b4a3dba SKYH4-1946 : Observing lighttpd crash during long run.
+af30729 SKYH4-1830 : Newly changed GW address is not persistent over reboot.
+bf08748 RDKCOM-1104 : brlan0 was having IP address in bridge mode
+8f8098d RDKB-23505 : Enforce HTTPs download for Downloadable modules (XB3)
+6590e09 RDKB-13484: Switch to new smcroute for XF3 for Home Lan Isolation
+3e4fdbb RDKB-24137 : First working version of telemetry 2.0
+1ba2122 RDKB-25178: Add method to get ARM cpu and mem
+c617a76 RDKB-24991: SNMPv3 unreachable until reboot.
+83fe209 Revert "Revert "ARRISXB6-8599 ARRISXB6-10539 ARRISXB6-10506: 0010-router_advertisement_on_wan_connection_loss.patch""
+78e16df ARRISXB6-10540 ARRISXB6-10528: [Field-Reported][Data-Analysis] Xi6 Not able
+bb89bca SKYH4-1825 : NTP sync should happen.
+32ff1fb SKYH4-1944 : Last reboot reason is always SWReset.
+5561ba8 RDKALL-1352: RFC to Disable Forward SSH
+e759d83 CISCOXB3-5902 : Observed spike on SecureXfinity Failure
+ef95b33 RDKB-25635 : syscfg commit leaking file handler
+e9eb0e8 RDKB-21403: Removing /nvram/syscfg.db based on (SysCfg.UpdateNvram) parameter.
+238a08c RDKB-24803 :Modify delete_old_dns implementation in service_udhcpc
+9b74b52 RDKB-23295 : Modify PeriodicSyncInterval default to 0 and handle Webconfig Sync
+1f5538b RDKB-349  Routing : Device.Routing.Router.1.Enable with value false doesn't take effect
+0e86a66 RDKBDEV-8: Created new GRE data model and extensions to support GRE-Hotspot
+22ff020 RDKBCMF-213: Add IPv6 General Purpose rules to the firewall using sysevents
+efee044 RDKCOM-971: Add IPv6 General Purpose rules to the firewall using sysevents
+5bb219c RDKB-19211: Dibbler server/client logs
+569e41d RDKB-24959: [Utopia] ip_conntrack updates for Kernel 4.9
+09b4ed6 RDKB-20772 :Proposed Bug Fix: ti_udhcp initial timeout fix
+4bb0518 RDKB-24187: Time is not in sync with UTC in ETHWAN Mode
+7a8c42d RDKB-25034: NTP is not listening on ipv4,
+760062f Revert "ARRISXB6-8599 ARRISXB6-10539 ARRISXB6-10506: 0010-router_advertisement_on_wan_connection_loss.patch"
+ad3a362 TCXB7-844,TCXB7-1000,TCXB7-720 : [Utopia] Upflow XB7 patches
+34208df TCCBR-3649 : CBR IPv6 Prefix Sub-Delegation Not Working
+d492ad2 RDKB-296 RDK-B firewall modifies DSCP marking on forwarded packets
+bd11ab8 RDKCOM-1085 RDK-B firewall modifies DSCP marking on forwarded packets
+3e98604 RDKB-24539: Onboard atom log problem even after factory reset
+3d3fa3a RDKB-23651 : Create polling for telemetry of Rotorlock
+35154da BWGRDK-504: Cleanup patches maintained in meta layers
+d42d3c9 TCCBR-4220 : CBR showing wrong reboot reason
+cddca2b RDKB-25090 , RDKB-24573 : Observed log print "sh: =: argument expected"
+acb4458 Revert "RDKB-24573 : Adding execution succeed check"
+63f095a RDKB-24573 : Adding execution succeed check
+c8f558e BWGRDK-552: Observed continuous dibbler restart
+f7d5a9c RDKB-24786: NTP conf File Corruption
+4009757 RDKB-21174,RDKB-21199,RDKB-21848: Add OnBoarding logs in Utopia
+8056ad7 RDKB-10570: RFC implementation to support refactored UPnP services on XB
+ecebdef RDKALL-1204 : Bootstrap parameter update handling
+67defa1 REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+47fea0f RDKCOM-1097: REFPLTB-388: Ethwan support and adding Macros as RPI in Turris
+c52a460 RDKBCMF-234: DNS Search list in RA messages for LAN bridges
+7a9a451 RDKCOM-726: erouter0 was not getting IPv6 address intermittent when running...
+a5de4c5 RDKCOM-1105 : DNS Search list in RA messages for LAN bridges
+7eaf97f RDKALL-839: Change CI Xconf endpoint URL for RFC and DCM
+c69389f TCCBR-4087 TCCBR-4169 TCCBR-4170 : Restore saved configuration
+770c55f RDKB-24237 (SECVULN-9846): syscfg - Memory Exhaustion + Bug [Exploited]
+708fa3e SKYH4-1583: ip -6 rule â€œfrom all iff brlan0 lookup erouterâ€ not cleared.
+
+project rdkb/components/opensource/ccsp/Xconf/
+85dbcf5 RDKB-25253 : [Xconf]-"cat: write error: Broken pipe" error
+e172f63 RDKB-23505 : Enforce HTTPs download for Downloadable modules (XB3)
+2478b71 RDKB-25345 : current_time calculated value missing under XCONF logs
+6b62fbb BWGRDK-485: Optimize the Model and version check.
+bacc329 BWGRDK-449: Sleep time value in minutes missing under XCONF logs.
+24144e8 RDKB-20533 :Log message misspelled in xconf.txt.0
+77fd60f ARRISXB3-8445 : Observed 'SYS_ERROR_ARM_WriteError_BrokenPipe'
+e759e37 CISCOXB3-5670 : "sh: 1: unknown operand" and "sh: 2: unknown operand" error
+
+project rdkb/components/opensource/ccsp/hal/
+b4b40bb REFPLTB-444 : Modified setup script to load webui during fresh boot-up in Emulator
+
+project rdkb/components/opensource/ccsp/halinterface/
+ce28ed7 INTEL-401 BootFileName buffer is 64Byte but RFC support 255 bytes
+1ffa742 RDKB-24551: eMTA is not obtaining IPv6 Global Address in ethwan mode
+2e933d4 RDKB-21607: HAL definition platform_hal_SetSNMPOnboardRebootEnable
+
+project rdkb/components/opensource/ccsp/hotspot/
+6f3098e RDKB-25142 : Signal 11 received,when primary and secondary tunnel down
+95e5846 Revert "ARRISXB6-10081 : Multiple Occurence of GRE Tunnel is observed"
+4a19ba5 ARRISXB6-10081 : Multiple Occurence of GRE Tunnel is observed
+
+project rdkb/components/opensource/ccsp/sysint/
+eaba8ee ARRISXB6-10502 error: No space left on device
+ce4c2a2 RDKB-25178: Add method to get ARM cpu and mem
+8c0eee2 RDKB-24991: SNMPv3 unreachable until reboot.
+f9a7db3 ARRISXB6-8672 ARRISXB6-8690 : Mitigation to reboot box on no connectivity
+d69cd2a CISCOXB3-5883 : plume_dnld logs not copied into /rdklogs/logs/ in Arm side
+53a1a99 RDKALL-1352 : ForwardSSH Enable/Disable
+3c0ac4c RDKB-21403: Set syscfg.db(/nvram or /opt/secure/data) based on UpdateNvram
+754b7c1 TCXB7-845,TCXB7-846,CMXB7-81,CMXB7-82: [Sysint] Update For XB7 Device Class
+cbdb4c4 TCCBR-4275 : Device is uploading logs with EPOCH date after reboot
+fb6439c RDKB-23302 : Line goes into scroll mode
+f111cf1 RDKB-24382 :Create a script to schedule cron at maintenance window.
+856b220 RDKB-19904,RDKB-23473:Persistent back up of OnBoardingLog.txt.0 and log upload
+5bc84a8 RDKB-24137 : Bootup, log upload, maintenance window orchestration
+79cdd05 ARRISXB6-10401 : Revssh failing
+
+project rdkb/components/opensource/ccsp/webui/
+46bb050 SKYH4-1945 : Check for server IP in DHCP pool range
+ca668e8 TCXB6-7522: Footer link alignment is displayed wrongly in WAN NETWORK.
+e2eeb33 RDKB-24123 : Blocked Keyword case insensitive comparision
+1c9d2f8 RDKB-23342:bedtime pause page in french support
+bf733dc SKYH4-1913 : the pop-up is not disappearing after selecting the add button
+b72034e SKYH4-1609 : MAP-T XFINITY Network GUI page
+60389d0 SKYH4-1686 : 802.11a and n (5GHz) clients are not connected to the POD.
+fe541a3 SKYH4-1522 : Sky Self-Heal: Alarm LED should be RED in SelfHeal Page.
+af91f13 SKYH4-1917 :IPV6 address is not localized in italy in the connected device page
+20bb869 SKYH4-1797 :Not able to see sub-tabs below Trouble shooting Tab in IE and FF.
+e9f413f RDKB-25234: Blocked site URL is accepting same site URL for case insensitive.
+46d783b SKYH4-1781 : In few pages Save and Cancel buttons, Labels are in English.
+9387484 RDKB-24879 : WiFi Radio 5G shown as 2.4G when WiFi crashes or down
+f30e696 SKYH4-1828 : [GUI]:LAN page is not working as expected in I.E 11 11.1006
+a377414 RDKB-24649: WIFI Password with Space(s) is not allowed through GUI.
+80fbba0 SKYH4-1706 : Add translations for pause screen
+7f399e3 SKYH4-1828 : [GUI]:LAN page is not working as expected in I.E 11 11.1006
+eae6dbe SKYH4-1774 : String on alert pop-up in English
+8916415 CISCOXB3-5802: lighttpd changes.
+96c7b59 RDKB-25392:MOCA Tab missing in MSO GUI in Bridge Mode.
+26507d1 SKYH4-1797 :Not able to see sub-tabs below Trouble shooting Tab in IE and FF.
+68bbc03 SKYH4-1806 : [MAP-T]Internet status is showing red cross even internet is there
+2863d75 SKYH4-1808 : [MAP-T][GUI]:Modem & WAN Port status showing as disconnected in GUI
+1e185d0 TXB6VTN-113 RDKB-25545 : Captive portal - tooltip texts overlaps
+05b91a3 RDKB-24332 : TCH-XB6 EWAN WAN mode change is ignored
+baa8f41 RDKB-21876:Moca status not shown properly in userbar.
+185691a RDKB-25083 : Wi-Fi Name and password screen fields
+07bc820 RDKB-24782: Port number is getting changed on FTP rule in port forwarding.
+90fd70c SKYH4-1766 : Upstream Italian locale to webui
+bb9f754 RDKB-25360,SKYH4-1760 : ULA Prefix: edit box should check for only IPv6
+5b07bcc SKYH4-1773 : [GUI] WiFi configuration page is displayed as empty in IE.
+3d9c412 RDKB-24733: GHz unit is not uniform in GUI pages.
+88caa03 SKYH4-1754 : Fix sectrum analyzer for localized languages
+18a5ac3 RDKB-24571:Radio for Automatic channel selection is not present in Admin GUI.
+f6047d9 SKYH4-1054 :RDKB-HUB4_Test:Connected clients IPv6 addrss in portforwarding.
+edae019 RDKB-24617: [GUI]'Print' option is not working from Parental Control>Reports.
+62e818b RDKB-24842: Parental Control button values are changed.
+656263a TXB6VTN-112 : Tooltip message needs to be simplified
+382e78b TXB6VTN-110 : Captive Portal Wi-Fi name and PW screen alignment
+8429f2e SKYH4-1733 : Label (Field name) is missing in the Add reserve IP page.
+cb2a606 RDKB-25192:xFi URL are missing in Parental control> Managed Devices page.
+081310f RDKB-23423: webui php code removal for not required features
+57f5bf6 RDKB-24572:Observing timeout on clicking "Save Result" in Wi-Fi Spectrum page.
+7984de9 RDKB-21266: Add OnBoarding logs in Webui
+50380bf RDKB-25063: User is not able to navigate in any Tab under GUI page.
+95e508f SKYH4-1487,SKYH4-1645 : Localize alert messages
+5199dce SKYH4-1673: After enabling Mesh when we disable both 2.4 and 5Ghz SSID's.
+f409772 SKYH4-1646,SKYH4-1670 : Fixed translations for connecetd devices page
+a4dc1b2 SKYH4-1721 : un-tick 'Stateless' checkbox when Stateful option is selected.
+3889932 SKYH4-1602, SKYH4-1620 : [1.3p1s2]:ULA Prefix(Manual) is not functioning.
+d787605 SKYH4-1425 : Fix javascript error messages
+a6a972d SKYH4-1592 : Change LanIpv6Ula data model to LanIpv6UlaPrefix in localIPconfig
+40e4cbe SKYH4-1654 : The message in default currentpassword at wizard_setp1 is wrong
+32816a5 TCXB6-7168:Internet option is shown as Inactive on GUI page.
+edfa0e3 RDKB-24357: Failures while Navigating to "Local IP Network".
+8db0479 SKYH4-1577 : un-tick 'Stateless' checkbox when Stateful option is selected.
+80ff5e9 SKYH4-1233: Discrepancy in operating modes behavior for 2.4 GHz and 5 GHz.
+
+project rdkb/devices/intel-x86-pc/emulator/tdkb/
+1f18b4d TDKB-886 : M70 Coverage Improvement
+
+project rdkb/devices/raspberrypi/hal/
+b369245 REFPLTB-427 : RDKB RPI smoke tests are failing
+b30a9b7 REFPLTB-391 : Implementated PreferPrivate_Conn api support in hal
+
+project rdkb/devices/raspberrypi/sysint/
+ad8656a REFPLTB-449: Backup and Restore User Settings implementation in RPi
+fabef8e REFPLTB-429: Updated Connectivity Test script to support
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+f29127a REFPLTB-304 : [TDK]Default value of most parameters under
+f8e7935 REFPLTB-304 : [TDK]Default value of most parameters under
+89c14a5 REFPLTB-442,REFPLTB-439 : Emulator UI frequently not getting data from backend
+2597e17 REFPLTB-439 : Emulator UI frequently not getting data from backend
+e3926df REFPLTB-374: REFPLTB-359: Admin login DMLs not working as expected for RPI and Emulator,
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+0a45ab7 REFPLTB-374: REFPLTB-359: Admin login DMLs not working as expected for RPI and Emulator,
+cc23344 REFPLTB-399 : Introduced pop up message in WebUI for Invalid SSID name

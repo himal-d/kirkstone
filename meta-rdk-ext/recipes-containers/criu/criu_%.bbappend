@@ -1,0 +1,8 @@
+inherit logrotate 
+
+LOGROTATE_NAME = "fds"
+LOGROTATE_LOGNAME_fds = "fds.log"
+LOGROTATE_SIZE_fds = "512000"
+LOGROTATE_ROTATION_fds = "2"
+LOGROTATE_SIZE_MEM_fds = "512000"
+LOGROTATE_ROTATION_MEM_fds = "2"

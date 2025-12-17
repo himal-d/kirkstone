@@ -1,0 +1,14 @@
+[Unit]
+Description=TLS tunnel for network daemons
+Before=vodclientapp.service
+After=lxy-extractor.service
+
+[Service]
+Type=forking
+ExecStartPre=GetConfigFile /tmp/trpfizyanrln
+ExecStartPre=/usr/bin/upStunnelConf/upStunnelConf.sh
+ExecStart=/usr/bin/stunnel /etc/stunnel.conf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

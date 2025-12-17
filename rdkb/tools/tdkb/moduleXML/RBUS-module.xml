@@ -1,0 +1,81 @@
+<!--
+ If not stated otherwise in this file or this component's Licenses.txt file the
+ following copyright and licenses apply:
+
+ Copyright 2020 RDK Management
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<?xml version='1.0' encoding='utf-8'?>
+<xml>
+  <module>
+  <!-- Module Name  -->
+    <moduleName>RBUS</moduleName>
+  <!-- Category of the module  -->
+    <category>RDKB</category>
+  <!-- Excecution time out of module -->
+    <executionTimeOut>15</executionTimeOut>
+  <!-- Excecution time out of module -->
+    <testGroup>Component</testGroup>
+  <!-- Logs File Names of module -->
+    <logFileNames>[]</logFileNames>
+  <!-- Crash File Names of the module -->
+    <crashFileNames>[]</crashFileNames>
+  <!-- Total functions corresponding module  -->
+    <functions>
+      <function name='RBUS_DoNothing' />
+      <function name='RBUS_DataElements' />
+      <function name='RBUS_Session' />
+      <function name='RBUS_CloseSession' />
+      <function name='RBUS_DiscoverComponentDataElements' />
+      <function name='RBUS_Get' />
+      <function name='RBUS_GetValue' />
+      <function name='RBUS_SetValue' />
+      <function name='RBUS_CheckStatus' />
+      <function name='RBUS_Open' />
+      <function name='RBUS_Close' />
+      <function name='RBUS_RegisterOperation' />
+      <function name='RBUS_PropertyCommands' />
+      <function name='RBUS_ObjectCommands' />
+      <function name='RBUS_TableRowCommands' />
+      <function name='RBUS_SetLogLevel' />
+    </functions>
+  <!-- Total parameters corresponding module  -->
+    <parameters>
+      <parameter funName='RBUS_DataElements' parameterName='element1' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_DataElements' parameterName='element2' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_DataElements' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_Session' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_CloseSession' parameterName='sessionid' parameterType='INTEGER' range='0-9' />
+      <parameter funName='RBUS_DiscoverComponentDataElements' parameterName='componentName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_Get' parameterName='paramName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_GetValue' parameterName='paramName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_GetValue' parameterName='paramType' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_SetValue' parameterName='paramName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_SetValue' parameterName='paramType' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_SetValue' parameterName='paramValue' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_RegisterOperation' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_RegisterOperation' parameterName='objectName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_RegisterOperation' parameterName='methodName' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_PropertyCommands' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_PropertyCommands' parameterName='prop_count' parameterType='INTEGER' range='0-9' />
+      <parameter funName='RBUS_PropertyCommands' parameterName='property_name' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_ObjectCommands' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_ObjectCommands' parameterName='obj_count' parameterType='INTEGER' range='0-9' />
+      <parameter funName='RBUS_ObjectCommands' parameterName='object_name' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_TableRowCommands' parameterName='operation' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_TableRowCommands' parameterName='table_row' parameterType='STRING' range='a-z' />
+      <parameter funName='RBUS_SetLogLevel' parameterName='level' parameterType='INTEGER' range='0-100' />
+    </parameters>
+  </module>
+</xml>

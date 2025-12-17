@@ -1,0 +1,23 @@
+From badb8a2c885e4eb021feeadba91651580802effc Mon Sep 17 00:00:00 2001
+From: Michael Pantazoglou <michael.pantazoglou@oceanbluesoftware.co.uk>
+Date: Tue, 11 Apr 2023 17:56:12 +0300
+Subject: [PATCH] Report video decode error
+
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp         | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index bd3d7c2c8e8a..2b496a20e8db 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -1943,7 +1943,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
+             // Let the mediaPlayerClient handle the stream error, in this case the HTMLMediaElement will emit a stalled event.
+             GST_ERROR("Decode error, let the Media element emit a stalled event.");
+             m_loadingStalled = true;
+-            break;
++            error = MediaPlayer::NetworkState::DecodeError;
++            attemptNextLocation = true;
+         } else if (err->domain == GST_STREAM_ERROR) {
+             error = MediaPlayer::NetworkState::DecodeError;
+             attemptNextLocation = true;

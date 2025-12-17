@@ -1,0 +1,28 @@
+Date: Aug 23 14:44:26 2016
+
+From: eace82070f519ed86a2869dbdfe437f407ef282d Aug 24 11:04:58 2016
+
+Subject: [PATCH] RDK-16104 : Develop code - Brotli
+
+        Enable brotli and solve compile time issues
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Vargheese Baby <vargheesebaby@tataelxsi.com>
+---
+
+Index: git/setup.py
+===================================================================
+--- git.orig/setup.py
++++ git/setup.py
+@@ -120,7 +120,7 @@ class BuildExt(build_ext):
+ 
+ brotli = Extension("brotli",
+                     sources=[
+-                        "python/brotlimodule.cc",
++                        "enc/compressor.cc",
+                         "common/dictionary.c",
+                         "dec/bit_reader.c",
+                         "dec/decode.c",

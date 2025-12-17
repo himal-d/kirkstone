@@ -1,0 +1,204 @@
+From a04f540725551023b016ab1d02a1faae8cb622b0 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Fri, 14 Apr 2017 23:25:11 +0200
+Subject: [PATCH] android: add prlimit implementation for 32bit
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ configure.ac          |  4 +++
+ src/include/prlimit.c | 78 +++++++++++++++++++++++++++++++++++++++++++
+ src/include/prlimit.h | 42 +++++++++++++++++++++++
+ src/lxc/Makefile.am   |  6 ++++
+ src/lxc/conf.c        |  3 ++
+ 5 files changed, 133 insertions(+)
+ create mode 100644 src/include/prlimit.c
+ create mode 100644 src/include/prlimit.h
+
+diff --git a/configure.ac b/configure.ac
+index 287d57f55..4db75cfb5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -665,6 +665,10 @@ AC_CHECK_FUNCS([fgetln],
+ 	AM_CONDITIONAL(HAVE_FGETLN, true)
+ 	AC_DEFINE(HAVE_FGETLN,1,[Have fgetln]),
+ 	AM_CONDITIONAL(HAVE_FGETLN, false))
++AC_CHECK_FUNCS([prlimit],
++	AM_CONDITIONAL(HAVE_PRLIMIT, true)
++	AC_DEFINE(HAVE_PRLIMIT,1,[Have prlimit]),
++	AM_CONDITIONAL(HAVE_PRLIMIT, false))
+ 
+ # Check for some libraries
+ AC_SEARCH_LIBS(sem_open, [rt pthread])
+diff --git a/src/include/prlimit.c b/src/include/prlimit.c
+new file mode 100644
+index 000000000..3718f149b
+--- /dev/null
++++ b/src/include/prlimit.c
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (C) 2008 The Android Open Source Project
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *  * Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *  * Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
++ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++#include <errno.h>
++#include <fcntl.h>
++#include <stdarg.h>
++#include <stdint.h>
++#include <unistd.h>
++#include <linux/types.h> /* __le64, __l32 ... */
++#include <sys/resource.h>
++#include <sys/syscall.h>
++#include <sys/time.h>
++#include <sys/types.h>
++#include <sys/uio.h>
++#include <sys/vfs.h>
++
++#if defined(__LP64__)
++#error This code is only needed on 32-bit systems!
++#endif
++
++#define RLIM64_INFINITY (~0ULL)
++
++typedef uint64_t u64;
++
++// There is no prlimit system call, so we need to use prlimit64.
++int prlimit(pid_t pid, int resource, const struct rlimit *n32, struct rlimit *o32)
++{
++	struct rlimit64 n64;
++	if (n32 != NULL) {
++		n64.rlim_cur = (n32->rlim_cur == RLIM_INFINITY)
++				   ? RLIM64_INFINITY
++				   : n32->rlim_cur;
++		n64.rlim_max = (n32->rlim_max == RLIM_INFINITY)
++				   ? RLIM64_INFINITY
++				   : n32->rlim_max;
++	}
++
++	struct rlimit64 o64;
++	int result = prlimit64(
++	    pid, resource, (n32 != NULL) ? (const struct rlimit64 *)&n64 : NULL,
++	    (o32 != NULL) ? &o64 : NULL);
++
++	if (result != -1 && o32 != NULL) {
++		o32->rlim_cur = (o64.rlim_cur == RLIM64_INFINITY)
++				    ? RLIM_INFINITY
++				    : o64.rlim_cur;
++		o32->rlim_max = (o64.rlim_max == RLIM64_INFINITY)
++				    ? RLIM_INFINITY
++				    : o64.rlim_max;
++	}
++
++	return result;
++}
+diff --git a/src/include/prlimit.h b/src/include/prlimit.h
+new file mode 100644
+index 000000000..ab19b37a9
+--- /dev/null
++++ b/src/include/prlimit.h
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (C) 2008 The Android Open Source Project
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *  * Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *  * Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
++ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++#ifndef _PRLIMIT_H
++#define _PRLIMIT_H
++
++#include <linux/resource.h>
++#include <sys/cdefs.h>
++#include <sys/types.h>
++
++#define RLIM_SAVED_CUR RLIM_INFINITY
++#define RLIM_SAVED_MAX RLIM_INFINITY
++
++int prlimit(pid_t, int, const struct rlimit*, struct rlimit*);
++int prlimit64(pid_t, int, const struct rlimit64*, struct rlimit64*);
++
++#endif
+diff --git a/src/lxc/Makefile.am b/src/lxc/Makefile.am
+index d7c05d6fe..a6a69decf 100644
+--- a/src/lxc/Makefile.am
++++ b/src/lxc/Makefile.am
+@@ -40,6 +40,9 @@ noinst_HEADERS += \
+ 	../include/ifaddrs.h \
+ 	../include/openpty.h \
+ 	../include/lxcmntent.h
++if !HAVE_PRLIMIT
++noinst_HEADERS += ../include/prlimit.h
++endif
+ endif
+ 
+ if !HAVE_GETLINE
+@@ -130,6 +133,9 @@ liblxc_la_SOURCES += \
+ 	../include/ifaddrs.c ../include/ifaddrs.h \
+ 	../include/openpty.c ../include/openpty.h \
+ 	../include/lxcmntent.c ../include/lxcmntent.h
++if !HAVE_PRLIMIT
++liblxc_la_SOURCES += ../include/prlimit.c ../include/prlimit.h
++endif
+ endif
+ 
+ if !HAVE_GETLINE
+diff --git a/src/lxc/conf.c b/src/lxc/conf.c
+index 530a57ed1..b600c275a 100644
+--- a/src/lxc/conf.c
++++ b/src/lxc/conf.c
+@@ -99,6 +99,9 @@
+ 
+ #if IS_BIONIC
+ #include <../include/lxcmntent.h>
++#ifndef HAVE_PRLIMIT
++#include <../include/prlimit.h>
++#endif
+ #else
+ #include <mntent.h>
+ #endif
+-- 
+2.24.0
+

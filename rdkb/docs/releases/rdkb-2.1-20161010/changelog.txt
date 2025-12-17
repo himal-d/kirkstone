@@ -1,0 +1,252 @@
+Changelog between rdkb-2.1-20161010 and rdkb-2.1-20160829
+
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+e3c5eba RDKB-7938: Add CONTRIBUTING.md file to repository
+ced0f13 ARRISXB6-2362: Observed "core.CcspCMAgentSsp" crash in XB6
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+d3533fd RDKB-8010, RDKB-8011: add log script into cron
+c45428b RDKB-7501 :  CCSP components are not registered with the CR after a Atom restart
+bde491f RDKB-7942: [systemd] Services Should Use device.properties over conf files
+ab637bf RDKB-7938: Add CONTRIBUTING.md file to repository
+b5234da Revert "RDKB-7870: [systemd] Create WiFi Health Service"
+06b7271 RDKB-7870: [systemd] Create WiFi Health Service
+464c38d RDKB-7644 : Add separate log file for CcspMoCA component
+5707ba5 RDKB-7065 : Merge CcspCommonLibrary changes to master
+340557e RDKB-7775: Remove banner from dropbear daemon
+082a3bb ARRISXB6-2316: [CCSP] CcspSafeNAT needs to be removed from XB6 in Master
+ca486a4 RDKB-7181: CCSP Wifi component is not Registered with CR during Initialization
+e5b0f90 RDKB-7515:Replacing echo with echo_t to add timestamp in atom console
+0650f94 RDKB-7500: Wireless extender stopped working - communication with WECB failed
+e04c148 RDKB-7500: Wireless extender stopped working - communication with WECB failed
+001d32c XF3-794: Fixing core/minidup uploads for XF3
+91c0c23 RDKB-7535 : [Yocto][Boot Time]: ATOM Ping is triggered during boot
+f156240 RDKB-7423:After SUSI activation user redirected to local captive portal
+06e491d ARRISXB6-2008: [WEBPA] No Longer Establishing and Keeping Connection
+de1d8f1 RDKB-7380 : Adding system statistics to cron and remove sleep
+9236a92 RDKB-7461 : Adding debugs in few failure cases in common library
+031e18a RDKB-7381 : Replacing echo with echo_t to add timestamp in common library
+
+project rdkb/components/opensource/ccsp/CcspCr/
+c784a1d RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+a4d3991 RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+d676c1c RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+b30ae26 RDKB-7875 : Unknown device entry listed under host table
+3a609b9 RDKB-7694 : WiFi clients connected to XW1 is toggling is_active
+292def9 RDKB-7938: Add CONTRIBUTING.md file to repository
+b708ce8 RDKB-7592: Extender device metric report is shows devicemac as interface mac
+5ce923e RDKB-7591 : Signal Strength Value being changed in Avro Pack
+71777f6 RDKB-7591 : RSSI value is showing +ve when the Device is connected to EXTENDER
+3531b93 RDKB-7476 : Event based implementation for LMLite polling periods.
+a718330 RDKB-7605 : Device on Extender shows up with wifi_operating_standard=ac
+4c88892 RDKB-7447 : Handling NULL RSSI values during Moca Sync
+1899e24 RDKB-7445 : CcspLMLite crashes if handling Older Extender Firmware
+ad1fca8 RDKB-7350 : Security issues found on Static Analysis in LMLite Component.
+f35a097 RDKB-7349 : Security issues found on Static Analysis in LMLite Component.
+07180c8 RDKB-7348 : Security issues found on Static Analysis in LMLite Component.
+7abcd45 RDKB-7370 : Reports to be sent every time polling period is changed
+d6a9285 RDKB-7223: Connected device goes offline and the Layer1Interface value changes
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+be65508 RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+61be4f6 RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+bad9530 RDKB-7546 : Redirect request from blocked device to blocking webpage
+63761aa RDKBEMU-236 : Upstream Trouble Shooting - change password feature
+c627a22 RDKB-7938: Add CONTRIBUTING.md file to repository
+44020fc RDKB-4208 : Develop Code
+8e43d08 RDKB-4208 : Develop Code
+81df3c0 XF3-1196: Bring CcspPandM BWG changes to XF3
+1e82cdf TCXB6-604 : Reading processor speed to display using dmcli
+bdc7f32 RDKB-7064 : Merge CcspPandM changes to master
+05b04ef RDKB-5705:Log message required for Bridge mode settings
+d6cea28 RDKBEMU-232 : Upstream Emulator Specific ccsp-p-and-m
+93d9ebc TCXB6-634 : CcspPandM is crashing in latest build
+ef634ac ARRISXB6-2292: [Process Monitoring][Self Healing]
+c8cef21 TCXB6-602: Xfinity Page doesn't populate Ipv6 address
+2e010ff RDKB-4720 : Add XBB1 TR-181 implementation
+92ad56b RDKB-7568 :  Cloud redirection not happening when  Cloud UI is enabled
+7d603e1 RDKB-7630 :  brlan0 lost IP address after router reset
+38272ad RDKBEMU-225 : upstream xfinity-wifi functionality with PSM support
+30d8817 RDKBEMU-221 : Upstream Emulator Specific ccsp-p-and-m
+2238c35 RDKB-7567: Reduce the log level of dibbler to error
+ab899ee RDKB-7258: Log MoCA Enable value and Status in the Armconsole
+b24bf35 RDKB-7229 : Negative indexes created for port forwarding on 2.2p5s1
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+af116ae RDKB-7938: Add CONTRIBUTING.md file to repository
+a664c5a RDKB-6828 :BCI migration to Ciscoxb3 Yocto
+955d06a RDKB-7610: Add LnF support for WECB
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+f81bd73 Revert "RDKB-5825: SecureSSID Authentication Mode OID is showing as integer value"
+3fd152e RDKB-7938: Add CONTRIBUTING.md file to repository
+698dabd RDKB-7477:SNMP Encryption Algorithm Response MIB returned incorrect setting
+f34f3b2 RDKB-7387 : Error messages in WECB log when MoCA SNMP parameters queried
+26fa955 ARRISXB6-2056: [SNMP] CCSP SNMP Agent Stuck in Infinite loop
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+a0d5c8f RDKB-7938: Add CONTRIBUTING.md file to repository
+05c8fcc RDKB-7782 : session_id is getting changed by TR069 to 1
+d3b4390 RDKB-7328 : Security issues found on Static Analysis in TR069-PA Component.
+36a0784 RDKB-7327 : Security issues found on Static Analysis in TR069-PA Component.
+d0a041e RDKB-7325 : Security issues found on Static Analysis in TR069-PA Component.
+b7722d5 RDKB-7324 : Security issues found on Static Analysis in TR069-PA Component.
+d953e33 RDKB-7323 : Security issues found on Static Analysis in TR069-PA Component.
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+d464585 RDKB-7938: Add CONTRIBUTING.md file to repository
+4fa5cc2 RDKB-7500: Wireless extender stopped working - communication with WECB failed
+8888901 RDKB-7610: Changed the number of SSIDs that the XB3 provides to the XW1.
+8a9054e RDKB-7500: Added debug to show extender is connected.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+e78d56f RDKB-8010, RDKB-8011: RX TX Rate and RSSI for each client
+557c4ca RDKB-8050: reset bandsteer print counter after print
+125e9f4 RDKB-8044: telemetry marker for TKIP\
+6d0abfe RDKB-8046: RSSI value should be updated per request
+c23b12d ARRISXB6-2301: Fix issue with initial bssid cache
+356d942 RDKB-8023: hostapd incorrect config false alarm
+11283af RDKB-8012: print BS enable/disable every 6 hours
+53d44a7 RDKB-7501 :  CCSP components are not registered with the CR after a Atom restart
+6e5407b RDKB-7373: call platform specific wifi profile check
+f0b1f82 XF3-1531: Fixed issue with XF3 wifi UI hang
+d2f6575 RDKB-7938: Add CONTRIBUTING.md file to repository
+f041c57 ARRISXB6-2301,ARRISXB3-5190: Fix issue with initial bssid cache
+5f08cdb ARRISXB6-2301: Fix wifi mac address issue with sub radios
+555c775 RDKB-7859: Bandsteering logging enhancement
+8b6867a RDKB-7863: Rx date for each acitve AP
+6d7430f RDKB-7848: log(telemetry) for wps_gpio kernel dump
+d99c8cf XB3-1389: Fix radio transmit power for broadcom radios
+3b0fbd7 RDKB-7828: process monitor enhancement
+8638f64 RDKB-7812: [Wi-Fi]Clarification of Logs in WiFilog.txt
+d555c4c ARRISXB6-2099: Start the web server after wifi agent is fully initialized
+729efc0 RDKB-7775: Remove banner from dropbear daemon
+ed4f704 RDKB-7776: Do ping/arping to determine ATOM stall
+d7fe13c RDKB-7678: need to print "apup stuck restarting wifi"every 15 minutes
+09ff96b Revert "ARRISXB6-2249: CaptivePortal is broken after factory reset"
+297e6c9 RDKB-7181: CCSP Wifi component is not Registered with CR during Initialization
+d1dddef ARRISXB6-2066: [WiFi]160MHz BW Needs to Be Implemented E2E
+224fa82 RDKB-5416: Read PreferPrivate object value from PSM after WiFi init.
+8c8196f ARRISXB6-2249: CaptivePortal is broken after factory reset
+86778e2 ARRISXB6-2066: [WiFi]160MHz BW Needs to Be Implemented E2E
+d00b5ae RDKB-7515:Replacing echo with echo_t to add timestamp in atom console
+eb9e008 RDKB-5416: Add TR181 object to turn on/off the ACL list feature.
+db5dca9 RDKB-7569:Remove sending log messages to LogAgent from process_monitor_atom.sh
+8aa914e RDKB-7641: print unique telemetry occurrence one time only
+d87a304 RDKB-7631: telemetry change for tracking access control list add/remove
+ab1f2c9 ARRISXB6-2156: QTN apis taking time to setup LnF SSID
+d210e6b RDKB-7413: Add DNS for ATOM
+7befc61 RDKB-7569:Remove sending log messages to LogAgent from process_monitor_atom.sh
+4f50167 RDKBEMU-215 : upstream xfinity-wifi functionalities with PSM support.
+cbea629 RDKB-7423:After SUSI activation user redirected to local captive portal
+d3876bb RDKB-7475:Keep beacon rate unchanged after firmware upgrade
+7ffbb59 ARRISXB6-2144: Xb6 Lost and Found phase 1
+fa6a5c3 RDKBEMU-208 : upstream Emulator Specific Code Modification
+1c331a3 RDKB-7413: Add DNS for ATOM
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+05b5777 RDKB-8115 : prints that coming on log when syseventd killed.
+1646a5a RDKB-7938: Add CONTRIBUTING.md file to repository
+daf40da RDKB-6828 :BCI migration to Ciscoxb3 Yocto
+
+project rdkb/components/opensource/ccsp/RebootManager/
+adb10b4 RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+f76f0f6 Revert "RDKB-7923 : [Field] Monitor tmpfs partition usage for selfheal."
+14210c0 RDKB-7999 : Reboot the device if CCSP Wifi dmcli parameters are failing
+b7989bd RDKB-8065:Marker needed to track devices which is stuck at erouter rebinding
+c9a2811 RDKB-8034 : Self heal mechanism when downstream_manager is occupying 100% CPU
+15d1a58 RDKBEMU-240 : Upstream Diagnostics tool support in RDKB Emulator.
+27e6ea8 RDKB-8026: bug for dnsmasq.leases path
+8ee79f6 RDKB-7784 : Develop TR-181 parameter to enable and run speedtest2
+a947824 Revert "RDKB-7947:tmpfs filling selfheal should be triggered when it becomes 85% full"
+ab40561 RDKB-7910: ICCCTL memory info needs to be in telemetry consumable format
+1d1d915 RDKB-7929: Need to hookup traffic_count
+f0d35d1 RDKB-7945 : [systemd][Field] Monitor tmpfs partition usage for selfheal.
+2c9b95f RDKB-7952: tmpfs usage print in telemetry consumable format
+0b5b05e RDKB-7784 : Develop TR-181 parameter to enable and run speedtest2
+49585df RDKB-7947:tmpfs filling selfheal should be triggered when it becomes 85% full
+b90ab1d RDKB-7938: Add CONTRIBUTING.md file to repository
+4123c80 RDKB-7923 : [Field] Monitor tmpfs partition usage for selfheal.
+3875a7f RDKB-7643 : Add Selfheal corrective action for CcspMoCA
+0ef6728 RDKB-7776: Do ping/arping to determine ATOM stall
+12e9b0a RDKB-7779 : Add logging mechanism to identify atom only reboot
+4ac2b03 RDKB-7704 : Add timestamps with RDKB_MEM_HEALTH in ArmConsolelog.
+fb27c1d ARRISXB6-2292: [Process Monitoring][Self Healing]
+e875cb7 RDKB-7432 :  Device is going for reboot in every 10 mins in battery mode
+48f85bb RDKB-7478 : Selfheal.txt.0 shows "RKDB_PLATFORM_ERROR" instead of "RDKB"
+81aa2d5 RDKB-7474: iccctl output needs to be in Telemetry consumable format
+2b4ab9a RDKB-7482 : [systemd] Update All Devices: [Field] PAM dmcli commands are failing
+aaf4495 RDKB-7401 : [Field] PAM dmcli commands are failing
+c0d11e5 RDKB-6162 , RDKB-7412 : mpstat related changes
+b5d0999 RDKB-7411: Print only the 15th min load average in Self Heal.txt
+
+project rdkb/components/opensource/ccsp/Utopia/
+aa935a3 RDKB-7630 :  brlan0 lost IP address after router reset
+059594c RDKB-7604 ARRISXB6-2216 ARRISXB6-988: [Utopia] Prevent Execution call of sa_potd
+c5183d8 RDKB-6530: Re-implement Utopia source for xml & utapi.
+26d0b21 RDKB-7566: Reduce the log level of zebra to error
+80d3843 ARRISXB6-2144 : LnF phase1 set ssid
+45dbfb5 ARRISXB6-2144 : LnF phase1 set ssid
+f62f19a RDKB-7379 : Replacing echo with echo_t to add timestamp in utopia
+4982e60 RDKB-6530:RDK-B: Utopia contains GPL source
+2dba9ff RDKB-7149 : Iptable Corruption issue seen after upgrading to 2.2p5s1
+5b325b7 RDKB-7139 : Security issues found on Static Analysis in Utopia Component.
+
+project rdkb/components/opensource/ccsp/hal/
+7b14f39 RDKB-7938: Add CONTRIBUTING.md file to repository
+b79daa0 RDKB-7556 : Doxygen Documentation for RDK-B HAL for epon.
+3f2b191 RDKB-7559 : Doxygen Documentation for RDK-B Firewall HAL.
+bc1ac6f RDKB-7554 : Doxygen Documentation for RDK-B dhcpv4c HAL.
+c5c3888 RDKB-7554 : Doxygen Documentation for RDK-B dhcpv4c HAL.
+31141bd RDKB-7558 : Doxygen Documentation for RDK-B HAL for MTA.
+681d8e8 RDKBEMU-227 : Emulator specific hal modification
+958eaee RDKBEMU-220 : Upstream Emulator Specific Hal Implementation for VLAN Feature
+c24f934 RDKB-7551 : Doxygen Documentation for RDK-B HAL for VLAN.
+6e07549 RDKBEMU-216 : Upstream Xfinity Wi-Fi functionality with
+556399c RDKBEMU-205 : Updated setup.sh script to support xfinity-wifi
+
+project rdkb/components/opensource/ccsp/hotspot/
+a347acc RDKB-7938: Add CONTRIBUTING.md file to repository
+79af5d6 RDKBEMU-207 : upstream source-pc in ccsp-hotspot
+
+project rdkb/components/opensource/ccsp/standalone/
+61cf67f RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/utilities/
+0649b73 RDKB-7938: Add CONTRIBUTING.md file to repository
+
+project rdkb/components/opensource/ccsp/webui/
+48fd835 RDKB-7363 : WEBUI download report "HTTP ERROR 500"
+f0bfbd5 RDKB-7371 :  Install ccsp_bus_client_tool on atom
+598f3a6 ARRISXB6-1735 : WEBUI download "HTTP ERROR 500"
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+bb79bf3 RDKBEMU-242 : Added Test-and-Diagnostics service for External source
+9bc3cf5 RDKBEMU-241 : Updated COSAXCalibur.XML to support Bridge Mode features
+2d2556f RDKBEMU-235 : Added PSM support to Trouble Shooting - change password
+d53c992 RDKBEMU-102 : Added CcspTandDSsp Service into device repo
+bd4ed5f RDKB-7938: Add CONTRIBUTING.md file to repository
+f14ba0c RDKBEMU-233 : Updated COSAXCalibur.XML to support Porttriggering
+5975ca0 RDKBEMU-231 : Emulator Specific PSM XML Updation
+4033c47 RDKBEMU-226 : Updated COSAXCalibur.XML to support xfinitywifi
+f610c7a RDKBEMU-222 : Added Emulator specific snmp
+d2ab733 RDKBEMU-218 : Upstream system daemon with xfinity wi-fi support
+6a6ffe7 RDKBEMU-211 : Integration of PSM(XML files) in yocto.
+d6b5c49 RDKBEMU-209 : Added Emulator Specific Hotspot
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+54c209f RDKBEMU-237 : Emulator specific php modification to support
+73849c1 RDKB-7938: Add CONTRIBUTING.md file to repository

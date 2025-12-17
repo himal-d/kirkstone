@@ -1,0 +1,49 @@
+From 8403614cd33bef0371c9b2ba930c9f5a9aac5800 Mon Sep 17 00:00:00 2001
+From: kkanag314 <krishnapriya_kanagaraj@comcast.com>
+Date: Mon, 27 Nov 2023 06:54:32 +0000
+Subject: [PATCH] For CBCS contents,If the saiz box doesn't have a valid value in the sample_count and default_sample_aux_info_sizes ,reference the senc box for auxilary information .
+                 If saiz box parsing is failed and the mp4 segment doesn't have a senc box , then return fail
+
+---
+ gst/isomp4/qtdemux.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 82efadcee..8c594a314 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -4604,8 +4604,10 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+           qtdemux_parse_saiz (qtdemux, stream, &saiz_data,
+           &qtdemux->cenc_aux_sample_count);
+       if (qtdemux->cenc_aux_info_sizes == NULL) {
+-        GST_ERROR_OBJECT (qtdemux, "failed to parse saiz box");
+-        goto fail;
++        if (stream->protection_scheme_type != FOURCC_cbcs) {
++          GST_ERROR_OBJECT (qtdemux, "failed to parse saiz box");
++          goto fail;
++        }
+       }
+       saio_node =
+           qtdemux_tree_get_child_by_type_full (traf_node, FOURCC_saio,
+@@ -4622,6 +4624,7 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+         GST_ERROR_OBJECT (qtdemux, "failed to parse saio box");
+         g_free (qtdemux->cenc_aux_info_sizes);
+         qtdemux->cenc_aux_info_sizes = NULL;
++
+         goto fail;
+       }
+       /* Check for senc node
+@@ -4643,6 +4646,10 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+ 
+       } else {
+ 
++        if (qtdemux->cenc_aux_info_sizes == NULL) {
++          GST_ERROR_OBJECT (qtdemux, "failed to parse saiz box and senc box is also not available");
++          goto fail;
++        }
+         if (base_offset > -1 && base_offset > qtdemux->moof_offset)
+           offset += (guint64) (base_offset - qtdemux->moof_offset);
+         if ((info_type == FOURCC_cenc || info_type == FOURCC_cbcs)
+-- 
+2.17.1
+

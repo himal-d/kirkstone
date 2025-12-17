@@ -1,0 +1,23 @@
+--- a/Makefile.in	2019-10-21 16:16:01.007184472 +0100
++++ b/Makefile.in	2019-10-21 16:19:21.810953339 +0100
+@@ -716,8 +716,7 @@
+ 	  echo "$$d$$p"; \
+ 	done | $(am__base_list) | \
+ 	while read files; do \
+-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgconfigdir)'"; \
+-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgconfigdir)" || exit $$?; \
++	  echo "[Disabled] $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgconfigdir)'"; \
+ 	done
+ 
+ uninstall-pkgconfigDATA:
+--- a/Makefile.am	2019-10-21 16:25:26.793937800 +0100
++++ b/Makefile.am	2019-10-21 16:26:33.867233706 +0100
+@@ -12,7 +12,7 @@
+ DEFAULT_CRYPTO	= @XMLSEC_DEFAULT_CRYPTO@
+ 
+ bin_SCRIPTS 	= xmlsec1-config
+-pkgconfig_DATA 	= xmlsec1.pc @XMLSEC_CRYPTO_PC_FILES_LIST@
++# pkgconfig_DATA 	= xmlsec1.pc @XMLSEC_CRYPTO_PC_FILES_LIST@
+ pkgconfigdir 	= $(libdir)/pkgconfig
+ confexecdir	= $(libdir)
+ confexec_DATA 	= xmlsec1Conf.sh

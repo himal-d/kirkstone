@@ -1,0 +1,43 @@
+From e65f129c29b6cc96bd65677ac763c6e92888d4a7 Mon Sep 17 00:00:00 2001
+From: Manoj Bhatta <manoj_bhatta@comcast.com>
+Date: Fri, 10 Mar 2023 19:24:30 +0000
+Subject: [PATCH] default gamepad db dir /usr/share
+
+---
+ src/manette-device.h          | 1 +
+ src/manette-mapping-manager.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/manette-device.h b/src/manette-device.h
+index 207a0d4..b97c5c4 100644
+--- a/src/manette-device.h
++++ b/src/manette-device.h
+@@ -34,6 +34,7 @@ gboolean manette_device_has_input (ManetteDevice *self,
+                                    guint          type,
+                                    guint          code);
+ const gchar *manette_device_get_name (ManetteDevice *self);
++const gchar *manette_device_get_guid (ManetteDevice *self);
+ gboolean manette_device_has_user_mapping (ManetteDevice *self);
+ void manette_device_save_user_mapping (ManetteDevice *self,
+                                        const gchar   *mapping_string);
+diff --git a/src/manette-mapping-manager.c b/src/manette-mapping-manager.c
+index 4e9afaa..7ec13d4 100644
+--- a/src/manette-mapping-manager.c
++++ b/src/manette-mapping-manager.c
+@@ -223,6 +223,7 @@ manette_mapping_manager_new (void)
+   g_autofree gchar *path = NULL;
+   g_autoptr (GFile) user_mappings_file = NULL;
+   GError *inner_error = NULL;
++  gchar *data_dir = "/usr/share/"; //can be done using env variable
+ 
+   self = (ManetteMappingManager*) g_object_new (MANETTE_TYPE_MAPPING_MANAGER, NULL);
+ 
+@@ -242,7 +243,7 @@ manette_mapping_manager_new (void)
+     g_clear_error (&inner_error);
+   }
+ 
+-  path = g_build_filename (g_get_user_config_dir (), CONFIG_DIR, MAPPING_CONFIG_FILE, NULL);
++  path = g_build_filename (data_dir, CONFIG_DIR, MAPPING_CONFIG_FILE, NULL);
+ 
+   self->user_mappings_uri = g_filename_to_uri (path, NULL, &inner_error);
+   if (G_UNLIKELY (inner_error != NULL)) {

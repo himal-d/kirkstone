@@ -1,0 +1,70 @@
+##########################################
+Date: Apr 22, 2022 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: Supported/basic rates per VAP configuration for CAC 
+Source: Comcast
+License: BSD 
+Upstream-Status: Pending
+Signed-off-by: Tamilarasi Ganesan <tamilarasi_ganesan@comcast.com>
+##########################################
+diff --git a/source/hostap-2.10/src/ap/hostapd.h b/source/hostap-2.10/src/ap/hostapd.h
+index cf1c0da..c17d638 100644
+--- a/source/hostap-2.10/src/ap/hostapd.h
++++ b/source/hostap-2.10/src/ap/hostapd.h
+@@ -550,7 +550,8 @@ struct hostapd_iface {
+ 	 * current_mode->channels */
+ 	int num_rates;
+ 	struct hostapd_rate_data *current_rates;
+-	int *basic_rates;
++	struct hostapd_rate_data *current_cac_rates;
++    int *basic_rates;
+ 	int freq;
+ 
+ 	/* Background radar configuration */
+diff --git a/source/hostap-2.10/src/ap/ieee802_11.c b/source/hostap-2.10/src/ap/ieee802_11.c
+index 9160e8b..0e0c336 100644
+--- a/source/hostap-2.10/src/ap/ieee802_11.c
++++ b/source/hostap-2.10/src/ap/ieee802_11.c
+@@ -111,7 +111,7 @@ u8 * hostapd_eid_supp_rates(struct hostapd_data *hapd, u8 *eid)
+ 	int i, num, count;
+ 	int h2e_required;
+ 
+-	if (hapd->iface->current_rates == NULL)
++        if ((hapd->iface->current_rates == NULL) && (hapd->iface->current_cac_rates == NULL))
+ 		return eid;
+ 
+ 	*pos++ = WLAN_EID_SUPP_RATES;
+@@ -133,14 +133,25 @@ u8 * hostapd_eid_supp_rates(struct hostapd_data *hapd, u8 *eid)
+ 	}
+ 
+ 	*pos++ = num;
+-	for (i = 0, count = 0; i < hapd->iface->num_rates && count < num;
+-	     i++) {
+-		count++;
+-		*pos = hapd->iface->current_rates[i].rate / 5;
+-		if (hapd->iface->current_rates[i].flags & HOSTAPD_RATE_BASIC)
+-			*pos |= 0x80;
+-		pos++;
+-	}
++        if(hapd->iface->current_cac_rates) {
++                for (i = 0, count = 0; i < hapd->iface->num_rates && count < num;
++                                i++) {
++                        count++;
++                        *pos = hapd->iface->current_cac_rates[i].rate / 5;
++                        if (hapd->iface->current_cac_rates[i].flags & HOSTAPD_RATE_BASIC)
++                                *pos |= 0x80;
++                        pos++;
++                }
++        } else {
++                for (i = 0, count = 0; i < hapd->iface->num_rates && count < num;
++                                i++) {
++                        count++;
++                        *pos = hapd->iface->current_rates[i].rate / 5;
++                        if (hapd->iface->current_rates[i].flags & HOSTAPD_RATE_BASIC)
++                                *pos |= 0x80;
++                        pos++;
++                }
++        }
+ 
+ 	if (hapd->iconf->ieee80211n && hapd->iconf->require_ht && count < 8) {
+ 		count++;

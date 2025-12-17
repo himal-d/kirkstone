@@ -1,0 +1,41 @@
+Date: Tue, 19 Dec 2017 10:30:06 -0800
+
+From: da59d58c03b0e58c5cdf570539324120ef6314a6 Mon Sep 17 00:00:00 2001
+
+Subject: [PATCH] WKIT-1041: WPEWebProcess crash in OpenCDM:update()
+
+	check for mediakeysessionupdate failure
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Gurdal Oruklu <Gurdal_Oruklu2@cable.comcast.com>
+---
+ src/browser/wpe/opencdm/open_cdm.cpp | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/browser/wpe/opencdm/open_cdm.cpp b/src/browser/wpe/opencdm/open_cdm.cpp
+index a5660d1..b0f0e75 100644
+--- a/src/browser/wpe/opencdm/open_cdm.cpp
++++ b/src/browser/wpe/opencdm/open_cdm.cpp
+@@ -171,9 +171,15 @@ int OpenCdm::Update(unsigned char* pbResponse, int cbResponse, std::string& resp
+     cout << pbResponse[i] <<"";
+   CDM_DLOG() << "\nEnd";
+   CDM_DLOG() << "Update session with info from server.";
+-  platform_->MediaKeySessionUpdate((uint8_t*)pbResponse, cbResponse, m_session_id.session_id, m_session_id.session_id_len);
++  MediaKeySessionUpdateResponse status = platform_->MediaKeySessionUpdate((uint8_t*)pbResponse, cbResponse, m_session_id.session_id, m_session_id.session_id_len);
+   CDM_DLOG() << "Update session with info from server complete.";
+ 
++  if (status.platform_response !=  PLATFORM_CALL_SUCCESS) {
++    m_eState = KEY_SESSION_ERROR;
++    CDM_DLOG() << "MediaKeySessionUpdate() failed!";
++    return 1;
++  }
++
+   while (m_eState == KEY_SESSION_WAITING_FOR_LICENSE) {
+     CDM_DLOG() << "Waiting for license update status!" << "\n";
+     fflush(stdout);
+-- 
+2.14.2
+

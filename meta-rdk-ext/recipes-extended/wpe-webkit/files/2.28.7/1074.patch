@@ -1,0 +1,50 @@
+From 9cf5069b0119c59fcdb120ec4abf49641d55edb9 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Wed, 19 Apr 2023 12:43:48 +0000
+Subject: [PATCH] MSE: limit the number of samples stored in SourceBuffer
+
+Applications may append a lot of samples without triggereing
+eviction algorithm (> 500K). Which results in cleanup(on player
+destruction) taking too long time.
+
+Here is an example of video where we observed such behavior:
+https://www.youtube.com/tv#/watch?v=6ATfcsAFFNE&list=RD-WLgxoa4BeU
+
+This change allows at least one pass of eviction algorithm if number
+of samples is greater than 10K. Which should be enough to allow
+storing ~2-3 minutes of audio or video if size limit doesn't kick in.
+---
+ Source/WebCore/Modules/mediasource/SourceBuffer.cpp | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+index d67dc994bb429..bc51853c5d3e2 100644
+--- a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
++++ b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+@@ -981,16 +981,24 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
+     if (isRemoved())
+         return;
+ 
++    const auto hasTooManySamples = [&] {
++        size_t currentSize = 0;
++        for (const auto& trackBuffer : m_trackBufferMap.values())
++            currentSize += trackBuffer.samples.size();
++        const size_t kSampleMapSizeLimit = 10000;
++        return currentSize > kSampleMapSizeLimit;
++    };
++
+     // This algorithm is run to free up space in this source buffer when new data is appended.
+     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
+     // 2. If the buffer full flag equals false, then abort these steps.
+-    if (!m_bufferFull)
++    if (!m_bufferFull && !hasTooManySamples())
+         return;
+ 
+     size_t maximumBufferSize = this->maximumBufferSize();
+ 
+     // Check if app has removed enough already.
+-    if (extraMemoryCost() + newDataSize < maximumBufferSize) {
++    if (m_bufferFull && extraMemoryCost() + newDataSize < maximumBufferSize) {
+         m_bufferFull = false;
+         return;
+     }

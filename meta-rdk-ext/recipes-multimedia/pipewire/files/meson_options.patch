@@ -1,0 +1,13 @@
+diff --git a/meson_options.txt b/meson_options.txt
+index 9c6947d45..8af62bf6b 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -49,7 +49,7 @@ option('pipewire-alsa',
+ option('pipewire-jack',
+        description: 'Enable pipewire-jack integration',
+        type: 'feature',
+-       value: 'enabled')
++       value: 'disabled')
+ option('pipewire-v4l2',
+        description: 'Enable pipewire-v4l2 integration',
+        type: 'feature',

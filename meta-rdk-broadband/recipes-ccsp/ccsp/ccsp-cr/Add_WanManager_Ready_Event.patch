@@ -1,0 +1,51 @@
+Date: 06-Sep-2023
+From: parthiban.selvaraj@sky.uk
+Source: SKY  
+
+
+Index: git/config/cr-deviceprofile_embedded.xml
+===================================================================
+--- git.orig/config/cr-deviceprofile_embedded.xml
++++ git/config/cr-deviceprofile_embedded.xml
+@@ -68,6 +68,17 @@
+ 	        <name>com.cisco.spvtg.ccsp.fu</name> <version>1</version>
+ 	    </component>
+ 	-->
+-
++        <component>
++            <name>com.cisco.spvtg.ccsp.ethagent</name> <version>1</version>
++        </component>
++        <component>
++            <name>com.cisco.spvtg.ccsp.wanmanager</name> <version>1</version>
++            <dependencies>
++                    <dependency>com.cisco.spvtg.ccsp.psm</dependency>
++                    <dependency>com.cisco.spvtg.ccsp.pam</dependency>
++                    <dependency>com.cisco.spvtg.ccsp.ethagent</dependency>
++            </dependencies>
++            <event>wan_ready_to_go</event>
++        </component>
+     </components>    
+ </deviceProfile>
+Index: git/source/cr-ethwan-deviceprofile.xml
+===================================================================
+--- git.orig/source/cr-ethwan-deviceprofile.xml
++++ git/source/cr-ethwan-deviceprofile.xml
+@@ -65,6 +65,17 @@
+ 	        <name>com.cisco.spvtg.ccsp.fu</name> <version>1</version>
+ 	    </component>
+ 	-->
+-
++        <component>
++            <name>com.cisco.spvtg.ccsp.ethagent</name> <version>1</version>
++        </component>
++        <component>
++            <name>com.cisco.spvtg.ccsp.wanmanager</name> <version>1</version>
++            <dependencies>
++                    <dependency>com.cisco.spvtg.ccsp.psm</dependency>
++                    <dependency>com.cisco.spvtg.ccsp.pam</dependency>
++                    <dependency>com.cisco.spvtg.ccsp.ethagent</dependency>
++            </dependencies>
++            <event>wan_ready_to_go</event>
++        </component>
+     </components>    
+ </deviceProfile>

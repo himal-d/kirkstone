@@ -1,0 +1,102 @@
+From 605cb6a4d464567880b3a957de2323bb8fb344f9 Mon Sep 17 00:00:00 2001
+From: Edward Hervey <edward@centricular.com>
+Date: Wed, 21 Sep 2022 10:05:05 +0200
+Subject: [PATCH] SERXIONE-5687 gstpad: Avoid race in (un)setting EOS flag on sinkpads
+
+SERXIONE-5687: This patch fixes a race in simultaneous EOS event processing
+by audio and video streaming threads. Sometimes it happens that EOS event
+is not passed downstream of multiqueue element and it never reach sink element.
+
+Original patch:  https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/605cb6a4d464567880b3a957de2323bb8fb344f9
+
+The scenario is the following:
+
+* Thread 1 is pushing an EOS event on a sinkpad
+* Thread 2 is pushing a STREAM_START event on the same sinkpad before Thread 1
+returns. Note : It starts pushing the event after Thread 1 took the object lock.
+
+There is a potential race between:
+
+* The moment Thread 1 sets the EOS flag once it has finished sending the
+event (via store_sticky_event). When it does that it has both the STREAM and
+OBJECT lock
+
+* The moment Thread 2 sends the STREAM_START event (Which should release that
+EOS status), but removing the EOS flag is only done while holding the OBJECT
+lock and not the STREAM_LOCK, which means it could be re-set by Thread 1 before
+it then checks again the EOS flag (without the STREAM lock taken).
+
+The EOS flag unsetting by STREAM_START should be done with the STREAM lock
+taken, otherwise it will be racy.
+
+Fixes https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1452
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3320>
+---
+ gst/gstpad.c | 41 +++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/gst/gstpad.c b/gst/gstpad.c
+index 3b82be6..159440e 100644
+--- a/gst/gstpad.c
++++ b/gst/gstpad.c
+@@ -5792,6 +5792,17 @@ gst_pad_send_event_unchecked (GstPad * pad, GstEvent * event,
+ 
+       switch (event_type) {
+         case GST_EVENT_STREAM_START:
++          /* Take the stream lock to unset the EOS status. This is to ensure
++           * there isn't any other serialized event passing through while this
++           * EOS status is being unset */
++          /* lock order: STREAM_LOCK, LOCK, recheck flushing. */
++          GST_OBJECT_UNLOCK (pad);
++          GST_PAD_STREAM_LOCK (pad);
++          need_unlock = TRUE;
++          GST_OBJECT_LOCK (pad);
++          if (G_UNLIKELY (GST_PAD_IS_FLUSHING (pad)))
++            goto flushing;
++
+           /* Remove sticky EOS events */
+           GST_LOG_OBJECT (pad, "Removing pending EOS events");
+           remove_event_by_type (pad, GST_EVENT_EOS);
+@@ -5800,24 +5811,22 @@ gst_pad_send_event_unchecked (GstPad * pad, GstEvent * event,
+           GST_OBJECT_FLAG_UNSET (pad, GST_PAD_FLAG_EOS);
+           break;
+         default:
++          if (serialized) {
++            /* Take the stream lock to check the EOS status and drop the event
++             * if that is the case. */
++            /* lock order: STREAM_LOCK, LOCK, recheck flushing. */
++            GST_OBJECT_UNLOCK (pad);
++            GST_PAD_STREAM_LOCK (pad);
++            need_unlock = TRUE;
++            GST_OBJECT_LOCK (pad);
++            if (G_UNLIKELY (GST_PAD_IS_FLUSHING (pad)))
++              goto flushing;
++
++            if (G_UNLIKELY (GST_PAD_IS_EOS (pad)))
++              goto eos;
++          }
+           break;
+       }
+-
+-      if (serialized) {
+-        if (G_UNLIKELY (GST_PAD_IS_EOS (pad)))
+-          goto eos;
+-
+-        /* lock order: STREAM_LOCK, LOCK, recheck flushing. */
+-        GST_OBJECT_UNLOCK (pad);
+-        GST_PAD_STREAM_LOCK (pad);
+-        need_unlock = TRUE;
+-        GST_OBJECT_LOCK (pad);
+-        if (G_UNLIKELY (GST_PAD_IS_FLUSHING (pad)))
+-          goto flushing;
+-
+-        if (G_UNLIKELY (GST_PAD_IS_EOS (pad)))
+-          goto eos;
+-      }
+       break;
+   }
+ 
+-- 
+2.25.1
+

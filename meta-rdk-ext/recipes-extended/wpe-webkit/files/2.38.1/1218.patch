@@ -1,0 +1,33 @@
+From 23c1847ba46f0c166e57608fe610686c12b48aa3 Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Thu, 26 Oct 2023 10:03:32 -0400
+Subject: [PATCH] RDK-40561: Create XML document for HbbTV XHTML MIME type
+
+Reason for change: HbbTV Support
+Test Procedure: See ticket
+Risks: Low
+
+Signed-off-by: Filipe Norte <filipe.norte@sky.uk>
+
+Cherry-pick from wpe-2.28 pull request:
+https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/1071
+---
+ Source/WebCore/dom/DOMImplementation.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/dom/DOMImplementation.cpp b/Source/WebCore/dom/DOMImplementation.cpp
+index 3882bb9fc1bb..f95a703c0bb2 100644
+--- a/Source/WebCore/dom/DOMImplementation.cpp
++++ b/Source/WebCore/dom/DOMImplementation.cpp
+@@ -148,7 +148,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
+     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
+     if (equalLettersIgnoringASCIICase(contentType, "text/html"_s))
+         return HTMLDocument::create(frame, settings, url, documentIdentifier);
+-    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"_s))
++    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"_s) || equalLettersIgnoringASCIICase(contentType, "application/vnd.hbbtv.xhtml+xml"_s))
+         return XMLDocument::createXHTML(frame, settings, url);
+     if (equalLettersIgnoringASCIICase(contentType, "text/plain"_s))
+         return TextDocument::create(frame, settings, url, documentIdentifier);
+-- 
+2.41.0
+

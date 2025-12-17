@@ -1,0 +1,38 @@
+From aed9acc6f5fb66d8bfbe0c76393bb5114e32c009 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Tue, 11 Jul 2023 10:41:54 +0200
+Subject: [PATCH] [GSTMediaPlayer] Don't update video duration at the end of
+ playback
+
+Playback position reported from GStreamer pipeline after EOS received
+is not always the same as expected video duration (~200ms diff sometimes).
+As a result the last 'timeupdate' event is triggered with a value that
+is not equal to inital duraiton that is confusing to advertisers
+expecting a video to play e.g. 10sec but at the end it's only 9.8sec.
+
+Update video duration only if not set already. Playback position querry
+will notice m_isEndReached(true) and will use duration as current playback
+position.
+
+Partial backport of ebfcb3b0757d41d55ce80fd731be7c83eea93078
+https://bugs.webkit.org/show_bug.cgi?id=224237
+---
+ .../platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index e3024152a11e..53ea543335d7 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -2739,7 +2739,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
+     // position is not always reported as 0 for instance.
+     m_lastQueryTime.reset();
+     MediaTime now = currentMediaTime();
+-    if (now > MediaTime::zeroTime() && !m_isSeeking) {
++    if (now > MediaTime::zeroTime() && !m_isSeeking && !durationMediaTime().isFinite()) {
+         m_cachedDuration = now;
+         m_player->durationChanged();
+     }
+-- 
+2.25.1
+

@@ -1,0 +1,25 @@
+diff --git a/build/flags.mk b/build/flags.mk
+index b4a2f015..a34cee78 100644
+--- a/build/flags.mk
++++ b/build/flags.mk
+@@ -27,6 +27,7 @@ CFLAGS   := -Wall -Wextra -Werror
+ CFLAGS   += -Wno-unused-parameter
+ CFLAGS   += -Wno-unused-label
+ CFLAGS   += -Wno-strict-aliasing
++CFLAGS   += -Wno-error=deprecated-declarations
+ CFLAGS   += -fasynchronous-unwind-tables
+ 
+ DEBUGFLAGS := -g
+diff --git a/src/lib/osn/src/linux/strongswan.c b/src/lib/osn/src/linux/strongswan.c
+index 200c13cc..006994d0 100644
+--- a/src/lib/osn/src/linux/strongswan.c
++++ b/src/lib/osn/src/linux/strongswan.c
+@@ -1299,7 +1299,7 @@ static bool strongswan_get_status_ipsec(struct osn_ipsec_status *tunnel_status,
+             break;
+         }
+     } /* while (we're reading lines from the "ipsec status <tunnel_name>" output */
+-    fclose(f);
++    pclose(f);
+     f = NULL;
+ 
+     if (!status_obtained)

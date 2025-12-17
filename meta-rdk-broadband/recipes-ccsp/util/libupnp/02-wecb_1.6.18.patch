@@ -1,0 +1,481 @@
+Date: Jan 20, 2016 7:16 AM
+
+From: 23d20db6af215695fb6fdaf7098b6aba8c01eeb2 Jan 21, 2016 2:46 AM
+
+Subject: [PATCH] ARRISXB3-4105: Bringing libupnp on Yocto to 1.6.18 on par with Legacy.
+
+     WECB is not functional on Yocto now. In order to isolate
+     the issue in Arris, this step is intended to reduce the
+     number of unknowns.
+
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: Ramki Ananthakrishnan <ramki_ananthakrishnan@cable.comcast.com>
+---
+
+diff -Nur a/threadutil/src/ThreadPool.c b/threadutil/src/ThreadPool.c
+--- a/threadutil/src/ThreadPool.c	2012-04-12 06:44:50.000000000 +0800
++++ b/threadutil/src/ThreadPool.c	2015-02-04 09:28:35.996450621 +0800
+@@ -827,7 +827,7 @@
+ 
+ 	totalJobs = tp->highJobQ.size + tp->lowJobQ.size + tp->medJobQ.size;
+ 	if (totalJobs >= tp->attr.maxJobsTotal) {
+-		fprintf(stderr, "total jobs = %ld, too many jobs", totalJobs);
++		fprintf(stderr, "total jobs = %ld %ld %ld %ld, too many jobs", totalJobs, tp->highJobQ.size, tp->medJobQ.size, tp->lowJobQ.size);
+ 		goto exit_function;
+ 	}
+ 	if (!jobId)
+diff -Nur a/upnp/inc/upnp.h b/upnp/inc/upnp.h
+--- a/upnp/inc/upnp.h	2013-01-29 21:50:42.000000000 +0800
++++ b/upnp/inc/upnp.h	2015-02-04 09:36:17.834557472 +0800
+@@ -952,8 +952,27 @@
+ 	/*!  Local Port to listen for incoming connections.
+ 	 * \c NULL will pick an arbitrary free port. */
+ 	unsigned short DestPort);
++EXPORT_SPEC int UpnpInit4( 
++	/*! The interface name to use by the UPnP SDK operations.
++	 * Examples: "eth0", "xl0", "Local Area Connection", \c NULL to
++	 * use the first suitable interface. */
++	const char *IfName,
++	const char *IfIPv4addr,
++	/*!  Local Port to listen for incoming connections.
++	 * \c NULL will pick an arbitrary free port. */
++	unsigned short DestPort);
++
+ #endif
+ 
++EXPORT_SPEC int UpnpInit3( 
++	/*! The interface name to use by the UPnP SDK operations.
++	 * Examples: "eth0", "xl0", "Local Area Connection", \c NULL to
++	 * use the first suitable interface. */
++	const char *IfName,
++	const char *IfIPv4addr,
++	/*!  Local Port to listen for incoming connections.
++	 * \c NULL will pick an arbitrary free port. */
++	unsigned short DestPort);
+ /*!
+  * \brief Terminates the Linux SDK for UPnP Devices.
+  *
+diff -Nur a/upnp/src/api/upnpapi.c b/upnp/src/api/upnpapi.c
+--- a/upnp/src/api/upnpapi.c	2013-01-29 21:50:42.000000000 +0800
++++ b/upnp/src/api/upnpapi.c	2015-02-04 09:30:32.225782289 +0800
+@@ -485,6 +485,286 @@
+ 	return retVal;
+ }
+ 
++/*CISCO PATCH BEGIN */
++/*
++ The reason we add this interface is that we need to feed libupnp exactly the
++ interface and ip we desire.
++ UpnpInit can only accept ip address.
++ UpnpInit2 accepts interface name but it will get ip address using ioctl way.
++ This approach will not work if xb3 is configured with static ip on primary interface.
++ Address obtained could be the static ip configured.
++*/
++int UpnpInit3(const char *IfName, const char *HostIP, unsigned short DestPort)
++{
++    int retVal = UPNP_E_SUCCESS;
++
++    /* Initializes the ithread library */
++    ithread_initialize_library();
++
++    ithread_mutex_lock(&gSDKInitMutex);
++
++    /* Check if we're already initialized. */
++    if (UpnpSdkInit == 1) {
++        retVal = UPNP_E_INIT;
++        goto exit_function;
++    }
++
++    /* Perform initialization preamble. */
++    retVal = UpnpInitPreamble();
++    if (retVal != UPNP_E_SUCCESS) {
++        goto exit_function;
++    }
++
++    UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__,
++        "UpnpInit with IfName=%s, HostIP=%s, DestPort=%d.\n", 
++        IfName ? IfName : "",
++        HostIP ? HostIP : "", (int)DestPort);
++
++    /* Verify IfName if provided */
++    if (IfName != NULL) {
++        if (strlen(IfName) > sizeof(gIF_NAME))
++            return UPNP_E_INVALID_INTERFACE;
++
++        memset(gIF_NAME, 0, sizeof(gIF_NAME));
++        strncpy(gIF_NAME, IfName, sizeof(gIF_NAME) - 1);
++    }
++
++    /* Verify HostIP, if provided, or find it ourselves. */
++    memset(gIF_IPV4, 0, sizeof(gIF_IPV4));
++    if (HostIP != NULL) {
++        strncpy(gIF_IPV4, HostIP, sizeof(gIF_IPV4) - 1);
++    } else {
++        if( getlocalhostname( gIF_IPV4, sizeof(gIF_IPV4) - 1 ) != UPNP_E_SUCCESS ) {
++            retVal = UPNP_E_INIT_FAILED;
++            goto exit_function;
++        }
++    }
++    
++    /* Set the UpnpSdkInit flag to 1 to indicate we're successfully initialized. */
++    UpnpSdkInit = 1;
++
++    /* Finish initializing the SDK. */
++    retVal = UpnpInitStartServers(DestPort);
++    if (retVal != UPNP_E_SUCCESS) {
++        UpnpSdkInit = 0;
++        goto exit_function;
++    }
++
++    UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__,
++        "Host Ip: %s Host Port: %d\n", gIF_IPV4,
++        (int)LOCAL_PORT_V4);
++
++exit_function:
++    ithread_mutex_unlock(&gSDKInitMutex);
++
++    return retVal;
++}
++
++#ifdef UPNP_ENABLE_IPV6
++int UpnpGetIfInfo2(const char *IfName, const char *ip)
++{
++	char szBuffer[MAX_INTERFACES * sizeof(struct ifreq)];
++	struct ifconf ifConf;
++	struct ifreq ifReq;
++	FILE *inet6_procfd;
++	size_t i;
++	int LocalSock;
++	struct in6_addr v6_addr;
++	unsigned if_idx;
++	char addr6[8][5];
++	char buf[INET6_ADDRSTRLEN];
++	int ifname_found = 0;
++	int valid_addr_found = 0;
++
++	/* Copy interface name, if it was provided. */
++	if (IfName != NULL) {
++		if (strlen(IfName) > sizeof(gIF_NAME))
++			return UPNP_E_INVALID_INTERFACE;
++
++		memset(gIF_NAME, 0, sizeof(gIF_NAME));
++		strncpy(gIF_NAME, IfName, sizeof(gIF_NAME) - 1);
++		ifname_found = 1;
++	}
++	/* Create an unbound datagram socket to do the SIOCGIFADDR ioctl on.  */
++	if ((LocalSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET) {
++		UpnpPrintf(UPNP_ALL, API, __FILE__, __LINE__,
++			   "Can't create addrlist socket\n");
++		return UPNP_E_INIT;
++	}
++	/* Get the interface configuration information...  */
++	ifConf.ifc_len = (int)sizeof szBuffer;
++	ifConf.ifc_ifcu.ifcu_buf = (caddr_t) szBuffer;
++
++	if (ioctl(LocalSock, SIOCGIFCONF, &ifConf) < 0) {
++		UpnpPrintf(UPNP_ALL, API, __FILE__, __LINE__,
++			   "DiscoverInterfaces: SIOCGIFCONF returned error\n");
++		close(LocalSock);
++		return UPNP_E_INIT;
++	}
++	/* Cycle through the list of interfaces looking for IP addresses.  */
++	for (i = (size_t)0; i < (size_t)ifConf.ifc_len;) {
++		struct ifreq *pifReq =
++		    (struct ifreq *)((caddr_t) ifConf.ifc_req + i);
++		i += sizeof *pifReq;
++		/* See if this is the sort of interface we want to deal with. */
++		memset(ifReq.ifr_name, 0, sizeof(ifReq.ifr_name));
++		strncpy(ifReq.ifr_name, pifReq->ifr_name,
++			sizeof(ifReq.ifr_name) - 1);
++		if (ioctl(LocalSock, SIOCGIFFLAGS, &ifReq) < 0) {
++			UpnpPrintf(UPNP_ALL, API, __FILE__, __LINE__,
++				   "Can't get interface flags for %s:\n",
++				   ifReq.ifr_name);
++		}
++		/* Skip LOOPBACK interfaces, DOWN interfaces and interfaces that  */
++		/* don't support MULTICAST. */
++		if ((ifReq.ifr_flags & IFF_LOOPBACK)
++		    || (!(ifReq.ifr_flags & IFF_UP))
++		    || (!(ifReq.ifr_flags & IFF_MULTICAST))) {
++			continue;
++		}
++		if (ifname_found == 0) {
++			/* We have found a valid interface name. Keep it. */
++			memset(gIF_NAME, 0, sizeof(gIF_NAME));
++			strncpy(gIF_NAME, pifReq->ifr_name, sizeof(gIF_NAME) - 1);
++			ifname_found = 1;
++		} else {
++			if (strncmp
++			    (gIF_NAME, pifReq->ifr_name,
++			     sizeof(gIF_NAME)) != 0) {
++				/* This is not the interface we're looking for. */
++				continue;
++			}
++		}
++		/* Check address family. */
++		if (pifReq->ifr_addr.sa_family == AF_INET) {
++			/* Copy interface name, IPv4 address and interface index. */
++			memset(gIF_NAME, 0, sizeof(gIF_NAME));
++			strncpy(gIF_NAME, pifReq->ifr_name, sizeof(gIF_NAME) - 1);
++			inet_ntop(AF_INET,
++				  &((struct sockaddr_in *)&pifReq->ifr_addr)->
++				  sin_addr, gIF_IPV4, sizeof(gIF_IPV4));
++			if(!ip || (ip && !strcmp(ip, gIF_IPV4)))
++			{
++				gIF_INDEX = if_nametoindex(gIF_NAME);
++				valid_addr_found = 1;
++				break;
++			}
++		}
++	}
++	close(LocalSock);
++	/* Failed to find a valid interface, or valid address. */
++	if (ifname_found == 0 || valid_addr_found == 0) {
++		UpnpPrintf(UPNP_CRITICAL, API, __FILE__, __LINE__,
++			   "Failed to find an adapter with valid IPv4 addresses for use.\n");
++
++		
++		gIF_INDEX = if_nametoindex(gIF_NAME);
++		gIF_IPV4[0] = '\0';
++		//return UPNP_E_INVALID_INTERFACE;
++	}
++	/* Try to get the IPv6 address for the same interface  */
++	/* from "/proc/net/if_inet6", if possible. */
++	inet6_procfd = fopen("/proc/net/if_inet6", "r");
++	if (inet6_procfd) {
++		while (fscanf(inet6_procfd,
++			      "%4s%4s%4s%4s%4s%4s%4s%4s %02x %*02x %*02x %*02x %*20s\n",
++			      addr6[0], addr6[1], addr6[2], addr6[3],
++			      addr6[4], addr6[5], addr6[6], addr6[7],
++			      &if_idx) != EOF) {
++			/* Get same interface as IPv4 address retrieved. */
++			if (gIF_INDEX == if_idx) {
++				snprintf(buf, sizeof(buf),
++					 "%s:%s:%s:%s:%s:%s:%s:%s", addr6[0],
++					 addr6[1], addr6[2], addr6[3], addr6[4],
++					 addr6[5], addr6[6], addr6[7]);
++				/* Validate formed address and check for link-local. */
++				if (inet_pton(AF_INET6, buf, &v6_addr) > 0) {
++					if (IN6_IS_ADDR_ULA(&v6_addr)) {
++						/* Got valid IPv6 ula. */
++						memset(gIF_IPV6_ULA_GUA, 0,
++							sizeof(gIF_IPV6_ULA_GUA));
++						strncpy(gIF_IPV6_ULA_GUA, buf,
++							sizeof
++							(gIF_IPV6_ULA_GUA) - 1);
++					} else if (IN6_IS_ADDR_GLOBAL(&v6_addr)
++						   && strlen(gIF_IPV6_ULA_GUA)
++						   == (size_t)0) {
++						/* got a GUA, should store it while no ULA is found */
++						memset(gIF_IPV6_ULA_GUA, 0,
++                                                        sizeof(gIF_IPV6_ULA_GUA));
++						strncpy(gIF_IPV6_ULA_GUA, buf,
++							sizeof
++							(gIF_IPV6_ULA_GUA) - 1);
++					} else
++					    if (IN6_IS_ADDR_LINKLOCAL(&v6_addr)
++						&& strlen(gIF_IPV6) == (size_t)0) {
++						/* got a Link local IPv6 address. */
++						memset(gIF_IPV6, 0,
++                                                        sizeof(gIF_IPV6));
++						strncpy(gIF_IPV6, buf,
++							sizeof(gIF_IPV6) - 1);
++					}
++				}
++			}
++		}
++		fclose(inet6_procfd);
++	}
++	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__,
++		   "Interface name=%s, index=%d, v4=%s, v6=%s, ULA or GUA v6=%s\n",
++		   gIF_NAME, gIF_INDEX, gIF_IPV4, gIF_IPV6, gIF_IPV6_ULA_GUA);
++
++	return UPNP_E_SUCCESS;
++}
++
++int UpnpInit4(const char *IfName, const char *ip, unsigned short DestPort)
++{
++	int retVal;
++
++	/* Initializes the ithread library */
++	ithread_initialize_library();
++
++	ithread_mutex_lock(&gSDKInitMutex);
++
++	/* Check if we're already initialized. */
++	if (UpnpSdkInit == 1) {
++		retVal = UPNP_E_INIT;
++		goto exit_function;
++	}
++
++	/* Perform initialization preamble. */
++	retVal = UpnpInitPreamble();
++	if (retVal != UPNP_E_SUCCESS) {
++		goto exit_function;
++	}
++
++	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__,
++		"UpnpInit2 with IfName=%s, DestPort=%d.\n", 
++		IfName ? IfName : "", DestPort);
++
++	/* Retrieve interface information (Addresses, index, etc). */
++	retVal = UpnpGetIfInfo2(IfName, ip);
++	if (retVal != UPNP_E_SUCCESS) {
++		goto exit_function;
++	}
++
++	/* Set the UpnpSdkInit flag to 1 to indicate we're successfully initialized. */
++	UpnpSdkInit = 1;
++
++	/* Finish initializing the SDK. */
++	retVal = UpnpInitStartServers(DestPort);
++	if (retVal != UPNP_E_SUCCESS) {
++		UpnpSdkInit = 0;
++		goto exit_function;
++	}
++
++exit_function:
++	ithread_mutex_unlock(&gSDKInitMutex);
++
++	return retVal;
++}
++#endif
++/* CISCO PATCH END */
++
+ #ifdef UPNP_ENABLE_IPV6
+ int UpnpInit2(const char *IfName, unsigned short DestPort)
+ {
+diff -Nur a/upnp/src/ssdp/ssdp_ctrlpt.c b/upnp/src/ssdp/ssdp_ctrlpt.c
+--- a/upnp/src/ssdp/ssdp_ctrlpt.c	2013-01-29 21:50:42.000000000 +0800
++++ b/upnp/src/ssdp/ssdp_ctrlpt.c	2015-02-04 09:28:35.997450693 +0800
+@@ -123,7 +123,8 @@
+ 	param.Expires = -1;
+ 	if (httpmsg_find_hdr(hmsg, HDR_CACHE_CONTROL, &hdr_value) != NULL) {
+ 		if (matchstr(hdr_value.buf, hdr_value.length,
+-			     "%imax-age = %d%0", &param.Expires) != PARSE_OK)
++			     "%imax-age = %d%0", &param.Expires) != PARSE_OK && matchstr(hdr_value.buf, hdr_value.length,
++			     "%ino-cache=\"Ext\", max-age = %d%0", &param.Expires) != PARSE_OK)
+ 			return;
+ 	}
+ 	/* DATE */
+@@ -227,6 +228,12 @@
+ 		    strlen(param.Location) == 0 || !usn_found || !st_found) {
+ 			return;	/* bad reply */
+ 		}
++		//In response, we should find device or service type in ST header
++		if (st_found && !strlen(param.DeviceType)) {
++			//strncpy(param.DeviceId, event.UDN, sizeof(param.DeviceId) - 1);
++			strncpy(param.DeviceType, event.DeviceType, sizeof(param.DeviceType) - 1);
++		}
++
+ 		/* check each current search */
+ 		HandleLock();
+ 		if (GetClientHandleInfo(&handle, &ctrlpt_info) != HND_CLIENT) {
+@@ -578,7 +585,7 @@
+ 	newArg->requestType = requestType;
+ 	id = (int *)malloc(sizeof(int));
+ 	TPJobInit(&job, (start_routine) searchExpired, id);
+-	TPJobSetPriority(&job, MED_PRIORITY);
++	TPJobSetPriority(&job, LOW_PRIORITY);
+ 	TPJobSetFreeFunction(&job, (free_routine) free);
+ 	/* Schedule a timeout event to remove search Arg */
+ 	TimerThreadSchedule(&gTimerThread, timeTillRead,
+diff -Nur a/upnp/src/ssdp/ssdp_device.c b/upnp/src/ssdp/ssdp_device.c
+--- a/upnp/src/ssdp/ssdp_device.c	2012-12-07 01:41:49.000000000 +0800
++++ b/upnp/src/ssdp/ssdp_device.c	2015-02-04 09:28:36.010451625 +0800
+@@ -191,6 +191,9 @@
+ #endif
+ 	char buf_ntop[INET6_ADDRSTRLEN];
+ 	int ret = UPNP_E_SUCCESS;
++	int fd = -1;
++    int nread = -1;
++    char rbuf[16] = {'\0'}; 
+ 
+ 	ReplySock = socket((int)DestAddr->sa_family, SOCK_DGRAM, 0);
+ 	if (ReplySock == INVALID_SOCKET) {
+@@ -202,6 +205,19 @@
+ 		return UPNP_E_OUTOF_SOCKET;
+ 	}
+ 
++    /* 
++     * TTL is configurable from WEBUI. Values set will be stored into /var/tmp/upnp.ttl
++     * Backend or igd service handler will feed user-set ttl values into this file
++     */
++    ttl = 5;    // USGv2 default values
++    fd = open("/var/tmp/upnp.ttl", O_RDONLY);
++    if (fd != -1){
++        nread = read(fd, rbuf, sizeof(rbuf));
++        if (nread != -1)
++            ttl = atoi(rbuf);
++    }
++    close(fd);
++
+ 	switch (DestAddr->sa_family) {
+ 	case AF_INET:
+ 		inet_ntop(AF_INET, &((struct sockaddr_in *)DestAddr)->sin_addr,
+diff -Nur a/upnp/src/ssdp/ssdp_server.c b/upnp/src/ssdp/ssdp_server.c
+--- a/upnp/src/ssdp/ssdp_server.c	2012-12-07 01:46:09.000000000 +0800
++++ b/upnp/src/ssdp/ssdp_server.c	2015-02-04 09:28:36.035453418 +0800
+@@ -515,6 +515,28 @@
+ 			CommandFound = 1;
+ 		}
+ 	}
++	//patched by cisco to support wecb device
++	if (strstr(cmd, "hnap:WiFiExtender") != NULL) 
++	{
++		memset(Evt->DeviceType, 0, sizeof(Evt->DeviceType));
++		if ((!strncmp(cmd, "hnap:WiFiExtender", strlen("hnap:WiFiExtender") + 1))) 
++		{
++			strncpy(Evt->DeviceType, "hnap:WiFiExtender", sizeof(Evt->DeviceType) - 1);
++			CommandFound = 1;
++			return 0;
++		}
++		else if(!strncmp(cmd, "hnap:WiFiExtenderSynced", strlen("hnap:WiFiExtenderSynced") + 1))
++		{
++			strncpy(Evt->DeviceType, "hnap:WiFiExtenderSynced", sizeof(Evt->DeviceType) - 1);
++			return 0;
++		}
++		else
++		{
++			printf("error packet:%s\n", cmd);
++			return -1;
++		}
++	}
++
+ 	if ((TempPtr = strstr(cmd, "::upnp:rootdevice")) != NULL) {
+ 		/* Everything before "::upnp::rootdevice" is the UDN. */
+ 		if (TempPtr != cmd) {
+@@ -539,7 +561,7 @@
+ 		return SSDP_ROOTDEVICE;
+ 	if (strstr(cmd, "uuid:"))
+ 		return SSDP_DEVICEUDN;
+-	if (strstr(cmd, "urn:") && strstr(cmd, ":device:"))
++	if ((strstr(cmd, "urn:") && strstr(cmd, ":device:")) || strstr(cmd, "hnap:WiFiExtender"))
+ 		return SSDP_DEVICETYPE;
+ 	if (strstr(cmd, "urn:") && strstr(cmd, ":service:"))
+ 		return SSDP_SERVICE;
+@@ -840,6 +862,20 @@
+ 		ret = UPNP_E_SOCKET_BIND;
+ 		goto error_handler;
+ 	}
++    /*CISCO PATCH BEGIN*/
++    /*
++       When we're in a multihomed situation, M-SEARCH packets will be forwarded to 
++       all sockets listening 239.255.255.250:1900 and thus all sockets replies.
++       Kernel handles the multicast M-SEARCH correctly sending to interface interested in
++       the multicast group.
++       But transport layer (socket) has no idea of interface infomration.
++
++       Therefore we use SO_BINDTODEVICE. If packet is received from interface that is not
++       bound to, packet will be dropped.
++    */
++    if (gIF_NAME[0] != 0)
++        setsockopt(*ssdpSock, SOL_SOCKET, SO_BINDTODEVICE, gIF_NAME, strlen(gIF_NAME));
++    /*CISCO PATCH END*/
+ 	memset((void *)&ssdpMcastAddr, 0, sizeof(struct ip_mreq));
+ 	ssdpMcastAddr.imr_interface.s_addr = inet_addr(gIF_IPV4);
+ 	ssdpMcastAddr.imr_multiaddr.s_addr = inet_addr(SSDP_IP);

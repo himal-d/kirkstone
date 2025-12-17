@@ -1,0 +1,17 @@
+Date: 01-Nov-2023
+From: Srijeyarankesh_JS@comcast.com
+Source: COMCAST
+
+--- a/source/hostap-2.10/src/ap/ieee802_1x.c	2023-11-02 17:47:09.857263839 +0000
++++ b/source/hostap-2.10/src/ap/ieee802_1x.c	2023-11-02 17:51:57.106735984 +0000
+@@ -2125,8 +2125,10 @@
+ 				      session_timeout_set ?
+ 				      (int) session_timeout : -1);
+ #ifdef FEATURE_SUPPORT_RADIUSGREYLIST
++#ifdef CONFIG_DRIVER_BRCM
+ 		if ((hapd->conf->rdk_greylist  || hapd->conf->connected_building_avp) && !hapd->conf->ieee802_1x)
+ 			ieee802_1x_set_sta_authorized(hapd, sta, 1);
++#endif
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 		break;
+ 	case RADIUS_CODE_ACCESS_REJECT:

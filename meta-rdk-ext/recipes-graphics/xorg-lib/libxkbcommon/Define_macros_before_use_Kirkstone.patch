@@ -1,0 +1,16 @@
+Index: libxkbcommon-0.5.0/src/xkbcomp/parser.y
+===================================================================
+--- libxkbcommon-0.5.0.orig/src/xkbcomp/parser.y
++++ libxkbcommon-0.5.0/src/xkbcomp/parser.y
+@@ -31,6 +31,11 @@
+  */
+ 
+ %{
++/* Tokens */
++#define YYEMPTY -2
++#define YYerror 256
++#define YYUNDEF 257
++
+ #include "xkbcomp-priv.h"
+ #include "ast-build.h"
+ #include "parser-priv.h"

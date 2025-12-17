@@ -1,0 +1,26 @@
+Index: git/lib/server.c
+===================================================================
+--- git.orig/lib/server.c
++++ git/lib/server.c
+@@ -290,7 +290,7 @@ lws_http_serve(struct lws *wsi, char *ur
+ 			}
+ 			sym[len] = '\0';
+ 			lwsl_debug("symlink %s -> %s\n", path, sym);
+-			snprintf(path, sizeof(path) - 1, "%s", sym);
++			snprintf(path, sizeof(path), "%s", sym);
+ 		}
+ #endif
+ 		if ((S_IFMT & st.st_mode) == S_IFDIR) {
+Index: git/CMakeLists.txt
+===================================================================
+--- git.orig/CMakeLists.txt
++++ git/CMakeLists.txt
+@@ -49,7 +49,7 @@ if(GIT_EXECUTABLE)
+     OUTPUT_VARIABLE GIT_HOST
+     OUTPUT_STRIP_TRAILING_WHITESPACE
+     )
+-	string(REGEX REPLACE "([^\\])[\\]([^\\])" "\\1\\\\\\\\\\2" GIT_USER ${GIT_USER})
++	string(REGEX REPLACE "([^\\])[\\]([^\\])" "\\1\\\\\\\\\\2" GIT_USER "${GIT_USER}")
+     set(LWS_BUILD_HASH ${GIT_USER}@${GIT_HOST}-${GIT_HASH})
+     message("Git commit hash: ${LWS_BUILD_HASH}")
+ endif()

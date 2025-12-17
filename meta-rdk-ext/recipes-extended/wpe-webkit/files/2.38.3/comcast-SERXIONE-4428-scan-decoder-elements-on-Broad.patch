@@ -1,0 +1,30 @@
+From 0a9fc9ea54ec1e1265388028886285cfd5772af0 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Thu, 22 Feb 2024 14:10:41 +0000
+Subject: [PATCH] comcast - SERXIONE-4428 - scan decoder elements on Broadcom
+ as well
+
+Include some SW decoders and decoding sinks
+---
+ .../platform/graphics/gstreamer/GStreamerRegistryScanner.cpp  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp b/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
+index d2bbf1416e9b..310e2b872050 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
+@@ -79,9 +79,9 @@ GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFa
+ {
+ #if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
+     if (types.contains(Type::AudioDecoder))
+-        audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
++        audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
+     if (types.contains(Type::VideoDecoder))
+-        videoDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
++        videoDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+ #else
+     if (types.contains(Type::AudioDecoder))
+         audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
+-- 
+2.25.1
+

@@ -1,0 +1,62 @@
+From dcb1ceadd7b08affc7b3412f5d1da02f9fbd7597 Mon Sep 17 00:00:00 2001
+From: cshashank <shashank.kumar@lnttechservices.com>
+Date: Thu, 29 Aug 2019 14:45:24 +0000
+Subject: [PATCH] Fix to cobalt compilation issue
+
+Cobalt compilations fails due to below reason
+
+error: typedef redefinition with different types ('void *' vs 'intptr_t' (aka 'long'))
+typedef void            *EGLNativeDisplayType;
+                         ^
+../../cobalt/renderer/egl_and_gles.h:123:30: note: expanded from macro 'EGLNativeDisplayType'
+                             ^
+../../starboard/egl.h:46:18: note: previous definition is here
+typedef intptr_t SbEglNativeDisplayType;
+
+Signed-off-by: cshashank <shashank.kumar@lnttechservices.com>
+---
+ src/starboard/shared/wayland/application_wayland.cc | 5 +++++
+ src/starboard/shared/wayland/native_display_type.h  | 6 ++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/src/starboard/shared/wayland/application_wayland.cc b/src/starboard/shared/wayland/application_wayland.cc
+index d65fafad0..060ada049 100644
+--- a/src/starboard/shared/wayland/application_wayland.cc
++++ b/src/starboard/shared/wayland/application_wayland.cc
+@@ -14,7 +14,12 @@
+
+ #include "starboard/shared/wayland/application_wayland.h"
+
++#if SB_API_VERSION >= 11
++#include "starboard/egl.h"
++#else
+ #include <EGL/egl.h>
++#endif
++
+ #include <poll.h>
+ #include <string.h>
+ #include <sys/eventfd.h>
+diff --git a/src/starboard/shared/wayland/native_display_type.h b/src/starboard/shared/wayland/native_display_type.h
+index b4c116d5e..603f6defd 100644
+--- a/src/starboard/shared/wayland/native_display_type.h
++++ b/src/starboard/shared/wayland/native_display_type.h
+@@ -14,11 +14,17 @@
+
+ #ifndef STARBOARD_SHARED_WAYLAND_NATIVE_DISPLAY_TYPE_H_
+ #define STARBOARD_SHARED_WAYLAND_NATIVE_DISPLAY_TYPE_H_
++
++#if SB_API_VERSION >= 11
++#include "starboard/egl.h"
++#else
+ #include <EGL/egl.h>
++#endif
+
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
++typedef EGLNativeDisplayType NativeDisplayType;
+ NativeDisplayType WaylandNativeDisplayType();
+
+ #ifdef __cplusplus
+--
+2.16.2

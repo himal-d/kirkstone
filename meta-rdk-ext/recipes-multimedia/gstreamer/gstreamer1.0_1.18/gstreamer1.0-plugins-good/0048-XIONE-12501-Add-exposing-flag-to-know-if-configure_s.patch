@@ -1,0 +1,93 @@
+From f3948061ae67f84c587f26f9ddfb213b62fd3211 Mon Sep 17 00:00:00 2001
+From: Tony Paul <Tony_Paul@comcast.com>
+Date: Thu, 31 Aug 2023 15:36:01 +0000
+Subject: [PATCH 1/1] XIONE-12501-Add-exposing-flag-to-know-if-configure_s
+
+Signed-off-by: Tony Paul <Tony_Paul@comcast.com>
+---
+ gst/isomp4/qtdemux.c | 18 +++++++++++++++++-
+ gst/isomp4/qtdemux.h |  1 +
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index cbd021647..a328f5251 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -474,6 +474,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
+   qtdemux->aamp_rate = 1.0;
+   qtdemux->aamp_last_pts = GST_CLOCK_TIME_NONE;
+   qtdemux->aamp_pts_offset = 0;
++  qtdemux->exposing = FALSE;
+ 
+ }
+ 
+@@ -2333,6 +2334,9 @@ gst_qtdemux_handle_sink_event (GstPad * sinkpad, GstObject * parent,
+         gst_event_unref (event);
+         goto drop;
+       }
++      if (demux->exposing) {
++        g_printf("[%s] Received FLUSH_START during exposing stream\n", __FUNCTION__);
++      }
+       QTDEMUX_EXPOSE_LOCK (demux);
+       res = gst_pad_event_default (demux->sinkpad, parent, event);
+       QTDEMUX_EXPOSE_UNLOCK (demux);
+@@ -5221,7 +5225,9 @@ beach:
+     /* digested all data, show what we have */
+     qtdemux_prepare_streams (qtdemux);
+     QTDEMUX_EXPOSE_LOCK (qtdemux);
++    qtdemux->exposing = TRUE;
+     ret = qtdemux_expose_streams (qtdemux);
++    qtdemux->exposing = FALSE;
+     QTDEMUX_EXPOSE_UNLOCK (qtdemux);
+ 
+     qtdemux->state = QTDEMUX_STATE_MOVIE;
+@@ -7822,7 +7828,9 @@ gst_qtdemux_process_adapter (GstQTDemux * demux, gboolean force)
+             qtdemux_parse_tree (demux);
+             qtdemux_prepare_streams (demux);
+             QTDEMUX_EXPOSE_LOCK (demux);
++	    demux->exposing = TRUE;
+             qtdemux_expose_streams (demux);
++	    demux->exposing = FALSE;
+             QTDEMUX_EXPOSE_UNLOCK (demux);
+ 
+             demux->got_moov = TRUE;
+@@ -7924,7 +7932,9 @@ gst_qtdemux_process_adapter (GstQTDemux * demux, gboolean force)
+                                 demux->segment_seqnum);
+                 }
+               QTDEMUX_EXPOSE_LOCK (demux);
++	      demux->exposing = TRUE;
+               qtdemux_expose_streams (demux);
++	      demux->exposing = FALSE;
+               QTDEMUX_EXPOSE_UNLOCK (demux);
+             }
+ 
+@@ -9436,7 +9446,13 @@ gst_qtdemux_configure_stream (GstQTDemux * qtdemux, QtDemuxStream * stream)
+           || !gst_caps_is_equal_fixed (prev_caps, CUR_STREAM (stream)->caps)) {
+         GST_DEBUG_OBJECT (qtdemux, "setting caps %" GST_PTR_FORMAT,
+             CUR_STREAM (stream)->caps);
+-        gst_pad_set_caps (stream->pad, CUR_STREAM (stream)->caps);
++        if (qtdemux->exposing) {
++          QTDEMUX_EXPOSE_UNLOCK(qtdemux);
++          gst_pad_set_caps (stream->pad, CUR_STREAM (stream)->caps);
++          QTDEMUX_EXPOSE_LOCK(qtdemux);
++        } else {
++          gst_pad_set_caps (stream->pad, CUR_STREAM (stream)->caps);
++        }
+       } else {
+         GST_DEBUG_OBJECT (qtdemux, "ignore duplicated caps");
+       }
+diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h
+index 1727938c0..599f9fbd9 100644
+--- a/gst/isomp4/qtdemux.h
++++ b/gst/isomp4/qtdemux.h
+@@ -275,6 +275,7 @@ struct _GstQTDemux {
+   gboolean aamp_player_enabled;
+   GstClockTime aamp_last_pts;
+   GstClockTime aamp_pts_offset;
++  gboolean exposing;
+ };
+ 
+ struct _GstQTDemuxClass {
+-- 
+2.25.1
+

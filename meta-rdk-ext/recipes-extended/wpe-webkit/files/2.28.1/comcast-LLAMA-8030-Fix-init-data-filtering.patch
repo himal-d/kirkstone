@@ -1,0 +1,141 @@
+From 8505f12cc5d6f5a99c0c5bdf08d372d59aeecb7b Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Thu, 25 May 2023 12:45:59 -0400
+Subject: [PATCH] LLAMA-8030: Fix init data filtering
+
+Reason for change: Asset with multiple protection systems
+may not resume playback after ads, as init data may contain
+pssh boxes for multiple key systems, but with wrong system
+id associated with the init data structure compared to
+current active key system
+Test Procedure: Verify assets play normally, after seek and
+after ads
+Risks: Medium
+
+Signed-off-by: Filipe Norte <filipe.norte@sky.uk>
+---
+ .../gstreamer/MediaPlayerPrivateGStreamer.cpp | 12 ++++++
+ .../gstreamer/MediaPlayerPrivateGStreamer.h   |  2 +
+ .../gstreamer/eme/GStreamerEMEUtilities.cpp   | 43 +++++++++++++++++++
+ .../gstreamer/eme/GStreamerEMEUtilities.h     |  2 +
+ 4 files changed, 59 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 502e21a21d61..29ae72c57e02 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -419,6 +419,9 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String
+     m_reportedPlaybackFailed = false;
+     m_reportedPlaybackEOS = false;
+ 
++    // FIXME: Temporary workaround for youtube use cases
++    m_isYoutubeContent = urlString.containsIgnoringASCIICase("ytlr-cert.appspot.com") || urlString.containsIgnoringASCIICase("youtube.com");
++
+     if (!m_pipeline)
+         createGSTPlayBin(url, pipelineName);
+     syncOnClock(true);
+@@ -3867,6 +3870,15 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
+         if (!weakThis)
+             return;
+ 
++        if (weakThis->m_cdmInstance && equalIgnoringASCIICase(initData.payloadContainerType(), "cenc") && !GStreamerEMEUtilities::cencHasInitDataForKeySystem(initData, weakThis->m_cdmInstance->keySystem())) {
++            // FIXME: Temporary workaround for youtube use cases
++            if (!weakThis->m_isYoutubeContent)  {
++                GST_TRACE_OBJECT(weakThis->pipeline(), "skipping initialization data for a different key system");
++                return;
++            }
++            GST_TRACE_OBJECT(weakThis->pipeline(), "not skipping initialization data for a different key system");
++        }
++
+         GST_DEBUG("scheduling initializationDataEncountered %s event of size %zu", initData.payloadContainerType().utf8().data(),
+             initData.payload()->size());
+         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.payload()->data()), initData.payload()->size());
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+index d05e8b5a9951..c4a2653a414a 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+@@ -588,6 +588,8 @@ private:
+ 
+     uint64_t m_cachedTotalVideoFrames = 0;
+     uint64_t m_cachedDroppedVideoFrames = 0;
++
++    bool m_isYoutubeContent { false };
+ };
+ 
+ }
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp b/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
+index b4bb04649c6e..7fc60657c2b7 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
+@@ -20,6 +20,8 @@
+ 
+ #include "config.h"
+ #include "GStreamerEMEUtilities.h"
++#include "InitDataRegistry.h"
++#include "ISOProtectionSystemSpecificHeaderBox.h"
+ 
+ #include <wtf/text/Base64.h>
+ 
+@@ -90,5 +92,46 @@ RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unpars
+     return payload;
+ }
+ 
++bool GStreamerEMEUtilities::cencHasInitDataForKeySystem(const InitData& initData, const String& keySystem)
++{
++    auto psshBoxes = InitDataRegistry::extractPsshBoxesFromCenc(*(initData.payload()));
++
++    if (!psshBoxes) {
++        return false;
++    }
++
++    auto keySystemToUuidRaw = [&keySystem]() -> auto& {
++        static const Vector<uint8_t> s_ClearKeyUUIDRaw ({ 0x10,0x77,0xef,0xec,0xc0,0xb2,0x4d,0x02,0xac,0xe3,0x3c,0x1e,0x52,0xe2,0xfb,0x4b });
++#if ENABLE(THUNDER)
++        static const Vector<uint8_t> s_WidevineUUIDRaw ({ 0xed,0xef,0x8b,0xa9,0x79,0xd6,0x4a,0xce,0xa3,0xc8,0x27,0xdc,0xd5,0x1d,0x21,0xed });
++        static const Vector<uint8_t> s_PlayReadyUUIDRaw({ 0x9a,0x04,0xf0,0x79,0x98,0x40,0x42,0x86,0xab,0x92,0xe6,0x5b,0xe0,0x88,0x5f,0x95 });
++#endif
++        static const Vector<uint8_t> s_InvalidUUIDRaw;
++
++        if (isClearKeyKeySystem(keySystem))
++            return s_ClearKeyUUIDRaw;
++
++#if ENABLE(THUNDER)
++        if (isWidevineKeySystem(keySystem))
++            return s_WidevineUUIDRaw;
++
++        if (isPlayReadyKeySystem(keySystem))
++            return s_PlayReadyUUIDRaw;
++#endif
++
++        ASSERT_NOT_REACHED();
++        return s_InvalidUUIDRaw;
++    };
++
++    auto& keySystemUuidRaw = keySystemToUuidRaw();
++
++    for (auto& box : psshBoxes.value()) {
++        if (box->systemID() == keySystemUuidRaw) {
++            return true;
++        }
++    }
++    return false;
++}
++
+ }
+ #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
+diff --git a/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h b/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h
+index d96c7fa2c095..2b923c891947 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h
++++ b/Source/WebCore/platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h
+@@ -217,6 +217,8 @@ public:
+         ASSERT_NOT_REACHED();
+         return "";
+     }
++
++    static bool cencHasInitDataForKeySystem(const InitData& initData, const String& keySystem);
+ };
+ 
+ }
+-- 
+2.40.0
+

@@ -1,0 +1,63 @@
+From be0f6e1d6d6d7631674a7089c88085ff26ad95a0 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Thu, 26 Jan 2023 11:47:39 +0100
+Subject: [PATCH] comcast - RDK-40160 - WPE CFLAGS
+
+---
+ Source/WebCore/PlatformWPE.cmake | 2 ++
+ Source/WebKit/PlatformWPE.cmake  | 2 ++
+ Source/cmake/FindWPE.cmake       | 5 +++++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/Source/WebCore/PlatformWPE.cmake b/Source/WebCore/PlatformWPE.cmake
+index 2538971bcdbc..60c6184fcf4f 100644
+--- a/Source/WebCore/PlatformWPE.cmake
++++ b/Source/WebCore/PlatformWPE.cmake
+@@ -72,6 +72,8 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+     ${WPEBACKEND_FDO_INCLUDE_DIRS}
+ )
+ 
++add_definitions(${WPE_DEFINITIONS})
++
+ if (ENABLE_GAMEPAD)
+     list(APPEND WebCore_INCLUDE_DIRECTORIES
+         "${WEBCORE_DIR}/platform/gamepad/wpe"
+diff --git a/Source/WebKit/PlatformWPE.cmake b/Source/WebKit/PlatformWPE.cmake
+index 427b784521f7..82d686f99a92 100644
+--- a/Source/WebKit/PlatformWPE.cmake
++++ b/Source/WebKit/PlatformWPE.cmake
+@@ -310,6 +310,8 @@ list(APPEND WebKit_LIBRARIES
+     ${WPE_LIBRARIES}
+ )
+ 
++add_definitions(${WPE_DEFINITIONS})
++
+ set(INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST YES)
+ WEBKIT_BUILD_INSPECTOR_GRESOURCES(${DERIVED_SOURCES_WEBINSPECTORUI_DIR})
+ 
+diff --git a/Source/cmake/FindWPE.cmake b/Source/cmake/FindWPE.cmake
+index 597cee7511a7..848dac075fb0 100644
+--- a/Source/cmake/FindWPE.cmake
++++ b/Source/cmake/FindWPE.cmake
+@@ -4,6 +4,7 @@
+ #  WPE_FOUND - system has WPE.
+ #  WPE_INCLUDE_DIRS - the WPE include directories
+ #  WPE_LIBRARIES - link these to use WPE.
++#  WPE_DEFINITIONS - WPE compiler switches
+ #
+ # Copyright (C) 2016 Igalia S.L.
+ #
+@@ -31,6 +32,10 @@
+ find_package(PkgConfig)
+ pkg_check_modules(PC_WPE QUIET wpe-1.0)
+ 
++if (PC_WPE_FOUND)
++    set(WPE_DEFINITIONS ${PC_WPE_CFLAGS_OTHER})
++endif ()
++
+ find_path(WPE_INCLUDE_DIRS
+     NAMES wpe/wpe.h
+     HINTS ${PC_WPE_INCLUDEDIR} ${PC_WPE_INCLUDE_DIRS}
+-- 
+2.17.1
+

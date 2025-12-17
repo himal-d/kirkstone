@@ -1,0 +1,125 @@
+Changelog between rdkb-20170313 and rdkb-20170327
+
+
+
+project rdk/components/generic/rdk_logger/
+d15403f Add plumeAgent to rdk logger
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+7a51d5e ARRISXB6-3416 : OFDM params to be added in dmcli database and show up in GUI
+6c6df67 ARRISXB6-3416 : OFDM params to be added in dmcli database and show up in GUI
+a4c1b31 BLDK-443 Update LICENSE, NOTICE and COPYING files.
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+1c941bfa RDKB-8589: [systemd] CR Componet Restart Requires All CCSP Restart
+2ebcd321 ARRISXB6-3677: Intermittently After Reset To Defaults Users are 0
+9376450b Revert "RDKB-8589: [systemd] CR Componet Restart Requires All CCSP Restart"
+cbd16dff Revert "ARRISXB6-3677: Intermittently After Reset To Defaults Users are 0"
+d82d7df5 MESH-94: Wait until PAM is inited before starting mesh
+65adaa35 ARRISXB3-5808: Change output dir from atom console to wifihealth
+ed968e13 WEBPA-1797 :Modify parodus start up by checking parodus directory availability
+40be25a0 ARRISXB6-3677: Intermittently After Reset To Defaults Users are 0
+a4c55009 MESH-57: backhal SSID for plume
+7e9cf0cc RDKB-8589: [systemd] CR Componet Restart Requires All CCSP Restart
+111071d6 PLUME-14: Add plumeAgent to the RDK Logger
+5005791d WEBPA-1693,WEBPA-1718 :parodus DISTRO_FEATURES & remove parodus env variables
+42606718 RDKB-9561 : XDNS and TandD process are not coming up
+2aabbee4 RDKB-9561 : move safnat ,xdns, TandD down in cosa_start_rem.sh
+5086db90 RDKB-7180: Add RSA MD4 or MD5 Message-Digest Algorithm License
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+c5db5dd WEBPA-1733: Updated to support WebPA logging.
+2078111 MESH-105: Need to tag "Mesh"as connection type for pod in device connetion list
+51a98ab WEBPA-1698,WEBPA-1707 : parodus DISTRO_FEATURES and to use parodus config info
+8810218 RDKB-9771 :  LMLite Crash.
+1f41296 RDKB-10296 : [LM lite]Separate Mutex object for xHost object in LM
+1b0382b RDKB-10297 : LMLite Crash : Add_Update_IPv6Address returning NULL
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+6811804 RDKB-10577 : MOCA_HEALTH : NCMacAddress displayes wrong value
+bc0ebe9 Revert "RDKB-10372 : X_CISCO_NetworkCoordinatorMACAddress is giving wrong value"
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+bacbbb2 XF3-1716: Parental Controls Should Use Local Time
+19716ef RDKBEMU-345 : Emulator returning invalid namespace on getting
+b491ccd RDKBEMU-377 : Setting invalid address to Device.NAT.X_CISCO_COM_DMZ.InternalIP
+ef8256c TCXB6-775: TR-069 cant talk to ACS server
+e807bef RDKB-10456: ATOM br0 ip should be *.254
+709d010 ARRISXB6-3599: intermittent syscfg corruption after reset to defaults
+7cf1978 MESH-94: Wait until PAM is inited before starting mesh
+c88ff94 RDKB-8931 : Log timestamp when device enters in/out Activation captive mode
+049bfc9 RDKB-10155, RDKB-10406 : xDNS high CPU fix. Handle ON/OFF state
+173bfd3 RDKB-10373:EMS :Mobile number goes blank to server
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+2427165 RDKB-8589: [systemd] CR Componet Restart Requires All CCSP Restart
+2b0954d WEBPA-1695 : parodus DISTRO_FEATURES: for CcspPSM
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+a06463c TCCBR-835: RG side implementation for Static OID.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+70f2d44 MESH-90: Add new mesh wifi sync messages to RDKB
+7e83664 RDKB-10384: auto channel status for telemetry
+79fc275 RDKB-10379: fcs error count and macs packet count for telemetry
+bfeb1dd MESH-90: Add sync from RDKB to Mesh
+d71117b RDKB-10476:Bring proper time-stamp in all logs of RDK-B Devices- Wifiagent
+a7bb9f5 RDKB-8966: unnecessary log removal and cleanup of process monitor
+9f8878d RDKB-8160: Unable to set the value of oid for Security Mode.
+e4c9a8d RDKBEMU-376 : Device.WiFi.AccessPoint.1.Security.ModesSupported parameter not
+5b09a9d RDKB-8210: deauth rsn 2 print correction
+072650b RDKB-10546: process monitor cleanup
+af2a88a MESH-57: backhaul ssid
+aa29a4f RDKB-10467: process monitor race condition with other running scripts like apup
+118a5e5 MESH-57: Fix backhaul wps enable
+a2ed043 ARRISXB3-5808: Change output dir from atom console to wifihealth
+a796f18 MESH-57: backhal SSID
+0abeda9 RDKB-8068 : Unable to set ALL supported security modes
+e5c327a RDKB-10462: WiFi:AirTimePercent are not retained for AP group.
+7f23837 RDKB-10140 : remove trace print in loop
+8ec8886 RDKB-10253: WiFi clients reported as Ethernet
+9111eeb MESH-57, MESH-62:
+e050a96 ARRISXB3-5651 : cron job race condition protection
+9eae433 WEBPA-1474 : Add selfheal mechanism for webpa in ATOM
+525b6e3 MESH-52: Make sure that wifi_initialized is created
+1daa584 RDKB-10241: WiFi:AirTimePercent are not retaining post restart.
+1efbe1b RDKB-10236 : telemetry marker for excess retry counter
+4a921e1 ARRISXB3-5632 : false wanting of hostapd incorrect config
+6cff699 ARRISXB6-2601: Develop Code - Band utilization for Radio
+a78d22b CISCOXB3-2012 : radio_enable flag for 5g and 2g flipped in process monitor code
+5d7e1b3 RDKBEMU-364 : upstream radio_enable parameter functionality
+
+project rdkb/components/opensource/ccsp/Utopia/
+f19acc2 RDKB-10498 : Adding firewall rules for IPv4
+0059908 RDKB-4628: DMZ should have higher precedence than firewall.
+8563e56 ARRISXB6-3775: Vlan Util Shouldn't sit in infinite loop
+18cf64c RDKB-8733:Log timestamp when device starts initialization-with firmware name
+14b7e5c TCCBR-916: CBR LAN Clients not getting auto generated ip.
+054a649 RDKB-10501: Parental control does not block existing connection
+2a63708 RDKB-9495 : Device continuously reboots due to self heal
+f8ae290 MESH-95: DHCP for mesh not work properly
+80177f9 RDKB-10248: IPv6 Entries issue in ip neigh show
+19bcb00 CISCOXB3-1914: Cisco XB3 - Unable to get video on Pace Xi5 (XRE-10007)
+9fb92c6 RDKB-10230: [FIELD] Two ti_dhcp6c process is running on erouter0 interface
+3983a6d TCCBR-760: No private IPv6 address received by LAN client.
+
+project rdkb/components/opensource/ccsp/hal/
+a7291b8 RDKBEMU-379 : Extra spaces are seen in Wifi password when trying
+
+project rdkb/components/opensource/ccsp/halinterface/
+a2c35cd RDKB-5987: Add missing data types from patch file.
+
+project rdkb/components/opensource/ccsp/sysint/
+b104a83 RDKB-8966: unnecessary log removal and cleanup of process monitor
+
+project rdkb/components/opensource/ccsp/webui/
+8418d8e ARRISXB6-3768: [rdkb flow down] 5G WiFi GUI Page Only Shows the
+52cc19c RDKB-10586: [Wi-Fi] Not able to select Manual channel for 2.4G Radio
+f869e2d ARRISXB6-3416 : OFDM params to be added in dmcli database and show up in GUI.
+2899a13 RDKB-9645: disable 255.255.255.128 as netmask from Gui
+bd022f9 RDKB-10554: 5G WiFi GUI Shows Current Channel as 36 in Manual Mode
+67cff5d ARRISXB6-3727: [RDKB Flow Down] Update Web GUi to match XB3
+6423d9d RDKB-10103: MoCA diagnose add TxPowerControlReduction, RxPowerLevel
+
+project rdkb/devices/raspberrypi/hal/
+7d4207b RDKBCMF-63 : CcspWifiAgent is not starting hostapd for raspberyPi

@@ -1,0 +1,26 @@
+From e45ed9ef9d88c0068b7b8faa8fae9c4506abcac0 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Thu, 28 Apr 2022 11:07:03 +0000
+Subject: [PATCH] comcast - RDK-28954 - Add secure dump location
+
+---
+ Source/WebKit/Shared/unix/BreakpadExceptionHandler.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Source/WebKit/Shared/unix/BreakpadExceptionHandler.cpp b/Source/WebKit/Shared/unix/BreakpadExceptionHandler.cpp
+index bac75400dfff..7a306185d8f7 100644
+--- a/Source/WebKit/Shared/unix/BreakpadExceptionHandler.cpp
++++ b/Source/WebKit/Shared/unix/BreakpadExceptionHandler.cpp
+@@ -42,6 +42,9 @@ void installBreakpadExceptionHandler()
+     static MainThreadLazyNeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler;
+     static String breakpadMinidumpDir = String::fromUTF8(getenv("BREAKPAD_MINIDUMP_DIR"));
+ 
++    if (breakpadMinidumpDir.isEmpty() && FileSystem::fileExists("/tmp/.SecureDumpEnable"_s))
++        breakpadMinidumpDir = "/opt/secure/minidumps"_s;
++
+ #ifdef BREAKPAD_MINIDUMP_DIR
+     if (breakpadMinidumpDir.isEmpty())
+         breakpadMinidumpDir = StringImpl::createFromCString(BREAKPAD_MINIDUMP_DIR);
+-- 
+2.25.1
+

@@ -1,0 +1,60 @@
+##########################################
+Date: April 27 2023 12.30PM
+From: 3396217ce9f7cac65367b0e7f729b812eb37419e
+Subject: Fetch VLAN ID from bridge
+Source: COMCAST
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: pavithra_sundaravadivel@comcast.com
+##########################################
+diff --git a/source/hostap-2.9/src/ap/ieee802_1x.c b/source/hostap-2.9/src/ap/ieee802_1x.c
+index c1e9193..e5b55c5 100755
+--- a/source/hostap-2.9/src/ap/ieee802_1x.c
++++ b/source/hostap-2.9/src/ap/ieee802_1x.c
+@@ -677,6 +677,32 @@ int add_sqlite_radius_attr(struct hostapd_data *hapd, struct sta_info *sta,
+ 	return 0;
+ }
+ 
++#ifdef FEATURE_SUPPORT_RADIUSGREYLIST
++#define FAIL -1
++static int get_ap_vlan(char *ifname)
++{
++        char cmd[64] = {0}, buf[32] = {0};
++        FILE *fp;
++        snprintf(cmd, sizeof(cmd), "/usr/sbin/get_vlan.sh %s",ifname);
++        fp = popen(cmd, "r");
++        if (NULL == fp) {
++            wpa_printf(MSG_ERROR, " %s: Error in getting vlanid\n",__func__);
++            return FAIL;
++        }
++        if (fgets(buf, sizeof(buf), fp) == NULL) {
++            wpa_printf(MSG_ERROR, "%s: Error in reading vlanid\n",__func__);
++            pclose(fp);
++            return FAIL;
++        }
++        pclose(fp);
++        if (buf[0] == '\0') {
++            wpa_printf(MSG_ERROR, "%s: Error in getting vlanid\n",__func__);
++            return FAIL;
++        }
++        wpa_printf(MSG_DEBUG, "%s: VLAN for interface %s is %d\n",__func__,ifname, atoi(buf));
++        return atoi(buf);
++}
++#endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+ 
+ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 				   struct sta_info *sta,
+@@ -852,8 +878,12 @@ void ieee802_1x_encapsulate_radius(struct hostapd_data *hapd,
+ 		os_snprintf(txtaddr, sizeof(txtaddr), MACSTR, MAC2STR(sta->addr));
+ 		snr = greylist_get_client_snr(hapd, txtaddr);
+ 		greylist_get_cmmac();
+-		ap_vlan = htonl(hapd->conf->ap_vlan);
+ 
++		ap_vlan = htonl(get_ap_vlan(hapd->conf->iface));
++
++		if (FAIL == ap_vlan) {
++			ap_vlan = htonl(hapd->conf->ap_vlan);
++		}
+ 		radius_msg_add_comcast(
+ 			msg, RADIUS_VENDOR_ATTR_COMCAST_NETWORK_TYPE,
+ 			&secure, 1);

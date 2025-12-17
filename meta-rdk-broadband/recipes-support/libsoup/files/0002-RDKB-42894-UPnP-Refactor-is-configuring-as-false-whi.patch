@@ -1,0 +1,66 @@
+From 83d5ba785775a9cf871cf52a72843052516cdc07 Mon Sep 17 00:00:00 2001
+From: Manish Lepuru <manish_lepuru@Comcast.com>
+Date: Wed, 17 Aug 2022 09:23:47 +0000
+Subject: [PATCH] RDKB-42894:UPnP Refactor is configuring as false while
+ starting IDM
+
+Reason for change: refactor rfc should not be set to false if wan-status is stopped
+Test Procedure:
+ 1. Enable UPnP and refactor RFC
+ 2. sysevent set wan-status stopped
+ 3. systemctl restart xcal-device xupnp
+ 4. certificates should be generated under tmp folder
+ 5. self and peer device discovery should success
+Risks: High
+Signed-off-by:manish_lepuru@comcast.com
+
+Change-Id: I38dd43308278cd01cd7860c828ce4db52dc2e99a
+---
+ libsoup/soup-session.c | 6 ++++--
+ libsoup/soup-session.h | 4 +++-
+ libsoup/soup-socket.c  | 1 +
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/libsoup/soup-session.c b/libsoup/soup-session.c
+index bdcf23f..999820d 100644
+--- a/libsoup/soup-session.c
++++ b/libsoup/soup-session.c
+@@ -776,8 +776,10 @@ soup_session_set_property_internal(SoupSession *session, guint prop_id,
+ 		ensure_socket_props (session);
+ 	}
+ }
+-
+-
++void soup_set_certificate_flags(unsigned int flags)
++{
++    soup_socket_set_certificate_flags(flags);
++}
+ static void
+ soup_session_set_property (GObject *object, guint prop_id,
+ 			   const GValue *value, GParamSpec *pspec)
+diff --git a/libsoup/soup-session.h b/libsoup/soup-session.h
+index 5ee7c00..9231b89 100644
+--- a/libsoup/soup-session.h
++++ b/libsoup/soup-session.h
+@@ -28,7 +28,9 @@ struct _SoupSession {
+ 	GObject parent;
+ 
+ };
+-
++SOUP_AVAILABLE_IN_2_42
++void
++soup_set_certificate_flags(unsigned int flags);
+ typedef struct {
+ 	GObjectClass parent_class;
+ 
+diff --git a/libsoup/soup-socket.c b/libsoup/soup-socket.c
+index 5b3b71c..e8ffed0 100644
+--- a/libsoup/soup-socket.c
++++ b/libsoup/soup-socket.c
+@@ -1377,6 +1377,7 @@ static volatile GTlsCertificateFlags cFlags=G_TLS_CERTIFICATE_VALIDATE_ALL;;
+ void
+ soup_socket_set_certificate_flags(unsigned int flags)
+ {
++   g_message("soup-socket cflags=%u",flags);
+    cFlags=(GTlsCertificateFlags) flags;
+ }

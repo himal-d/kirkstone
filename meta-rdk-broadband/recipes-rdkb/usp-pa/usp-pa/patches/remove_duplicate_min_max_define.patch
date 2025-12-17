@@ -1,0 +1,35 @@
+OBUSPA: Remove duplicate MIN and MAX defines
+  
+MIN and MAX are now defined in the platform's system headers, so must
+not be defined in OBUSPA anymore. This patch only defines them if
+they have not already been defined.
+
+Date: Fri, 8 Apr 2022 00:00:00 +0000
+From: Richard Holme <richard.holme@commscope.com>
+Subject: [PATCH] Remove duplicate MIN and MAX defines
+Source: CommScope
+Upstream-Status: Accepted
+Signed-off-by: Richard Holme <richard.holme@commscope.com>
+
+
+
+
+diff -rupN original/src/core/common_defs.h new/src/core/common_defs.h
+--- original/src/core/common_defs.h	2021-12-15 09:34:17.000000000 +0000
++++ new/src/core/common_defs.h	2022-03-29 11:28:08.680837672 +0100
+@@ -54,11 +54,14 @@
+ #define NUM_ELEM(x) (sizeof((x)) / sizeof((x)[0]))
+ 
+ // Minimum of two values
++#ifndef MIN
+ #define MIN(x, y)  ( ((x) <= (y)) ? (x) : (y) )
++#endif
+ 
+ // Maximum of two values
++#ifndef MAX
+ #define MAX(x, y)  ( ((x) >= (y)) ? (x) : (y) )
+-
++#endif
+ // Whether a character is an alphanumeric symbol character
+ #define IS_ALPHA(c)  ( ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) )
+ #define IS_NUMERIC(c)  ((c >= '0') && (c <= '9'))

@@ -1,0 +1,135 @@
+From 6a93d5c132eaa042ec2bb3c3e9e0d50b6ba1b941 Mon Sep 17 00:00:00 2001
+From: Damian Wrobel <dwrobel@ertelnet.rybnik.pl>
+Date: Thu, 18 Jul 2019 10:07:26 +0200
+Subject: [PATCH] Do not use clang compiler
+
+Avoid using google's binary bloatware,
+two years old 2017 version of clang,
+which unconditionally pollutes $HOME directory.
+
+Avoids the following compilation issue:
+
+FAILED: protoc
+bash -c "/home/dwrobel1/starboard-toolchains/x86_64-linux-gnu-clang-chromium-298539-1/llvm-build/Release+Asserts/bin/clang++ -target i386-unknown-linux-gnu -pthread -o protoc -Wl,-rpath=\$ORIGIN/lib -Wl,--start-
+group obj.host/third_party/protobuf/src/google/protobuf/compiler/protoc.main.o obj.host/third_party/protobuf/libprotoc_lib obj.host/third_party/protobuf/libprotobuf_full_do_not_use  -Wl,--end-group "
+/usr/bin/ld: skipping incompatible /opt/rh/devtoolset-6/root/usr/lib/gcc/x86_64-redhat-linux/6.3.1/libstdc++_nonshared.a when searching for -lstdc++_nonshared
+/usr/bin/ld: cannot find -lstdc++_nonshared
+
+Signed-off-by: Damian Wrobel <dwrobel@ertelnet.rybnik.pl>
+---
+ src/build/common.gypi                       |  2 +-
+ src/cobalt/build/cobalt_configuration.gypi  |  2 +-
+ src/starboard/build/base_configuration.gypi |  2 --
+ src/starboard/tools/build.py                | 15 +++++----------
+ src/v8/gypfiles/toolchain.gypi              |  7 -------
+ 5 files changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/src/build/common.gypi b/src/build/common.gypi
+index 7078e81a8..7f79c20dc 100644
+--- a/src/build/common.gypi
++++ b/src/build/common.gypi
+@@ -113,7 +113,7 @@
+     'msvs_debug_link_incremental%': '2',
+ 
+     # Clang stuff.
+-    'clang%': '<(clang)',
++    'clang%': '0',
+     'make_clang_dir%': 'third_party/llvm-build/Release+Asserts',
+ 
+     # These two variables can be set in GYP_DEFINES while running
+diff --git a/src/cobalt/build/cobalt_configuration.gypi b/src/cobalt/build/cobalt_configuration.gypi
+index 9feeca1ea..ca6e0c0f0 100644
+--- a/src/cobalt/build/cobalt_configuration.gypi
++++ b/src/cobalt/build/cobalt_configuration.gypi
+@@ -34,7 +34,7 @@
+     'variables': {
+       'cobalt_webapi_extension_source_idl_files%': [],
+       'cobalt_webapi_extension_generated_header_idl_files%': [],
+-      'cobalt_v8_buildtime_snapshot%': "true",
++      'cobalt_v8_buildtime_snapshot%': "false",
+     },
+ 
+     # Whether Cobalt is being built.
+diff --git a/src/starboard/build/base_configuration.gypi b/src/starboard/build/base_configuration.gypi
+index 1d405d5f5..12fa39489 100644
+--- a/src/starboard/build/base_configuration.gypi
++++ b/src/starboard/build/base_configuration.gypi
+@@ -197,11 +197,9 @@
+            target_arch=="ppc"', {
+             # All the 32 bit CPU architectures v8 supports.
+             'compiler_flags_cc_host%': [
+-              '-m32',
+               '--std=gnu++11',
+             ],
+             'linker_flags_host%': [
+-              '-target', 'i386-unknown-linux-gnu',
+               '-pthread',
+             ],
+           }, {
+diff --git a/src/starboard/tools/build.py b/src/starboard/tools/build.py
+index 5c83b7922..f79bad0f7 100644
+--- a/src/starboard/tools/build.py
++++ b/src/starboard/tools/build.py
+@@ -198,23 +198,18 @@ def EnsureClangAvailable(clang_spec):
+ def GetHostCompilerEnvironment(clang_spec, goma_supports_compiler):
+   """Return the host compiler toolchain environment."""
+ 
+-  toolchain_dir = EnsureClangAvailable(clang_spec)
+-  toolchain_bin_dir = os.path.join(toolchain_dir, 'bin')
+-
+-  cc_clang = os.path.join(toolchain_bin_dir, 'clang')
+-  cxx_clang = os.path.join(toolchain_bin_dir, 'clang++')
+   host_clang_environment = {
+-      'CC_host': cc_clang,
+-      'CXX_host': cxx_clang,
+-      'LD_host': cxx_clang,
++      'CC_host': 'gcc',
++      'CXX_host': 'g++',
++      'LD_host': 'g++',
+       'ARFLAGS_host': 'rcs',
+       'ARTHINFLAGS_host': 'rcsT',
+   }
+   # Check if goma is installed. Initialize if needed and use if possible.
+   if goma_supports_compiler and starboard.tools.goma.FindAndStartGoma():
+     host_clang_environment.update({
+-        'CC_host': 'gomacc ' + cc_clang,
+-        'CXX_host': 'gomacc ' + cxx_clang,
++        'CC_host': 'gomacc ' + 'gcc',
++        'CXX_host': 'gomacc ' + 'g++',
+     })
+   return host_clang_environment
+ 
+diff --git a/src/v8/gypfiles/toolchain.gypi b/src/v8/gypfiles/toolchain.gypi
+index 14183a9fa..edb9e132f 100644
+--- a/src/v8/gypfiles/toolchain.gypi
++++ b/src/v8/gypfiles/toolchain.gypi
+@@ -161,9 +161,6 @@
+     'conditions': [
+       ['clang==1', {
+         'ldflags_host': [
+-          # mksnapshot can not be compiled on host machine with default clang
+-          # linker.
+-          '-fuse-ld=lld',
+         ],
+       }],
+       ['v8_target_arch=="arm"', {
+@@ -1019,8 +1016,6 @@
+                     'cflags': [ '-m31' ],
+                     'ldflags': [ '-m31' ]
+                   },{
+-                   'cflags': [ '-m32' ],
+-                   'ldflags': [ '-m32' ]
+                   }],
+                 ],
+               }],
+@@ -1037,8 +1032,6 @@
+                     'cflags': [ '-m31' ],
+                     'ldflags': [ '-m31' ]
+                   },{
+-                   'cflags': [ '-m32' ],
+-                   'ldflags': [ '-m32' ],
+                   }],
+                 ],
+               }],
+--
+2.16.2

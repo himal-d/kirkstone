@@ -1,0 +1,27 @@
+From f9ced7c3576d5a89dcab2d516680626e06df9212 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Thu, 23 Mar 2023 09:15:34 +0000
+Subject: [PATCH] comcast DELIA-60706 Allow seeking during PAUSED to PLAYING
+ transition
+
+Change-Id: I25106e7672b6ad98225d00ce6b109558c84d97f7
+---
+ .../graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp   | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index 86b8f2ef1498..5ea9259c5440 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -261,6 +261,8 @@ static bool checkShouldDelaySeek(GstStateChangeReturn getStateResult, GstState c
+         return false;
+     if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PAUSED_TO_PAUSED)
+         return false;
++    if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PAUSED_TO_PLAYING)
++        return false;
+     return true;
+ }
+ 
+-- 
+2.25.1
+

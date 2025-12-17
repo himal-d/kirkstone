@@ -1,0 +1,335 @@
+Date: Jan 04 1:20 PM 2024
+From: 984767eb71a4aa608f259b1a031ea3aa3583e495
+Signed-off-by: Sindhuja <Sindhuja_Muthukrishnan@comcast.com>
+Source: Comcast
+
+Index: git/src/analyze/print/heaptrack_print.cpp
+===================================================================
+--- git.orig/src/analyze/print/heaptrack_print.cpp
++++ git/src/analyze/print/heaptrack_print.cpp
+@@ -37,6 +37,7 @@ struct MergedAllocation : public Allocat
+     std::vector<Allocation> traces;
+     // location
+     IpIndex ipIndex;
++    int tid;
+ };
+ 
+ class formatBytes
+@@ -138,6 +139,7 @@ struct Printer final : public Accumulate
+         if (it == mergedAllocations->end() || !findIp(it->ipIndex).equalWithoutAddress(traceIp)) {
+             MergedAllocation merged;
+             merged.ipIndex = trace.ipIndex;
++	    merged.tid = trace.tid;
+             it = mergedAllocations->insert(it, merged);
+         }
+         it->traces.push_back(allocation);
+@@ -206,12 +208,12 @@ struct Printer final : public Accumulate
+         }
+     }
+ 
+-    void printIp(const IpIndex ip, ostream& out, const size_t indent = 0) const
++    void printIp(const IpIndex ip, ostream& out, const size_t indent = 0, int tid = 0) const
+     {
+-        printIp(findIp(ip), out, indent);
++        printIp(findIp(ip), out, indent, tid);
+     }
+ 
+-    void printIp(const InstructionPointer& ip, ostream& out, const size_t indent = 0, bool flameGraph = false) const
++    void printIp(const InstructionPointer& ip, ostream& out, const size_t indent = 0, int tid = 0, bool flameGraph = false) const
+     {
+         printIndent(out, indent);
+ 
+@@ -243,6 +245,9 @@ struct Printer final : public Accumulate
+         out << '\n';
+         printIndent(out, indent + 1);
+ 
++	if ( tid ) {
++		 out << "Thread id:" << tid << '\n';
++	}
+         if (ip.frame.fileIndex) {
+             out << "at " << stringify(ip.frame.fileIndex) << ':' << ip.frame.line << '\n';
+             printIndent(out, indent + 1);
+@@ -279,7 +284,7 @@ struct Printer final : public Accumulate
+         while (node.ipIndex) {
+             const auto& ip = findIp(node.ipIndex);
+             if (!skipFirst) {
+-                printIp(ip, out, indent);
++                printIp(ip, out, indent, node.tid);
+             }
+             skipFirst = false;
+ 
+@@ -311,7 +316,7 @@ struct Printer final : public Accumulate
+         if (!isStopIndex(ip.frame.functionIndex)) {
+             printFlamegraph(findTrace(node.parentIndex), out);
+         }
+-        printIp(ip, out, 0, true);
++        printIp(ip, out, 0, node.tid, true);
+     }
+ 
+     template <typename T, typename LabelPrinter, typename SubLabelPrinter>
+@@ -337,7 +342,7 @@ struct Printer final : public Accumulate
+                 break;
+             }
+             label(allocation);
+-            printIp(allocation.ipIndex, cout);
++            printIp(allocation.ipIndex, cout, allocation.tid);
+ 
+             if (!allocation.ipIndex) {
+                 continue;
+
+Index: git/src/analyze/allocationdata.h
+===================================================================
+--- git.orig/src/analyze/allocationdata.h
++++ git/src/analyze/allocationdata.h
+@@ -11,6 +11,7 @@
+
+ struct AllocationData
+ {
++    int64_t thread_id = 0;
+     // number of allocations
+     int64_t allocations = 0;
+     // number of temporary allocations
+Index: git/src/analyze/accumulatedtracedata.h
+===================================================================
+--- git.orig/src/analyze/accumulatedtracedata.h
++++ git/src/analyze/accumulatedtracedata.h
+@@ -58,6 +58,7 @@ struct TraceNode
+ {
+     IpIndex ipIndex;
+     TraceIndex parentIndex;
++    int tid;
+ };
+
+ struct Allocation : public AllocationData
+@@ -72,6 +73,7 @@ struct Allocation : public AllocationDat
+ struct AllocationInfo
+ {
+     uint64_t size = 0;
++    int tid = 0;
+     // index into AccumulatedTraceData::allocations
+     AllocationIndex allocationIndex;
+     bool operator==(const AllocationInfo& rhs) const
+
+Index: git/src/interpret/heaptrack_interpret.cpp
+===================================================================
+--- git.orig/src/interpret/heaptrack_interpret.cpp
++++ git/src/interpret/heaptrack_interpret.cpp
+@@ -544,6 +544,14 @@ int main(int /*argc*/, char** /*argv*/)
+                 if (fileName == "x") {
+                     fileName = exe;
+                 }
++
++		const auto dbg_symbols = getenv("DEBUG_SYMBOLS");
++		if (dbg_symbols) {
++			std::string outputFilename = dbg_symbols + fileName.substr(1);
++			size_t lastSlashPos = outputFilename.rfind('/');
++			outputFilename.insert(lastSlashPos, "/.debug");
++			fileName = outputFilename;
++		}
+                 const char* internedString = nullptr;
+                 const auto moduleIndex = data.intern(fileName, &internedString);
+                 uintptr_t addressStart = 0;
+@@ -561,35 +569,38 @@ int main(int /*argc*/, char** /*argv*/)
+         } else if (reader.mode() == 't') {
+             uintptr_t instructionPointer = 0;
+             size_t parentIndex = 0;
+-            if (!(reader >> instructionPointer) || !(reader >> parentIndex)) {
++	    uint32_t tid = 0;
++            if (!(reader >> instructionPointer) || !(reader >> parentIndex) || !(reader >> tid)) {
+                 error_out << "failed to parse line: " << reader.line() << endl;
+                 return 1;
+             }
+             // ensure ip is encountered
+             const auto ipId = data.addIp(instructionPointer);
+             // trace point, map current output index to parent index
+-            data.out.writeHexLine('t', ipId, parentIndex);
++            data.out.writeHexLine('t', ipId, parentIndex, tid);
+         } else if (reader.mode() == '+') {
+             ++c_stats.allocations;
+             ++c_stats.leakedAllocations;
+             uint64_t size = 0;
+             TraceIndex traceId;
++	    uint32_t tid = 0;
+             uint64_t ptr = 0;
+-            if (!(reader >> size) || !(reader >> traceId.index) || !(reader >> ptr)) {
++            if (!(reader >> size) || !(reader >> traceId.index) || !(reader >> ptr) || !(reader >> tid)) {
+                 error_out << "failed to parse line: " << reader.line() << endl;
+                 continue;
+             }
+ 
+             AllocationInfoIndex index;
+             if (allocationInfos.add(size, traceId, &index)) {
+-                data.out.writeHexLine('a', size, traceId.index);
++                data.out.writeHexLine('a', size, traceId.index, tid);
+             }
+             ptrToIndex.addPointer(ptr, index);
+             lastPtr = ptr;
+-            data.out.writeHexLine('+', index.index);
++            data.out.writeHexLine('+', index.index, tid);
+         } else if (reader.mode() == '-') {
+             uint64_t ptr = 0;
+-            if (!(reader >> ptr)) {
++	    uint32_t tid = 0;
++            if (!(reader >> ptr) || !(reader >> tid)) {
+                 error_out << "failed to parse line: " << reader.line() << endl;
+                 continue;
+             }
+@@ -599,7 +610,7 @@ int main(int /*argc*/, char** /*argv*/)
+             if (!allocation.second) {
+                 continue;
+             }
+-            data.out.writeHexLine('-', allocation.first.index);
++            data.out.writeHexLine('-', allocation.first.index, tid);
+             if (temporary) {
+                 ++c_stats.temporaryAllocations;
+             }
+Index: git/src/analyze/accumulatedtracedata.cpp
+===================================================================
+--- git.orig/src/analyze/accumulatedtracedata.cpp
++++ git/src/analyze/accumulatedtracedata.cpp
+@@ -275,6 +275,7 @@ bool AccumulatedTraceData::read(boost::i
+             TraceNode node;
+             reader >> node.ipIndex;
+             reader >> node.parentIndex;
++	     reader >> node.tid;
+             // skip operator new and operator new[] at the beginning of traces
+             while (find(opNewIpIndices.begin(), opNewIpIndices.end(), node.ipIndex) != opNewIpIndices.end()) {
+                 node = findTrace(node.parentIndex);
+@@ -310,7 +311,7 @@ bool AccumulatedTraceData::read(boost::i
+             AllocationInfo info;
+             AllocationInfoIndex allocationIndex;
+             if (fileVersion >= 1) {
+-                if (!(reader >> allocationIndex)) {
++                if (!(reader >> allocationIndex) || !(reader >> info.tid)) {
+                     cerr << "failed to parse line: " << reader.line() << ' ' << __LINE__ << endl;
+                     continue;
+                 } else if (allocationIndex.index >= allocationInfos.size()) {
+@@ -323,7 +324,7 @@ bool AccumulatedTraceData::read(boost::i
+             } else { // backwards compatibility
+                 uint64_t ptr = 0;
+                 TraceIndex traceIndex;
+-                if (!(reader >> info.size) || !(reader >> traceIndex) || !(reader >> ptr)) {
++                if (!(reader >> info.size) || !(reader >> traceIndex) || !(reader >> ptr) || !(reader >> info.tid)) {
+                     cerr << "failed to parse line: " << reader.line() << ' ' << __LINE__ << endl;
+                     continue;
+                 }
+@@ -340,6 +341,7 @@ bool AccumulatedTraceData::read(boost::i
+                 allocation.leaked += info.size;
+                 ++allocation.allocations;
+ 
++		allocation.thread_id = info.tid;
+                 handleAllocation(info, allocationIndex);
+             }
+ 
+@@ -402,7 +404,7 @@ bool AccumulatedTraceData::read(boost::i
+             }
+             AllocationInfo info;
+             TraceIndex traceIndex;
+-            if (!(reader >> info.size) || !(reader >> traceIndex)) {
++            if (!(reader >> info.size) || !(reader >> traceIndex) || !(reader >> info.tid)) {
+                 cerr << "failed to parse line: " << reader.line() << endl;
+                 continue;
+             }
+
+Index: git/src/track/libheaptrack.cpp
+===================================================================
+--- git.orig/src/track/libheaptrack.cpp
++++ git/src/track/libheaptrack.cpp
+@@ -282,6 +282,14 @@ public:
+         s_lock.unlock();
+     }
+ 
++    pid_t getCurrentThreadId()
++    {
++#ifdef __linux__
++	    return syscall(SYS_gettid);
++#elif defined(__FreeBSD__)
++		     return pthread_getthreadid_np();
++#endif
++    }
+     void initialize(const char* fileName, heaptrack_callback_t initBeforeCallback,
+                     heaptrack_callback_initialized_t initAfterCallback, heaptrack_callback_t stopCallback)
+     {
+@@ -519,21 +527,21 @@ public:
+         }
+     }
+ 
+-    void handleMalloc(void* ptr, size_t size, const Trace& trace)
++    void handleMalloc(void* ptr, size_t size, const Trace& trace,  uint32_t tid)
+     {
+         if (!s_data || !s_data->out.canWrite()) {
+             return;
+         }
+         updateModuleCache();
+ 
+-        const auto index = s_data->traceTree.index(trace, [](uintptr_t ip, uint32_t index) {
++        const auto index = s_data->traceTree.index(trace, [tid](uintptr_t ip, uint32_t index) {
+             // decrement addresses by one - otherwise we misattribute the cost to the wrong instruction
+             // for some reason, it seems like we always get the instruction _after_ the one we are interested in
+             // see also: https://github.com/libunwind/libunwind/issues/287
+             // and https://bugs.kde.org/show_bug.cgi?id=439897
+             --ip;
+ 
+-            return s_data->out.writeHexLine('t', ip, index);
++            return s_data->out.writeHexLine('t', ip, index, tid);
+         });
+ 
+ #ifdef DEBUG_MALLOC_PTRS
+@@ -542,10 +550,10 @@ public:
+         s_data->known.insert(ptr);
+ #endif
+ 
+-        s_data->out.writeHexLine('+', size, index, reinterpret_cast<uintptr_t>(ptr));
++        s_data->out.writeHexLine('+', size, index, reinterpret_cast<uintptr_t>(ptr), tid);
+     }
+ 
+-    void handleFree(void* ptr)
++    void handleFree(void* ptr, uint32_t  tid)
+     {
+         if (!s_data || !s_data->out.canWrite()) {
+             return;
+@@ -557,7 +565,7 @@ public:
+         s_data->known.erase(it);
+ #endif
+ 
+-        s_data->out.writeHexLine('-', reinterpret_cast<uintptr_t>(ptr));
++        s_data->out.writeHexLine('-', reinterpret_cast<uintptr_t>(ptr), tid);
+     }
+ 
+     static bool isPaused()
+@@ -814,10 +822,11 @@ static void heaptrack_realloc_impl(void*
+         trace.fill(2 + HEAPTRACK_DEBUG_BUILD * 3);
+ 
+         HeapTrack::op(guard, [&](HeapTrack& heaptrack) {
++	pid_t tid = heaptrack.getCurrentThreadId();
+             if (ptr_in) {
+-                heaptrack.handleFree(ptr_in);
++                heaptrack.handleFree(ptr_in, static_cast<uint32_t>(tid));
+             }
+-            heaptrack.handleMalloc(ptr_out, size, trace);
++            heaptrack.handleMalloc(ptr_out, size, trace, static_cast<uint32_t>(tid));
+         });
+     }
+ }
+@@ -877,7 +886,9 @@ void heaptrack_malloc(void* ptr, size_t
+         Trace trace;
+         trace.fill(2 + HEAPTRACK_DEBUG_BUILD * 2);
+ 
+-        HeapTrack::op(guard, [&](HeapTrack& heaptrack) { heaptrack.handleMalloc(ptr, size, trace); });
++        HeapTrack::op(guard, [&](HeapTrack& heaptrack) {
++	pid_t tid = heaptrack.getCurrentThreadId();
++	heaptrack.handleMalloc(ptr, size, trace, static_cast<uint32_t>(tid)); });
+     }
+ }
+ 
+@@ -888,7 +899,9 @@ void heaptrack_free(void* ptr)
+ 
+         debugLog<VeryVerboseOutput>("heaptrack_free(%p)", ptr);
+ 
+-        HeapTrack::op(guard, [&](HeapTrack& heaptrack) { heaptrack.handleFree(ptr); });
++        HeapTrack::op(guard, [&](HeapTrack& heaptrack) {
++	pid_t tid = heaptrack.getCurrentThreadId();
++	heaptrack.handleFree(ptr,static_cast<uint32_t>(tid)); });
+     }
+ }
+ 

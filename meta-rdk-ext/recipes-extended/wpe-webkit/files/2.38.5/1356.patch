@@ -1,0 +1,23 @@
+From ab42109971618621c9104d08da2600d81d58e9d2 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Tue, 25 Jun 2024 13:33:16 +0000
+Subject: [PATCH] [GStreamer][Quirks] detect brcm audio sink by testing object
+ type name
+
+---
+ Source/WebCore/platform/gstreamer/GStreamerQuirkBroadcom.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/gstreamer/GStreamerQuirkBroadcom.cpp b/Source/WebCore/platform/gstreamer/GStreamerQuirkBroadcom.cpp
+index 01738d0e220e1..8bf195f4ab7a0 100644
+--- a/Source/WebCore/platform/gstreamer/GStreamerQuirkBroadcom.cpp
++++ b/Source/WebCore/platform/gstreamer/GStreamerQuirkBroadcom.cpp
+@@ -39,7 +39,7 @@ GStreamerQuirkBroadcom::GStreamerQuirkBroadcom()
+ 
+ void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
+ {
+-    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
++    if (!g_strcmp0(G_OBJECT_TYPE_NAME(element), "Gstbrcmaudiosink"))
+         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
+     else if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiodecoder")) {
+         // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.

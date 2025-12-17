@@ -1,0 +1,35 @@
+From df68d469e569d4f90686c50316f2c6c31baa6501 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Fri, 22 Mar 2024 16:35:26 +0100
+Subject: [PATCH] Ignore sinks position while seeking
+
+Don't trust sinks position when pipeline is not prerolled
+as behavor is different across devices.
+Use last cached position instead.
+
+After removing MSE data, sinks get flushed and are not able
+to return valid playback time. Some implementation returns
+invalid time, 0.00 or even some random value.
+This value may be then reported up to HTMLMediaElement
+that may be confusing to web applications.
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp         | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 9764a80f45ce..987ad82dee53 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -1391,7 +1391,8 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+         return m_cachedPosition;
+     }
+ 
+-    GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
++    // We can't trust sinks position when pipeline is flushed (e.g. after MSE samples removal).
++    GstClockTime gstreamerPosition = isPipelineSeeking() ? GST_CLOCK_TIME_NONE : gstreamerPositionFromSinks();
+     GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
+ 
+     // Cached position is marked as non valid here but we might fail to get a new one so initializing to this as "educated guess".
+-- 
+2.25.1
+

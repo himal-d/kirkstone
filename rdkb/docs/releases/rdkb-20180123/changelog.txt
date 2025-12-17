@@ -1,0 +1,149 @@
+Changelog between rdkb-20171228 and rdkb-20180123
+
+
+project rdk/components/generic/breakpad_wrapper/
+cd7d8a8 RDKCOM-452 RDKBCMF-149 Breakpad-wrapper build failures
+aad128b RDKBCMF-149 Breakpad-wrapper build failures
+
+project rdk/components/generic/crashupload/
+97fc714 RDKB-13824 : Minidumps folder not cleaned if the the upload to Server fails.
+ca1a1a7 AXG1V4-1165: Corefiles are not saved under "/opt/corefiles_backup"
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+67c12c11 RDKB3939-182: Missing Telemetry Strings for Factory Reset
+0dbb3dce RDKB-15460: meshapcfg call moved after correction
+f3c0abd4 RDKB-15167 : Support to Handle encrypted and unencrypted volumes in ArrisXB3
+9dd7d4e0 RDKB-13484: Tweak moca bridge setup for XF3
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+5a74fb2 Fix change(s) missed by upstreaming process.
+a717a71 RDKB-15417 : LM misreporting total Online clients
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+078f73f RDKB-15419, TCXB6-3383: Continuous CcspLMLite crash while accessing GUI
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+7a1e367 RDKB-15538 : Tr181 implementation for CcspMtaAgent.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+f4a65c1 RDKB-15615 : Not returning "invalid request" error in response of abort reboot
+ce8f316 XF3-2872 : error observed while retrieving MAC address for the payload
+d258cef RDKB-15514: Restructure UI to have TFTP dropdown
+9dc1da2 RDKCOM-461: RPI-131 : [RPI-B] Cannot get admin password from backend.
+3fce1cb RDKB-14823 : Implement LAN side DNS configuration for BCI platforms.
+8fc3e1b RDKB-14823 : Implement LAN side DNS configuration for BCI platforms.
+ace1dcb TCXB6-3365: Streamling cosa IPV6 related TR-181 patches to ccsp-p-and-m generic
+479f8ec RDKB-14745: Enable tr181 parameter for Container support - Pace XF3
+353c4f4 RDKB-15420 : Tr181 Parameter for AbortReboot
+a071132 RDKB-14270: Add RFC control for TR-069 firewall hole
+511c029 RDKB-13628 : TR-181 for IDS Enable and ScanTask.
+428731c Revert "RDKB-13628 : TR-181 for IDS Enable and ScanTask"
+2f21550 RDKB3939-186: MAC address for Lan Ports
+3dd3f8f RDKB-13628 : TR-181 for IDS Enable and ScanTask
+ff0cbe7 RDKB3939-98: Introduce swap using zram in 3939
+8c142e3 RDKB-15051 : Enabling data model for X_CISCO_COM_FileTransfer in BCI model
+408556f ARRISXB3-7044 : cURL output has junk in syndicate partner id string
+cfa3187 RDKB-15450 : Add Device.DeviceInfo.X_RDKCENTRAL-COM_AkerEnable
+2704237 RDKB-15251: Develop code to derive and override PartnerID.
+3810cc9 XF3-2794:enable/disable hotspot does not not work
+4810d77 ARRISXB3-7073 system command removal from cosa_x_cisco_com_security_apis.c
+74087ce ARRISXB3-7073 system command removal from cosa_x_cisco_com_security_apis.c
+41aa9b6 RDKB-15117, RDKB-15118: Encrypt admin password saved to nvram
+73bab64 RPI-131 : [RPI-B] Cannot get admin password from backend.
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+b33b221 RDKB-4940 : Need to move bbhm_def_cfg.xml from CCSP to OEM
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+7ba57a1 Fix change(s) missed by upstreaming process.
+6a42635 RDKB-15157: Single Build for Syndication (Phase 1) - ACS - Stage2.
+61be12e RDKB-14582: CcspTr069Pa contains certificate file - cacert.pem
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+3ef385c RDKB-15610: Do not change the channel for score tie
+2f43c0a RDKB-15460: initial mesh script modified
+b1ad938 RDKBEMU-589 : [TDK][WIFI][HAL]wifi_getRadioMaxBitRate returns NULL
+657dd82 RDKBEMU-608,RDKBEMU-570,RDKBEMU-595,RDKBEMU-594 : [TDK] [WIFI]
+9847c37 XF3-2853: Fix telemetry tags for wifi init
+7465e87 Revert "ARRISXB3-6868 : Fix WiFi bootup issue for XB6 (ARRISXB6-6384)"
+f444bb1 RDKBEMU-598,RDKBEMU-597 : [TDK][WiFi]HAL api wifi_getRadioIfName()
+b787f7a RDKB3939-404: RDKB do not allow to set 11a
+b0994d0 ARRISXB3-6868 : Fix WiFi bootup issue for XB6 (ARRISXB6-6384)
+77abc30 RDKBEMU-596 : The HAL api wifi_getBaseBSSID() is returning junk value
+18ba908 ARRISXB3-7082: no channel change for 2.4G
+b3d644a RDKB-14318,ARRISXB3-6730 : lighttpd fails to launch sometimes
+0dee81d ARRISXB6-5918: Fix telemetry logging for WiFi beaconing
+
+project rdkb/components/opensource/ccsp/PowerManager/
+abf6fdf RDKB-15187: Power Manager Update for new Components
+5c1b59f ARRISXB6-6234: Remove CcspWecbController.service from Power Management
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+a369497 RDKB3939-306: Introduce Zram support in 3939
+fe1b5f2 Fix change(s) missed by upstreaming process.
+b457324 RDKB-15479: [SELFHEAL] Not taking corrective action after PING failure.
+d27ebad Observed Error message in selfheal logs while fetching device mode
+f1ed95f ARRISXB3-6945 [Field][Data-Analysis]DHCP range corrupted, dnsmasq not running
+a515711 CISCOXB3-3639: Observed 'Something went wrong while checking 5G Enable'
+85540e7 RDKB-14318,ARRISXB3-6730 : lighttpd fails to launch sometimes
+
+project rdkb/components/opensource/ccsp/Utopia/
+b099caf RDKB-15599 : LAN IP is missing in /etc/hosts file for Docsis-Gateway entry.
+3e6fda9 RDKB-14823 : Implement LAN side DNS configuration for BCI platforms.
+82bf9ad ARRISXB6-6547: support QTN EP default gateway setting -step 3
+27b0aca RDKB-14860: Move iptables rules from lxc-net to firewall code
+71340e7 RDKB-14270: Add RFC control for TR-069 firewall hole
+adb7eae ARRISXB3-6945 [Field][Data-Analysis]DHCP range corrupted, dnsmasq not running
+c4bea10 RDKB-13392 :  moca_split and bootuptime_XHOME_split reporting wrong values
+0d530e1 RDKB-15450 : Add Device.DeviceInfo.X_RDKCENTRAL-COM_AkerEnable
+fa1c25c RDKB-15457:Firewall: Assignment operator used instead of relational operator
+251e2c1 RDKB-14318,ARRISXB3-6730 : lighttpd fails to launch sometimes
+eb1b69b RDKB-15011 CCSP Deadlock - PAM process
+d517b0b ARRISXB3-7073 system command removal from cosa_x_cisco_com_security_apis.c
+f92bafd gcc 7 build fixes
+be5d746 utopia_init_xb6.sh: remove unnecessary 's' suffix from sleep command
+
+project rdkb/components/opensource/ccsp/Xconf/
+c1c6cc6 RDKB-15421 : Set Counter for Abort Reboot
+c80a607 RDKB-15421 : Set Counter for Abort Reboot
+
+project rdkb/components/opensource/ccsp/hal/
+d45186c RDKBEMU-618 : [TDK] [WIFI] Restarting the hostapd process is corrupting
+02d9bdb RDKBEMU-611 : RDKB Emulator Builds are breaking
+920c37f RDKBEMU-589,RDKBEMU-569 : [TDK][WIFI][HAL]wifi_getRadioExtChannel
+5379ac2 RDKBEMU-608,RDKBEMU-570,RDKBEMU-595,RDKBEMU-594 : [TDK] [WIFI]
+6f0229a RDKBEMU-597,RDKBEMU-598,RDKBEMU-599,RDKBEMU-589,RDKBEMU-570,RDKBEMU-594 :
+d8106c5 RDKBCMF-148: Remove VIM swap file.
+
+project rdkb/components/opensource/ccsp/halinterface/
+dc3e0d7 RDKB-15475:Define MTA HAL APIs for Telephony
+dfc3187 RDKB-15253: Implementation for getFactoryPartnerId() to read OEM PartnerID
+
+project rdkb/components/opensource/ccsp/sysint/
+a6006fd RDKB3939-306: Introduce Zram support in 3939
+6272ce5 RDKB-14823 : Implement LAN side DNS configuration for BCI platforms.
+cc52639 RDKB-14741: IPv6 support for container
+43605d8 RDKB-15167 : Support to Handle encrypted and unencrypted volumes in ArrisXB3
+6b31fbc DELIA-23694: Telemetry params missing in log
+8435edc RDKALL-205: Remove Non Secure tftp transfer method for Log Upload
+194be59 RDKB-14318,ARRISXB3-6730 : lighttpd fails to launch sometimes
+
+project rdkb/components/opensource/ccsp/webui/
+357765d RDKB-5456: Port trigger rule for same target and trigger port
+cbf304f RDKB-15025: Logs in WebUI are displayed with wrong Time Frame
+9c6ab9d ARRISXB6-3416, ARRISXB6-3121 : DS OFDM parameters
+985b786 RDKB-15511: Blocked device is not redirecting to pause block page
+efac1c2 RDKB-15497: Wizard page WiFi Private SSID credentials are readable
+640b42b RDKB-15180: Wizard edit settings are not saved in MSO GUI
+92f2fe2 RDKB-14318,ARRISXB3-6730 : lighttpd fails to launch sometimes
+5751ed4 RDKB-14890: Lack of CSRF Protection on internal web server pages
+5c68506 RDKB-15305: GUI modifications for admin password hashing
+
+project rdkb/devices/raspberrypi/hal/
+97f280e RPI-114 [RPI][Wifi] : Add Wifi HAL Debug Macros in implemented APIs Reason for change: Entry and exit debug macros implemented in working functions in wifi_hal.c Test Procedure:      1. Boot Gateway device. Run commands systemctl stop ccspwifiagent.service ; cd /usr/ccsp/wifi/CcspWiFiSsp â€“subsys eRT.      2. Run dmcli commands for working functions
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+00271d8 RDKBEMU-615 : Modified tr69 systemd file
+3f2de2d RDKBEMU-607 : [TDK] [LMLite] Observing LMLite process crash while
+3cffcc7 RDKBEMU-610 : [TDK] [SNMP] SNMP process gets killed automatically
+e244973 RDKBEMU-585,RDKBEMU-586 : Device.UserInterface.X_CISCO_COM_

@@ -1,0 +1,23 @@
+From e651fb858fcf372685e86f4c924f4b2c7af77a8c Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Wed, 17 Jan 2024 09:45:37 +0000
+Subject: [PATCH] Force sync layer states on making browser visible
+
+---
+ .../WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp b/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+index 170eb13003a1b..8bd4ac0a7f20a 100644
+--- a/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
++++ b/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+@@ -266,8 +266,8 @@ void LayerTreeHost::pauseRendering()
+ void LayerTreeHost::resumeRendering()
+ {
+     m_isSuspended = false;
++    renderNextFrame(true);
+     m_compositor->resume();
+-    scheduleLayerFlush();
+ }
+ 
+ GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()

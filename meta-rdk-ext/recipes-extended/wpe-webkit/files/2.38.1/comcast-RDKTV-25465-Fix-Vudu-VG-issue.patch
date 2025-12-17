@@ -1,0 +1,34 @@
+From febfdf7a9a9d144e3df06a23ce48da5888a7b22b Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Wed, 18 Oct 2023 03:06:16 +0000
+Subject: [PATCH] comcast : RDKTV-25465 Fix Vudu VG issue
+
+Commit 7d44a07 skips render tree update on Element::focus which
+results in creation of WebKitAccessible without renderer. This
+WebKitAccessible is then removed when focus state change event
+is handled (i.e AXObjectCache::get(Node*) removes it as it sees it
+has a lately added renderer). This change deferes focus change handling
+after render tree update.
+---
+ Source/WebCore/accessibility/AXObjectCache.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/accessibility/AXObjectCache.cpp b/Source/WebCore/accessibility/AXObjectCache.cpp
+index c7268839e43a..b75d20770555 100644
+--- a/Source/WebCore/accessibility/AXObjectCache.cpp
++++ b/Source/WebCore/accessibility/AXObjectCache.cpp
+@@ -1366,9 +1366,9 @@ void AXObjectCache::handleRowCountChanged(AXCoreObject* axObject, Document* docu
+ 
+ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* newNode)
+ {
+-    if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer())) {
++    if (!newNode->renderer() || (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer()))) {
+         m_deferredFocusedNodeChange.append({ oldNode, newNode });
+-        if (!newNode->renderer()->needsLayout() && !m_performCacheUpdateTimer.isActive())
++        if ((newNode->renderer() ? !newNode->renderer()->needsLayout() : true) && !m_performCacheUpdateTimer.isActive())
+             m_performCacheUpdateTimer.startOneShot(0_s);
+     } else
+         handleFocusedUIElementChanged(oldNode, newNode);
+-- 
+2.25.1
+

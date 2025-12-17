@@ -1,0 +1,34 @@
+Date: Nov 29 12:22:58 2018
+
+From: 2d294af85b2cbb91ac4cc8d2a97c60060e187694 May 21 06:40:28 2019
+
+Subject: [PATCH] RDKALL-1278: Upgrade libfontconfig to 2.12.1
+
+	Upgrade open source packages
+	Code changes done and verified the c-ares is getting updated to 1.13.0 after resolving its dependencies with nghttp2 in local VM.
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: vthava166 <Vijayakumar_Thavamani@comcast.com>
+
+---
+
+Index: nghttp2-1.31.1/configure.ac
+===================================================================
+--- nghttp2-1.31.1.orig/configure.ac
++++ nghttp2-1.31.1/configure.ac
+@@ -364,7 +364,11 @@ fi
+ PKG_CHECK_MODULES([LIBCARES], [libcares >= 1.7.5], [have_libcares=yes],
+                   [have_libcares=no])
+ if test "x${have_libcares}" = "xno"; then
+-  AC_MSG_NOTICE($LIBCARES_PKG_ERRORS)
++ AC_MSG_WARN($LIBCARES_PKG_ERRORS)
++ PKG_CHECK_MODULES([LIBCARES], [libcares >= 1.7.5],
++              [AC_DEFINE([HAVE_LIBCARES], [1],
++              [Define to 1 if you have `libcare` library.])],
++              [have_libcares=yes])
+ fi
+ 
+ # libevent_openssl (for examples)

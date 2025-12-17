@@ -1,0 +1,151 @@
+Index: git/tinyxml2.h
+===================================================================
+--- git.orig/tinyxml2.h
++++ git/tinyxml2.h
+@@ -1747,8 +1747,17 @@ public:
+     	specified, TinyXML-2 will assume 'xml' points to a
+     	null terminated string.
+     */
+-    XMLError Parse( const char* xml, size_t nBytes=static_cast<size_t>(-1) );
+-
++    XMLError Parse( const char* xml, size_t nBytes);
++    /**
++        Parse an XML file from a character string.
++        Returns XML_SUCCESS (0) on success, or
++        an errorID.
++        TinyXML-2 assumes 'xml' points to a null terminated string
++        which size is at most 4K bytes.  If you want to parse a
++        document greater than 4K size, use the overload of Parse which
++        requires you to specify the size of 'xml'.
++    */
++    XMLError Parse( const char* xml);
+     /**
+     	Load an XML file from disk.
+     	Returns XML_SUCCESS (0) on success, or
+Index: git/xmltest.cpp
+===================================================================
+--- git.orig/xmltest.cpp
++++ git/xmltest.cpp
+@@ -2517,7 +2517,7 @@ int main( int argc, const char ** argv )
+ 		static const int COUNT = 10;
+ 		for (int i = 0; i < COUNT; ++i) {
+ 			XMLDocument doc;
+-			doc.Parse(mem);
++			doc.Parse(mem, size);
+ 			parseDreamXmlFailed = parseDreamXmlFailed || doc.Error();
+ 		}
+ #if defined( _MSC_VER )
+Index: git/tinyxml2.cpp
+===================================================================
+--- git.orig/tinyxml2.cpp
++++ git/tinyxml2.cpp
+@@ -993,11 +993,13 @@ XMLNode* XMLNode::InsertAfterChild( XMLN
+ 
+ const XMLElement* XMLNode::FirstChildElement( const char* name ) const
+ {
+-    for( const XMLNode* node = _firstChild; node; node = node->_next ) {
++    for( const XMLNode* node = _firstChild; node; node = node->_next ) 
++    {
+         const XMLElement* element = node->ToElementWithName( name );
+-        if ( element ) {
+-            return element;
+-        }
++	if (element && (!name || element->Name() && XMLUtil::StringEqual( element->Name(), name )))
++	{
++		return element;
++	}
+     }
+     return 0;
+ }
+@@ -1005,10 +1007,12 @@ const XMLElement* XMLNode::FirstChildEle
+ 
+ const XMLElement* XMLNode::LastChildElement( const char* name ) const
+ {
+-    for( const XMLNode* node = _lastChild; node; node = node->_prev ) {
++    for( const XMLNode* node = _lastChild; node; node = node->_prev ) 
++    {
+         const XMLElement* element = node->ToElementWithName( name );
+-        if ( element ) {
+-            return element;
++        if (element && (!name || element->Name() && XMLUtil::StringEqual( element->Name(), name )))
++	{	
++	return element;
+         }
+     }
+     return 0;
+@@ -1017,9 +1021,11 @@ const XMLElement* XMLNode::LastChildElem
+ 
+ const XMLElement* XMLNode::NextSiblingElement( const char* name ) const
+ {
+-    for( const XMLNode* node = _next; node; node = node->_next ) {
++    for( const XMLNode* node = _next; node; node = node->_next ) 
++    {
+         const XMLElement* element = node->ToElementWithName( name );
+-        if ( element ) {
++	if (element && (!name || element->Name() && XMLUtil::StringEqual( element->Name(), name )))
++	{
+             return element;
+         }
+     }
+@@ -1029,11 +1035,13 @@ const XMLElement* XMLNode::NextSiblingEl
+ 
+ const XMLElement* XMLNode::PreviousSiblingElement( const char* name ) const
+ {
+-    for( const XMLNode* node = _prev; node; node = node->_prev ) {
++    for( const XMLNode* node = _prev; node; node = node->_prev ) 
++    {
+         const XMLElement* element = node->ToElementWithName( name );
+-        if ( element ) {
+-            return element;
+-        }
++         if (element && (!name || element->Name() && XMLUtil::StringEqual( element->Name(), name )))
++	 {		 
++		 return element;
++         }
+     }
+     return 0;
+ }
+@@ -2411,20 +2419,40 @@ XMLError XMLDocument::SaveFile( FILE* fp
+     return _errorID;
+ }
+ 
++XMLError XMLDocument::Parse( const char* p)
++{
++	// We read at most 128K bytes of data to mitigate for a possible
++	// erroneous content of 'p' that wouldn't end with a \0 character.
++	return Parse( p, strnlen( p, 128 * 1024 ) );
++}
+ 
+ XMLError XMLDocument::Parse( const char* p, size_t len )
+ {
+     Clear();
+ 
++    if( len > (128 * 1024) )
++    {
++	    SetError( XML_ERROR_PARSING, 0, 0 );
++	    return _errorID;
++    }
++
+     if ( len == 0 || !p || !*p ) {
+         SetError( XML_ERROR_EMPTY_DOCUMENT, 0, 0 );
+         return _errorID;
+     }
+-    if ( len == static_cast<size_t>(-1) ) {
+-        len = strlen( p );
++
++    try
++    {
++	    _charBuffer = new char[ len+1 ];
++    }
++    catch (std::bad_alloc& ba)
++    {
++	    printf("new operation failed: memory limit exceeded");
++	    printf("bad_alloc caught: %s \n",ba.what());
++	    SetError( XML_ERROR_PARSING, 0, 0 );
++	    return _errorID;
+     }
+     TIXMLASSERT( _charBuffer == 0 );
+-    _charBuffer = new char[ len+1 ];
+     memcpy( _charBuffer, p, len );
+     _charBuffer[len] = 0;
+ 

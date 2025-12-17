@@ -1,0 +1,74 @@
+From 3db7d30cc64f6df8f84ce5672dab7eb2213b2f98 Mon Sep 17 00:00:00 2001
+From: Manoj Bhatta <manoj_bhatta@comcast.com>
+Date: Thu, 20 Apr 2023 05:35:08 +0000
+Subject: [PATCH] new SDL gamedb
+- Remove duplicate GUID 
+- Update gameDB to new SDL database
+
+---
+ tools/update-gamecontrollerdb.sh | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/tools/update-gamecontrollerdb.sh b/tools/update-gamecontrollerdb.sh
+index 9efdb15..5b804b2 100755
+--- a/tools/update-gamecontrollerdb.sh
++++ b/tools/update-gamecontrollerdb.sh
+@@ -1,39 +1,48 @@
+ #!/bin/bash
+ 
+-OUTPUT=src/gamecontrollerdb
++OUTPUT=./gamecontrollerdb
++TMP_OUTPUT=./tmp_gamecontrollerdb
+ 
+ ensure-valid-id () {
+   grep -E '^[0-9a-f]{32},'
+ }
+ 
+ footer () {
+-  printf "\n" >> $OUTPUT
++  printf "\n" >> $TMP_OUTPUT
+ }
+ 
+ 
+-
+ #Cleanup
+-rm $OUTPUT
++rm -f $OUTPUT
++rm -f $TMP_OUTPUT
+ 
++DATE=$(date)
+ # Add the SDL DB header
+-printf "# Source: https://github.com/SDL-mirror/SDL/blob/master/src/joystick/SDL_gamecontrollerdb.h\n\n" >> $OUTPUT
++printf "# Game Controller DB for libmanette used in RDK\n" >> $TMP_OUTPUT
++printf "# Source: https://github.com/libsdl-org/SDL/blob/main/src/joystick/SDL_gamepad_db.h\n" >> $TMP_OUTPUT
++printf "# Created on: %s\n\n" "$DATE"  >> $TMP_OUTPUT  
+ 
+ # Add the SDL DB
+-curl https://raw.githubusercontent.com/SDL-mirror/SDL/master/src/joystick/SDL_gamecontrollerdb.h \
+-  | awk '/LINUX/{flag=1;next}/endif/{flag=0}flag' \
++curl https://raw.githubusercontent.com/libsdl-org/SDL/main/src/joystick/SDL_gamepad_db.h \
++  | awk '/SDL_JOYSTICK_LINUX/{flag=1;next}/endif/{flag=0}flag' \
++  | sed 's/hint:SDL_GAMECONTROLLER_USE_BUTTON_LABELS:=1,//' \
++  | sed 's/hint:!SDL_GAMECONTROLLER_USE_BUTTON_LABELS:=1,//' \
+   | sed -n 's/.*"\(.*\)".*/\1/p' \
+-  | ensure-valid-id | sort >> $OUTPUT
++  | ensure-valid-id | awk -F',' '!seen[$1]++'  >> $TMP_OUTPUT
+ 
+ footer
+ 
+ # Add the GameControllerDB header
+-printf "# Source: https://github.com/gabomdq/SDL_GameControllerDB/blob/master/gamecontrollerdb.txt\n\n" >> $OUTPUT
++printf "# Source: https://github.com/gabomdq/SDL_GameControllerDB/blob/master/gamecontrollerdb.txt\n\n" >> $TMP_OUTPUT
+ 
+ # Add the GameControllerDB
+ curl https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt \
+   | grep "platform:Linux" \
+   | sed 's/platform:Linux,//' \
+-  | ensure-valid-id | sort >> $OUTPUT
++  | ensure-valid-id | awk -F',' '!seen[$1]++' >> $TMP_OUTPUT
+ 
+ footer
+ 
++# remove duplicate GUIDs
++awk -F',' '!seen[$1]++'  $TMP_OUTPUT > $OUTPUT
++rm $TMP_OUTPUT

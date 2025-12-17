@@ -1,0 +1,116 @@
+From 169d1fe5bb507ad910e092bc9d376b8bed6cc9ed Mon Sep 17 00:00:00 2001
+From: Manoj Bhatta <manoj_bhatta@comcast.com>
+Date: Fri, 10 Mar 2023 17:49:25 +0000
+Subject: [PATCH] old kernel and 64 bit kernel build error fix
+
+---
+ demos/manette-test/manette-test.c |  2 +-
+ src/manette-device.c              | 19 ++++++++++++++++++-
+ src/manette-event-mapping.c       |  2 +-
+ src/manette-mapping.c             |  2 +-
+ tests/test-event-mapping.c        |  2 +-
+ tests/test-mapping.c              |  2 +-
+ 6 files changed, 23 insertions(+), 6 deletions(-)
+
+diff --git a/demos/manette-test/manette-test.c b/demos/manette-test/manette-test.c
+index ff1794d..89c86db 100644
+--- a/demos/manette-test/manette-test.c
++++ b/demos/manette-test/manette-test.c
+@@ -18,7 +18,7 @@
+ 
+ #include <glib/gprintf.h>
+ #include <libmanette.h>
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ 
+ #define CASE_THEN_STRING(x) case x: return #x;
+ 
+diff --git a/src/manette-device.c b/src/manette-device.c
+index 5f84b15..c1dde5a 100644
+--- a/src/manette-device.c
++++ b/src/manette-device.c
+@@ -28,7 +28,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <libevdev/libevdev.h>
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+@@ -36,6 +36,23 @@
+ #include "manette-event-private.h"
+ #include "manette-mapping-manager-private.h"
+ 
++#if !defined(input_event_sec)
++#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64))
++#define input_event_sec time.tv_sec
++#else
++#define input_event_sec  __sec
++#endif
++#endif
++
++#if !defined(input_event_usec)
++#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64))
++#define input_event_usec time.tv_usec
++#else
++#define input_event_usec __usec
++#endif
++#endif
++
++
+ struct _ManetteDevice
+ {
+   GObject parent_instance;
+diff --git a/src/manette-event-mapping.c b/src/manette-event-mapping.c
+index c9dfbfb..6ca7f6c 100644
+--- a/src/manette-event-mapping.c
++++ b/src/manette-event-mapping.c
+@@ -18,7 +18,7 @@
+ 
+ #include "manette-event-mapping-private.h"
+ 
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ #include "manette-event-private.h"
+ 
+ static GSList *
+diff --git a/src/manette-mapping.c b/src/manette-mapping.c
+index 8369e5b..f38aab7 100644
+--- a/src/manette-mapping.c
++++ b/src/manette-mapping.c
+@@ -19,7 +19,7 @@
+ #include "manette-mapping-private.h"
+ 
+ #include <errno.h>
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/tests/test-event-mapping.c b/tests/test-event-mapping.c
+index 8028ca3..911bbd2 100644
+--- a/tests/test-event-mapping.c
++++ b/tests/test-event-mapping.c
+@@ -16,7 +16,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ #include "../src/manette-event-mapping-private.h"
+ #include "../src/manette-event-private.h"
+ 
+diff --git a/tests/test-mapping.c b/tests/test-mapping.c
+index b968aa5..12120ae 100644
+--- a/tests/test-mapping.c
++++ b/tests/test-mapping.c
+@@ -16,7 +16,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-#include <linux/input-event-codes.h>
++#include <linux/input.h>
+ #include "../src/manette-mapping-private.h"
+ 
+ #define MAPPING_STEAM_CONTROLLER "03000000de280000fc11000001000000,Steam Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,"

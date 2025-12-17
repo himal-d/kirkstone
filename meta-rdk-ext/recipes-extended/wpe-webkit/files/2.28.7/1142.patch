@@ -1,0 +1,42 @@
+From ca776262dbc1a0bec2bedcb99efcf31e8b0829dd Mon Sep 17 00:00:00 2001
+From: Jack Howgate <jack.howgate@sky.uk>
+Date: Sun, 20 Aug 2023 16:33:17 +0100
+Subject: [PATCH] Implemented save function in inspector front end host and set
+ 'canSave' to true to allow exporting HAR files form network tab in remote web
+ inspector.
+
+---
+ .../Base/BrowserInspectorFrontendHost.js           | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebInspectorUI/UserInterface/Base/BrowserInspectorFrontendHost.js b/Source/WebInspectorUI/UserInterface/Base/BrowserInspectorFrontendHost.js
+index baabcbb5571a..2925731e6d85 100644
+--- a/Source/WebInspectorUI/UserInterface/Base/BrowserInspectorFrontendHost.js
++++ b/Source/WebInspectorUI/UserInterface/Base/BrowserInspectorFrontendHost.js
+@@ -231,13 +231,19 @@ if (!window.InspectorFrontendHost) {
+ 
+         canSave()
+         {
+-            return false;
++            return true;
+         }
+ 
+         save(url, content, base64encoded, forceSaveAs)
+-        {
+-            // FIXME: Create a Blob from the content, get an object URL, open it to trigger a download.
+-            throw "unimplemented";
++        {           
++            var link = document.createElement("a");
++            var file = new Blob([content], {type: "octet/stream"});
++            link.href = URL.createObjectURL(file);
++            link.download = url;
++            link.click();
++            setTimeout(() => {
++                window.URL.revokeObjectURL(link.href);
++            }, 0);
+         }
+ 
+         append(url, content)
+-- 
+2.34.1
+

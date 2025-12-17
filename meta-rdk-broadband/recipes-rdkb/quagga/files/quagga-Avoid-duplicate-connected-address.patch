@@ -1,0 +1,39 @@
+Date: Jan 05, 2023 03:21 PM
+
+From: a9d42424741a6d2106aed6f80bad400bc7fa3e5c Feb 22, 2018 2:59 PM
+
+Subject: [PATCH] RDKB-15501: Upgrade Quagga to 1.2.4 or later
+
+        Upgrading Quagga to 1.2.4. While upgrading to newer
+version zebra crashed. Added fix for the same.
+rtadv.patch is now added here instead of duplication in other layers.
+Removing unrecognised configure options.
+
+Source: COMCAST
+
+License: GPL-2.0-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Arjun <arjun_daasuramdass@comcast.com>
+Index: quagga-1.2.4/lib/if.c
+===================================================================
+--- quagga-1.2.4.orig/lib/if.c
++++ quagga-1.2.4/lib/if.c
+@@ -908,6 +908,16 @@ connected_add_by_prefix (struct interfac
+                          struct prefix *destination)
+ {
+   struct connected *ifc;
++  struct listnode *cnode;
++  struct connected *c;
++  int ret = 0;
++
++  for (ALL_LIST_ELEMENTS_RO (ifp->connected, cnode, c))
++  {
++	  ret = connected_same_prefix (p, (c->address));
++	  if(ret == 1)
++		  return NULL;
++  }
+ 
+   /* Allocate new connected address. */
+   ifc = connected_new ();

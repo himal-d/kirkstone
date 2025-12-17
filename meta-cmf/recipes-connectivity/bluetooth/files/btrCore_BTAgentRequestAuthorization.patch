@@ -1,0 +1,53 @@
+---
+ src/bt-ifce/btrCore_dbus_bluez5.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/src/bt-ifce/btrCore_dbus_bluez5.c b/src/bt-ifce/btrCore_dbus_bluez5.c
+index 449059a..66e19b2 100644
+--- a/src/bt-ifce/btrCore_dbus_bluez5.c
++++ b/src/bt-ifce/btrCore_dbus_bluez5.c
+@@ -973,6 +973,35 @@ btrCore_BTAgentCancelMessage (
+     return DBUS_HANDLER_RESULT_HANDLED;
+ }
+ 
++static DBusHandlerResult
++btrCore_BTAgentRequestAuthorization (
++    DBusConnection* apDBusConn,
++    DBusMessage* apDBusMsg,
++    void* apvUserData
++) {
++    DBusMessage*    lpDBusReply = NULL;
++    stBtIfceHdl*    pstlhBtIfce = (stBtIfceHdl*)apvUserData;
++
++    (void)pstlhBtIfce;
++    if (!dbus_message_get_args(apDBusMsg, NULL, DBUS_TYPE_INVALID)) {
++        BTRCORELOG_ERROR ("Invalid arguments for confirmation method");
++        return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
++    }
++    BTRCORELOG_INFO ("Request Authorization\n");
++    lpDBusReply = dbus_message_new_method_return(apDBusMsg);
++
++    if (!lpDBusReply) {
++        BTRCORELOG_ERROR ("Can't create lpDBusReply message\n");
++        return DBUS_HANDLER_RESULT_NEED_MEMORY;
++    }
++
++    dbus_connection_send(apDBusConn, lpDBusReply, NULL);
++    dbus_connection_flush(apDBusConn);
++
++    dbus_message_unref(lpDBusReply);
++    return DBUS_HANDLER_RESULT_HANDLED;
++}
++
+ 
+ static DBusMessage*
+ btrCore_BTSendMethodCall (
+@@ -9072,6 +9101,7 @@ btrCore_BTAgentMessageHandlerCb (
+ 
+     if (dbus_message_is_method_call(apDBusMsg, BT_DBUS_BLUEZ_AGENT_PATH, "RequestAuthorization")) {
+         BTRCORELOG_INFO ("btrCore_BTAgentMessageHandlerCb:: RequestAuthorization\n");
++        return btrCore_BTAgentRequestAuthorization(apDBusConn, apDBusMsg, apvUserData);
+     }
+ 
+     return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+-- 

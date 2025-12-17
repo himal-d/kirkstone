@@ -1,0 +1,89 @@
+From 378ec589936f491138401b53aa03263895385a3d Mon Sep 17 00:00:00 2001
+From: apatel599 <aniketnarshibhai_patel@comcast.com>
+Date: Thu, 17 Nov 2022 08:19:43 +0000
+Subject: [PATCH] RDKB-45650,TCXB7-5403:[OneWifi] Added more validation check on Our OneWifi code
+
+Reason for change: Added pointer validation on our rdk-wifi-libhostapd code.
+Test Procedure: 1. Load OneWifi Image.
+                2. Connect client with private_vap and confirm.
+
+Risks: Low
+Priority: P1
+
+Change-Id: Ia17d8149dace33ef711501620a1861ee5513d9e8
+Signed-off-by: apatel599@cable.comcast.com
+(cherry picked from commit 1df4e25b132757ece70aee3924a90c5ab98c3f67)
+(cherry picked from commit e70fab697443a3f1b161eb1964489bb662f10da4)
+---
+
+diff --git a/source/hostap-2.9/src/ap/wpa_auth.c b/source/hostap-2.9/src/ap/wpa_auth.c
+index c560770..e048e8b 100755
+--- a/source/hostap-2.9/src/ap/wpa_auth.c
++++ b/source/hostap-2.9/src/ap/wpa_auth.c
+@@ -97,8 +97,15 @@
+ 				      const u8 *addr, wpa_eapol_variable var,
+ 				      int value)
+ {
++#ifdef RDK_ONEWIFI
++	if ((wpa_auth != NULL) && (wpa_auth->cb != NULL)) {
++        	if (wpa_auth->cb->set_eapol)
++                	wpa_auth->cb->set_eapol(wpa_auth->cb_ctx, addr, var, value);
++	}
++#else
+ 	if (wpa_auth->cb->set_eapol)
+ 		wpa_auth->cb->set_eapol(wpa_auth->cb_ctx, addr, var, value);
++#endif //RDK_ONEWIFI
+ }
+ 
+ 
+diff --git a/source/hostap-2.9/src/ap/wpa_auth_glue.c b/source/hostap-2.9/src/ap/wpa_auth_glue.c
+index 0800a87..0018a6e 100755
+--- a/source/hostap-2.9/src/ap/wpa_auth_glue.c
++++ b/source/hostap-2.9/src/ap/wpa_auth_glue.c
+@@ -191,16 +191,30 @@
+ static void hostapd_wpa_auth_set_eapol(void *ctx, const u8 *addr,
+ 				       wpa_eapol_variable var, int value)
+ {
++#ifdef RDK_ONEWIFI
++	if ((ctx == NULL) || (addr == NULL))
++                return;
++#endif //RDK_ONEWIFI
+ 	struct hostapd_data *hapd = ctx;
+ 	struct sta_info *sta = ap_get_sta(hapd, addr);
+ 	if (sta == NULL)
+ 		return;
+ 	switch (var) {
+ 	case WPA_EAPOL_portEnabled:
++#ifdef RDK_ONEWIFI
++		if (sta->eapol_sm)
++			ieee802_1x_notify_port_enabled(sta->eapol_sm, value);
++#else
+ 		ieee802_1x_notify_port_enabled(sta->eapol_sm, value);
++#endif //RDK_ONEWIFI
+ 		break;
+ 	case WPA_EAPOL_portValid:
++#ifdef RDK_ONEWIFI
++		if (sta->eapol_sm)
++			ieee802_1x_notify_port_valid(sta->eapol_sm, value);
++#else
+ 		ieee802_1x_notify_port_valid(sta->eapol_sm, value);
++#endif //RDK_ONEWIFI
+ 		break;
+ 	case WPA_EAPOL_authorized:
+ 		ieee802_1x_set_sta_authorized(hapd, sta, value);
+@@ -214,9 +228,15 @@
+ 			sta->eapol_sm->keyRun = value ? TRUE : FALSE;
+ 		break;
+ 	case WPA_EAPOL_keyAvailable:
++#ifdef RDK_ONEWIFI
++                if ((sta->eapol_sm != NULL) && (sta->eapol_sm->eap_if != NULL))
++                        sta->eapol_sm->eap_if->eapKeyAvailable =
++                                value ? TRUE : FALSE;
++#else
+ 		if (sta->eapol_sm)
+ 			sta->eapol_sm->eap_if->eapKeyAvailable =
+ 				value ? TRUE : FALSE;
++#endif //RDK_ONEWIFI
+ 		break;
+ 	case WPA_EAPOL_keyDone:
+ 		if (sta->eapol_sm)

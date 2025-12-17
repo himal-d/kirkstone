@@ -1,0 +1,11 @@
+<!-- XML CONFIGURATION FOR common /etc/ld.so.preload file  -->
+
+<CONTAINER APPEND="LD_SO_PRELOAD">
+	<LxcConfig>
+		<LdSoPreload>
+			<SoLib>libcrashreporting</SoLib>
+		</LdSoPreload>
+		<Rootfs create="yes">
+		</Rootfs>
+	</LxcConfig>
+</CONTAINER>

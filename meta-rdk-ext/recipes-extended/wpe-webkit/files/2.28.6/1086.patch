@@ -1,0 +1,32 @@
+From 0408c88b1ddb197abe29cd96c5d2bb0f5c5727d8 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Tue, 23 May 2023 11:48:05 +0200
+Subject: [PATCH] 1086 patch
+
+---
+ Source/WebCore/animation/AnimationTimeline.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/Source/WebCore/animation/AnimationTimeline.cpp b/Source/WebCore/animation/AnimationTimeline.cpp
+index 5e874a43a73e..9b5bec62dc5d 100644
+--- a/Source/WebCore/animation/AnimationTimeline.cpp
++++ b/Source/WebCore/animation/AnimationTimeline.cpp
+@@ -455,6 +455,15 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
+         }
+     }
+ 
++    // A CSS Transition might have completed since the last time animations were updated so we must
++    // update the running and completed transitions membership in that case.
++    auto* keyframeEffect = keyframeEffectForElementAndProperty(element, property);
++    auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
++    if (is<CSSTransition>(animation) && runningTransitionsByProperty.contains(property) && animation->playState() == WebAnimation::PlayState::Finished) {
++        completedTransitionsByProperty.set(property, runningTransitionsByProperty.take(property));
++        animation = nullptr;
++    }
++
+     // https://drafts.csswg.org/css-transitions-1/#before-change-style
+     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
+     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
+-- 
+2.25.1
+

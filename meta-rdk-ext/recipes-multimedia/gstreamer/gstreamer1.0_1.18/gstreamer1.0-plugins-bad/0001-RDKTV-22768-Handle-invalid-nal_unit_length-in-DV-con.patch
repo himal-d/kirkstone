@@ -1,0 +1,90 @@
+From a8338c1812c94f5528932d6f7c32cb8a387da897 Mon Sep 17 00:00:00 2001
+From: sputhi200 <Sujeesh_Puthiya@comcast.com>
+Date: Mon, 10 Apr 2023 21:14:51 +0000
+Subject: [PATCH 1/1] RDKTV-22768: Handle invalid nal_unit_length in DV content
+
+Signed-off-by: sputhi200 <Sujeesh_Puthiya@comcast.com>
+---
+ gst-libs/gst/codecparsers/gsth265parser.c | 10 +++++++---
+ gst-libs/gst/codecparsers/gsth265parser.h |  3 ++-
+ gst/videoparsers/gsth265parse.c           |  8 ++++++++
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/gst-libs/gst/codecparsers/gsth265parser.c b/gst-libs/gst/codecparsers/gsth265parser.c
+index dc7f27aa9..bc3d4de99 100644
+--- a/gst-libs/gst/codecparsers/gsth265parser.c
++++ b/gst-libs/gst/codecparsers/gsth265parser.c
+@@ -1402,7 +1402,7 @@ gst_h265_parser_identify_nalu_unchecked (GstH265Parser * parser,
+   if (size < offset + 4) {
+     GST_DEBUG ("Can't parse, buffer has too small size %" G_GSIZE_FORMAT
+         ", offset %u", size, offset);
+-    return GST_H265_PARSER_ERROR;
++    return GST_H265_PARSER_SKIP_INVALID_NAL;
+   }
+ 
+   off1 = scan_for_start_codes (data + offset, size - offset);
+@@ -4128,7 +4128,9 @@ gst_h265_parser_insert_sei_internal (GstH265Parser * parser,
+         sei_info.data, 0, sei_info.size, &sei_nalu);
+   }
+   gst_memory_unmap (sei, &sei_info);
+-  if (pres != GST_H265_PARSER_OK && pres != GST_H265_PARSER_NO_NAL_END) {
++  if (pres != GST_H265_PARSER_OK
++      && (pres != GST_H265_PARSER_NO_NAL_END
++          || pres != GST_H265_PARSER_SKIP_INVALID_NAL)) {
+     GST_DEBUG ("Failed to identify sei nal unit, ret: %d", pres);
+     return NULL;
+   }
+@@ -4148,7 +4150,9 @@ gst_h265_parser_insert_sei_internal (GstH265Parser * parser,
+           info.data, offset, info.size, &nalu);
+     }
+ 
+-    if (pres != GST_H265_PARSER_OK && pres != GST_H265_PARSER_NO_NAL_END) {
++    if (pres != GST_H265_PARSER_OK
++        && (pres != GST_H265_PARSER_NO_NAL_END
++            || pres != GST_H265_PARSER_SKIP_INVALID_NAL)) {
+       GST_DEBUG ("Failed to identify nal unit, ret: %d", pres);
+       gst_buffer_unmap (au, &info);
+ 
+diff --git a/gst-libs/gst/codecparsers/gsth265parser.h b/gst-libs/gst/codecparsers/gsth265parser.h
+index 073123d7c..7b3be33e0 100644
+--- a/gst-libs/gst/codecparsers/gsth265parser.h
++++ b/gst-libs/gst/codecparsers/gsth265parser.h
+@@ -332,7 +332,8 @@ typedef enum
+   GST_H265_PARSER_BROKEN_LINK,
+   GST_H265_PARSER_ERROR,
+   GST_H265_PARSER_NO_NAL,
+-  GST_H265_PARSER_NO_NAL_END
++  GST_H265_PARSER_NO_NAL_END,
++  GST_H265_PARSER_SKIP_INVALID_NAL
+ } GstH265ParserResult;
+ 
+ /**
+diff --git a/gst/videoparsers/gsth265parse.c b/gst/videoparsers/gsth265parse.c
+index 6af531a59..15932130e 100644
+--- a/gst/videoparsers/gsth265parse.c
++++ b/gst/videoparsers/gsth265parse.c
+@@ -1269,6 +1269,10 @@ gst_h265_parse_handle_frame (GstBaseParse * parse,
+          * not to skip too much */
+         *skipsize = size - 5;
+         goto skip;
++      case GST_H265_PARSER_SKIP_INVALID_NAL:
++        GST_WARNING_OBJECT(h265parse, "skiping the invalid nal unit %u", nalu.size);
++        *skipsize = nalu.size;
++        goto skip;
+       default:
+         /* should not really occur either */
+         GST_ELEMENT_ERROR (h265parse, STREAM, FORMAT,
+@@ -1328,6 +1332,10 @@ gst_h265_parse_handle_frame (GstBaseParse * parse,
+         GST_ELEMENT_ERROR (h265parse, STREAM, FORMAT,
+             ("Error parsing H.265 stream"), ("No H.265 NAL unit found"));
+         goto invalid_stream;
++      case GST_H265_PARSER_SKIP_INVALID_NAL:
++        GST_WARNING_OBJECT(h265parse, "skiping the invalid nal unit %u", nalu.size);
++        *skipsize = nalu.size;
++        goto skip;
+       case GST_H265_PARSER_BROKEN_DATA:
+         GST_WARNING_OBJECT (h265parse, "input stream is corrupt; "
+             "it contains a NAL unit of length %u", nalu.size);
+-- 
+2.17.1
+

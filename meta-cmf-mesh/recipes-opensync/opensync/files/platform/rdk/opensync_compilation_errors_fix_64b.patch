@@ -1,0 +1,35 @@
+diff --git a/src/lib/target/src/bsal_legacy.c b/src/lib/target/src/bsal_legacy.c
+index 467bdf2..6b68ac3 100644
+--- a/src/lib/target/src/bsal_legacy.c
++++ b/src/lib/target/src/bsal_legacy.c
+@@ -1014,7 +1014,7 @@ static bool bsal_client_set_connected(
+                 memcpy(info, &client_info_cache->client, sizeof(*info));
+             }
+ #endif
+-            LOGI("BSAL Client "MAC_ADDR_FMT" is connected apIndex: %d, SNR: %d, rx: %lld, tx: %lld", MAC_ADDR_UNPACK(mac_addr),
++            LOGI("BSAL Client "MAC_ADDR_FMT" is connected apIndex: %d, SNR: %d, rx: %"PRIu64", tx: %"PRIu64"", MAC_ADDR_UNPACK(mac_addr),
+                 apIndex, info->snr, info->rx_bytes, info->tx_bytes);
+ 
+             break;
+diff --git a/src/tools/band_steering_test/bs_testd/bs_testd.c b/src/tools/band_steering_test/bs_testd/bs_testd.c
+index e3d548c..62b0aff 100644
+--- a/src/tools/band_steering_test/bs_testd/bs_testd.c
++++ b/src/tools/band_steering_test/bs_testd/bs_testd.c
+@@ -966,7 +966,7 @@ static parse_ret_t parse_cmd(int connfd)
+         }
+ 
+         total_bytes += bytes;
+-        LOGD("total_bytes = %d\n", total_bytes);
++        LOGD("total_bytes = %zu\n", total_bytes);
+ 
+         if (total_bytes >= (ssize_t)sizeof(buf) && buf[sizeof(buf) - 1] != '\0')
+         {
+@@ -981,7 +981,7 @@ static parse_ret_t parse_cmd(int connfd)
+             // Otherwise we're blocking (on purpose).
+             // in case of client malfunction this loop needs to be interrupted by a signal.
+             // Non-blocking variant may be implemented in the future.
+-            LOGD("incomplete, bytes = %d , buf = >>%s<<\n", bytes, buf);
++            LOGD("incomplete, bytes = %zu , buf = >>%s<<\n", bytes, buf);
+             incomplete = true;
+             ptr += bytes;
+             continue;

@@ -1,0 +1,252 @@
+Changelog between rdkb-20200706 and rdkb-20200807
+
+
+
+project rdk/components/generic/breakpad_wrapper/
+ee8dfad Revert "RDK-28091: Capture stack backtraces automatically". Due to DELIA-44579
+
+project rdk/components/generic/crashupload/
+b095325 DELIA-43524: Start core log, only after system time is acquired.
+4908940 DELIA-44260, DELIA-44120: Both Success and Failure message are seen with 200
+
+project rdk/components/generic/libSyscallWrapper/
+c67732e BLDK-734:RDK License header changes-for Notice header update
+
+project rdk/components/generic/rfc/
+335dbb5 RDKB-27681, RDKB-29818: Invalidate Account Id after each power cycle
+
+project rdk/components/generic/sys_mon_tools/mem_analyser_tools/
+fb4db24 BLDK-734:RDK License header changes-for Notice header update
+
+project rdk/components/generic/syslog_helper/
+f938bba BLDK-734:RDK License header changes-for Notice header update
+
+project rdk/components/generic/xupnp/
+f9c574c DELIA-44979: Added restart hook for xcal-device.path
+074a39c DELIA-40142 : log when DP disabled device access services
+d6fdb3b RDK-28416: Use logmilestone api with rdkloggers library in Xupnp
+71ba5e2 DELIA-44383: Add service restart delays
+
+project rdkb/components/generic/CcspLogAgent/
+23a4a61 TRDKB-326,RDKB-26266: Integrate support for XML to C in CcspLogAgent
+
+project rdkb/components/generic/harvester/
+ba8afb1 TRDKB-327,RDKB-26266 : Convert Harvester.XML to C
+ebc0ce0 RDKB-29214 : Harvester must set source mac for all events
+
+project rdkb/components/generic/mtu_modifier/
+05b605c RDKBCMF-245 mtu_modifier component build failures
+
+project rdkb/components/generic/notify_comp/
+9b94cd3 TRDKB-329,RDKB-26266 : Convert NotifyComponent.xml to C
+
+project rdkb/components/generic/servicemanager/
+77c7077 BLDK-734:RDK License header changes-for Notice header update
+
+project rdkb/components/generic/sso/
+de97ecc BLDK-734:RDK License header changes-for Notice header update
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+c686271 RDKB-25910 : CLONE - [SEC_UPLIFT] Replacing SDL banned C
+b6c3084 TRDKB-313,RDKB-26266 : Integrate support for XML to C conversion in CMAgent
+1953634 RDKMDOC-91: CcspCMAgent Doxygen Documentation
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+233e37e8 RDKB-30015:Move Tr181 from P&M to CcspAdvsecurity.
+17b6c9a2 RDKBDEV-83 : Device Gateway Association using Manageable Device
+665577ef RDKB-27243 : Review Coding Security/Style Guide
+ec2e61d1 RDKB-30052: Integrate WebConfig framework for DMZ
+0a43e622 RDKB-29440 : Code optimization of using Environment variable
+8a163183 Revert "CISCOXB3-6085, RDKB-29332 : Moving current psm config to tmp"
+6bead2bc CISCOXB3-6108 : QinQ for mesh ethernet pod
+c908bf1f CISCOXB3-6085, RDKB-29332 : Moving current psm config to tmp
+
+project rdkb/components/opensource/ccsp/CcspDmCli/
+fb533f5 TRDKB-347,RDKB-26266 :Convert MsgBusTest.XML to C
+
+project rdkb/components/opensource/ccsp/CcspEPONAgent/
+a66ad20 RDKB-26266 : Convert xml files to C data structure
+
+project rdkb/components/opensource/ccsp/CcspEthAgent/
+356e2a2 BLDK-734:RDK License header changes-for Notice header update
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+86b5d43 RDKBDEV-83 : Device Gateway Association using Manageable Device
+334de6b RDKB-30520: Address source is not updating as static.
+b44fe6d RDKB-28409, RDKB-29365: Replace non-reentrant in
+5edf98a TCCBR-4621 : LMLite crash.
+b9c51f3 BLDK-734:RDK License header changes-for Notice header update
+b729f98 TRDKB-325,RDKB-26266 : Integrate support for XML to C in CcspLMLite
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+7a80643 RDKB-30469: Decode root doc failed for LAN blob
+b13daa7 RDKB-30247 : Incorrect Comcast Header in CcspMisc
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+db6c31a RDKB-27243 : Review Coding Security/Style Guide
+aa8b58a RDKB-25910 : CLONE - [SEC_UPLIFT] Replacing SDL banned C
+c5f19e7 TRDKB-324,RDKB-26266 : Convert TR181-MoCA.XML to C
+08b1fc1 RDKB-27638 : WIFI_ERROR_macNotAdded More freq.
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+35db24f RDKB-25910 : CLONE - [SEC_UPLIFT] Replacing SDL banned C
+b71712b TRDKB-319,RDKB26266 : Integrate support for XML to C in CcspMtaAgent
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+f3ea6fb SKYH4-2878: WiFi Help link URL change
+015f760 RDKB-29650:Parental control unable to add keyword.
+b30d943 RDKB-30015:Move Tr181 from P&M to CcspAdvsecurity.
+1c49079 BWGRDK-635, BWGRDK-636, BWGRDK-650: Implemented TR181 Parameter
+ecf2511 CISCOXB3-6301 : CcspPandMSsp crash with signature strnlen and reason SIGSEGV
+5af2b82 REFPLTB-505: Unable to toggle value for Device.DeviceInfo.X_RDKCENTRAL-COM_CloudUIEnable
+184b20b RDKB-27243 RDKB-30923: Review Coding Security/Style Guide
+3302a07 RDKB-28409, RDKB-29364: Replace non-reentrant with reentrant functions
+c752426 RDKB-30052: Integrate WebConfig framework for DMZ
+48e4ef0 RDKB-30306 : Incorrect Comcast Headers
+d9f1afa RDKB-28133: any string is getting set to XconfSelector TR 181
+cd2a9d5 RDKB-29440 : Code optimization of using Environment variable
+117448d AXB3RETAIL-177 :Diagnostic Tools->Connectivity Test is failing
+9f55ca7 RDKB-29030 : Reduced Logging for all RDKB devices PAM Component
+c247caa RDKB-29999 : Implement TR181 parameter for dnssec Enable/Disable
+b8159bd RDKB-29075 : Integrate port mapping with WebConfig Framework
+59fd5d5 TRDKB-274,RDKB-26266 : Integrate with yocto builds
+975706a BWGRDK-575: Restore static IP configurations in BWG
+5a241b4 Revert "RDKB-23500: To fix libsyswrapper usage in RDKB components"
+a643942 SKYH4-3227 : Adding variabe to check if dibbler has already started
+ea14204 CMXB7-1224: wifi_factoryReset() should not remove /nvram/wifi_reset_indicator
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+d8c8301 RDKB-29031 : Reduced Logging for all RDKB devices PSM Component
+ad787a9 Revert "CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp"
+120070c CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+16ec10d RDKBDEV-83 : Device Gateway Association using Managed Device
+0fba891 RDKBDEV-55 - Adding Custom_Mapper functionality and integration with CcspTr069Pa
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+dd722d3 SKYH4-3629 : WiFi is not getting enabled from GUI after reboot.
+db7b75b RDKB-29595 : WiFi blaster on XB3 gateway
+40d0396 RDKB-25290: Neighbor report activation across wifi reset
+d87dfd3 RDKB-29467 : request timeout for step greater than 31
+a02f190 RDKB-30825: WiFi GAS Configuration parameters are accepting out of range values
+979ea9d RDKB-29783 : wifi blaster hang issue
+03b982d RDKB-30802 X_CISCO_COM_ConfigFileBase64 for TXB7
+7323671 RDKB-30529 : wifiblaster default values not restored
+dcdccea REFPLTB-577,REFPLTB-660 : [TDK][AUTO][EMU]Device.WiFi.AccessPoint.i.Status
+d60f070 RDKCOM-1319: REFPLTB-577,REFPLTB-660 : [TDK][AUTO][EMU]Device.WiFi.AccessPoi...
+6490bd0 RDKB-30368 : Wifi log flood for 256 steps
+3193b78 ARRISXB3-10041: To restore WiFi config corruption
+0e8f75f RDKB-30329 : Wifi changes to fix webconfig memleak
+72050ef RDKB-28775 : WebConfig POC for WiFi Component
+b77aada TRDKB-318,RDKB-26266 : Integrate support for XML to C in cspWifiAgent
+249adf3 SKYH4-3456 : WiFi log shows multiple instance of HAL failure.
+70ccbc5 REFPLTB-622 : Online / Offline status of connected devices on RDKB
+c7fc1cc REFPLTB-634: [Turris Omnia RDK-Next] Wifi Agent is not running
+ab40691 RDKB-30099 log truncation
+d474548 RDKCOM-1300: REFPLTB-634: [Turris Omnia RDK-Next] Wifi Agent is not running
+0d5b49f RDKCOM-1303: REFPLTB-622 : Online / Offline status of connected devices on RDKB
+
+project rdkb/components/opensource/ccsp/CcspXDNS/
+5e91df3 RDKB-30293 : Integrate XDNS blob support for XDNS Module.
+7126c3d RDKB-29999 : Implement TR181 parameter for dnssec Enable/Disable
+771ac3d RDKB-25910 : CLONE - [SEC_UPLIFT] Replacing SDL banned C
+41425ef TRDKB-378,RDKB-26266 :Convert CcspXdns_dm.xml to C
+
+project rdkb/components/opensource/ccsp/GwProvApp-EthWan/
+16e3d25 CBR2-169,CBR2-37: Map Ethwan to eth5 for CBR2. This is change-2.
+
+project rdkb/components/opensource/ccsp/MeshAgent/
+bd323d1 RDKB-22976, CISCOXB3-5464 : Radio Status related changes
+47fff6f RDKB-25910 : CLONE - [SEC_UPLIFT] Replacing SDL banned C
+
+project rdkb/components/opensource/ccsp/PowerManager/
+d6cdaa1 RDKB-27796 : "echo: write error: Broken pipe" under rdkb_power_manager.sh
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+773d1ed RDKB-30015:Move Tr181 from P&M to CcspAdvsecurity.
+2bcb618 RDKB-27243 : Review Coding Security/Style Guide
+e8d7304 Revert "RDKB-27963 : Disabling v6 handler, bootfile check"
+258adfa Revert "CISCOXB3-6085, RDKB-29332:  Moving current psm config to tmp"
+6d441f3 BLDK-734:RDK License header changes-for Notice header update
+b38ccb5 TRDKB-323,RDKB-26266 : Integrate support for XML to C in TestandDiagnostic
+3bef326 Revert "Revert "Revert "RDKB-26920 : Observed multiple dibbler restarts"""
+7d00d04 CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp
+6f88f4a RDKB-29769 : task_health_monitor.sh syntax error
+3c6a1c7 CBR2-169,CBR2-133 : Change modelnumber in /etc/device.properties
+
+project rdkb/components/opensource/ccsp/Utopia/
+1efeba2d BWGRDK-635, BWGRDK-636,BWGRDK-650: Setting as Default value
+fd172e9d RDKBDEV-55 - Adding Custom_Mapper functionality and integration with CcspTr069Pa
+eb9a0d03 RDKBDEV-83 : Device Gateway Association using Managed Device
+941ee16a SKYH4-3235 : In Field Hub4 5G radio was in bad state and restart recovered.
+e882aadf Revert "CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp"
+0f69f11b RDKB-29999 : Implement TR181 parameter for dnssec Enable/Disable
+d5c33fcc BLDK-734:RDK License header changes-for Notice header update
+0bf51651 REFPLTB-712 : Ports(80,443,9000) are accepted in firewall without any service
+7f5536a8 BWGRDK-575: Restore static IP configurations in BWG
+97e6b347 RDKCOM-1306: REFPLTB-712 : Ports(80,443,9000) are accepted in firewall witho...
+bca86a07 CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp
+88e101ba REFPLTB-488: Site blocked through parental control managed sites is accessible from client
+35a98c83 RDKCOM-1241: Site blocked through parental control managed sites is accessib...
+
+project rdkb/components/opensource/ccsp/Xconf/
+31a627c XF3-5709 : ambiguous redirect in firmwareSched.sh file
+
+project rdkb/components/opensource/ccsp/hal/
+7719728 REFPLTB-660 : [TDK][AUTO]Unable to set and get the TR-181 parameter
+4fc94ca RDKCOM-1318: REFPLTB-660 : [TDK][AUTO]Unable to set and get the TR-181 param...
+
+project rdkb/components/opensource/ccsp/halinterface/
+362403c RDKB-30073 : Update radio param while getting radioTrafficstats
+2fbb252 REFPLTB-556: Corrections for HAL documentation
+83267c5 RDKCOM-1295: REFPLTB-556: Corrections for HAL documentation
+
+project rdkb/components/opensource/ccsp/hotspot/
+7b82f51 TRDKB-328,RDKB-26266 : Integrate support for XML to C in hotspot
+acf786e ARRISXB6-11172 RDKB-30452: Observed Multiple Occurence of GRE Tunnel creation
+
+project rdkb/components/opensource/ccsp/sysint/
+12825d1 RDKB-31050,RDKB-29749: Log tarballs are not getting created and
+f01b651 BLDK-734:RDK License header changes-for Notice header update
+2358d27 Revert "CISCOXB3-6085, RDKB-29332:  Moving current psm config to tmp"
+30ee650 CISCOXB3-6085, RDKB-29332:  Moving current psm config to tmp
+
+project rdkb/components/opensource/ccsp/webui/
+9df4090 SKYH4-3412 :[VDSL&Sprint] GUI shows Error message in English instead of Italian
+980a08c SKYH4-3157: GUI - Language corrections BL043 and BL044 changes
+197ac96 SKYH4-3568 : [Auto][Sprint]IPV4 &IPV6 ServerIps are Overlapping in port frwding
+33b15f0 SKYH4-2816: Display the Connected WAN connection Name in GUI
+f6ddc8d SKYH4-3475 :UI not accepting the complete digit map only accepts up to 257 char
+4938459 RDKB-27653 : Separate dialog box for Traceroute error
+042dea5 SKYH4-3139: Alignment is not proper in Parental control - > Manage devices
+6687675 SKYH4-3299:[VDSL] WAN informations should be clear after WAN cable disconnect.
+174d195 SKYH4-3239 :[Auto][Sprint]Illegal characters are seen in alert message
+fab0d9a SKYH4-3548:[Auto][Sprint][VDSL]Admin GUI Page Layout changes with lengthy name.
+e93d08e Revert "CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp"
+b22dc42 SKYH4-3182: the Modem Status in GUI is shown in English instead of Italian.
+5a7ba64 BLDK-734:RDK License header changes-for Notice header update
+42782cf SKYH4-3382 :Auto&Sprint-DHCPv6 values aren't set default on restoring default.
+6b11be3 SKYH4-3232:[VDSL][GUI]Ethernet LAN and other GUI page parameters are not inline
+b33fc7c SKYH4-3453:[SkyHub4]WIFI GUI layout changes with 32 special characters as SSID
+b228359 SKYH4-2652:GUI Alignment is not proper few GUI pages.
+9a628da CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp
+c2c0dcc SKYH4-3311:[Auto][Stable]"Bridge mode" is showning in GUI while launching page
+
+project rdkb/components/opensource/ccsp/webui-bwg/
+bf8fc4b RDKB-30493 : Observed failure when try to change ReservedIP
+7a04e28 RDKB-29313:Able to set invalid LAN DHCP range as 10.1.10.254.
+7206291 Revert "CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp"
+97cedc8 BLDK-734:RDK License header changes-for Notice header update
+79ec2de CISCOXB3-6085, RDKB-29332: Moving current psm config to tmp
+e83ed84 CBR2-169,RDKB-28677 : Bring-in webui changes for CBR2
+
+project rdkb/devices/raspberrypi/hal/
+095b6d7 REFPLTB-775 : Initial wifi connection failure issue on both 2.4 and 5 Ghz
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+63da6ac RDKBDEV-223:[RDKB][BUGFIX]TCP port 7547 with LAN need to be closed.
+72f52ea RDKBDEV-222:[RDKB][BUGFIX]Unsafe TCP port 53 with wan is opened by default.
+ef7f528 RDKBDEV-221:[RDKB][BUGFIX]SSH to target with tcp port 22 form LAN need to be closed.
+e8b9016 REFPLTB-505: Unable to toggle value for Device.DeviceInfo.X_RDKCENTRAL-COM_CloudUIEnable
+48c0fe2 REFPLTB-660 : [TDK][AUTO]Unable to set and get the TR-181 parameter

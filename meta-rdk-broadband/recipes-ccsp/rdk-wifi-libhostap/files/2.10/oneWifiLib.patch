@@ -1,0 +1,1398 @@
+##########################################
+Date: Apr 22, 2022 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: 
+Source: Sky
+Upstream-Status: Pending
+Signed-off-by: Damiano Barone <damiano.barone@sky.uk>
+##########################################
+Index: git/Makefile.am
+===================================================================
+--- /dev/null
++++ git/Makefile.am
+@@ -0,0 +1,19 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++SUBDIRS = source
+\ No newline at end of file
+Index: git/configure.ac
+===================================================================
+--- /dev/null
++++ git/configure.ac
+@@ -0,0 +1,94 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++#                                              -*- Autoconf -*-
++# Process this file with autoconf to produce configure script.
++#
++
++AC_PREREQ([2.65])
++AC_INIT([rdk-wifi-libhostap], [1.0], [BUG-REPORT-ADDRESS])
++AM_INIT_AUTOMAKE([foreign])
++LT_INIT
++
++AC_PREFIX_DEFAULT(`pwd`)
++AC_ENABLE_SHARED
++AC_DISABLE_STATIC
++
++AC_CONFIG_HEADERS([config.h])
++AC_CONFIG_MACRO_DIR([m4])
++
++# Specify ccsp cpu arch
++
++AC_ARG_WITH([ccsp-arch],
++[AC_HELP_STRING([--with-ccsp-arch={arm,atom,pc,mips}],
++                [specify the ccsp board CPU platform])],
++[case x"$withval" in
++   xarm)
++     CCSP_ARCH=arm
++     ;;
++   xatom)
++     CCSP_ARCH=atom
++     ;;
++   xpc)
++     CCSP_ARCH=pc
++     ;;
++   xmips)
++     CCSP_ARCH=mips
++     ;;
++   *)
++     AC_MSG_ERROR([$withval is an invalid option to --with-ccsp-arch])
++     ;;
++ esac],
++[CCSP_ARCH=''])
++if test x"${CCSP_ARCH}" != x; then
++  AC_DEFINE_UNQUOTED(CCSP_ARCH, "$CCSP_ARCH",
++                     [The board CPU architecture])
++fi
++
++AM_CONDITIONAL(CCSP_ARCH_ARM, test "x$CCSP_ARCH" = xarm)
++AM_CONDITIONAL(CCSP_ARCH_ATOM, test "x$CCSP_ARCH" = xatom)
++AM_CONDITIONAL(CCSP_ARCH_PC, test "x$CCSP_ARCH" = xpc)
++AM_CONDITIONAL(CCSP_ARCH_MIPS, test "x$CCSP_ARCH" = xmips)
++
++# Checks for programs.
++AC_PROG_CC
++AC_PROG_INSTALL
++AM_PROG_CC_C_O
++AM_PROG_LIBTOOL(libtool)
++
++# Checks for header files.
++AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
++
++# Checks for typedefs, structures, and compiler characteristics.
++AC_HEADER_STDBOOL
++AC_C_INLINE
++
++# Checks for library functions.
++AC_FUNC_MALLOC
++
++AC_CONFIG_FILES(
++	source/hostap-2.10/src/Makefile
++	source/hostap-2.10/hostapd/Makefile
++	source/hostap-2.10/Makefile
++	source/Makefile
++	Makefile
++)
++
++
++AC_OUTPUT
++
+Index: git/source/Makefile.am
+===================================================================
+--- /dev/null
++++ git/source/Makefile.am
+@@ -0,0 +1,19 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++SUBDIRS = hostap-2.10
+\ No newline at end of file
+Index: git/source/hostap-2.10/Makefile.am
+===================================================================
+--- /dev/null
++++ git/source/hostap-2.10/Makefile.am
+@@ -0,0 +1,19 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++SUBDIRS = src hostapd
+\ No newline at end of file
+Index: git/source/hostap-2.10/hostapd/Makefile.am
+===================================================================
+--- /dev/null
++++ git/source/hostap-2.10/hostapd/Makefile.am
+@@ -0,0 +1,72 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++AM_CFLAGS = -D_ANSC_LINUX
++AM_CFLAGS += -D_ANSC_USER
++AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
++AM_CPPFLAGS = -Wall -Werror
++
++#include ../src/drivers/drivers.mak
++
++##### CLEAR VARS
++
++DRV_CFLAGS =
++DRV_WPA_CFLAGS =
++DRV_AP_CFLAGS =
++DRV_OBJS =
++DRV_WPA_OBJS =
++DRV_AP_OBJS =
++DRV_LIBS =
++DRV_WPA_LIBS =
++DRV_AP_LIBS =
++
++##### COMMON DRIVERS
++
++
++
++
++
++#include ../src/drivers/drivers.mak
++
++AM_LDFLAGS = -lpthread
++AM_LDFLAGS += -lz
++hardware_platform = i686-linux-gnu
++
++AM_CFLAGS += -DCONFIG_CTRL_IFACE
++AM_CFLAGS += -DCONFIG_CTRL_IFACE_UNIX
++AM_CFLAGS += -DCONFIG_FST
++AM_CFLAGS += -DCONFIG_IEEE80211W
++AM_CFLAGS += -DCONFIG_WPS
++AM_CFLAGS += -DCONFIG_WPS_NFC
++#bin_PROGRAMS = hostapd_cli
++
++hostapd_cli_CPPFLAGS = -I$(top_srcdir)/source/hostap-2.10/src -I$(top_srcdir)/source/hostap-2.10/src/utils/ -I$(top_srcdir)/source/hostap-2.10/src/ap -I$(top_srcdir)/source/hostap-2.10/src/common
++
++hostapd_cli_SOURCES = hostapd_cli.c
++
++hostapd_cli_SOURCES += ../src/common/wpa_ctrl.c
++hostapd_cli_SOURCES += ../src/utils/os_unix.c
++hostapd_cli_SOURCES += ../src/utils/eloop.c
++hostapd_cli_SOURCES += ../src/utils/common.c
++hostapd_cli_SOURCES += ../src/utils/wpa_debug.c
++hostapd_cli_SOURCES += ../src/utils/edit_simple.c
++#hostapd_cli_SOURCES += ../src/utils/trace.c
++
++hostapd_cli_SOURCES += ../src/common/cli.c
++
++#hostapd_cli_LDFLAGS = -lrt -ldl
+\ No newline at end of file
+Index: git/source/hostap-2.10/hostapd/defconfig
+===================================================================
+--- git.orig/source/hostap-2.10/hostapd/defconfig
++++ git/source/hostap-2.10/hostapd/defconfig
+@@ -30,6 +30,15 @@ CONFIG_DRIVER_NL80211=y
+ # Use libnl v2.0 (or 3.0) libraries.
+ #CONFIG_LIBNL20=y
+ 
++ifneq ($(STB),1)
++CFLAGS += -I$(LIBNL_DIR)/install/include/libnl3
++LIBS += -L$(LIBNL_DIR)/install/lib
++else
++LIBS += -lm
++CFLAGS += -I$(LIBNL_DIR)/include/libnl3
++LIBS += -L$(LIBNL_DIR)/lib/static
++endif # STB
++
+ # Use libnl 3.2 libraries (if this is selected, CONFIG_LIBNL20 is ignored)
+ CONFIG_LIBNL32=y
+ 
+Index: git/source/hostap-2.10/hostapd/main.c
+===================================================================
+--- git.orig/source/hostap-2.10/hostapd/main.c
++++ git/source/hostap-2.10/hostapd/main.c
+@@ -32,7 +32,7 @@
+ #include "eap_register.h"
+ #include "ctrl_iface.h"
+ 
+-
++#if 0
+ struct hapd_global {
+ 	void **drv_priv;
+ 	size_t drv_count;
+@@ -40,6 +40,7 @@ struct hapd_global {
+ 
+ static struct hapd_global global;
+ 
++#endif
+ 
+ #ifndef CONFIG_NO_HOSTAPD_LOGGER
+ static void hostapd_logger_cb(void *ctx, const u8 *addr, unsigned int module,
+@@ -150,7 +151,7 @@ static void hostapd_logger_cb(void *ctx,
+ /**
+  * hostapd_driver_init - Preparate driver interface
+  */
+-static int hostapd_driver_init(struct hostapd_iface *iface)
++int hostapd_driver_init(struct hostapd_iface *iface)
+ {
+ 	struct wpa_init_params params;
+ 	size_t i;
+@@ -254,7 +255,7 @@ static int hostapd_driver_init(struct ho
+  * or more BSSes sharing the same radio) and allocate memory for the BSS
+  * interfaces. No actual driver operations are started.
+  */
+-static struct hostapd_iface *
++struct hostapd_iface *
+ hostapd_interface_init(struct hapd_interfaces *interfaces, const char *if_name,
+ 		       const char *config_fname, int debug)
+ {
+@@ -332,7 +333,7 @@ static void handle_dump_state(int sig, v
+ #endif /* CONFIG_NATIVE_WINDOWS */
+ 
+ 
+-static int hostapd_global_init(struct hapd_interfaces *interfaces,
++int hostapd_global_init(struct hapd_interfaces *interfaces,
+ 			       const char *entropy_file)
+ {
+ 	int i;
+@@ -378,7 +379,7 @@ static int hostapd_global_init(struct ha
+ }
+ 
+ 
+-static void hostapd_global_deinit(const char *pid_file, int eloop_initialized)
++void hostapd_global_deinit(const char *pid_file, int eloop_initialized)
+ {
+ 	int i;
+ 
+@@ -409,7 +410,7 @@ static void hostapd_global_deinit(const
+ }
+ 
+ 
+-static int hostapd_global_run(struct hapd_interfaces *ifaces, int daemonize,
++int hostapd_global_run(struct hapd_interfaces *ifaces, int daemonize,
+ 			      const char *pid_file)
+ {
+ #ifdef EAP_SERVER_TNC
+@@ -617,7 +618,7 @@ static int gen_uuid(const char *txt_addr
+ #define HOSTAPD_CLEANUP_INTERVAL 10
+ #endif /* HOSTAPD_CLEANUP_INTERVAL */
+ 
+-static int hostapd_periodic_call(struct hostapd_iface *iface, void *ctx)
++int hostapd_periodic_call(struct hostapd_iface *iface, void *ctx)
+ {
+ 	hostapd_periodic_iface(iface);
+ 	return 0;
+@@ -625,7 +626,7 @@ static int hostapd_periodic_call(struct
+ 
+ 
+ /* Periodic cleanup tasks */
+-static void hostapd_periodic(void *eloop_ctx, void *timeout_ctx)
++void hostapd_periodic(void *eloop_ctx, void *timeout_ctx)
+ {
+ 	struct hapd_interfaces *interfaces = eloop_ctx;
+ 
+Index: git/source/hostap-2.10/src/Makefile.am
+===================================================================
+--- /dev/null
++++ git/source/hostap-2.10/src/Makefile.am
+@@ -0,0 +1,383 @@
++##########################################################################
++# If not stated otherwise in this file or this component's LICENSE
++# file the following copyright and licenses apply:
++#
++# Copyright 2015 RDK Management
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++##########################################################################
++AM_CFLAGS = -D_ANSC_LINUX
++AM_CFLAGS += -D_ANSC_USER
++if CCSP_ARCH_ARM
++AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
++endif
++
++if CCSP_ARCH_ATOM
++AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
++endif
++
++if CCSP_ARCH_PC
++AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
++endif
++AM_CFLAGS += -DEAP_PWD
++AM_CPPFLAGS = -Wall -Werror
++ACLOCAL_AMFLAGS = -I m4
++hardware_platform = i686-linux-gnu
++
++lib_LTLIBRARIES = libhostap.la
++
++libhostap_la_CPPFLAGS = -I$(top_srcdir)/source/hostap-2.10/src -I$(top_srcdir)/source/hostap-2.10/src/utils/ -I$(top_srcdir)/source/hostap-2.10/src/ap
++libhostap_la_CPPFLAGS += -I$(top_srcdir)/libnl/include
++libhostap_la_CPPFLAGS += -I$(top_srcdir)/openssl/usr/include/
++
++libhostap_la_SOURCES = ap/wpa_auth_glue.c
++libhostap_la_SOURCES += ap/wpa_auth.c
++libhostap_la_SOURCES += ap/wpa_auth_ie.c
++libhostap_la_SOURCES += ap/wpa_auth_ft.c
++libhostap_la_SOURCES += ap/ap_drv_ops.c
++libhostap_la_SOURCES += ap/pmksa_cache_auth.c
++libhostap_la_SOURCES += ap/tkip_countermeasures.c
++libhostap_la_SOURCES += ap/ieee802_11.c
++libhostap_la_SOURCES += ap/ieee802_11_he.c
++libhostap_la_SOURCES += ap/ieee802_11_ht.c
++libhostap_la_SOURCES += ap/ieee802_11_vht.c
++libhostap_la_SOURCES += ap/ieee802_11_shared.c
++libhostap_la_SOURCES += ap/beacon.c
++libhostap_la_SOURCES += ap/dfs.c
++libhostap_la_SOURCES += ap/sta_info.c
++libhostap_la_SOURCES += ap/ieee802_1x.c
++libhostap_la_SOURCES += ap/accounting.c
++libhostap_la_SOURCES += ap/utils.c
++libhostap_la_SOURCES += ap/ap_config.c
++libhostap_la_SOURCES += ap/ieee802_11_auth.c
++libhostap_la_SOURCES += ap/hw_features.c
++libhostap_la_SOURCES += ap/wmm.c
++libhostap_la_SOURCES += ap/hostapd.c
++libhostap_la_SOURCES += ap/wps_hostapd.c
++libhostap_la_SOURCES += ap/rrm.c
++libhostap_la_SOURCES += ap/eap_user_db.c
++libhostap_la_SOURCES += ap/neighbor_db.c
++libhostap_la_SOURCES += ap/ap_mlme.c
++libhostap_la_SOURCES += ap/ap_list.c
++libhostap_la_SOURCES += ap/authsrv.c
++libhostap_la_SOURCES += ap/bss_load.c
++libhostap_la_SOURCES += ap/vlan_init.c
++libhostap_la_SOURCES += ap/vlan.c
++libhostap_la_SOURCES += ap/vlan_ifconfig.c
++libhostap_la_SOURCES += ap/drv_callbacks.c
++libhostap_la_SOURCES += ap/eth_p_oui.c
++libhostap_la_SOURCES += ap/ctrl_iface_ap.c
++
++libhostap_la_SOURCES += radius/radius.c
++libhostap_la_SOURCES += radius/radius_client.c
++libhostap_la_SOURCES += radius/radius_das.c
++
++#libhostap_la_SOURCES += eap_register.c
++libhostap_la_SOURCES += eap_common/eap_common.c
++libhostap_la_SOURCES += eap_common/eap_peap_common.c
++libhostap_la_SOURCES += eap_common/eap_psk_common.c
++libhostap_la_SOURCES += eap_common/eap_pax_common.c
++libhostap_la_SOURCES += eap_common/eap_sake_common.c
++libhostap_la_SOURCES += eap_common/eap_gpsk_common.c
++libhostap_la_SOURCES += eap_common/chap.c
++libhostap_la_SOURCES += eap_common/eap_pwd_common.c
++#libhostap_la_SOURCES += eap_common/eap_sim_common.c
++#libhostap_la_SOURCES += eap_common/eap_fast_common.c
++libhostap_la_SOURCES += eap_common/eap_ikev2_common.c
++libhostap_la_SOURCES += eap_common/ikev2_common.c
++libhostap_la_SOURCES += eap_common/eap_wsc_common.c
++#libhostap_la_SOURCES += eap_common/eap_teap_common.c
++
++libhostap_la_SOURCES += eap_peer/eap_tls.c
++libhostap_la_SOURCES += eap_peer/eap_peap.c
++libhostap_la_SOURCES += eap_peer/eap_ttls.c
++libhostap_la_SOURCES += eap_peer/eap_md5.c
++libhostap_la_SOURCES += eap_peer/eap_mschapv2.c
++libhostap_la_SOURCES += eap_peer/mschapv2.c
++libhostap_la_SOURCES += eap_peer/eap_otp.c
++libhostap_la_SOURCES += eap_peer/eap_gtc.c
++libhostap_la_SOURCES += eap_peer/eap_leap.c
++libhostap_la_SOURCES += eap_peer/eap_psk.c
++libhostap_la_SOURCES += eap_peer/eap_pax.c
++libhostap_la_SOURCES += eap_peer/eap_sake.c
++libhostap_la_SOURCES += eap_peer/eap_gpsk.c
++libhostap_la_SOURCES += eap_peer/eap.c
++libhostap_la_SOURCES += eap_peer/eap_methods.c
++libhostap_la_SOURCES += eap_peer/eap_tls_common.c
++libhostap_la_SOURCES += eap_peer/eap_pwd.c
++libhostap_la_SOURCES += eap_server/eap_server_tls.c
++libhostap_la_SOURCES += eap_server/eap_server_peap.c
++#libhostap_la_SOURCES += eap_server/eap_server_ttls.c
++libhostap_la_SOURCES += eap_server/eap_server_md5.c
++#libhostap_la_SOURCES += eap_server/eap_server_mschapv2.c
++libhostap_la_SOURCES += eap_server/eap_server_gtc.c
++libhostap_la_SOURCES += eap_server/eap_server_psk.c
++libhostap_la_SOURCES += eap_server/eap_server_pax.c
++libhostap_la_SOURCES += eap_server/eap_server_sake.c
++libhostap_la_SOURCES += eap_server/eap_server_gpsk.c
++libhostap_la_SOURCES += eap_server/eap_server.c
++libhostap_la_SOURCES += eap_server/eap_server_identity.c
++libhostap_la_SOURCES += eap_server/eap_server_methods.c
++libhostap_la_SOURCES += eap_server/eap_server_tls_common.c
++libhostap_la_SOURCES += eap_server/eap_server_pwd.c
++libhostap_la_SOURCES += eap_server/eap_server_tnc.c
++libhostap_la_SOURCES += eap_server/tncs.c
++libhostap_la_SOURCES += eap_server/eap_server_ikev2.c
++libhostap_la_SOURCES += eap_server/eap_server_wsc.c
++#libhostap_la_SOURCES += eap_server/eap_server_teap.c
++#libhostap_la_SOURCES += eap_server/eap_server_fast.c
++#libhostap_la_SOURCES += eap_server/eap_server_aka.c
++#libhostap_la_SOURCES += eap_server/eap_server_sim.c
++#libhostap_la_SOURCES += eap_server/eap_sim_db.c
++libhostap_la_SOURCES += eap_server/ikev2.c
++libhostap_la_SOURCES += eapol_supp/eapol_supp_sm.c
++libhostap_la_SOURCES += rsn_supp/wpa.c
++libhostap_la_SOURCES += rsn_supp/wpa_ie.c
++libhostap_la_SOURCES += rsn_supp/wpa_ft.c
++libhostap_la_SOURCES += rsn_supp/pmksa_cache.c
++libhostap_la_SOURCES += rsn_supp/preauth.c
++
++libhostap_la_SOURCES += common/wpa_common.c
++libhostap_la_SOURCES += common/wpa_ctrl.c
++libhostap_la_SOURCES += common/wpa_helpers.c
++libhostap_la_SOURCES += common/ieee802_11_common.c
++libhostap_la_SOURCES += common/hw_features_common.c
++libhostap_la_SOURCES += common/ctrl_iface_common.c
++libhostap_la_SOURCES += common/sae.c
++libhostap_la_SOURCES += common/dragonfly.c
++
++libhostap_la_SOURCES += utils/wpa_debug.c
++libhostap_la_SOURCES += utils/eloop.c
++libhostap_la_SOURCES += utils/os_unix.c
++libhostap_la_SOURCES += utils/common.c
++libhostap_la_SOURCES += utils/wpabuf.c
++libhostap_la_SOURCES += utils/ip_addr.c
++libhostap_la_SOURCES += utils/uuid.c
++libhostap_la_SOURCES += utils/base64.c
++libhostap_la_SOURCES += utils/crc32.c
++
++libhostap_la_SOURCES += crypto/random.c
++#libhostap_la_SOURCES += crypto/md5.c
++#libhostap_la_SOURCES += crypto/md5-internal.c
++#libhostap_la_SOURCES += crypto/sha1.c
++libhostap_la_SOURCES += crypto/sha256-kdf.c
++#libhostap_la_SOURCES += crypto/sha1-internal.c
++#libhostap_la_SOURCES += crypto/sha1-pbkdf2.c
++libhostap_la_SOURCES += crypto/sha1-prf.c
++#libhostap_la_SOURCES += crypto/aes-cbc.c
++#libhostap_la_SOURCES += crypto/aes-ccm.c
++libhostap_la_SOURCES += crypto/aes-ctr.c
++libhostap_la_SOURCES += crypto/aes-eax.c
++libhostap_la_SOURCES += crypto/aes-encblock.c
++#libhostap_la_SOURCES += crypto/aes-gcm.c
++#libhostap_la_SOURCES += crypto/aes-internal.c
++#libhostap_la_SOURCES += crypto/aes-internal-dec.c
++#libhostap_la_SOURCES += crypto/aes-internal-enc.c
++libhostap_la_SOURCES += crypto/aes-omac1.c
++libhostap_la_SOURCES += crypto/aes-siv.c
++#libhostap_la_SOURCES += crypto/aes-wrap.c
++#libhostap_la_SOURCES += crypto/aes-unwrap.c
++#libhostap_la_SOURCES += crypto/rc4.c
++libhostap_la_SOURCES += crypto/tls_none.c
++#libhostap_la_SOURCES += crypto/tls_internal.c
++libhostap_la_SOURCES += crypto/ms_funcs.c
++libhostap_la_SOURCES += crypto/dh_groups.c
++#libhostap_la_SOURCES += crypto/des-internal.c
++#libhostap_la_SOURCES += crypto/dh_group5.c
++#libhostap_la_SOURCES += crypto/md4-internal.c
++#libhostap_la_SOURCES += crypto/milenage.c
++libhostap_la_SOURCES += crypto/sha1-tlsprf.c
++#libhostap_la_SOURCES += crypto/sha1-tprf.c
++#libhostap_la_SOURCES += crypto/sha256.c
++libhostap_la_SOURCES += crypto/sha256-prf.c
++libhostap_la_SOURCES += crypto/sha256-tlsprf.c
++#libhostap_la_SOURCES += crypto/sha256-internal.c
++#libhostap_la_SOURCES += crypto/crypto_internal.c
++#libhostap_la_SOURCES += crypto/crypto_internal-cipher.c
++#libhostap_la_SOURCES += crypto/crypto_internal-modexp.c
++#libhostap_la_SOURCES += crypto/crypto_internal-rsa.c
++#libhostap_la_SOURCES += crypto/sha384.c
++libhostap_la_SOURCES += crypto/sha384-prf.c
++libhostap_la_SOURCES += crypto/sha384-kdf.c
++#libhostap_la_SOURCES += crypto/sha384-internal.c
++#libhostap_la_SOURCES += crypto/sha512-internal.c
++libhostap_la_SOURCES += crypto/sha512-kdf.c
++libhostap_la_SOURCES += crypto/sha512-prf.c
++#libhostap_la_SOURCES += crypto/fips_prf_internal.c
++#libhostap_la_SOURCES += crypto/tls_openssl.c
++libhostap_la_SOURCES += crypto/crypto_openssl.c
++
++#libhostap_la_SOURCES += crypto/dh_group5.c
++#libhostap_la_SOURCES += crypto/dh_groups.c
++#libhostap_la_SOURCES += crypto/sha256-prf.c
++#libhostap_la_SOURCES += crypto/sha256.c
++#libhostap_la_SOURCES += crypto/sha256-internal.c
++#libhostap_la_SOURCES += crypto/crypto_internal-modexp.c
++#libhostap_la_SOURCES += tls/bignum.c
++
++libhostap_la_SOURCES += eapol_auth/eapol_auth_sm.c
++libhostap_la_SOURCES += eapol_auth/eapol_auth_dump.c
++
++libhostap_la_SOURCES += l2_packet/l2_packet_linux.c
++libhostap_la_SOURCES += drivers/netlink.c
++libhostap_la_SOURCES += drivers/drivers.c #Added for hostapd.c support, will be removed later once only needed API(s) used
++libhostap_la_SOURCES += drivers/driver_common.c #event_to_string API, will be removed later once only needed API(s) used
++
++#AM_CFLAGS += -DCONFIG_DRIVER_NL80211
++libhostap_la_SOURCES += drivers/driver_nl80211.c
++libhostap_la_SOURCES += drivers/driver_nl80211_android.c
++libhostap_la_SOURCES += drivers/driver_nl80211_capa.c
++libhostap_la_SOURCES += drivers/driver_nl80211_event.c
++libhostap_la_SOURCES += drivers/driver_nl80211_monitor.c
++libhostap_la_SOURCES += drivers/driver_nl80211_scan.c
++libhostap_la_SOURCES += drivers/linux_ioctl.c
++libhostap_la_SOURCES += drivers/rfkill.c
++libhostap_la_SOURCES += drivers/driver_hostap.c
++libhostap_la_SOURCES += utils/radiotap.c
++libhostap_la_SOURCES += ap/acs.c
++
++libhostap_la_SOURCES += wps/wps.c
++libhostap_la_SOURCES += wps/wps_attr_build.c
++libhostap_la_SOURCES += wps/wps_registrar.c
++libhostap_la_SOURCES += wps/wps_dev_attr.c
++libhostap_la_SOURCES += wps/wps_common.c
++libhostap_la_SOURCES += wps/wps_enrollee.c
++libhostap_la_SOURCES += wps/wps_attr_parse.c
++libhostap_la_SOURCES += wps/wps_attr_process.c
++
++libhostap_la_SOURCES += tls/asn1.c
++#libhostap_la_SOURCES += tls/bignum.c
++#libhostap_la_SOURCES += tls/pkcs1.c
++#libhostap_la_SOURCES += tls/pkcs5.c
++#libhostap_la_SOURCES += tls/pkcs8.c
++#libhostap_la_SOURCES += tls/rsa.c
++#libhostap_la_SOURCES += tls/tlsv1_client.c
++#libhostap_la_SOURCES += tls/tlsv1_client_read.c
++#libhostap_la_SOURCES += tls/tlsv1_client_write.c
++#libhostap_la_SOURCES += tls/tlsv1_common.c
++#libhostap_la_SOURCES += tls/tlsv1_cred.c
++#libhostap_la_SOURCES += tls/tlsv1_record.c
++#libhostap_la_SOURCES += tls/tlsv1_server.c
++#libhostap_la_SOURCES += tls/tlsv1_server_read.c
++#libhostap_la_SOURCES += tls/tlsv1_server_write.c
++#libhostap_la_SOURCES += tls/tlsv1_client_ocsp.c
++#libhostap_la_SOURCES += tls/x509v3.c
++
++AM_CFLAGS += -DCONFIG_HS20
++AM_CFLAGS += -DCONFIG_INTERWORKING
++libhostap_la_SOURCES += ap/hs20.c
++libhostap_la_SOURCES += ap/gas_serv.c
++libhostap_la_SOURCES += common/gas.c
++libhostap_la_SOURCES += ../hostapd/main.c
++
++libhostap_la_SOURCES += ../hostapd/ctrl_iface.c
++libhostap_la_SOURCES += ../hostapd/config_file.c
++libhostap_la_SOURCES += ../hostapd/eap_register.c
++
++#COBJECTS = $(libhostap_la_SOURCES:.c=.o)  # expands to list of object files
++
++#
++AM_CFLAGS += -DHOSTAPD #applicable ap
++AM_CFLAGS += -DNEED_AP_MLME    #applicable ap
++AM_CFLAGS += -DCONFIG_IEEE80211R_AP    #applicable ap
++AM_CFLAGS += -DCONFIG_ETH_P_OUI    #applicable ap
++#AM_CFLAGS += -DCONFIG_INTERWORKING #applicable ap
++#AM_CFLAGS += -DCONFIG_WPS  #applicable ap
++#AM_CFLAGS += -DCONFIG_PROXYARP #applicable ap
++#AM_CFLAGS += -DCONFIG_IPV6 #applicable for ap/ radius/ utils/
++#AM_CFLAGS += -DCONFIG_IAPP #applicable ap
++#AM_CFLAGS += -DCONFIG_AIRTIME_POLICY   #applicable ap
++#
++##applicable for common/
++AM_CFLAGS += -DCONFIG_IEEE80211R #ap/
++AM_CFLAGS += -DCONFIG_IEEE80211W #ap/
++#AM_CFLAGS += -DCONFIG_HS20 #ap/ eap_server/
++AM_CFLAGS += -DCONFIG_SAE
++AM_CFLAGS += -DCONFIG_SUITE
++AM_CFLAGS += -DCONFIG_SUITEB
++AM_CFLAGS += -DCONFIG_SUITEB192
++#
++##applicable for utils/
++#AM_CFLAGS += -DCONFIG_DEBUG_FILE
++#
++##applicable for crypto
++AM_CFLAGS += -DCONFIG_CRYPTO_INTERNAL
++AM_CFLAGS += -DCONFIG_TLS_INTERNAL_CLIENT
++AM_CFLAGS += -DCONFIG_TLS_INTERNAL_SERVER
++#AM_CFLAGS += -DALL_DH_GROUPS
++AM_CFLAGS += -DCONFIG_SHA256
++AM_CFLAGS += -DCONFIG_SHA384
++AM_CFLAGS += -DCONFIG_SHA512
++AM_CFLAGS += -DCONFIG_HMAC_SHA384_KDF
++AM_CFLAGS += -DCONFIG_INTERNAL_SHA384
++##endif
++AM_CFLAGS += -DLINUX_PORT -DRDK_PORT -DCONFIG_CRYPTO_INTERNAL -DCONFIG_DEBUG_LINUX_TRACING -DCONFIG_WPS -DCONFIG_IEEE80211AC -DCONFIG_IEEE80211AX -DCONFIG_IEEE80211N
++#AM_CFLAGS += -DCONFIG_WPS -DCONFIG_CTRL_IFACE -DCONFIG_CTRL_IFACE_UNIX -DCONFIG_INTERNAL_LIBTOMMATH //master
++#AM_CFLAGS += -DLINUX_PORT -DCONFIG_IEEE80211N -DCONFIG_IEEE80211AC -DCONFIG_WPS 
++#AM_CFLAGS += -DCONFIG_EAP -DCONFIG_EAP_MD5 -DCONFIG_EAP_TLS -DCONFIG_EAP_MSCHAPV2 -DCONFIG_EAP_PEAP -DCONFIG_EAP_GTC -DCONFIG_EAP_TTLS
++#AM_CFLAGS += -DEAP_TLS
++#AM_CFLAGS += -DEAP_PEAP
++#AM_CFLAGS += -DEAP_TTLS
++#AM_CFLAGS += -DEAP_MD5
++#AM_CFLAGS += -DEAP_MSCHAPv2
++#AM_CFLAGS += -DEAP_GTC
++#AM_CFLAGS += -DEAP_OTP
++#AM_CFLAGS += -DEAP_LEAP
++#AM_CFLAGS += -DEAP_PSK
++#AM_CFLAGS += -DEAP_PAX
++#AM_CFLAGS += -DEAP_SAKE
++#AM_CFLAGS += -DEAP_GPSK -DEAP_GPSK_SHA256
++AM_CFLAGS += -DCONFIG_WEP
++
++AM_CFLAGS += -DEAP_SERVER_IDENTITY
++AM_CFLAGS += -DEAP_SERVER_TLS
++AM_CFLAGS += -DEAP_SERVER_PEAP
++#AM_CFLAGS += -DEAP_SERVER_TTLS
++AM_CFLAGS += -DEAP_SERVER_MD5
++#AM_CFLAGS += -DEAP_SERVER_MSCHAPV2
++AM_CFLAGS += -DEAP_SERVER_GTC
++AM_CFLAGS += -DEAP_SERVER_PSK
++AM_CFLAGS += -DEAP_SERVER_PAX
++AM_CFLAGS += -DEAP_SERVER_SAKE
++AM_CFLAGS += -DEAP_SERVER_GPSK
++AM_CFLAGS += -DEAP_SERVER_GPSK_SHA256
++AM_CFLAGS += -DEAP_SERVER_PWD
++AM_CFLAGS += -DEAP_SERVER_TNC
++AM_CFLAGS += -DEAP_SERVER_IKEV2
++AM_CFLAGS += -DEAP_SERVER_WSC
++#AM_CFLAGS += -DEAP_SERVER_TEAP
++#AM_CFLAGS += -DEAP_SERVER_FAST
++#AM_CFLAGS += -DEAP_SERVER_AKA_PRIME
++#AM_CFLAGS += -DEAP_SERVER_AKA
++#AM_CFLAGS += -DEAP_SERVER_SIM
++#AM_CFLAGS += -DEAP_SERVER_TLV
++AM_CFLAGS += -DEAP_SERVER_UNAUTH_TLS
++
++AM_CFLAGS += -DIEEE8021X_EAPOL
++
++AM_CFLAGS += -DEAP_SERVER
++
++AM_CFLAGS += -DCONFIG_INTERNAL_LIBTOMMATH
++AM_CFLAGS += -DCONFIG_CRYPTO_INTERNAL
++AM_CFLAGS += -DCONFIG_TLSV11
++AM_CFLAGS += -DCONFIG_TLSV12
++
++#Logger compilation
++AM_CFLAGS += -DCONFIG_DEBUG_FILE
++
++#Needed to compile
++AM_CFLAGS += -DCONFIG_ECC
++
++#AM_CFLAGS += -DCONFIG_CTRL_IFACE_UDP
++
++libhostap_la_LDFLAGS = -lpthread -ldl -lssl
+Index: git/source/hostap-2.10/src/ap/ap_config.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/ap_config.c
++++ git/source/hostap-2.10/src/ap/ap_config.c
+@@ -537,7 +537,7 @@ int hostapd_setup_wpa_psk(struct hostapd
+ }
+ 
+ 
+-static void hostapd_config_free_radius(struct hostapd_radius_server *servers,
++void hostapd_config_free_radius(struct hostapd_radius_server *servers,
+ 				       int num_servers)
+ {
+ 	int i;
+@@ -665,7 +665,7 @@ void hostapd_config_free_eap_users(struc
+ 
+ 
+ #ifdef CONFIG_WEP
+-static void hostapd_config_free_wep(struct hostapd_wep_keys *keys)
++void hostapd_config_free_wep(struct hostapd_wep_keys *keys)
+ {
+ 	int i;
+ 	for (i = 0; i < NUM_WEP_KEYS; i++) {
+Index: git/source/hostap-2.10/src/ap/ap_drv_ops.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/ap_drv_ops.c
++++ git/source/hostap-2.10/src/ap/ap_drv_ops.c
+@@ -753,6 +753,14 @@ int hostapd_drv_sta_deauth(struct hostap
+ 					reason);
+ }
+ 
++int hostapd_drv_sta_notify_deauth(struct hostapd_data *hapd,
++			   const u8 *addr, int reason)
++{
++	if (!hapd->driver || !hapd->driver->sta_notify_deauth || !hapd->drv_priv)
++		return 0;
++	return hapd->driver->sta_notify_deauth(hapd->drv_priv, hapd->own_addr, addr,
++					reason);
++}
+ 
+ int hostapd_drv_sta_disassoc(struct hostapd_data *hapd,
+ 			     const u8 *addr, int reason)
+Index: git/source/hostap-2.10/src/ap/ap_drv_ops.h
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/ap_drv_ops.h
++++ git/source/hostap-2.10/src/ap/ap_drv_ops.h
+@@ -106,6 +106,8 @@ int hostapd_drv_send_mlme(struct hostapd
+ 			  int no_encrypt);
+ int hostapd_drv_sta_deauth(struct hostapd_data *hapd,
+ 			   const u8 *addr, int reason);
++int hostapd_drv_sta_notify_deauth(struct hostapd_data *hapd,
++			   const u8 *addr, int reason);
+ int hostapd_drv_sta_disassoc(struct hostapd_data *hapd,
+ 			     const u8 *addr, int reason);
+ int hostapd_drv_send_action(struct hostapd_data *hapd, unsigned int freq,
+Index: git/source/hostap-2.10/src/ap/drv_callbacks.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/drv_callbacks.c
++++ git/source/hostap-2.10/src/ap/drv_callbacks.c
+@@ -1207,7 +1207,7 @@ int hostapd_probe_req_rx(struct hostapd_
+ #ifdef HOSTAPD
+ 
+ #ifdef CONFIG_IEEE80211R_AP
+-static void hostapd_notify_auth_ft_finish(void *ctx, const u8 *dst,
++void hostapd_notify_auth_ft_finish(void *ctx, const u8 *dst,
+ 					  const u8 *bssid,
+ 					  u16 auth_transaction, u16 status,
+ 					  const u8 *ies, size_t ies_len)
+@@ -1254,7 +1254,7 @@ static void hostapd_notify_auth_fils_fin
+ #endif /* CONFIG_FILS */
+ 
+ 
+-static void hostapd_notif_auth(struct hostapd_data *hapd,
++void hostapd_notif_auth(struct hostapd_data *hapd,
+ 			       struct auth_info *rx_auth)
+ {
+ 	struct sta_info *sta;
+Index: git/source/hostap-2.10/src/ap/hostapd.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/hostapd.c
++++ git/source/hostap-2.10/src/ap/hostapd.c
+@@ -57,10 +57,10 @@
+ #include "wpa_auth_kay.h"
+ 
+ 
+-static int hostapd_flush_old_stations(struct hostapd_data *hapd, u16 reason);
++int hostapd_flush_old_stations(struct hostapd_data *hapd, u16 reason);
+ #ifdef CONFIG_WEP
+-static int hostapd_setup_encryption(char *iface, struct hostapd_data *hapd);
+-static int hostapd_broadcast_wep_clear(struct hostapd_data *hapd);
++int hostapd_setup_encryption(char *iface, struct hostapd_data *hapd);
++int hostapd_broadcast_wep_clear(struct hostapd_data *hapd);
+ #endif /* CONFIG_WEP */
+ static int setup_interface2(struct hostapd_iface *iface);
+ static void channel_list_update_timeout(void *eloop_ctx, void *timeout_ctx);
+@@ -301,7 +301,7 @@ int hostapd_reload_config(struct hostapd
+ 
+ #ifdef CONFIG_WEP
+ 
+-static void hostapd_broadcast_key_clear_iface(struct hostapd_data *hapd,
++void hostapd_broadcast_key_clear_iface(struct hostapd_data *hapd,
+ 					      const char *ifname)
+ {
+ 	int i;
+@@ -330,14 +330,14 @@ static void hostapd_broadcast_key_clear_
+ }
+ 
+ 
+-static int hostapd_broadcast_wep_clear(struct hostapd_data *hapd)
++int hostapd_broadcast_wep_clear(struct hostapd_data *hapd)
+ {
+ 	hostapd_broadcast_key_clear_iface(hapd, hapd->conf->iface);
+ 	return 0;
+ }
+ 
+ 
+-static int hostapd_broadcast_wep_set(struct hostapd_data *hapd)
++int hostapd_broadcast_wep_set(struct hostapd_data *hapd)
+ {
+ 	int errors = 0, idx;
+ 	struct hostapd_ssid *ssid = &hapd->conf->ssid;
+@@ -494,7 +494,7 @@ static void hostapd_cleanup(struct hosta
+ }
+ 
+ 
+-static void sta_track_deinit(struct hostapd_iface *iface)
++void sta_track_deinit(struct hostapd_iface *iface)
+ {
+ 	struct hostapd_sta_info *info;
+ 
+@@ -567,7 +567,7 @@ static void hostapd_clear_wep(struct hos
+ }
+ 
+ 
+-static int hostapd_setup_encryption(char *iface, struct hostapd_data *hapd)
++int hostapd_setup_encryption(char *iface, struct hostapd_data *hapd)
+ {
+ 	int i;
+ 
+@@ -608,7 +608,7 @@ static int hostapd_setup_encryption(char
+ #endif /* CONFIG_WEP */
+ 
+ 
+-static int hostapd_flush_old_stations(struct hostapd_data *hapd, u16 reason)
++int hostapd_flush_old_stations(struct hostapd_data *hapd, u16 reason)
+ {
+ 	int ret = 0;
+ 	u8 addr[ETH_ALEN];
+@@ -1115,7 +1115,7 @@ static int db_table_create_radius_attrib
+  * initialized. Most of the modules that are initialized here will be
+  * deinitialized in hostapd_cleanup().
+  */
+-static int hostapd_setup_bss(struct hostapd_data *hapd, int first)
++int hostapd_setup_bss(struct hostapd_data *hapd, int first)
+ {
+ 	struct hostapd_bss_config *conf = hapd->conf;
+ 	u8 ssid[SSID_MAX_LEN + 1];
+@@ -1627,9 +1627,6 @@ static int setup_interface(struct hostap
+ 		if (os_strncmp(previous_country, country, 2) != 0) {
+ 			wpa_printf(MSG_DEBUG, "Continue interface setup after channel list update");
+ 			iface->wait_channel_update = 1;
+-			eloop_register_timeout(5, 0,
+-					       channel_list_update_timeout,
+-					       iface, NULL);
+ 			return 0;
+ 		}
+ 	}
+@@ -3869,7 +3866,10 @@ struct hostapd_data * hostapd_get_iface(
+ 					const char *ifname)
+ {
+ 	size_t i, j;
+-
++    if(interfaces->iface == NULL) {
++        wpa_printf(MSG_ERROR, "%s:%d iface is NULL", __func__, __LINE__);
++        return NULL;
++    }
+ 	for (i = 0; i < interfaces->count; i++) {
+ 		struct hostapd_iface *iface = interfaces->iface[i];
+ 
+Index: git/source/hostap-2.10/src/ap/hostapd.h
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/hostapd.h
++++ git/source/hostap-2.10/src/ap/hostapd.h
+@@ -718,12 +718,21 @@ struct hostapd_data * hostapd_get_iface(
+ void hostapd_event_sta_opmode_changed(struct hostapd_data *hapd, const u8 *addr,
+ 				      enum smps_mode smps_mode,
+ 				      enum chan_width chan_width, u8 rx_nss);
++int hostapd_setup_bss(struct hostapd_data *hapd, int first);
++void hostapd_free_hapd_data(struct hostapd_data *hapd);
++void hostapd_bss_deinit_no_free(struct hostapd_data *hapd);
+ 
+ #ifdef CONFIG_FST
+ void fst_hostapd_fill_iface_obj(struct hostapd_data *hapd,
+ 				struct fst_wpa_obj *iface_obj);
+ #endif /* CONFIG_FST */
+ 
++struct hapd_global {
++        void **drv_priv;
++        size_t drv_count;
++};
++
++struct hapd_global global;
+ int hostapd_set_acl(struct hostapd_data *hapd);
+ 
+ #endif /* HOSTAPD_H */
+Index: git/source/hostap-2.10/src/ap/utils.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/utils.c
++++ git/source/hostap-2.10/src/ap/utils.c
+@@ -93,6 +93,10 @@ void hostapd_prune_associations(struct h
+ 	struct prune_data data;
+ 	data.hapd = hapd;
+ 	data.addr = addr;
++    if(hapd && hapd->iface == NULL) {
++            wpa_printf(MSG_ERROR, "%s:%d hapd->iface is NULL", __func__, __LINE__);
++            return;
++    }
+ 	if (hapd->iface->interfaces &&
+ 	    hapd->iface->interfaces->for_each_interface)
+ 		hapd->iface->interfaces->for_each_interface(
+Index: git/source/hostap-2.10/src/ap/wpa_auth_glue.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/wpa_auth_glue.c
++++ git/source/hostap-2.10/src/ap/wpa_auth_glue.c
+@@ -268,6 +268,7 @@ static void hostapd_wpa_auth_psk_failure
+ 	struct hostapd_data *hapd = ctx;
+ 	wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_POSSIBLE_PSK_MISMATCH MACSTR,
+ 		MAC2STR(addr));
++	hostapd_drv_sta_notify_deauth(hapd, addr, WLAN_REASON_PREV_AUTH_NOT_VALID);
+ }
+ 
+ 
+Index: git/source/hostap-2.10/src/common/ieee802_11_defs.h
+===================================================================
+--- git.orig/source/hostap-2.10/src/common/ieee802_11_defs.h
++++ git/source/hostap-2.10/src/common/ieee802_11_defs.h
+@@ -2545,7 +2545,9 @@ enum edmg_bw_config {
+ };
+ 
+ /* DPP Public Action frame identifiers - OUI_WFA */
++#ifndef DPP_OUI_TYPE
+ #define DPP_OUI_TYPE 0x1A
++#endif
+ 
+ /* Robust AV streaming Action field values */
+ enum robust_av_streaming_action {
+Index: git/source/hostap-2.10/src/common/wpa_ctrl.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/common/wpa_ctrl.c
++++ git/source/hostap-2.10/src/common/wpa_ctrl.c
+@@ -774,3 +774,43 @@ int wpa_ctrl_get_fd(struct wpa_ctrl *ctr
+ #endif /* CONFIG_CTRL_IFACE_NAMED_PIPE */
+ 
+ #endif /* CONFIG_CTRL_IFACE */
++
++//CONFIG MACRO
++#ifndef CONFIG_CTRL_IFACE
++struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path)
++{
++    return NULL;
++}
++
++int wpa_ctrl_request(struct wpa_ctrl *ctrl, const char *cmd, size_t cmd_len,
++        char *reply, size_t *reply_len,
++        void (*msg_cb)(char *msg, size_t len))
++{
++    return 0;
++}
++
++void wpa_ctrl_close(struct wpa_ctrl *ctrl)
++{
++
++}
++
++static int wpa_ctrl_attach_helper(struct wpa_ctrl *ctrl, int attach)
++{
++    return 0;
++}
++
++int wpa_ctrl_get_fd(struct wpa_ctrl *ctrl)
++{
++    return 0;
++}
++
++int wpa_ctrl_recv(struct wpa_ctrl *ctrl, char *reply, size_t *reply_len)
++{
++    return 0;
++}
++
++int wpa_ctrl_attach(struct wpa_ctrl *ctrl)
++{
++    return 0;
++}
++#endif /* CONFIG_CTRL_IFACE */
+\ No newline at end of file
+Index: git/source/hostap-2.10/src/crypto/tls_openssl.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/crypto/tls_openssl.c
++++ git/source/hostap-2.10/src/crypto/tls_openssl.c
+@@ -1146,6 +1146,10 @@ void * tls_init(const struct tls_config
+ 	}
+ #endif /* OPENSSL_NO_ENGINE */
+ 
++#ifndef TLS_DEFAULT_CIPHERS
++#define TLS_DEFAULT_CIPHERS "DEFAULT:!EXP:!LOW"
++#endif /* TLS_DEFAULT_CIPHERS */
++
+ 	if (conf && conf->openssl_ciphers)
+ 		ciphers = conf->openssl_ciphers;
+ 	else
+Index: git/source/hostap-2.10/src/drivers/driver.h
+===================================================================
+--- git.orig/source/hostap-2.10/src/drivers/driver.h
++++ git/source/hostap-2.10/src/drivers/driver.h
+@@ -3230,6 +3230,8 @@ struct wpa_driver_ops {
+ 	int (*sta_deauth)(void *priv, const u8 *own_addr, const u8 *addr,
+ 			  u16 reason);
+ 
++	int (*sta_notify_deauth)(void *priv, const u8 *own_addr, const u8 *addr,
++			  u16 reason);
+ 	/**
+ 	 * sta_disassoc - Disassociate a station (AP only)
+ 	 * @priv: Private driver interface data
+Index: git/source/hostap-2.10/src/drivers/driver_nl80211_event.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/drivers/driver_nl80211_event.c
++++ git/source/hostap-2.10/src/drivers/driver_nl80211_event.c
+@@ -215,17 +215,19 @@ static void mlme_event_auth(struct wpa_d
+ 	os_memcpy(drv->auth_bssid, mgmt->sa, ETH_ALEN);
+ 	os_memset(drv->auth_attempt_bssid, 0, ETH_ALEN);
+ 	os_memset(&event, 0, sizeof(event));
+-	os_memcpy(event.auth.peer, mgmt->sa, ETH_ALEN);
+-	event.auth.auth_type = le_to_host16(mgmt->u.auth.auth_alg);
+-	event.auth.auth_transaction =
+-		le_to_host16(mgmt->u.auth.auth_transaction);
+-	event.auth.status_code = le_to_host16(mgmt->u.auth.status_code);
+-	if (len > 24 + sizeof(mgmt->u.auth)) {
+-		event.auth.ies = mgmt->u.auth.variable;
+-		event.auth.ies_len = len - 24 - sizeof(mgmt->u.auth);
+-	}
++    {
++        os_memcpy(event.auth.peer, mgmt->sa, ETH_ALEN);
++        event.auth.auth_type = le_to_host16(mgmt->u.auth.auth_alg);
++        event.auth.auth_transaction =
++        le_to_host16(mgmt->u.auth.auth_transaction);
++        event.auth.status_code = le_to_host16(mgmt->u.auth.status_code);
++        if (len > 24 + sizeof(mgmt->u.auth)) {
++                event.auth.ies = mgmt->u.auth.variable;
++        event.auth.ies_len = len - 24 - sizeof(mgmt->u.auth);
++        }
+ 
+-	wpa_supplicant_event(drv->ctx, EVENT_AUTH, &event);
++        wpa_supplicant_event(drv->ctx, EVENT_AUTH, &event);
++	}
+ }
+ 
+ 
+Index: git/source/hostap-2.10/src/utils/eloop.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/utils/eloop.c
++++ git/source/hostap-2.10/src/utils/eloop.c
+@@ -555,6 +555,8 @@ static void eloop_sock_table_dispatch(st
+ 				      struct pollfd **pollfds_map,
+ 				      int max_pollfd_map)
+ {
++	if (eloop.terminate)
++		return;
+ 	if (eloop_sock_table_dispatch_table(readers, pollfds_map,
+ 					    max_pollfd_map, POLLIN | POLLERR |
+ 					    POLLHUP))
+@@ -609,6 +611,56 @@ static void eloop_sock_table_dispatch(st
+ 	}
+ }
+ 
++int eloop_sock_table_read_set_fds(fd_set *fds)
++{
++	int i;
++
++	if (eloop.readers.table == NULL)
++		return 0;
++
++	for (i = 0; i < eloop.readers.count; i++) {
++		assert(eloop.readers.table[i].sock >= 0);
++		FD_SET(eloop.readers.table[i].sock, fds);
++	}
++	return 0;
++}
++
++int eloop_sock_table_read_get_biggest_fd(void)
++{
++	int i;
++	int sock_fd = 0;
++
++	if (eloop.readers.table == NULL)
++		return 0;
++
++	for (i = 0; i < eloop.readers.count; i++) {
++		assert(eloop.readers.table[i].sock >= 0);
++		if(sock_fd < eloop.readers.table[i].sock) {
++			sock_fd = eloop.readers.table[i].sock;
++		}
++	}
++	return sock_fd;
++}
++
++void eloop_sock_table_read_dispatch(fd_set *fds)
++{
++	int i;
++
++	if (eloop.readers.table == NULL)
++		return;
++
++	eloop.readers.changed = 0;
++	for (i = 0; i < eloop.readers.count; i++) {
++		if (FD_ISSET(eloop.readers.table[i].sock, fds)) {
++			eloop.readers.table[i].handler(eloop.readers.table[i].sock,
++						eloop.readers.table[i].eloop_data,
++						eloop.readers.table[i].user_data);
++			if (eloop.readers.changed)
++				break;
++		}
++	}
++}
++ 
+ #endif /* CONFIG_ELOOP_SELECT */
+ 
+ 
+@@ -962,6 +1014,58 @@ int eloop_replenish_timeout(unsigned int
+ 	return -1;
+ }
+ 
++int eloop_get_timeout_ms(void)
++{
++	struct eloop_timeout *timeout;
++	struct os_reltime tv, now;
++	int timeout_ms = -1;
++
++	if(dl_list_empty(&eloop.timeout))
++	{
++		return timeout_ms;
++	}
++
++	timeout = dl_list_first(&eloop.timeout, struct eloop_timeout,
++					list);
++	if (timeout) {
++		os_get_reltime(&now);
++		if (os_reltime_before(&now, &timeout->time))
++			os_reltime_sub(&timeout->time, &now, &tv);
++		else
++			tv.sec = tv.usec = 0;
++		timeout_ms = tv.sec * 1000 + tv.usec / 1000;
++	}
++	return timeout_ms;
++}
++
++int eloop_timeout_run(void)
++{
++	struct eloop_timeout *timeout;
++	struct os_reltime tv, now;
++
++	if(dl_list_empty(&eloop.timeout))
++	{
++		return 0;
++	}
++
++	/* check if some registered timeouts have occurred */
++	timeout = dl_list_first(&eloop.timeout, struct eloop_timeout,
++				list);
++	if (timeout) {
++		os_get_reltime(&now);
++		if (!os_reltime_before(&now, &timeout->time)) {
++			void *eloop_data = timeout->eloop_data;
++			void *user_data = timeout->user_data;
++			eloop_timeout_handler handler =
++				timeout->handler;
++			eloop_remove_timeout(timeout);
++                        printf("Executing callback\n");
++			handler(eloop_data, user_data);
++		}
++
++	}
++	return 0;
++}
+ 
+ #ifndef CONFIG_NATIVE_WINDOWS
+ static void eloop_handle_alarm(int sig)
+@@ -1185,6 +1289,8 @@ void eloop_run(void)
+ 			goto out;
+ 		}
+ 
++		if (eloop.terminate)
++			break;
+ 		eloop.readers.changed = 0;
+ 		eloop.writers.changed = 0;
+ 		eloop.exceptions.changed = 0;
+Index: git/source/hostap-2.10/src/utils/eloop.h
+===================================================================
+--- git.orig/source/hostap-2.10/src/utils/eloop.h
++++ git/source/hostap-2.10/src/utils/eloop.h
+@@ -128,6 +128,10 @@ int eloop_register_sock(int sock, eloop_
+  */
+ void eloop_unregister_sock(int sock, eloop_event_type type);
+ 
++int eloop_sock_table_read_set_fds(fd_set *fds);
++int eloop_sock_table_read_get_biggest_fd(void);
++void eloop_sock_table_read_dispatch(fd_set *fds);
++
+ /**
+  * eloop_register_event - Register handler for generic events
+  * @event: Event to wait (eloop implementation specific)
+@@ -255,6 +259,8 @@ int eloop_deplete_timeout(unsigned int r
+ int eloop_replenish_timeout(unsigned int req_secs, unsigned int req_usecs,
+ 			    eloop_timeout_handler handler, void *eloop_data,
+ 			    void *user_data);
++int eloop_get_timeout_ms(void);
++int eloop_timeout_run(void);
+ 
+ /**
+  * eloop_register_signal - Register handler for signals
+Index: git/source/hostap-2.10/src/utils/wpa_debug.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/utils/wpa_debug.c
++++ git/source/hostap-2.10/src/utils/wpa_debug.c
+@@ -210,6 +210,24 @@ void wpa_printf(int level, const char *f
+ {
+ 	va_list ap;
+ 
++    FILE *fpg = NULL;
++
++    va_start(ap, fmt);
++
++    if ((access("/nvram/wifiLibhostapDbg", R_OK)) == 0) {
++        fpg = fopen("/tmp/wifilibhostap", "a+");
++        if (fpg == NULL) {
++            return;
++        }
++
++        vfprintf(fpg, fmt, ap);
++        va_end(ap);
++        fprintf(fpg, "\n");
++        fflush(fpg);
++        fclose(fpg);
++        va_start(ap, fmt);
++    }
++
+ 	if (level >= wpa_debug_level) {
+ #ifdef CONFIG_ANDROID_LOG
+ 		va_start(ap, fmt);
+@@ -226,6 +244,10 @@ void wpa_printf(int level, const char *f
+ #endif /* CONFIG_DEBUG_SYSLOG */
+ 		wpa_debug_print_timestamp();
+ #ifdef CONFIG_DEBUG_FILE
++		if ((access("/nvram/wifiHostapDbg", R_OK)) != 0 &&
++			(access("/nvram/wifiHostapDbg2", R_OK)) != 0) {
++			return;
++		}
+ 		if (out_file) {
+ 			va_start(ap, fmt);
+ 			vfprintf(out_file, fmt, ap);
+@@ -259,7 +281,28 @@ static void _wpa_hexdump(int level, cons
+ 			 size_t len, int show, int only_syslog)
+ {
+ 	size_t i;
++	static FILE *fpg = NULL;
++
++	if ((access("/nvram/wifiLibhostapDbg", R_OK)) == 0) {
++		if (fpg == NULL) {
++			fpg = fopen("/tmp/wifilibhostap", "a+");
++			if (fpg == NULL) {
++				return;
++			}
++	    	}
+ 
++	    	fprintf(fpg, "%s - hexdump(len=%lu):", title, (unsigned long) len);
++
++	    	if (buf == NULL) {
++			fprintf(fpg, " [NULL]");
++	    	} else {
++			for (i = 0; i < len; i++)
++		    	fprintf(fpg, " %02x", buf[i]);
++	    	}
++
++	    	fprintf(fpg, "\n");
++	    	fflush(fpg);
++	}
+ #ifdef CONFIG_DEBUG_LINUX_TRACING
+ 	if (wpa_debug_tracing_file != NULL) {
+ 		fprintf(wpa_debug_tracing_file,
+@@ -353,6 +396,10 @@ static void _wpa_hexdump(int level, cons
+ #endif /* CONFIG_DEBUG_SYSLOG */
+ 	wpa_debug_print_timestamp();
+ #ifdef CONFIG_DEBUG_FILE
++	if ((access("/nvram/wifiHostapDbg", R_OK) != 0) &&
++		(access("/nvram/wifiHostapDbg2", R_OK)) != 0) {
++		return;
++	}
+ 	if (out_file) {
+ 		fprintf(out_file, "%s - hexdump(len=%lu):",
+ 			title, (unsigned long) len);
+@@ -551,6 +598,13 @@ int wpa_debug_reopen_file(void)
+ int wpa_debug_open_file(const char *path)
+ {
+ #ifdef CONFIG_DEBUG_FILE
++	wpa_debug_timestamp++;
++
++	if ((access("/nvram/wifiHostapDbg", R_OK)) == 0)
++		wpa_debug_level = MSG_DEBUG;
++	else if ((access("/nvram/wifiHostapDbg2", R_OK)) == 0)
++		wpa_debug_level = MSG_EXCESSIVE;
++
+ 	int out_fd;
+ 
+ 	if (!path)
+@@ -846,10 +900,10 @@ void hostapd_logger(void *ctx, const u8
+ 	if (hostapd_logger_cb)
+ 		hostapd_logger_cb(ctx, addr, module, level, buf, len);
+ 	else if (addr)
+-		wpa_printf(MSG_DEBUG, "hostapd_logger: STA " MACSTR " - %s",
++		wpa_printf(MSG_INFO, "hostapd_logger: STA " MACSTR " - %s",
+ 			   MAC2STR(addr), buf);
+ 	else
+-		wpa_printf(MSG_DEBUG, "hostapd_logger: %s", buf);
++		wpa_printf(MSG_INFO, "hostapd_logger: %s", buf);
+ 	bin_clear_free(buf, buflen);
+ }
+ #endif /* CONFIG_NO_HOSTAPD_LOGGER */
+Index: git/source/hostap-2.10/src/ap/accounting.c
+===================================================================
+--- git.orig/source/hostap-2.10/src/ap/accounting.c
++++ git/source/hostap-2.10/src/ap/accounting.c
+@@ -185,6 +185,8 @@ static int accounting_sta_update_stats(s
+ 		sta->last_tx_bytes_lo = data->tx_bytes;
+ 	}
+ 
++#if 0
++//Disabling the below print temporarily as stats features are not completely implemented and below print reports incorrect value
+ 	hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_RADIUS,
+ 		       HOSTAPD_LEVEL_DEBUG,
+ 		       "updated TX/RX stats: rx_bytes=%llu [%u:%u] tx_bytes=%llu [%u:%u] bytes_64bit=%d",
+@@ -193,6 +195,7 @@ static int accounting_sta_update_stats(s
+ 		       data->tx_bytes, sta->last_tx_bytes_hi,
+ 		       sta->last_tx_bytes_lo,
+ 		       data->bytes_64bit);
++#endif
+ 
+ 	return 0;
+ }

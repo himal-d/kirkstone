@@ -1,0 +1,38 @@
+Date: November 19, 2021 1:55 PM
+From: I2951f5563166fe1385ce7cf4f3c893a9a7669089 November 19, 2021 1:55 PM
+Subject: RDKB-38660
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: gchand542 <Guru_Chandru@comcast.com>
+
+diff -wNurp A/src/webcfg_privilege.c B/src/webcfg_privilege.c
+--- A/src/webcfg_privilege.c	2021-12-23 09:30:46.837584280 +0530
++++ B/src/webcfg_privilege.c	2021-12-23 10:11:33.753505650 +0530
+@@ -15,8 +15,27 @@
+ 
+ #include "webcfg_privilege.h"
++#include "webcfg_log.h"
++#include "cap.h"
++
++static cap_user appcaps;
+ 
+ void webcfg_drop_root_privilege()
+ {
+-
++	appcaps.caps = NULL;
++	appcaps.user_name = NULL;
++	bool ret = false;
++	ret = isBlocklisted();
++	if(ret)
++	{
++		WebcfgInfo("NonRoot feature is disabled\n");
++	}
++	else
++	{
++		WebcfgInfo("NonRoot feature is enabled, dropping root privileges for webconfig process\n");
++		init_capability();
++		drop_root_caps(&appcaps);
++		update_process_caps(&appcaps);
++		read_capability(&appcaps);
++	}
+ }

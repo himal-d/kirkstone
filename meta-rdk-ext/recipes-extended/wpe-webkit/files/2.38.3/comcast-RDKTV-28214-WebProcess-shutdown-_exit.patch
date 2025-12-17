@@ -1,0 +1,60 @@
+From 274c1160d8e1a4e9b7b56a439771d6d43578ad31 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Fri, 26 Jan 2024 16:46:06 +0100
+Subject: [PATCH] comcast - CVTE-281 - WebProcess shutdown _exit
+
+1) Call _exit() just before main() function return to avoid crashes
+   in exit handlers and static objects destructions.
+   _exit() func terminates a process immediately without any clean up.
+2) Override default "exit()" func from libc with local one that will do
+   _exit() (exit() is called explicitly in some cases in WebKit code).
+
+We had number of crashes during browser shutdown. They were
+happening after returning from main() function inside WPEWebProcess:
+1) RDK-43089 Crash on destroying EGLContext after deleting native window
+   inside wpe-backend-rdk
+2) RDKTV-26066 wpe EGLBackend was destroyed before EGLTarget
+   (static window context in non composited webgl).
+3) CVTE-281 - Platform display was destroyed before noncomposited webgl
+   global window context. This happens when WebPage was not closed
+   before exiting from app (e.g. by calling exit(0) explicitly).
+4) LLAMA-12832: Crash on release WPEFramework singletons
+   (OCDM and TextToSpeech serivces)
+
+Most of the issues should have been fixed already, beside 3)
+so we still need to drop the web process before main() func return;
+
+Signed-off-by: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+---
+ .../WebKit/WebProcess/wpe/WebProcessMainWPE.cpp   | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp b/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
+index ff5eeeb0f0ab..06b2151370ef 100644
+--- a/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
++++ b/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
+@@ -72,7 +72,20 @@ public:
+ 
+ int WebProcessMain(int argc, char** argv)
+ {
+-    return AuxiliaryProcessMain<WebProcessMainWPE>(argc, argv);
++    auto ret = AuxiliaryProcessMain<WebProcessMainWPE>(argc, argv);
++
++    // NOTE: This is a hack to avoid a crash when running exit handlers, see:
++    // See RDK-43089, RDKTV-26066, LLAMA-12832, CVTE-281
++    _exit(ret);
++
++    return ret;
+ }
+ 
+ } // namespace WebKit
++
++void exit(int status)
++{
++    // There are couple of places when WebProcess calls exit() directly.
++    // Override it with _exit() here to avoid running exit handlers.
++    _exit(status);
++}
+-- 
+2.25.1
+

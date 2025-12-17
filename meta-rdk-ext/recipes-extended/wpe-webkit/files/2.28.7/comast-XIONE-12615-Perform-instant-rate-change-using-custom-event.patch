@@ -1,0 +1,31 @@
+From 7c464d4dabb8e59ab09a276a05e58760b191b18e Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@sky.uk>
+Date: Mon, 19 Jun 2023 08:45:19 +0000
+Subject: [PATCH] Perform instant rate change using custom event
+
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 9d59bbd152b4..349f98e04758 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -641,10 +641,10 @@ void MediaPlayerPrivateGStreamer::updatePlaybackRate()
+ 
+     if (m_lastPlaybackRate != m_playbackRate) {
+ #if ENABLE(INSTANT_RATE_CHANGE)
+-        bool didInstantRateChange = isMediaSource() && gst_element_seek(
+-            pipeline(), m_playbackRate, GST_FORMAT_TIME,
+-            static_cast<GstSeekFlags>(GST_SEEK_FLAG_INSTANT_RATE_CHANGE),
+-            GST_SEEK_TYPE_NONE, 0, GST_SEEK_TYPE_NONE, 0);
++        GstStructure* s = gst_structure_new("custom-instant-rate-change",
++            "rate", G_TYPE_DOUBLE, m_playbackRate, nullptr);
++        bool didInstantRateChange = gst_element_send_event(
++            pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, s));
+         if (didInstantRateChange) {
+             g_object_set(m_pipeline.get(), "mute", mute, nullptr);
+             m_lastPlaybackRate = m_playbackRate;
+-- 
+2.39.1
+

@@ -1,0 +1,91 @@
+From: Jack O'Gorman <jack.ogorman@sky.uk>
+Date: Tue, 25 Jul 2023 17:12:00 +0000
+Subject: [PATCH] sbc rtp timestamps
+
+---
+diff --git a/gst/rtp/gstrtpsbcpay.c b/gst/rtp/gstrtpsbcpay.c
+index f2cf849ec..00a5bf293 100644
+--- a/gst/rtp/gstrtpsbcpay.c
++++ b/gst/rtp/gstrtpsbcpay.c
+@@ -157,9 +157,34 @@ gst_rtp_sbc_pay_set_caps (GstRTPBasePayload * payload, GstCaps * caps)
+       bitpool, channel_mode);
+ 
+   sbcpay->frame_length = frame_len;
+-  sbcpay->frame_duration = ((blocks * subbands) * GST_SECOND) / rate;
+-  sbcpay->last_timestamp = GST_CLOCK_TIME_NONE;
+-
++  switch (rate)
++  {
++    case 48000:
++      //48 = 3 * 2^4 so a denominator of 3 is needed to prevent rounding issues
++      sbcpay->frame_duration_remainder_denom = 3;
++      sbcpay->last_timestamp_remainder_demom = 3;
++      break;
++    case 44100:
++      //441 = 7^2 * 3^2 so a denominator of 441 is needed to prevent rounding issues
++      sbcpay->frame_duration_remainder_denom = 441;
++      sbcpay->last_timestamp_remainder_demom = 441;
++      break;
++    default:
++      sbcpay->frame_duration_remainder_denom = 0;
++      sbcpay->last_timestamp_remainder_demom = 0;
++      break;
++  }
++  if (sbcpay->frame_duration_remainder_denom)
++  {
++    sbcpay->frame_duration = ((blocks * subbands) * GST_SECOND) / rate;
++    sbcpay->frame_duration_remainder_num = ((blocks * subbands) * GST_SECOND) % sbcpay->last_timestamp_remainder_demom;
++    GST_DEBUG_OBJECT (payload, "calculated fractional part of delay: %hhu/%hhu", sbcpay->frame_duration_remainder_num, sbcpay->last_timestamp_remainder_demom);
++  }
++  else
++  {
++    sbcpay->frame_duration = ((blocks * subbands) * GST_SECOND) / rate;
++    sbcpay->last_timestamp = GST_CLOCK_TIME_NONE;
++  }
+   gst_rtp_base_payload_set_options (payload, "audio", TRUE, "SBC", rate);
+ 
+   GST_DEBUG_OBJECT (payload, "calculated frame length: %d ", frame_len);
+@@ -176,6 +201,7 @@ gst_rtp_sbc_pay_flush_buffers (GstRtpSBCPay * sbcpay)
+   GstBuffer *outbuf, *paybuf;
+   guint8 *payload_data;
+   guint frame_count;
++  guint frame_duration_correction;
+   guint payload_length;
+   struct rtp_payload *payload;
+   GstFlowReturn res;
+@@ -224,8 +250,17 @@ gst_rtp_sbc_pay_flush_buffers (GstRtpSBCPay * sbcpay)
+     GST_DEBUG_OBJECT (sbcpay, "Pushing %d bytes: %" GST_TIME_FORMAT,
+         payload_length, GST_TIME_ARGS (GST_BUFFER_PTS (outbuf)));
+ 
+-    sbcpay->last_timestamp += frame_count * sbcpay->frame_duration;
+-
++    if (sbcpay->frame_duration_remainder_num)
++    {
++      sbcpay->last_timestamp_remainder_num += sbcpay->frame_duration_remainder_num * frame_count;
++      frame_duration_correction = sbcpay->last_timestamp_remainder_num/sbcpay->frame_duration_remainder_denom;
++      sbcpay->last_timestamp_remainder_num -= frame_duration_correction * sbcpay->frame_duration_remainder_denom;
++      sbcpay->last_timestamp += frame_count * sbcpay->frame_duration + frame_duration_correction;
++    }
++    else
++    {
++      sbcpay->last_timestamp += frame_count * sbcpay->frame_duration;
++    }
+     res = gst_rtp_base_payload_push (GST_RTP_BASE_PAYLOAD (sbcpay), outbuf);
+ 
+     /* try to send another RTP buffer if available data exceeds MTU size */
+diff --git a/gst/rtp/gstrtpsbcpay.h b/gst/rtp/gstrtpsbcpay.h
+index e57022980..8c361a404 100644
+--- a/gst/rtp/gstrtpsbcpay.h
++++ b/gst/rtp/gstrtpsbcpay.h
+@@ -52,6 +52,11 @@ struct _GstRtpSBCPay {
+   GstClockTime frame_duration;
+ 
+   guint min_frames;
++
++  guint16 last_timestamp_remainder_num;
++  guint16 last_timestamp_remainder_demom;
++  guint16 frame_duration_remainder_num;
++  guint16 frame_duration_remainder_denom;
+ };
+ 
+ struct _GstRtpSBCPayClass {

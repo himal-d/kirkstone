@@ -1,0 +1,94 @@
+Changelog between rdkb-2.1-20161024 and rdkb-2.1-20161107
+
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+5f40e3f RDKB-8562 : Segmentation fault for null pointers to APIs in CMAgent.
+89192f7 RDKB-8562 : Segmentation fault for null pointers to APIs in CMAgent.
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+2ca4b52 RDKB-8862 : Junk charcters logged in Aromconsole and Atom console
+6d7635b ARRISXB6-2751: [systemd][CCSP] TAD and PAM should not be dependent on WiFi
+76e287c ARRISXB6-2522, ARRISXB6-2578: Boot time optimization
+51b6cba RDKB-8808: cron job for L2switch log
+c5c4dbe RDKB-8768: [systemd] Harvester and Servicemanager initilization
+45686ca ARRISXB6-2522, ARRISXB6-2578: Boot time optimization
+0d7da7a RDKB-8757 : Start Harvester and Servicemanager after WiFi init comlpletes.
+211c7c4 RDKB-8574: Code develop - Enable SD Notify in Service Files
+
+project rdkb/components/opensource/ccsp/CcspCr/
+f547840 CISCOXB3-1142 : HDM returns error for GPV query
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+c173103 RDKB-8805: Implement RX, TX parsing from Curl Query.
+0fbd3fa RDKB-8118 : Device traffic is sending corrupted payload sometime.
+5dad8b8 RDKB-8060 : XH - Device shows under Offline devices of Private network
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+057d28a ARRISXB6-2751: [systemd][CCSP] TAD and PAM should not be dependent on WiFi
+982ef84 XF3-1626: CFG3 fix static IP setup and initialization
+63bfa72 RDKB-8745 : To control the curl command run from network_response script.
+a30bf53 RDKB-8720 : SoftwareVersion shows emta & docsis version
+a8135ab RDKB-8593 : Curl command times out after router reset.
+a210812 RDKB-7799 : "Restore Default Settings" for Public WiFi is not working
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+655f776 ARRISXB6-2467,ARRISXB6-2017,ARRISXB6-2509: Add LnF to PSM bbhm file for XB6
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+9786e0e CISCOXB3-1142 : HDM failing for GetParamtersValues
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+bc7325b RDKB-8633 : wecb_master consuming high CPU when syseventd is crashed.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+b3cfc91 RDKB-8862 : Junk charcters logged in Aromconsole and Atom console
+cedad98 RDKB-8866: timestamp
+fb69ce1 RDKB-8189 : Need to automatically adjust the 2.4G radio beacon rate
+346c340 RDKB-8759: telemetry beacon rate log
+780f89e RDKB-8189 : Need to automatically adjust the 2.4G radio beacon rate
+465bbbd RDKB-8806: Dmcli failure because of Psm not registered failure
+8b0e927 RDKB-8808: L2switch log for generic puma6
+468cc2e RDKB-8808: L2switch log for puma6
+a7177d7 ARRISXB6-2522, ARRISXB6-2578: Boot time optimization
+bd7f766 RDKB-8764:SetPSKkey use the non generic api
+5c8525e RDKB-8686 : add check for proper radio flag in cfg database
+c4dc3e5 RDKB-8714: Add LinkQuality, SignalLevel, NoiseLevel
+bd7b158 RDKB-8683: Add DNS from CMTS to ATOM.
+4cfa9d4 RDKB-7949: wrong config for ATOM bridge
+c8866f7 RDKB-8587: check for wifi_fast_down_check_script.sh
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+483e338 RDKB-8862 : Junk charcters logged in Aromconsole and Atom console
+1180d1d RDKB-8724 : selfheal reboot is not working when multiple downstream_mgr
+3582232 RDKB-8821: [systemd] Self Healing Update XB3 Flow Down
+8937582 RDKB-7460 : Security issues found on Static Analysis in diagnostics Component.
+61fe6af RDKB-8590:[systemd]Time zone offset calculation for selfheal
+260dd85 RDKB-8758 : To set Last reboot reason in resource_monitor
+7d489e6 RDKB-8682:Gateway Ping test report incorrectly for both ipv4 and ipv6 ping fail
+61247d4 RDKB-8635: IPv6 Ping failure is being misreported
+a4a747b RDKB-5259 :eRouter reboot for loss of connectivity recovery action
+
+project rdkb/components/opensource/ccsp/Utopia/
+e6b5fe0 RDKB-8623: Managed Devices_Add Allowed Device-Internet is not working
+6f3eeb3 XF3-408,RDKB-7145: Fix break in parental controls due to security fix
+a8da4f3 RDKB-8811 : Do not run IGD on brlan1 interface
+6ad9602 WEBPA-1374 : Fix factory-reset issue in utopia script
+b6f3117 RDKB-7319 : Duplicate iptable rules for dynamic port mapping.
+48ffdbd ARRISXB6-2467,ARRISXB6-2017,ARRISXB6-2509: Add vlan bridges for br65 and br66
+fa6bf49 ARRISXB6-2656: [RDKB Flow Down] Fix error in utopia script for Reboot
+bd82ea8 WEBPA-1353 : Fixed comparison error in utopia script
+4c46e98 ARRISXB6-2560:[RDKB FlowDown] Set reboot reason as "factory-reset"
+
+project rdkb/components/opensource/ccsp/webui/
+d731989 ARRISXB6-2764: [RDKB Flow Down] [Web UI] MSO wifi setup GUI change
+aaf7032 RDKB-4538: MSO wifi setup GUI change
+a954da4 ARRISXB6-2686: [RDKB Flow Down] GUI Changes
+8672e34 RDKB-8718: Multiple firmware version return for the same device on 2.2p11s3
+8155353 RDKB-8719: XH - devices are shows under Offline devices of Private network
+2d3a3e1 RDKB-8632: "Restore Default Settings" for Public Wi-Fi not working
+9301246 RDKB-6697: Unknown Code found in webui and rdkbemu_xb3
+6761848 RDKB-7216: Code with unknown License found in webui and rdkbemu_xb3
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+f6da7e2 RDKBEMU-247 : Unknown Code found in rdkbemu_xb3
+4b2ece9 RDKBEMU-246 : Code with unknown License found in rdkbemu_xb3.

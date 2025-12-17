@@ -1,0 +1,289 @@
+Changelog between rdkb-20170626 and rdkb-20170803
+
+
+project rdk/components/generic/crashupload/
+04c2ff3 DELIA-21766: coredump/minidump size informations in the logs
+
+project rdk/components/generic/rdk_logger/
+0a210c5 MESH-249: Rename Plume.txt to MeshServiceLog.txt
+29e3bf2 RDK-19990: RDK Logger for cpuprocanalyzer
+f663f6d CBS-206: Disable wifi-hal debug logs
+db6a0a1 RDKB-9566 : Integrate CcspEthAgent with rdk logger
+5f21585 RDK-15849, RDK-15853 : RDKLogger - AudioIn Enhancements
+5c549b7 MESH-249: Add MeshService to RDK Logger
+1736d35 RDKC-1175:Xfinity watermark overlay with default positioning
+a7f92a4 RDKB-12090: Integrate seshat with rdk-logger.
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+91c35db RDKB-12619 , RDKB-12885 : TR181 DML with hal hooks
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+ecb93072 RDKBCMF-123 Resolve Comcast/CMF differences.
+81bbec55 RDKB-12907 : POC validation for logger new design
+a2d2e2b1 RDKB-9566 : Integrate CcspEthAgent with rdk logger
+d1a66efe MESH-249: Add MeshService to RDK Logger
+fb95df70 CISCOXB3-2681: wps self heal
+f3527271 RDKB3939-58 :wifi config upgrade
+815b53b6 RDKB-12461 : Atom Telnet login - Bastille - remove XB3 telnet daemon
+bd3aae25 RDKB-12467 : Disable password login
+142887d1 RDKBCMF-97: Fix 'Out-of-bounds read' in CcspCommonLibrary
+f327caa6 RDKB-11649: telemetry logs for was
+a192e957 RDKB-3301 : Enable SNMPv3 for RDKB devices
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+9db384c RDKB-12711: Add seshat distro to lmlite.
+63d9c78 RPI-44:[LMLite] Device.X_RDKCENTRAL-COM_Report.NetworkDevicesStatus.PollingPeriod not changing to default polling period after the default OverrideTTL period expired. RPI-43:[LMLite] Device.X_RDKCENTRAL-COM_Report.NetworkDevicesStatus.ReportingPeriod not changing to default reporting period after the default OverrideTTL period expired.
+b4275b5 RDKB-13050 : LMLite crash due to invalid mac address from MoCA
+6e7fad6 RDKB-9585 : Redesign CcspLMLite to use event mechanism
+539d2c9 RDKBEMU-494 : Upstream source-pc in Ccsp-lm-lite
+d5cdbac RDKB-12736: LMLite stuck in loop if client's hostname is '*'
+ec76bbe RDKB-10818: Develop Code for LMLite to include hostname as part of notification
+dca287e RDKB-12406 : Bug in Ccsp-lm-lite code in lm_main.c
+3b73b1f MESH-234: Add connected device notification for Mesh
+eff42c2 RDKB-12082: Integrate ccsp-lm-lite with seshat.
+dd08808 RDKB-12082: Integrate ccsp-lm-lite with seshat.
+b0ec1aa RDKBCMF-79 Fix 'Missing return statement' in CcspLMLite
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+11e9bc1 XMIDT-31, XMIDT-33 : Use compiler flag to add command-line argument seshat-url
+cc25a03 RDKB-12408 : Remove client_url from parodusStart application
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+b3c4910 RDKB-11819:[TDK][MOCA]Able to set KeyPassphrase with less than 12 characters
+a408ad9 RDKB-9917 : Add MoCA Device Nofitication Support in CcspMoCA
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+112d4d0 RDKBCMF-123 Resolve Comcast/CMF differences.
+caff425 TCCBR-1518: Factory Reset via MSO GUI does not reset to factory defaults
+20401b3 XF3-2142: Maintenance window codes missing in cosa_deviceinfo_apis.c
+ca03bf7 RDKB-12479 : Implement "Device.UserInterface.HTTPSecurityHeaderEnable"
+3ec7769 RDKB-12855: XB3 - successfully login to GUI as mso and invalid >64 bytes PoD
+35e3d77 RDKB-12649 : CcspPandMSsp crash for get/set of few parameters.
+29390ee RDKB-12294 : High CPU usage due to ti_dhcp6c process | erouter0 down
+f265c84 RDKBEMU-476 : [TDK] [Port Triggering] Fails to set the values for
+191309b RDKB-12765 : POTD is displayed in PAM log as clear text
+2f4fe82 RDKBEMU-476 : [TDK] [Port Triggering] Fails to set the values for
+a380f82 RDKBEMU-416 : [PAM][DNS CLIENT] Allows to set any value for
+c6f6f31 RDKBEMU-415,RDKBEMU-416 : [CLIENT]Device.DNS.Client.Server.1.DNSServer
+90b581d XF3-2347 : [CFG3]PasswordLockOut feature not working for CFG3 bci build.
+1a39e80 RDKB-10019 : Develop Code o WebUI LockOut
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+6d1897d RDKB-12672: Create ARM side new interfaces for SecureSSID.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+00ec971 RDKB-12835,CISCOXB3-2732: Unable to modify client limit through snmp.
+fa08a35 RDKB-12585 : Remove unused Mibs
+73969ea RDKB-10702: WiFi passphrase shorter than 8 char allowed through SNMP
+c92296e RDKB-11191 : [SNMP] SNMP walk query does not display IPv6 DNS servers
+deb73be ARRISXB6-3943: Ability to set unsupported security modes on the XB6
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+b38c9e6 RDKB-12907 : POC validation for logger new design
+9702a8b Revert "RDKB-12535:RDKB-12535:xRay is not showing XB6/XB3 devices"
+5e57d1a RDKB-12535:RDKB-12535:xRay is not showing XB6/XB3 devices
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+3a6a8c9 ARRISXB6-4885: stahealth.sh is missing under /usr/ccsp/wifi
+de92b62 RDKB-13051: SET on Device.WiFi.Radio.i.OperationalDataTransmitRates failed
+21d9b3d MESH-223: Turn off U-APSD for mesh access points
+a7801fe RDKB-8706: DCS logic coding
+6b171eb ARRISXB6-4886: [WiFi][Master][Stable2]/rdklogs/logs/wifihealth.txt
+a82acea RDKB-8706: DCS logic coding
+1046adb RDKBCMF-109: fix typo missed in review
+053bc24 ARRISXB6-4828: Admin GUI is not accessible after Network IP change
+592cd5b RDKB-12967:Device.WiFi. query is not giving complete parameter list
+e3f058d RDKB-12963:WiFi is broken in NG master build
+efd2839 RDKB-8706: DCS logic coding
+0d124fc CISCOXB3-2681: wps self heal
+fe4c023 ARRISXB6-4670 : The APList parsing failed
+fac7e38 RDKBEMU-482,RDKBEMU-485,RDKBEMU-484 : [TDK][WIFIAgent]
+10e4156 RDKB-11989:Develop Code - Telemetry log implementation.
+d933cf0 RDKB-12504: Bastille 24: Ability to route private Atom IP to LAN
+9ec29a8 RDKB-12650: band steering print missing
+d11ca89 RDKBCMF-109: Fix 'Destination buffer too small' in CcspWifiAgent
+f8e249e RDKB-12461 : Atom Telnet login - Bastille - remove XB3 telnet daemon
+9043337 RDKB-12454: meshapcfg.sh bug
+c85f4de RDKB-12307: CcspWifiAgent contains snippet matching GPLv2 ife_print6
+5de6141 RDKB-11532 : - Tr181 implementation for Active Band Steering
+b0034d3 ARRISXB6-3943: Ability to set unsupported security modes on the XB6
+b962af3 RDKB-11649: telemetry logs for was
+07ae93a RDKB-10773 : Disable band steering for private wifi when WiFi ACL is on.
+495a42c XF3-2326: Need to remove patch to cosa_wifi_apis.c
+
+project rdkb/components/opensource/ccsp/CcspXDNS/
+bd6d5de RDKB-10117 : XDNS - increase xdns clients table from 128 to 512
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+410649d RDKB-12313: [BridgeMode] UI is not accessible in bridge mode after reboot
+
+project rdkb/components/opensource/ccsp/GwProvApp-ePON/
+b5de3da XF3-2328: POTD - P0 - Bastille - Implement mitigations
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+8fe1aed RDKB-12522:TR-069 IP Diagnostics
+ba9a682 ARRISXB3-6323: Self Heal for Atom nvram in read-only mode
+3d9c3c3 CISCOXB3-2265 : SNMP RDKB mibs not accessible.
+6973775 RDKB-12000 : UDP Echo test results are not getting populated
+1e43b00 TCXB6-1953: Adding condition check for intel specific interface in selfheal
+e5586b9 RDKB-12120: Interface can not be empty in NSLookupDiagnostics
+18d70f7 RDKB-12647 : CcspTandDSsp crash for IPPing and Traceroute parameters
+2c34dea RDKB-12700 : yntax error in Selfheal Logs for task_health_monitor.sh
+a39ff38 RDKB-12786 : CcspTandDSsp - ERROR LOADING DM LIB libdmltad.so.
+a524f37 RDKB-12700 : yntax error in Selfheal Logs for task_health_monitor.sh
+b72978c RDKB-12215 : [TDK][TAD] Duplicate Function defn in PAM and TAD COSA DML APIs.
+5ea07f8 ARRISXB6-4770: [RDKB Flow Down] selfheal for brlan0/1 rearchitecture
+b4be4b4 RDKB-12511 : brlan0/1 is not having IP.
+86daeec RDKB-12473 : Require logs to identify Mounted File Systems in read only mode
+176af07 TCXB6-1765: Selfheal implementation to restart DHCP clients in TCHXB6
+403ed9c ARRISXB6-4742: Observed unary operator error in selfheal logs
+2e53f64 RDKBEMU-398 : [TandD] Diagnostic state is not returning as
+84a20b2 RDKBEMU-479/RDKBEMU-463 : Fails to set the value as "Requested" for
+34882ca RDKB-12421 : Trace Route giving operation timeout under diagnostics tools
+395499d RDKB-12467 : root login using key
+74b33ac TCXB6-1690, TCXB6-1689: Add else while checking MULTI_CORE=yes
+715415d RDKB-12509 : zebra-restart event is not registered
+0c5f450 TCXB6-1722: Telemetry Marker does not print for CcspHomeSecurity process crash
+9c7843d RDKB-12443 : Log when "sysevent get wan-status" status
+24a6373 RDKB-12239 : psm component is in hung state
+
+project rdkb/components/opensource/ccsp/Utopia/
+e700855 RDKBCMF-123 Resolve Comcast/CMF differences.
+f706e51 RDKB-12760 : Multiple duplicate port forwarding rules in iptables.
+41a6864 RDKB-8977 : Configurable SSH IPs
+f1e440e RDKB-13008:Utopia init getting delyed by 25 seconds on rdkb LLC tag
+f7e9ec3 TCCBR-1563: Renaming ArmConsoleLog.txt into Consolelog.txt in CBR
+8d8c672 RDKB-12672: Create ARM side new interfaces for SecureSSID.
+0b02360 RDKB-12308:Utopia contains snippet matches to Intel upnp code
+3dd28e4 RDKB-12301:Utopia contains snippet matches to libpcap (BSD)
+f40becb RDKB-12300 : Utopia function flow redesign as per new requirement
+9822c0c Revert "RDKB-2764: DSCP marking change"
+d36bae8 Revert "CBC-83: Temporary hack in firewall"
+586c485 CBC-83: Temporary hack in firewall
+3229db4 RDKB-9566 : Integrate CcspEthAgent with rdk logger
+d8ae2e1 Revert "RDKB-12816 : After RF Outage, Admin Page is not accessible."
+d1b8057 ARRISXB6-4723 : WLAN Client communication issue while port forwarding set
+0962a75 RDKB-12479 : Implement "Device.UserInterface.HTTPSecurityHeaderEnable"
+caa1253 RDKB-12816: After RF Outage, Admin Page is not accessible
+efc6298 MESH-249: Remove syslog_mesh.txt cron job on XB6
+a6a99d0 TCCBR-1448: CBR gives wrong IPv6 address to clients connected.
+9514b4e TCXB6-1851 : Bring up Host0 interface between Atom and Quantenna
+6cec2fd CISCOXB3-2417 : Ethernet disconnection during factory provisoning
+9e8c03a RDKB-12816 : After RF Outage, Admin Page is not accessible.
+010ef2b RDKB-8733, TCXB6-1351:Adding timestamp before device init log
+9d6f9e2 ARRISXB6-4740: GUI is not accessible thorugh 10.0.0.1 after switching to BRIDGE
+aff4b2f RDKB-12294 : High CPU usage due to ti_dhcp6c process | erouter0 down
+bfa7e65 RDKB-2764: DSCP marking change
+48d5402 RDKB-12368: Fix fail log message when retries exceeds max
+a772f84 RDKB-12368: Fix typo on dns_sync script
+7dd1160 RDKB-12497 : IGD constrain system directory (/var/igd) access
+d31d8f4 RDKB-12309 : Utopia contains open source csum source with no attribution.
+238251b ARRISXB6-4674: Adding activation_flags(NULL) for multinet-up event registration
+437d20a RDKB-12467 : root login using key
+58c1453 RDKB-12552: rpcclient is failing in ARM
+a2af4ff RDKB-12525: IGD process doesn't start
+29f3f0f RDKB-12509 : zebra-restart event is not registered
+a1e1ba8 RDKB-12410 : dnsmasq is crashing
+65fec39 RDKB-12478: "boot_to_XHOME_uptime" is missing in BootTime.log
+6760f04 RDKB-12300 : Utopia contains snippet of unknown origin in shell scripts
+cc65d6e RDKB-12302 : Utopia contains snip match to SmoothWall Homebrew Mods (GPLv2).
+91fa9cb RDKB-12025, RDKB-11211 : Allow SNMP from Localhost
+52a0584 ARRISXB6-3454, ARRISXB6-3634 : WPA2 Enterprise / Radius for L+F SSID
+a807c1c RDKB-12111 : Firewall rules for limiting portmap
+24caf01 RDKB-12111 : Firewall rules for limiting portmap
+4bfd9ab RDKB-12432 : Add iptable rule for l2sd0.4090
+e19242a RDKB-10019 : Develop Code o WebUI LockOut
+
+project rdkb/components/opensource/ccsp/Xconf/
+2783b23 RDKB-9189 : Remove TLS Fallback - XCONF
+45c77e1 ARRISXB6-4511: Logging Curl commands for xconf query
+dd57175 CBC-38,RDKB-11966 : Send Partner ID to Xconf
+d66bcaa RDKSYSINTSW-3517 : TLS Fallback telemetry for XCONF
+c5950d6 RDKSYSINTSW-3517 : TLS Fallback telemetry for XCONF
+5e2b7a1 RDKSYSINTSW-3517 : TLS Fallback telemetry for XCONF
+6dbc8ba RDKSYSINTSW-3517 : TLS Fallback telemetry for XCONF
+
+project rdkb/components/opensource/ccsp/hal/
+21cc1e1 RDKBEMU-499 : RDKB Emulator build is failing
+895a9c8 RDKBEMU-482 : [TDK][WIFIAgent]Device.WiFi.Radio.1.Channel
+f8f4f7c RDKBEMU-491 : All CCSP Components are failed due to
+81417f6 RDKB-12321 : Need to check in stub Wifi HAL for Active Band Steering
+
+project rdkb/components/opensource/ccsp/halinterface/
+57697ce RDKB-12774: hotspot agent header file should not be in HAL.
+e5fab02 RDKB-12768:Band Steering HAL definition
+6d3b3c5 MESH-247,ARRISXB3-6196,ARRISXB3-6138,ARRISXB3-6236:
+84127c1 RDKB-12746: Channel selection HAL definition
+
+project rdkb/components/opensource/ccsp/hotspot/
+1324f54 RDKB-12774: hotspot agent header file should not be in HAL.
+6b6f28c RDKB-12675: Add code in dhcpsnoopd and arpd to handle  new ifs.
+
+project rdkb/components/opensource/ccsp/sysint/
+27a5790 Revert "RDKB-13015 : Caching issues are seen in Accessing GUI"
+d7f05c6 RDKB-13015 : Caching issues are seen in Accessing GUI
+b495dd6 RDKB-13010: Handle bridge mode lighttpd redirection in case of RF outage
+853cab2 ARRISXB3-6323: Self Heal for Atom nvram in read-only mode
+9ebf1f1 RDKB-12816: After RF Outage, Admin Page is not accessible
+52b3a73 XF3-2324 : Fix getFWVersion function in utils.sh
+e9891c4 RDKB-12479 : Implement "Device.UserInterface.HTTPSecurityHeaderEnable"
+c1adf74 RDKB-11971: Develop code - Monitor the CPU utilization every 30 min
+8bb3082 RDKB-11971: Develop Code - Monitor the CPU utilization every 30 min
+4216436 RDKB-12816: After RF Outage, Admin Page is not accessible
+7aaa88d RDKB-12904 : Exclude empty split fields
+8c53c57 RDKB-9189 : Remove TLS Fallback (DCM)
+ee7c428 MESH-249: Add MeshServiceLog.txt for uploading
+a12dd48 RDKB-12815, RDKB-12871 : After Network IP change, Admin page is not accessible
+78f7bd1 RDKB-12457 - Provide support to upload radiusauthd log
+bc9a729 RDKB-12814 : https redirection failing in bridge mode.
+a5340ea RDKB-12377 : lighttpd configuration changes
+1359cd1 DELIA-21135 : Telemetry DCA optimizations
+be4617f RDKB-12090: Integrate seshat with rdk-logger.
+1247773 XF3-2323 : Fix ecmMacAddress value in log upload Xconf request
+41dd420 RDKB-12473 : Require logs to identify Mounted File Systems in read only mode
+e620c4e RDKB-12586: Sync from ATOM failed with retrun code is 12
+41b9e80 TCXB6-1761: Querying CM mac using dmcli instead of ifconfig
+763b278 ARRISXB6-4716: [STB][AUTO][Stable2]The ECM Mac of the device
+25198be RDKB-12467 : Use key for secure login
+82579c3 TCXB6-1761: Querying CM mac using dmcli instead of ifconfig
+1d4568b RDKB-11649: telemetry logs for was
+
+project rdkb/components/opensource/ccsp/webui/
+2915217 RDKBCMF-123 Resolve Comcast/CMF differences.
+49be2ba RDKB-12837: DFS Channels are greyed out in the GUI
+ff6e519 RDKB-12683: SecureSSID: Update WebUi for to show Hotspot clients in GUI
+7932b0e Revert "RDKB-13015 : Caching issues are seen in Accessing GUI"
+ec89675 RDKB-13015 : Caching issues are seen in Accessing GUI
+93ed9bd RDKB-12772: GUI status during RF disconnected
+6a99037 RDKB-12479 : Implement "Device.UserInterface.HTTPSecurityHeaderEnable"
+4466306 RDKB-12387 : webUI - change hover over texts in PHP files
+9b37552 RDKB-12865: Delay in loading Admin Page when bridge mode is enabled
+02e30a6 RDKB-12864: successful login to GUI as mso and invalid >64 byte PoD
+1aee8f7 RDKB-12251 : Parental Control report output contains a typo
+294464a RDKB-11445: Traceroute IPv4 is giving "Operation timeout"
+7e84141 RDKB-12806 : Client is not getting redirected to Captive portal page
+1701268 ARRISXB6-4805: [RDKB Flow Down] WiFi GUI Changes
+2b3e463 RDKB-12688 : Remove HTTP support for Remote Management.
+1c81c4b RDKB-12665: pop up message for DFS channels after click 5G edit page
+beffc49 ARRISXB6-4450 TCXB6-1574: WiFi page is blank after disabling 2.4G/5G Radio
+7460f15 RDKB-12350: GUI, only enable wps in private 2.4 and private 5g ssids
+0670b84 ARRISXB6-4559 TCXB6-1395: Bandsteering can't enabled from MSO GUI page
+df20f6a ARRISXB6-3943: Ability to set unsupported security modes on the XB6
+b49abef ARRISXB6-4646: Enabling and Disabling Bridge Through GUI is not Working
+8a589ef TCXB6-1730: Adding devices connected in 5GHz to the device list in GUI
+75038ac RDKB-12375: Develop Code for WebUI LockOut
+
+project rdkb/devices/raspberrypi/hal/
+9f1dbb8 RPI-56 :[TDK] [WIFI] TR-181 parameters of WIFI are not getting listed in the latest RPI image
+34e97e4 RPI-29 :SSID Name of WIFI 2.4 and 5GHZ not getting reverted to default SSID Name after doing WIFI factory reset
+bf834a8 RPI-42: Device.WiFi.AccessPoint.2.WPS.Enable returns true even after the WiFi dongle   is disconnected.
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+d2ef696 RDKBEMU-495 : Updated COSAXCalibur.XML
+974bb4a RDKBEMU-491 : All CCSP Components are failed due to
+da394e6 RDKBEMU-415 : Device.DNS.Client.Server.1.Type parameter
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+59c96c2 RDKBEMU-487 : [TDK] [LMLite] Device.Hosts.Host.1.IPv4Address. is missing
+b8a5232 RDKB-12479 : Implement "Device.UserInterface.HTTPSecurityHeaderEnable"
+c45acde RDKB-12251 : Parental Control report output contains a typo

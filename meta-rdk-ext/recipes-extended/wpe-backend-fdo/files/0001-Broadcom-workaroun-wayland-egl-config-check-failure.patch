@@ -1,0 +1,25 @@
+From e7e9f6f5cb2edd9e11d4959cb370c2d0878da6e1 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Fri, 8 Sep 2023 14:18:29 +0000
+Subject: [PATCH] Broadcom - workaroun wayland-egl config check failure
+
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 418e3e2..3a9b73d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -242,7 +242,7 @@ wl_egl_dep = disabler()
+ wl_egl_try_deps = ['wayland-egl', 'egl']
+ foreach dep_name : wl_egl_try_deps
+ 	dep = dependency(dep_name, required: false)
+-	if dep.found() and cxx.has_function('wl_egl_window_create', dependencies: dep)
++	if dep.found() and cxx.has_function('wl_egl_window_create', dependencies: [dep, dependency('wayland-client')])
+ 		wl_egl_dep = dep
+ 		break
+ 	endif
+-- 
+2.17.1
+

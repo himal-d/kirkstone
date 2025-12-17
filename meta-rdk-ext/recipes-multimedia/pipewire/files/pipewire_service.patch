@@ -1,0 +1,20 @@
+diff --git a/src/daemon/systemd/system/pipewire.service.in b/src/daemon/systemd/system/pipewire.service.in
+index 8b75ba284..09a31a9fc 100644
+--- a/src/daemon/systemd/system/pipewire.service.in
++++ b/src/daemon/systemd/system/pipewire.service.in
+@@ -23,12 +23,13 @@ SystemCallArchitectures=native
+ SystemCallFilter=@system-service
+ Type=simple
+ AmbientCapabilities=CAP_SYS_NICE
++ExecStartPre=/bin/mkdir -p /tmp/pipewire
+ ExecStart=@PW_BINARY@
+ Restart=on-failure
+ RuntimeDirectory=pipewire
+ RuntimeDirectoryPreserve=yes
+-User=pipewire
+-Environment=PIPEWIRE_RUNTIME_DIR=%t/pipewire
++Environment=PIPEWIRE_RUNTIME_DIR=/tmp/pipewire
++Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
+ 
+ [Install]
+ Also=pipewire.socket

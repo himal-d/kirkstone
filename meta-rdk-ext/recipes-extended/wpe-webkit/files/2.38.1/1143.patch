@@ -1,0 +1,163 @@
+From 7cec5ae16a6ce740b0a27b76597d9f88cd6f2508 Mon Sep 17 00:00:00 2001
+From: Filipe Norte <filipe.norte@sky.uk>
+Date: Wed, 8 Nov 2023 08:37:38 +0000
+Subject: [PATCH 1/2] Fix return of invalid playback position
+
+After a seek, the gstreamer pipeline may not be able to return a
+valid position right away.
+The m_canFallBackToLastFinishedSeekPosition is reset in an async
+way when handleMessage() is called, so playbackPosition() might
+be called while we still not have a valid position from the
+pipeline.
+
+This also takes care of a corner case where the cached position
+invalidation task (async operation triggered by the call to
+invalidateCachedPositionOnNextIteration()) runs after a seek
+operation completing, but without a valid position being
+yet available from the pipeline. In such case, the cached
+position is set with seeked-to position, but since the
+position invalidation request has already been requested,
+ it would now invalidate an actual valid position.
+---
+ .../gstreamer/MediaPlayerPrivateGStreamer.cpp | 36 +++++++++++++------
+ .../gstreamer/MediaPlayerPrivateGStreamer.h   |  2 ++
+ 2 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 78869e7aecd9..688bbed5b301 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -1334,24 +1334,38 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+     if (m_isEndReached)
+         return m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
+ 
+-    if (m_cachedPosition) {
++    // During normal playback, the cached position is invalidated after each iteration and latest one will be retrieved
++    // again from the pipleine/element on the next call to this function. Right after a seek operation, the element may
++    // however not return a valid position right away. In such case, we'll use the seeked-to position until we get a
++    // valid one from the pipeline, but we must ensure we'll query the pipeline for a new position till then so we bypass
++    // the return of the cached position in such case
++    if (m_cachedPosition && !m_isWaitingValidPlaybackPosition) {
+         GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.value().toString().utf8().data());
+         return m_cachedPosition.value();
+     }
+ 
+     GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
+-    GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
+ 
+-    MediaTime playbackPosition = MediaTime::zeroTime();
++    if (GST_CLOCK_TIME_IS_VALID(gstreamerPosition)) {
++        m_cachedPosition = MediaTime(gstreamerPosition, GST_SECOND);
++        m_isWaitingValidPlaybackPosition = false;
++    }
++    else if (m_canFallBackToLastFinishedSeekPosition) {
++        m_cachedPosition = m_seekTime;
++        m_isWaitingValidPlaybackPosition = true;
++    }
++    else if (!m_cachedPosition) {
++        // At playback start, this may have not been set yet
++        m_cachedPosition = MediaTime::zeroTime();
++    }
+ 
+-    if (GST_CLOCK_TIME_IS_VALID(gstreamerPosition))
+-        playbackPosition = MediaTime(gstreamerPosition, GST_SECOND);
+-    else if (m_canFallBackToLastFinishedSeekPosition)
+-        playbackPosition = m_seekTime;
++    GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", cachedPosition %s, canFallBackToLastFinishedSeekPosition: %s, waitValidPlaybackPosition: %s",
++        GST_TIME_ARGS(gstreamerPosition), m_cachedPosition.value().toString().utf8().data(), boolForPrinting(m_canFallBackToLastFinishedSeekPosition), boolForPrinting(m_isWaitingValidPlaybackPosition));
+ 
+-    m_cachedPosition = playbackPosition;
+-    invalidateCachedPositionOnNextIteration();
+-    return playbackPosition;
++    if (!m_isWaitingValidPlaybackPosition) {
++        invalidateCachedPositionOnNextIteration();
++    }
++    return m_cachedPosition.value();
+ }
+ 
+ void MediaPlayerPrivateGStreamer::updateEnabledVideoTrack()
+@@ -3641,7 +3655,7 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
+ void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const
+ {
+     RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
+-        if (!weakThis)
++        if (!weakThis || m_isWaitingValidPlaybackPosition)
+             return;
+         invalidateCachedPosition();
+     });
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+index 65676814f168..bdb448e9fadb 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+@@ -666,6 +666,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
+     // Specific to MediaStream playback.
+     MediaTime m_startTime;
+     MediaTime m_pausedTime;
++
++    mutable bool m_isWaitingValidPlaybackPosition { false };
+ };
+ 
+ }
+
+From 230631ce6710400bbf7e3faeec8f52bcc14eded4 Mon Sep 17 00:00:00 2001
+From: Pawel Lampe <pawel.lampe@gmail.com>
+Date: Tue, 7 Nov 2023 16:17:15 +0100
+Subject: [PATCH 2/2] Fall back to seek time in case of MSE simulating preroll
+
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp   | 9 +++++++--
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.h     | 1 +
+ .../gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp     | 1 +
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 688bbed5b301..488a57d74acd 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -1351,8 +1351,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+         m_isWaitingValidPlaybackPosition = false;
+     }
+     else if (m_canFallBackToLastFinishedSeekPosition) {
+-        m_cachedPosition = m_seekTime;
+-        m_isWaitingValidPlaybackPosition = true;
++        useSeekTimeAsPlaybackPositionUntilPipelinePositionIsValid();
+     }
+     else if (!m_cachedPosition) {
+         // At playback start, this may have not been set yet
+@@ -1368,6 +1367,12 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+     return m_cachedPosition.value();
+ }
+ 
++void MediaPlayerPrivateGStreamer::useSeekTimeAsPlaybackPositionUntilPipelinePositionIsValid() const
++{
++    m_cachedPosition = m_seekTime;
++    m_isWaitingValidPlaybackPosition = true;
++}
++
+ void MediaPlayerPrivateGStreamer::updateEnabledVideoTrack()
+ {
+     VideoTrackPrivateGStreamer* wantedTrack = nullptr;
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+index bdb448e9fadb..858568d44a34 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+@@ -360,6 +360,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
+ 
+     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
+     void invalidateCachedPosition() const;
++    void useSeekTimeAsPlaybackPositionUntilPipelinePositionIsValid() const;
+ 
+     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
+ 
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index 61c2f376509e..ff627438af9b 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -268,6 +268,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
+         if (!audioSinkPerformsAsyncStateChanges) {
+             // If audio-only pipeline's sink is not performing async state changes
+             // we must simulate preroll right away as otherwise nothing will trigger it.
++            useSeekTimeAsPlaybackPositionUntilPipelinePositionIsValid();
+             didPreroll();
+         }
+     }

@@ -1,0 +1,89 @@
+Changelog between rdkb-2.1-20160815 and rdkb-2.1-20160808
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+f9b795b RDKB-6920 ARRISXB6-1843: SystemD Initialization Synchronization
+34e7133 RDKB-7114 : Add device specific check for CR initialization.
+b92b0f2 ARRISXB6-1921: When QTN Crashes Loop check doesn't appear to Break
+b805172 RDKB-4678: Code from RFC Documents found in ccsp (Part2)
+6ecaea4 ARRISXB3-5001 : Start rpcserver in ARM and ATOM after boot up
+
+project rdkb/components/opensource/ccsp/CcspCr/
+b0c67aa RDKB-6920 ARRISXB6-1843: SystemD Initialization Synchronization
+de17a2f RDKB-6902 : Security issues found on Static Analysis in CcspCr
+Component.
+8b2f600 RDKB-6903 : Security issues found on Static Analysis in CcspCr
+Component.
+b17a276 RDKB-6901 : Security issues found on Static Analysis in CcspCr
+Component.
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+17b0ae5 RDKB-6831: Device Traffic Usage Harvester include all
+1a8a7c2 RDKB-6955 : Default values for NetworkDevicesTraffic should be 300 and
+900 resp$
+0eff7c3 RDKB-6868 : Add hostname,IPAddress to Device Status Report Harvester
+59774a8 RDKB-6762: [Field]Atom MAC flooded in connected devices list
+8dfd82d RDKB-6625 : Ccsp-LM-Lite changes is causing build failure for TCHXB6
+dc98a58 RDKB-7047: Network Traffic Report missing the entries
+379419d RDKB-7030 : Memory Leak in LMLite
+e3233ea TCXB6-467: CcspLMLite throws continuous error on l2sd0 interface
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+a98bb01 XF3-1246: Fix PAM startup issue
+c90c86c XF3-1246: PAM Data model out of date
+db573af RDKB-7124 : TR-181 parameter to disable/set memory limit.
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+f0445ef RDKB-6908 : Security issues found on Static Analysis in CcspPsm
+Component.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+94d46db RDKB-6911 : Security issues found on Static Analysis in CcspSnmpPa
+Component.
+8dc6639 RDKB-6910 : Security issues found on Static Analysis in CcspSnmpPa
+Component.
+b372f08 RDKB-6909 : Security issues found on Static Analysis in CcspSnmpPa
+Component.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+eba7670 RDKB-7114 : Add device specific check for CR initialization.
+b0a8f25 RDKB-6907 : Security issues found on Static Analysis in CcspWifiAgent
+Component.
+cb749f3 RDKB-6974: config LnF secure ssid
+685ec17 RDKB-6906 : Security issues found on Static Analysis in CcspWifiAgent
+Component.
+85e0de3 RDKB-6905 : Security issues found on Static Analysis in CcspWifiAgent
+Component.
+8bdc841 RDKB-6904 : Security issues found on Static Analysis in CcspWifiAgent
+Component.
+2a34ba3 RDKB-7103: Add dropbear to ATOM process monitoring
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+dd55131 RDKB-7195 : add iccctl mal to log memory
+cf8ef35 RDKB-7125 : Script which should drop_caches when enabled in stack.
+e1c4619 RDKB-7074: dropbear is crashed and DCA fails
+2dd82d5 RDKB-7022 : brlan1 doesnt have IPV4 Address
+
+project rdkb/components/opensource/ccsp/Utopia/
+9700e02 TCXB6-539 : Update udhcpc to use plugin
+613bf4a TCXB6-535: lan to wan disconnection
+6eaf9e2 RDKB-7127 : Security issues found on Static Analysis in CcspPsm
+Component.
+942e52b RDKB-7126 : Security issues found on Static Analysis in CcspPsm
+Component.
+39c987f RDKB-7124 : TR-181 parameter to disable/set memory limit.
+5d19f36 ARRISXB6-1923: [Yocto][Boot Time]: boot time optimization changes
+226ec8e ARRISXB3-4848 : Need to add generic RPC module to ArrisXb3
+43596d1 RDKB-6564 : RDKB still shows Captive portal even when SSID/Password
+Change.
+
+project rdkb/components/opensource/ccsp/webui/
+3d72d2a RDKB-6830: [WiFi] MSO GUI put the XHS wifi into public wifi catigory
+9cf0fd3 Revert "ARRISXB6-1953: [WiFi] MSO GUI put the XHS wifi into public wifi
+catigory"
+9f6f060 ARRISXB6-1953: [WiFi] MSO GUI put the XHS wifi into public wifi
+catigory
+bfda369 RDKB-4515: In Bridge Mode, for admin "Advanced" tab is not accessible.
+112770d RDKB-6008: Develop Code to address command injection
+3a871ac ARRISXB6-1924 : GUI removes whitespaces from SSID name

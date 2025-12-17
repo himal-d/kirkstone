@@ -1,0 +1,22 @@
+Index: bluez-5.66/src/bluetooth.service.in
+===================================================================
+--- bluez-5.66.orig/src/bluetooth.service.in
++++ bluez-5.66/src/bluetooth.service.in
+@@ -1,7 +1,7 @@
+ [Unit]
+ Description=Bluetooth service
+-After=securemount.service dbus.service
+-Requires=securemount.service dbus.service
++After=securemount.service dbus.service firmware_flash.service ble_rcp.service
++Requires=securemount.service dbus.service firmware_flash.service ble_rcp.service
+ Documentation=man:bluetoothd(8)
+ ConditionPathIsDirectory=/sys/class/bluetooth
+ 
+@@ -9,6 +9,7 @@ ConditionPathIsDirectory=/sys/class/blue
+ Type=dbus
+ BusName=org.bluez
+ ExecStart=@pkglibexecdir@/bluetoothd -d
++ExecStartPost=touch /tmp/bluezup
+ NotifyAccess=main
+ #WatchdogSec=10
+ Restart=always

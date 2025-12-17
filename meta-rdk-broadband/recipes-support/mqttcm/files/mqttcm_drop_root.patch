@@ -1,0 +1,36 @@
+Date: 16-May-2023
+From: Narapuram_LakshmiRangaiah@comcast.com
+Source: COMCAST  
+
+diff --git a/src/mqttcm_privilege.c b/src/mqttcm_privilege.c
+index 777611e..bb3c3e4 100644
+--- a/src/mqttcm_privilege.c
++++ b/src/mqttcm_privilege.c
+@@ -15,8 +15,25 @@
+  */
+
+ #include "mqttcm_privilege.h"
+-
++#include "mqttcm_log.h"
++#include "cap.h"
++static cap_user appcaps;
+ void mqttcm_drop_root_privilege()
+ {
+-
++       appcaps.caps = NULL;
++       appcaps.user_name = NULL;
++       bool ret = false;
++       ret = isBlocklisted();
++       if(ret)
++       {
++               MqttCMInfo("NonRoot feature is disabled\n");
++       }
++       else
++       {
++               MqttCMInfo("NonRoot feature is enabled, dropping root privileges for mqttCM process\n");
++               init_capability();
++               drop_root_caps(&appcaps);
++               update_process_caps(&appcaps);
++               read_capability(&appcaps);
++       }
+ }

@@ -1,0 +1,34 @@
+From 1c76abb1258fa900e6de19617c03854f7ae8edb6 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Tue, 23 May 2023 16:12:39 +0000
+Subject: [PATCH] comcast - XIONE-12272 - configure video resource usage with
+ gst context
+
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp   | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index a163650eaadd..ddc3abc0bdc0 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -4174,8 +4174,15 @@ GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
+     // Westeros using holepunch.
+     GstElement* videoSink = makeGStreamerElement("westerossink", "WesterosVideoSink");
+     g_object_set(G_OBJECT(videoSink), "zorder", 0.0f, nullptr);
+-    if (isPIPRequested)
++    if (isPIPRequested) {
+         g_object_set(G_OBJECT(videoSink), "res-usage", 0u, nullptr);
++        // Set context for pipelines that use ERM in decoder elements.
++        GstContext* context = gst_context_new("erm", FALSE);
++        GstStructure* contextStructure = gst_context_writable_structure(context);
++        gst_structure_set(contextStructure, "res-usage", G_TYPE_UINT, 0x0u, nullptr);
++        gst_element_set_context(GST_ELEMENT(pipeline()), context);
++        gst_context_unref(context);
++    }
+     return videoSink;
+ #endif
+ 
+-- 
+2.25.1
+

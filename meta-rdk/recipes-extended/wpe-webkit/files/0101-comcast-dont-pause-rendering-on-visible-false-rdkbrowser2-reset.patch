@@ -1,0 +1,31 @@
+Date: Nov 6, 2018 1:41 AM
+
+From: ebecd56aaa2727b6305d39c69951fbdc8740f800 Oct 31, 2018 11:56 PM
+
+Subject: [PATCH] XRE-13409: avoid pausing rendering on visible=false
+
+	To support rdkbrowser2.reset() doesn't work in wpe 0.4 after setting about:blank url.
+	This patch was added by Comcast.
+
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: Frank Maiolino <Frank_Maiolino@cable.comcast.com>
+---
+
+diff --git a/Source/WebKit/WebProcess/WebPage/LayerTreeHost.cpp b/Source/WebKit/WebProcess/WebPage/LayerTreeHost.cpp
+index 8181a24c584..013b72173e3 100644
+--- a/Source/WebKit/WebProcess/WebPage/LayerTreeHost.cpp
++++ b/Source/WebKit/WebProcess/WebPage/LayerTreeHost.cpp
+@@ -74,7 +74,8 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+ 
+ void LayerTreeHost::pauseRendering()
+ {
+-    m_isSuspended = true;
++    //FIXME commented out to support rdkbrowser2.reset() [setting visible=false after setting about:blank url]
++    //m_isSuspended = true;
+ }
+ 
+ void LayerTreeHost::resumeRendering()

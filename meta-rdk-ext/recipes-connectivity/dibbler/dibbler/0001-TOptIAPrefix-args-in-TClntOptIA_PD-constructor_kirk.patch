@@ -1,0 +1,30 @@
+From e61a9d48874234b2d288418f67c32d9a62b9dadb Mon Sep 17 00:00:00 2001
+From: Alagu <alagupandi_pattu@comcast.com>
+Date: Mon, 22 Mar 2021 08:31:59 +0000
+Subject: [PATCH] TOptIAPrefix args in TClntOptIA_PD constructor
+
+Reason for change: Ensure correct order of args while initializing the overloaded constructor of TOptIAPrefix in TClntOptIA_PD constructor
+
+Source: COMCAST
+License: "GPLv2"
+Upstream-Status: Pending
+Signed-off-by: Arjun <arjun_daasuramdass@comcast.com>
+---
+
+Index: git/ClntOptions/ClntOptIA_PD.cpp
+===================================================================
+--- git.orig/ClntOptions/ClntOptIA_PD.cpp
++++ git/ClntOptions/ClntOptIA_PD.cpp
+@@ -61,10 +61,10 @@ TClntOptIA_PD::TClntOptIA_PD(SPtr<TClntC
+     cfgPD->firstPrefix();
+     SPtr<TClntCfgPrefix> cfgPrefix;
+     while (cfgPrefix = cfgPD->getPrefix() ) {
+-        SubOptions.append(new TOptIAPrefix(cfgPrefix->get(),
++        SubOptions.append(new TOptIAPrefix(cfgPrefix->get(), cfgPrefix->getLength(),
+                                                cfgPrefix->getPref(),
+                                                cfgPrefix->getValid(),
+-                                               cfgPrefix->getLength(), 0));
++                                               0));
+     }
+     clearContext();
+ }

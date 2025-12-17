@@ -1,0 +1,39 @@
+###################################################################
+Date: <May 23 2023>
+Source: Deutsche Telekom AG
+Changes copyright 2023-2024 Deutsche Telekom AG
+###################################################################
+Index: log4c-1.2.3/src/log4c/rollingpolicy.c
+===================================================================
+--- log4c-1.2.3.orig/src/log4c/rollingpolicy.c
++++ log4c-1.2.3/src/log4c/rollingpolicy.c
+@@ -123,7 +123,14 @@
+     sd_debug("freeing policy name");
+     free(this->policy_name);
+     this->policy_name = NULL;
+-  };
++  }
++
++  if (this->policy_udata){
++     sd_debug("freeing policy udata");
++     free(this->policy_udata);
++     this->policy_udata = NULL;
++  }
++
+   sd_debug("freeing this rolling policy instance");
+   free(this);
+ 
+Index: log4c-1.2.3/src/sd/domnode-xml-parser.c
+===================================================================
+--- log4c-1.2.3.orig/src/sd/domnode-xml-parser.c
++++ log4c-1.2.3/src/sd/domnode-xml-parser.c
+@@ -932,8 +932,8 @@
+ 	sd_debug("COMMENT: add comment '%s' to node '%s'\n", yyvsp[0].s, node->name);
+ 	sd_list_append(node->children, __sd_domnode_new("#comment", yyvsp[0].s, 0));
+ 	/* $1 was obtain with strdup() */
+-	free(yyvsp[0].s);
+     }
++    free(yyvsp[0].s);
+ ;
+     break;}
+ case 5:

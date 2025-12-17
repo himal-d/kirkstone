@@ -1,0 +1,21 @@
+diff --git a/src/client/linux/minidump_writer/linux_ptrace_dumper.cc b/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
+index e3ddb81a..c5f7e009 100644
+--- a/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
++++ b/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
+@@ -158,10 +158,16 @@ bool LinuxPtraceDumper::ReadRegisterSet(ThreadInfo* info, pid_t tid)
+     return false;
+   }
+ 
++#if 0
++  // When running an arm build on an arm64 device, attempting to get the
++  // floating point registers fails. On Android, the floating point registers
++  // aren't written to the cpu context anyway, so just don't get them here.
++  // See http://crbug.com/508324
+   info->GetFloatingPointRegisters(&io.iov_base, &io.iov_len);
+   if (sys_ptrace(PTRACE_GETREGSET, tid, (void*)NT_FPREGSET, (void*)&io) == -1) {
+     return false;
+   }
++#endif
+   return true;
+ #else
+   return false;

@@ -1,0 +1,62 @@
+##########################################
+Date: Apr 22, 2022 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: MBR
+Source: Comcast
+License: BSD
+Upstream-Status: Pending
+Signed-off-by: Tamilarasi Ganesan <tamilarasi_ganesan@comcast.com>
+##########################################
+diff --git a/source/hostap-2.10/src/ap/ap_config.h b/source/hostap-2.10/src/ap/ap_config.h
+index 335af68..cbcaae6 100644
+--- a/source/hostap-2.10/src/ap/ap_config.h
++++ b/source/hostap-2.10/src/ap/ap_config.h
+@@ -301,7 +301,8 @@ struct hostapd_bss_config {
+         int rdk_greylist; /* Whether greylist is enabled */
+         int ap_vlan; /* vlan id */
+ #endif /* FEATURE_SUPPORT_RADIUSGREYLIST */
+-	int eapol_version;
++	int min_adv_mcs; //MBR
++  int eapol_version;
+ 	int eap_server; /* Use internal EAP server instead of external
+ 			 * RADIUS server */
+ 	struct hostapd_eap_user *eap_user;
+diff --git a/source/hostap-2.10/src/ap/ieee802_11_ht.c b/source/hostap-2.10/src/ap/ieee802_11_ht.c
+index e103deb..5d020b1 100644
+--- a/source/hostap-2.10/src/ap/ieee802_11_ht.c
++++ b/source/hostap-2.10/src/ap/ieee802_11_ht.c
+@@ -40,6 +40,15 @@ u8 * hostapd_eid_ht_capabilities(struct hostapd_data *hapd, u8 *eid)
+ 	cap->a_mpdu_params = hapd->iface->current_mode->a_mpdu_params;
+ 	os_memcpy(cap->supported_mcs_set, hapd->iface->current_mode->mcs_set,
+ 		  16);
++  u8 *supp_mcs_set = cap->supported_mcs_set;
++  wpa_printf(MSG_DEBUG, "Enter %s %d and min_adv_mcs:%d for the interface:%s\n", __func__,__LINE__,hapd->conf->min_adv_mcs,hapd->conf->iface);
++  while (*supp_mcs_set) {
++    for(int i=0;i<hapd->conf->min_adv_mcs;i++) {
++      *supp_mcs_set &= ~(1<<i);
++    }
++    wpa_printf(MSG_DEBUG, "Enter %s %d and supp_mcs_set:%d\n", __func__,__LINE__,*supp_mcs_set);
++    *supp_mcs_set++;
++  }
+ 
+ 	/* TODO: ht_extended_capabilities (now fully disabled) */
+ 	/* TODO: tx_bf_capability_info (now fully disabled) */
+@@ -104,7 +113,17 @@ u8 * hostapd_eid_ht_operation(struct hostapd_data *hapd, u8 *eid)
+ 		oper->ht_param |= HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW |
+ 			HT_INFO_HT_PARAM_STA_CHNL_WIDTH;
+ 
+-	pos += sizeof(*oper);
++  u8 *basic_mcs_set = oper->basic_mcs_set;
++   wpa_printf(MSG_DEBUG, "Enter %s %d and min_adv_mcs:%d for the interface:%s\n", __func__,__LINE__,hapd->conf->min_adv_mcs,hapd->conf->iface);
++  while (*basic_mcs_set) {
++    for(int i=0;i<hapd->conf->min_adv_mcs;i++) {
++      *basic_mcs_set &= ~(1<<i);
++    }
++    wpa_printf(MSG_DEBUG, "Enter %s %d and basic_mcs_set:%d\n", __func__,__LINE__,*basic_mcs_set);
++    *basic_mcs_set++;
++  }
++  
++  pos += sizeof(*oper);
+ 
+ 	return pos;
+ }

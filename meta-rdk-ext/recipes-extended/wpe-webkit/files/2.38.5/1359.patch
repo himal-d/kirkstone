@@ -1,0 +1,116 @@
+From 88b58b1599fca833469aba385a6bf0c2d0eac431 Mon Sep 17 00:00:00 2001
+From: Andrzej Surdej <Andrzej_Surdej@comcast.com>
+Date: Thu, 27 Jun 2024 16:44:10 +0200
+Subject: [PATCH] [LocalStorage] Fix NetworkProcess crash on sqlite database
+ corruption
+
+1) Corrupted database is handled inside handleDatabaseCorruptionIfNeeded(),
+that closes database connection and clears all cached statements (m_cachedStatements).
+The second destroys all SQLiteStatement(s) objects. But a pointer to such object
+may be still kept inside SQLiteStatementAutoResetScope created inside SQLiteStorageArea.cpp:
+
+   auto statement = cachedStatement(StatementType::SetItem);
+
+This will call m_statement->reset() at scope exit (from ~SQLiteStatementAutoResetScope)
+on already deleted object that results with crash.
+
+The solution is to use WeakPtr to make sure object is still alive
+before calling statement->reset()
+
+2) Special case happens when corruption is detected on setting new item (setItem).
+If there are no cached entries, handleDatabaseCorruptionIfNeeded() will not create
+new database (m_database == nullptr) that will lead to another crash
+when re-trying to create cachedStatement again.
+
+Solution here is to replace direct statement execution with full setItem() call
+that will prepareDatabase() again if needed.
+---
+ Source/WebCore/platform/sql/SQLiteStatement.h            | 3 ++-
+ .../platform/sql/SQLiteStatementAutoResetScope.cpp       | 3 +++
+ .../WebCore/platform/sql/SQLiteStatementAutoResetScope.h | 9 +++++----
+ .../WebKit/NetworkProcess/storage/SQLiteStorageArea.cpp  | 7 ++++---
+ 4 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/Source/WebCore/platform/sql/SQLiteStatement.h b/Source/WebCore/platform/sql/SQLiteStatement.h
+index cf2f120f2e75..30f7034a37aa 100644
+--- a/Source/WebCore/platform/sql/SQLiteStatement.h
++++ b/Source/WebCore/platform/sql/SQLiteStatement.h
+@@ -28,12 +28,13 @@
+ #include "SQLValue.h"
+ #include "SQLiteDatabase.h"
+ #include <wtf/Span.h>
++#include <wtf/WeakPtr.h>
+ 
+ struct sqlite3_stmt;
+ 
+ namespace WebCore {
+ 
+-class SQLiteStatement {
++class SQLiteStatement : public CanMakeWeakPtr<SQLiteStatement> {
+     WTF_MAKE_NONCOPYABLE(SQLiteStatement); WTF_MAKE_FAST_ALLOCATED;
+ public:
+     WEBCORE_EXPORT ~SQLiteStatement();
+diff --git a/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.cpp b/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.cpp
+index 7ec287201eee..6e321e96a841 100644
+--- a/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.cpp
++++ b/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.cpp
+@@ -54,4 +54,7 @@ SQLiteStatementAutoResetScope::~SQLiteStatementAutoResetScope()
+         m_statement->reset();
+ }
+ 
++SQLiteStatement* SQLiteStatementAutoResetScope::get() { return m_statement.get(); }
++SQLiteStatement* SQLiteStatementAutoResetScope::operator->() { return m_statement.get(); }
++
+ }
+diff --git a/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.h b/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.h
+index b49ed7cfc107..92f301517099 100644
+--- a/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.h
++++ b/Source/WebCore/platform/sql/SQLiteStatementAutoResetScope.h
+@@ -27,6 +27,7 @@
+ 
+ #include <wtf/FastMalloc.h>
+ #include <wtf/Noncopyable.h>
++#include <wtf/WeakPtr.h>
+ 
+ namespace WebCore {
+ class SQLiteStatement;
+@@ -39,14 +40,14 @@ public:
+     WEBCORE_EXPORT SQLiteStatementAutoResetScope& operator=(SQLiteStatementAutoResetScope&& other);
+     WEBCORE_EXPORT ~SQLiteStatementAutoResetScope();
+ 
+-    explicit operator bool() const { return m_statement; }
++    explicit operator bool() const { return !!m_statement; }
+     bool operator!() const { return !m_statement; }
+ 
+-    SQLiteStatement* get() { return m_statement; }
+-    SQLiteStatement* operator->() { return m_statement; }
++    SQLiteStatement* get();
++    SQLiteStatement* operator->();
+ 
+ private:
+-    SQLiteStatement* m_statement;
++    WeakPtr<SQLiteStatement> m_statement;
+ };
+ 
+ } // namespace WebCore
+diff --git a/Source/WebKit/NetworkProcess/storage/SQLiteStorageArea.cpp b/Source/WebKit/NetworkProcess/storage/SQLiteStorageArea.cpp
+index 7f5a37cea656..dc4dd10499f7 100644
+--- a/Source/WebKit/NetworkProcess/storage/SQLiteStorageArea.cpp
++++ b/Source/WebKit/NetworkProcess/storage/SQLiteStorageArea.cpp
+@@ -356,9 +356,10 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(const String& key, const
+     if (result != SQLITE_DONE) {
+         if (!handleDatabaseCorruption || !handleDatabaseCorruptionIfNeeded(result))
+             return makeUnexpected(StorageError::Database);
+-        statement = cachedStatement(StatementType::SetItem);
+-        if (!statement || statement->bindText(1, key) || statement->bindBlob(2, value) || statement->step() != SQLITE_DONE)
+-            return makeUnexpected(StorageError::Database);
++
++        // The database was recoverer from corruption.
++        // Try again but without handling database corruption this time to avaoid infinite loop.
++        return setItem(key, value, false);
+     }
+ 
+     updateCacheIfNeeded(key, value);
+-- 
+2.25.1
+

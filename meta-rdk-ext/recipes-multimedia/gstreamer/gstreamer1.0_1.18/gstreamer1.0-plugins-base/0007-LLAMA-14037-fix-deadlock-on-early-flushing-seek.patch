@@ -1,0 +1,97 @@
+From 5021981b6ce3bdf41293632ea0a9adf46cc17912 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Fri, 5 Jul 2024 17:04:06 +0000
+Subject: [PATCH] LLAMA-14037: fix deadlock on early flushing seek
+
+The deadlock may appear when applicaiton flushes the
+pipeline while one is being configured. The race is between app
+sending FLUSH START/STOP and multiqueue_src_probe exposing decodebin3 pad.
+
+It can happen that multiqueue src pad drops FLUSH_START event on app
+main thread (because pad wasn't linked yet), while
+multiqueue_src_probe is configuring the output pad. In such scenario
+app gets blocked on playink data probe awaiting for pipeline configuration to
+complete. which cannot happen because data flow was interrupted by
+flushing seek.
+
+This patch fixes the race by avoiding output configuration while
+pipeline is flushing. And rescheduling sticky events on parsebin src
+pad to re-try configuration next time.
+---
+ gst/playback/gstdecodebin3.c | 39 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/gst/playback/gstdecodebin3.c b/gst/playback/gstdecodebin3.c
+index 657e448..51d1d66 100644
+--- a/gst/playback/gstdecodebin3.c
++++ b/gst/playback/gstdecodebin3.c
+@@ -329,6 +329,8 @@ typedef struct _MultiQueueSlot
+ 
+   gboolean is_drained;
+ 
++  gboolean is_flushing;
++
+   DecodebinOutputStream *output;
+ } MultiQueueSlot;
+ 
+@@ -1798,6 +1800,17 @@ multiqueue_src_probe (GstPad * pad, GstPadProbeInfo * info,
+         DecodebinOutputStream *output;
+         GstMessage *msg = NULL;
+         SELECTION_LOCK (dbin);
++        if (slot->is_flushing) {
++            GST_WARNING_OBJECT (dbin, "dropping %" GST_PTR_FORMAT " because MultiQueueSlot is flushing", ev);
++            ret = GST_PAD_PROBE_DROP;
++            SELECTION_UNLOCK (dbin);
++            break;
++        }
++        if (slot->active_stream == NULL) {
++            GST_ERROR_OBJECT (dbin, "No active stream, give up");
++            SELECTION_UNLOCK (dbin);
++            break;
++        }
+         output = get_output_for_slot (slot);
+         if (output) {
+           reconfigure_output_stream (output, slot);
+@@ -1887,6 +1900,30 @@ multiqueue_src_probe (GstPad * pad, GstPadProbeInfo * info,
+         }
+       }
+         break;
++      case GST_EVENT_FLUSH_START:
++      {
++        SELECTION_LOCK (dbin);
++        slot->is_flushing = TRUE;
++        SELECTION_UNLOCK (dbin);
++      }
++        break;
++      case GST_EVENT_FLUSH_STOP:
++      {
++        SELECTION_LOCK (dbin);
++        slot->is_flushing = FALSE;
++        if (slot->active_stream == NULL || !gst_pad_has_current_caps(pad)) {
++            GstPad* peer;
++            gint64 offset;
++            peer = gst_pad_get_peer (slot->sink_pad);
++            offset = gst_pad_get_offset (peer);
++            GST_DEBUG_OBJECT (dbin, "No active stream or no current caps, trying to reschedule sticky events from peer %" GST_PTR_FORMAT, peer);
++            gst_pad_set_offset (peer, offset + 1);
++            gst_pad_set_offset (peer, offset);
++            gst_object_unref (peer);
++        }
++        SELECTION_UNLOCK (dbin);
++      }
++        break;
+       default:
+         break;
+     }
+@@ -1955,7 +1992,7 @@ create_new_slot (GstDecodebin3 * dbin, GstStreamType type)
+   /* Add event probe */
+   slot->probe_id =
+       gst_pad_add_probe (slot->src_pad,
+-      GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM,
++      GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH,
+       (GstPadProbeCallback) multiqueue_src_probe, slot, NULL);
+ 
+   GST_DEBUG ("Created new slot %u (%p) (%s:%s)", slot->id, slot,
+-- 
+2.25.1
+

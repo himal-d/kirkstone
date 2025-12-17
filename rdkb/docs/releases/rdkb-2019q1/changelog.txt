@@ -1,0 +1,246 @@
+Changelog between rdkb-20190206 and rdkb-2019q1
+
+
+
+project rdk/components/generic/breakpad_wrapper/
+258ec8b RDKCOM-452 RDKBCMF-149 Breakpad-wrapper build failures
+
+project rdk/components/generic/rdk_logger/
+65d9169 RDKB-20448: Port speedtest c client logging changes from 1811 to 1901
+
+project rdk/components/generic/rfc/
+d87efa1 RDK-20123, DELIA-32853 : Undefined reference thrown when linking -lrfcapi..
+
+project rdk/components/generic/xupnp/
+dfa5eb6 DELIA-29678: [Field]TELEMETRY_XUPNP_DISCOVERY_MAIN_LOOP_HANGED messages observed
+125dfce Revert "DELIA-32890 DELIA-31053 : Change the device removal logic in xupnp"
+a7e77c3 Revert "DELIA-32890 : mitigate upnp device removal due to multicast network issue"
+1a8c90b DELIA-32890 : mitigate upnp device removal due to multicast network issue
+
+project rdkb/components/generic/CcspLogAgent/
+8ee6c55 RDKB-15473 : Unapproved Cisco Copyright Notice (8 of 9)
+
+project rdkb/components/generic/servicemanager/
+0e98aea CODEMGMT-636: move RDK-B servicemanager.
+fc76e9b RDKCOM-877: CODEMGMT-636: move RDK-B servicemanager.
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+4c3ffc9 CISCOXB3-4956 : Mismatch in CableModem.DocsisLogNumberOfEntries TR181 query.
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+f0d81dac RDKB-20718: Run CcspMtaAgent in ETHWAN mode
+653338cb RDKB-20953 : snmpv3 service is triggering twice in XB3
+5f1f602b RDKB-20355,RDKB3939-859 : User is indefinitely looped to captive portal page.
+6419ef4e RDKB-17348 : Ccsp-common-library and ccsp-p-and-m component leaks memory
+
+project rdkb/components/opensource/ccsp/CcspHomeSecurity/
+eb6172c Update CCSP file
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+9edafad RDKB-7207: Added mlt headers to track allocation.
+2e3e34e XF3-4643 : "core.CcspLMLite" crash observed in the device
+83d1239 RDKB-20732 WPS Connected Clients are shown as Offline devices
+7b587b0 RDKB-19350 :NetworkDevicesStatus (NDS) report not sending IPV6 address.
+7126785 RPI-44:[LMLite] Device.X_RDKCENTRAL-COM_Report.NetworkDevicesStatus.PollingPeriod not changing to default polling period after the default OverrideTTL period expired. RPI-43:[LMLite] Device.X_RDKCENTRAL-COM_Report.NetworkDevicesStatus.ReportingPeriod not changing to default reporting period after the default OverrideTTL period expired.
+61d558b RDKCOM-838: [LMLite] Device.X_RDKCENTRAL-COM_Report.NetworkDevicesStatus.Po...
+6398261 RDKB-20882: Devices are showing offline in hostable
+473d96f RDKB-18615 : Observed Lmlite crash with signature strlen.
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+abd71b4 RDKB-19441 : Implement TR181 for OverCurrentFault.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+c369fdd RDKB-21304: Xhome Ethernet Port 2 association not persistent across the reboots
+fcc9b85 RDKB-20915 : Factory reset timeout
+ad5ab22 RDKCOM-461: RPI-131 : [RPI-B] Cannot get admin password from backend.
+1ccc232 RDKB-20677 : Implement TR181 for wan operational mode.
+6d26856 XF3-4557 : Create TR-181 RouterName parameter
+a352971 TCXB6-5701: Replace cm_dyn removals with latticecli reset method
+a02e62b CISCOXB3-5120: CUJO package not downloaded at bootup
+9994293 RDKB-16122: Device.DeviceInfo. of PAM is not listing all parameters
+c88c026 RDKB-17684 : IPV4 connectivity failure after IP scope change
+3657f68 RDKCOM-702: REFPLTB-203 : Updated factory reset source code in RPI
+4c888ef TATAELXSI-301 : [RPI][Broadband] Fails to set any valid range of values for LAN subnet mask
+d773323 RDKCOM-835: TATAELXSI-301 : [RPI][Broadband] Fails to set any valid range o...
+7e64702 RDKCOM-836: RDKCOM-702: REFPLTB-203 : Updated factory reset source code in RPI
+4514cc3 RDKB-20919 : Update partners xFi urls
+57eabd3 RDKB-19372: Tile Ring - Sending MEP TOA Commands
+f83f344 ARRISXB6-9172 : sending Null Mac notification during Reboot
+893b6c8 TCCBR-3353 : Dibbler-server not running after FR
+866d11d ARRISXB3-7073 system command removal from cosa_x_cisco_com_security_apis.c
+2968c9b RDKB-19907 : Proposed Bug Fix: Prevent Intermittent Dibbler Flushstop
+9719bd2 RDKB-19917 : Proposed Bug Fix: Dibbler Server Reconfigure Option.
+0483933 RDKB-15281 : Creating a long DeviceName can overwrite into the next field.
+bb679de RDKB-20405 : Remove plain text admin password from syscfg
+f505f64 RDKB-20246: Ring tile Open channel
+413ed68 ARRISXB6-8833: Can't set firewall level while LanMode is set to bridge-static
+68c2a18 ARRISXB6-8693: 0005-ccsp-p-and-m_dibbler_server_reconfigure_option.patch
+b32df72 RDKB-20468 : Observing "error code 102, type 0' error logs in PAM log file.
+3fc0f6d RDKB-16445 : Update Device.IP.Interface.4. on changing brlan0 addr
+99eec3d RDKB-17348 : Ccsp-common-library and ccsp-p-and-m component leaks memory
+272a7d7 RDKB-20246: Ring tile Open channel
+c4c3f20 XF3-4385 : Factory resetting the "WiFi" not working
+f192867 RDKB-20246: Ring tile Open channel
+944f2db ARRISXB6-8592: ACS URL Fix
+6392a75 RDKCOM-827: REFPLTB-261 : Updated the necessary changes to bring up
+6321168 RDKB-19937 : callback to set Ap nas ip to changed erouter ip
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+fbec77c RDKB-20713 : {Syndication} Need to re-design partner's handling.
+51903bf RDKB-20566: WiFi Country code value returned as USI instead of CAI
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+fff6e0b RDKB-20921 : Update "ccsp_tr069_pa_mapper*" to support xFi params via ACS/TR69
+037115c ARRISXB6-8695: 0003-Adding-TLV-sysevent-support-to-CcspTr069.patch
+cecba12 RDKB-20476 : TR69 is disabled in 3.3 release for comcast/syndication partners.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+ae3538c RDKB-16436: Create telemetry markers for ch NF
+5c1f9a2 RDKB-21076 : Observing unary operator expected error for mesh script
+34da0eb RDKB-15044: Create telemetry markers for WiFi password failures.
+0f7b2bc RDKB-20826 : CcspWifiSsp crash CosaDmlWiFi_GetRapidReconnectIndicationEnable
+3162ee4 RDKB-20923 : Zombie process by Ccspwifssp
+97526a0 REFPLTB-261 : Updated the necessary changes to bring up
+e7e5ade RPI-118: wifi clients are not getting an ip address
+3d6e0d7 RDKCOM-36 Do not wait for brlan1 creation on Raspberry Pi platform.
+be84a71 RDKCOM-839: RPI-118: wifi clients are not getting an ip address
+40d7efb RDKCOM-837: RDKCOM-36 Do not wait for brlan1 creation on Raspberry Pi platf...
+76d8da6 RDKCOM-834: REFPLTB-261 : Updated the necessary changes to bring up
+9a7b7fe REFPLTB-269 :  "Device.WiFi.SSID.{i}.Status" is not working as expected
+d677b36 RDKCOM-851: REFPLTB-269 : "Device.WiFi.SSID.{i}.Status" is not working as ...
+8b60102 RDKINCDT-9602: DPC3941B DPC3941B builds failed
+f5f0dfd ARRISXB3-8591, ARRISXB3-8593 : Mesh Enablement Issues
+043f58b RDKB3939-878 : Hotspot MacFilter addtion is failng & failed to connect.
+86f0c99 ARRISXB6-9169 : WiFi Region code is not persistent after reboot.
+4d2c338 RDKB-20691 timestamp is missing in wifihealth.txt Logs
+19c3507 RDKB-19976 : clean up processor monitor atom script
+fc274f1 RDKB-16805: WiFi 802.11v BTM Steering.
+5743ccf RDKB-20158 : client device connecting to xfinity wifi
+b324c3d RDKB-19923: PacketsReceived and PacketsSent always reports Null Values
+45a698e RDKB-20521: Array Index Mismatch on device flag array.
+5152045 RDKB-20076, TCCBR-3373 Reset client stats if radio or vap is disabled/enabled
+74d3862 RDKB-17545: Log all occurrences of connections to LNF PSK SSIDs.
+be7370c CISCOXB3-4032 : BSSID change after factory reset,configuring Xfinity or reboot
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+0cfe6c2 RDKBCMF-42 : Remove Docsis Dependencies from GwProvApp for RaspberryPi Platform
+47c29dc RDKB-5922 : Remove dependency on SOC header files
+c908bfd RDKCOM-826: RDKB-17596 : Erouter IPV6 null and can't SSH to device
+abc4b3a RDKB-20476 : TR69 is disabled in 3.3 release for comcast/syndication partners.
+89569ee ARRISXB6-8592: ACS URL Fix
+
+project rdkb/components/opensource/ccsp/GwProvApp-EthWan/
+aa5a8c0 RDKB-20674,RDKB-20675: Time is not in sync with UTC in ETTHWAN Mode
+01e45ee RDKB-20579 : Hook GWP_GetEthWanInterfaceName in GwProvEth-Wan instead eth0.
+
+project rdkb/components/opensource/ccsp/MeshAgent/
+881df67 ARRISXB3-8591, ARRISXB3-8593, RDKB-20834 : Mesh Enablement Issues
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+2694dbf RDKB-20866: Observed COUNT++ not found error
+4153570 TCCBR-3622 : Dropbear not running
+51e9c5b ARRISXB6-9237 : Traceroute ResponseTime not populating
+c593ba8 REFPLTB-33 Fix quoting for traceroute/ping
+b2c9ca9 RDKCOM-840: REFPLTB-33 Fix quoting for traceroute/ping
+63ac4ac RDKB-20689: Change self Heal to use service_udhcpc binary
+3130e4c RDKB-20781 : Device skip reboot and did not upgrade firmware.
+6c4e565 XF3-4479 : increase logging interval to 1 Hour-Syntax Error
+0c23ce5 XF3-4479 : increase logging interval to 1 Hour]
+a862d0a TCXB6-6103 CcspTandDSsp crash libc-2.19.so signature add/delete ipserver
+ec0111a RDKB-20850 : Syslog format is incorrect.
+57a4e35 RDKB-20766 : Resolving ipv6 gw ping failure in XF3
+0f1b3c1 RDKB-20448: Port speedtest c client TR-181 changes from 1811 to 1901
+
+project rdkb/components/opensource/ccsp/Utopia/
+328ec60 ARRISXB6-9039 : AXB6 Fix MTU size of ath12 and ath13
+d45ef68 RDKB-20674,RDKB-20675: Time is not in sync with UTC in ETTHWAN Mode
+32b223d XF3-4557 : Create TR-181 RouterName parameter
+d1325ac RDKB-20784 : Copying and uploading kernel trace
+30840f1 ARRISXB6-9171 : [3.5s1] XRE-10007 error on attached RDK-V settops.
+f1e8cac RDKB-15386 : Remove CiscoXB3-2671_Utopia.patch file from CISCO repo.
+3a80c76 ARRISXB6-8784 Last reboot reason for Pin-reset comes as unknown
+ca92d73 REFPLTB-261 : Updated the necessary changes to bring up
+9c65732 RDKCOM-753: REFPLTB-134 : [TDK]Blocked Parental Control devices
+adfcf7d RDKCOM-845: REFPLTB-261 : Updated the necessary changes to bring up
+ec1fdf4 RDKCOM-841: RDKCOM-753: REFPLTB-134 : [TDK]Blocked Parental Control devices
+d6c567d RDKCOM-843: REFPLTB-261 : Updated the necessary changes to bring up
+c56808e RDKCOM-844: REFPLTB-261 : Updated the necessary changes to bring up
+a864122 RDKB-19441 : Implement TR181 for OverCurrentFault.
+84b011e ARRISXB6-9264 : Default WiFi Region always returning as USI
+ecfe776 RDKB-20482 : udhcpc script to C code conversion.
+99a8ff8 RDKCOM-352: utopia_init.sh: quoting fixes
+92384c2 TCCBR-3342 : Syntax error in service_dhcp_server.sh- XHS_INTERFACE not defined
+f42c0a7 RDKB-20713 : {Syndication} Need to re-design partner's handling.
+dcb869c RDKB-19636 : Remove brlan0 from dibbler in bridge mode
+a300ed9 RDKCOM-829 RDKBCMF-41 : Changes In Utopia for making lan/wan services and ...
+69029ef ARRISXB3-7073 system command removal from cosa_x_cisco_com_security_apis.c
+d8cd05f RDKB-15530 : system() function call always returns -1 for success cases too.
+2558703 RDKB-20804: [ETHWAN] time is not in sync,
+0909adb RDKB-20405 : Remove plain text admin password from syscfg
+e58d867 Revert "CISCOXB3-4152: SNMP CM agent crash issue"
+6cfe1f5 ARRISXB6-8739:0012-Added-ip6tables-rule-to-allow-ipv6-traffic
+5eb1f59 ARRISXB6-8697: 0022-Honoring-TLV-202.10-RA-Transmission-Interval-utopia.patch
+6fa0646 ARRISXB6-8606:0055-Remove-zeroing-iptable-counter.patch
+3a45128 ARRISXB6-8696:0006-Modified-firewall-for-DMZ-IPv6.patch
+425a9aa RDKCOM-828: RDKCOM-35 Enabling Lan/Wan connectivity for Raspberry Pi platform.
+d437341 RDKB-19609 : Proposed Bug Fix: Set WAN IF Name for all Modes
+4356146 RDKCOM-830: RDKCOM-827: REFPLTB-261 : Updated the necessary changes to
+37493ac RDKB-20246: Ring tile Open channel
+eb4f32c RDKB3939-899 : [3.3p10s2]Pin hole reset reason is logged as unknown.
+89e4fcd RDKB-20549,TCXB6-5930: firewall is crashing if block device is enabled
+b2878ae RDKB-20566: WiFi Country code value returned as USI instead of CAI partners
+9b2c8a8 RDKB-19936 : Axb6 Bridge & vlan support for secured SSID
+
+project rdkb/components/opensource/ccsp/Xconf/
+c2c6c5a CISCOXB3-3522 : Used TLS1.2 for Codebig SSR communication
+f5f9f69 ARRISXB6-8983 : LED Sequence is not getting suppressed
+83cd1f1 RDKB-20769: FW download start/complete SET log messages when they are not set
+31ede68 TCCBR-3464 : LED Sequence during deferred reboot scenario
+7a6a7c0 TCXB6-5800 : LED Sequence during deferred reboot scenario
+
+project rdkb/components/opensource/ccsp/hal/
+411812a REFPLTB-262 : RDK-B Emulator Functionalities bring up
+e48bf5a RDKCOM-846: REFPLTB-262 : RDK-B Emulator Functionalities bring up
+d0019a5 RDKCOM-780: RDKB-18088 Update NOTICE file.
+a92083f REFPLTB-268 : updated hal source code with support of tp-link
+10b6e18 RDKCOM-850: REFPLTB-268 : updated hal source code with support of tp-link
+
+project rdkb/components/opensource/ccsp/halinterface/
+2eabe0f RDKB-15044: Create telemetry markers for WiFi password failures.
+860404f CISCOXB3-5088: Auto PNC
+ddaffd3 RDKB-18559: [HAL] Update MTA HAL MTAMGMT_MTA_LINETABLE_INFO
+eace3d2 RDKB-16805: WiFi 802.11v BTM Steering - HAL API
+9a10bfc RDKB-19804,RDKB-20188: Define HAL to retrieve ETHWAN interface name
+
+project rdkb/components/opensource/ccsp/sysint/
+5f39bf0 RDKCOM-715: REFPLTB-213: RFC simulator support on RPI
+196021c RDKB-20784 : Copying and uploading kernel trace
+8d233d7 RDKB-16078 : Log upload status goes to complete state on failure.
+43445e8 RDKB-20912 : Duplicate messages from backup during bootup
+2ca2b43 RDKALL-1139: Upload Telemetry Markers post Device reboot
+8d2579a RDKB-19179 : Log scripts hitting "unary operator expected" error in many places
+25a75b0 RDKB-20824 : Disable codebig path for telemetry if RFC is disabled
+030231c RDKB-20202 : Fixes for handling quotes present in telemetry message
+e3f2cf4 RDKB-20620 : Fix reverse SSH failure with IPv4 only device
+3844b11 CISCOXB3-4941 : authenticator_error_log.txt is not uploaded in tarball.
+
+project rdkb/components/opensource/ccsp/webui/
+fe3a964 RDKB-21075:
+2fafb7b RDKB-21030:Restore settings is directed to 10.0.0.1 instead of 192.168.0.1.
+fb16244 RDKB-21090: NetworkPassword is editable in Open Mode.
+8fb62be TCXB6-4367 [3.1s5] Unable to save DMZ rule for IPv6 host address only.
+785df7e CISCOXB3-4927: Remove "Undefined Offset" notice errors from managed sites.
+00e6da5 RDKB-20920 : Include partners branding in device paused screen
+901c0e1 RDKB-20939:Radio connected to XfinityWiFi devices is incorrect .
+f5d23c9 ARRISXB6-5530: Few of the reqd channels are greyed out
+be2b1ed RDKB-20647: Log In page for device in Paused mode is not displayed properly.
+95f9a2f XF3-4298: Download Version is displaying SoftwareImage Name.
+
+project rdkb/devices/raspberrypi/hal/
+97f56a5 REFPLTB-272 : updated hal source code with support of tp-link version3
+
+project rdkb/devices/raspberrypi/sysint/
+7d21f97 REFPLTB-1: RDK-B boot time data on R-Pi
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+17c8e0a REFPLTB-270 : Updated the required changes in emulator specific

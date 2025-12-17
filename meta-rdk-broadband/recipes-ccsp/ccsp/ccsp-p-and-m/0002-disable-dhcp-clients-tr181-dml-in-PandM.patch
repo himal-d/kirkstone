@@ -1,0 +1,81 @@
+##########################################
+Date: Nov 6, 2018 1:41 AM
+From: ebecd56aaa2727b6305d39c69951fbdc8740f800 Oct 31, 2018 11:56 PM
+Subject: PandM Data Model Patch
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: RDK User <kulvendra.singh@sky.uk>
+##########################################
+Index: generic/config-arm/TR181-USGv2.XML
+===================================================================
+--- generic.orig/config-arm/TR181-USGv2.XML
++++ generic/config-arm/TR181-USGv2.XML
+@@ -9408,7 +9408,7 @@
+         <func_GetParamStringValue>DHCPv4_GetParamStringValue</func_GetParamStringValue>
+ 
+       </functions>
+-
++<!-- if not _HUB4_PRODUCT_REQ_
+       <parameters>
+ 
+         <parameter>
+@@ -9420,6 +9420,7 @@
+           <syntax>uint32</syntax>
+ 
+         </parameter>
++-->        
+ <!--        
+         <parameter>
+ 
+@@ -9431,7 +9432,9 @@
+ 
+         </parameter>
+ -->
++<!-- if not _HUB4_PRODUCT_REQ_
+       </parameters>
++-->
+ 
+       <objects>
+ <!--        
+@@ -9519,6 +9522,7 @@
+           
+         </object>
+ -->
++<!-- if not _HUB4_PRODUCT_REQ_
+         <object>
+ 
+           <name>Client</name>
+@@ -9937,6 +9941,7 @@
+ 
+         </object>
+ 
++-->
+         <object>
+ 
+           <name>Server</name>
+@@ -10708,6 +10713,7 @@
+         <func_GetParamUlongValue>DHCPv6_GetParamUlongValue</func_GetParamUlongValue>
+         <func_GetParamStringValue>DHCPv6_GetParamStringValue</func_GetParamStringValue>
+       </functions>
++<!-- if not _HUB4_PRODUCT_REQ_      
+       <parameters>
+         <parameter>
+           <name>ClientNumberOfEntries</name>
+@@ -10715,7 +10721,9 @@
+           <syntax>uint32</syntax>
+         </parameter>
+       </parameters>
++-->      
+       <objects>
++<!-- if not _HUB4_PRODUCT_REQ_      
+         <object>
+           <name>Client</name>
+           <objectType>writableTable</objectType>
+@@ -11016,6 +11024,7 @@
+ 
+           </objects>
+         </object>
++-->        
+         <object>
+           <name>Server</name>
+           <objectType>object</objectType>

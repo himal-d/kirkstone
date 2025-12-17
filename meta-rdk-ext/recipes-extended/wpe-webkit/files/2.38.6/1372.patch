@@ -1,0 +1,82 @@
+From 33bfbb48666b7de47041e021654894d840b51ff4 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Wed, 24 Jul 2024 17:52:09 +0000
+Subject: [PATCH 1/2] [MSE][GStreamer] Avoid changing ref count of trackId
+ string from non-main thread
+
+StringImpl's ref count in not thread safe.
+---
+ .../graphics/gstreamer/mse/MediaSourceTrackGStreamer.h      | 2 +-
+ .../graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h
+index 8dc5f5411a35e..91004c2b53ed6 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h
+@@ -45,7 +45,7 @@ class MediaSourceTrackGStreamer final: public ThreadSafeRefCounted<MediaSourceTr
+     virtual ~MediaSourceTrackGStreamer();
+ 
+     TrackPrivateBaseGStreamer::TrackType type() const { return m_type; }
+-    AtomString trackId() const { return m_trackId; }
++    const AtomString& trackId() const { return m_trackId; }
+     GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
+     DataMutex<TrackQueue>& queueDataMutex() { return m_queueDataMutex; }
+ 
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+index 58738d2534098..85d829e1bf21b 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+@@ -185,12 +185,12 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
+     ASSERT(isMainThread());
+     ASSERT(m_tracks.contains(trackId));
+     MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+-    track->notifyWhenReadyForMoreSamples([weakPtr = WeakPtr { *this }, this, trackId]() mutable {
+-        RunLoop::main().dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
++    track->notifyWhenReadyForMoreSamples([weakPtr = WeakPtr { *this }, this, trackId = trackId.string().isolatedCopy()]() mutable {
++        RunLoop::main().dispatch([weakPtr = WTFMove(weakPtr), this, trackId = WTFMove(trackId)]() {
+             if (!weakPtr)
+                 return;
+             if (!m_hasBeenRemovedFromMediaSource)
+-                provideMediaData(trackId);
++                provideMediaData(AtomString{ trackId });
+         });
+     });
+ }
+
+From 960d3fdd1e287263da5f9f7c8f4eacffac36b64c Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Wed, 24 Jul 2024 18:11:25 +0000
+Subject: [PATCH 2/2] Prefer isolated copy of name string when copying Nicosia
+ animations
+
+The name StringImpl object can be shared with comositor thread
+if animaton source object has name StringImpl with ref count 1 (and so
+isSafeToSendToAnotherThread would return true). Which can lead to a
+race in StingImpl ref/deref between main and compositor threads.
+---
+ Source/WebCore/platform/graphics/nicosia/NicosiaAnimation.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/nicosia/NicosiaAnimation.cpp b/Source/WebCore/platform/graphics/nicosia/NicosiaAnimation.cpp
+index 1cf0980697f04..1150743ae660b 100644
+--- a/Source/WebCore/platform/graphics/nicosia/NicosiaAnimation.cpp
++++ b/Source/WebCore/platform/graphics/nicosia/NicosiaAnimation.cpp
+@@ -184,7 +184,7 @@ Animation::Animation(const String& name, const KeyframeValueList& keyframes, con
+ }
+ 
+ Animation::Animation(const Animation& other)
+-    : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
++    : m_name(other.m_name.isolatedCopy())
+     , m_keyframes(other.m_keyframes)
+     , m_boxSize(other.m_boxSize)
+     , m_timingFunction(other.m_timingFunction->clone())
+@@ -202,7 +202,7 @@ Animation::Animation(const Animation& other)
+ 
+ Animation& Animation::operator=(const Animation& other)
+ {
+-    m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
++    m_name = other.m_name.isolatedCopy();
+     m_keyframes = other.m_keyframes;
+     m_boxSize = other.m_boxSize;
+     m_timingFunction = other.m_timingFunction->clone();

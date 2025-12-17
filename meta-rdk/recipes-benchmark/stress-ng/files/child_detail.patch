@@ -1,0 +1,22 @@
+##########################################
+Date: Apr 5, 2022 1:41 AM
+From: dab354377b15d409e69445efacb289f41e325341 Apr 1, 2022 11:56 PM
+Subject: To add the VM stats detail for stress-ng processes
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Sindhuja <Sindhuja_Muthukrishnan@comcast.com>
+##########################################
+Index: stress-ng-0.11.21/core-helper.c
+===================================================================
+--- stress-ng-0.11.21.orig/core-helper.c
++++ stress-ng-0.11.21/core-helper.c
+@@ -1274,6 +1274,9 @@ int stress_sighandler(
+ void stress_handle_stop_stressing(int signum)
+ {
+ 	(void)signum;
++	 int peakMem=0,curMem=0;
++	 stressor_get_memory(&peakMem,&curMem);
++	 pr_inf("[%d] : Vmpeak:%d and RSS:%d\n",(int)getpid(),peakMem,curMem);
+ 
+ 	keep_stressing_set_flag(false);
+ 	/*

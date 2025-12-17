@@ -1,0 +1,76 @@
+From 773c65694e08c8a64904628d3ced8d8dc6f2866b Mon Sep 17 00:00:00 2001
+From: Yuriy Masechko <Yuriy_Masechko@comcast.com>
+Date: Tue, 22 Mar 2022 10:09:27 +0200
+Subject: [PATCH] RDKB-37345: Fix compile error
+
+Reason for change: Fix compile error
+Test Procedure:
+Risks: Low
+
+Change-Id: I6462bb33ceffe88fbe25e1d5c6576f101c68454f
+Signed-off-by: Yuriy Masechko <Yuriy_Masechko@comcast.com>
+
+RDKB-41011: Opening function to restart ap
+
+Reason for change: Opening function to restart ap
+Test Procedure:
+Risks: Low
+
+Change-Id: Ieb5e0f4cb02c094dd51b04cfe5e2d3e4fde654ca
+Signed-off-by: Yuriy Masechko <Yuriy_Masechko@comcast.com>
+---
+
+diff --git a/source/hostap-2.9/src/ap/hostapd.c b/source/hostap-2.9/src/ap/hostapd.c
+index 8294a1f..c2585aa 100755
+--- a/source/hostap-2.9/src/ap/hostapd.c
++++ b/source/hostap-2.9/src/ap/hostapd.c
+@@ -341,7 +341,11 @@
+ }
+ 
+ 
++#ifdef RDK_ONEWIFI
++void hostapd_free_hapd_data(struct hostapd_data *hapd)
++#else
+ static void hostapd_free_hapd_data(struct hostapd_data *hapd)
++#endif
+ {
+ 	os_free(hapd->probereq_cb);
+ 	hapd->probereq_cb = NULL;
+@@ -604,7 +608,11 @@
+ }
+ 
+ 
++#ifdef RDK_ONEWIFI
++void hostapd_bss_deinit_no_free(struct hostapd_data *hapd)
++#else
+ static void hostapd_bss_deinit_no_free(struct hostapd_data *hapd)
++#endif
+ {
+ 	hostapd_free_stas(hapd);
+ 	hostapd_flush_old_stations(hapd, WLAN_REASON_DEAUTH_LEAVING);
+diff --git a/source/hostap-2.9/src/ap/hostapd.h b/source/hostap-2.9/src/ap/hostapd.h
+index c4dafbf..6c3a364 100755
+--- a/source/hostap-2.9/src/ap/hostapd.h
++++ b/source/hostap-2.9/src/ap/hostapd.h
+@@ -652,6 +652,8 @@
+ 
+ #ifdef RDK_ONEWIFI
+ int hostapd_setup_bss(struct hostapd_data *hapd, int first);
++void hostapd_free_hapd_data(struct hostapd_data *hapd);
++void hostapd_bss_deinit_no_free(struct hostapd_data *hapd);
+ #endif /* RDK_ONEWIFI */
+ 
+ #ifdef CONFIG_FST
+diff --git a/source/hostap-2.9/src/common/ieee802_11_defs.h b/source/hostap-2.9/src/common/ieee802_11_defs.h
+index b0aa913..666e7a1 100755
+--- a/source/hostap-2.9/src/common/ieee802_11_defs.h
++++ b/source/hostap-2.9/src/common/ieee802_11_defs.h
+@@ -2222,6 +2222,8 @@
+ #define HE_QOS_INFO_MORE_DATA_ACK ((u8) (BIT(7)))
+ 
+ /* DPP Public Action frame identifiers - OUI_WFA */
++#ifndef DPP_OUI_TYPE
+ #define DPP_OUI_TYPE 0x1A
++#endif
+ 
+ #endif /* IEEE802_11_DEFS_H */

@@ -1,0 +1,15 @@
+config*
+.deps/
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+compile
+depcomp
+install-sh
+libtool
+ltmain.sh
+mem_stress.o
+memstress
+missing
+wip

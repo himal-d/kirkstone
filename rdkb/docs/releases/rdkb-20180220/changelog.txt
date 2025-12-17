@@ -1,0 +1,183 @@
+Changelog between rdkb-20180123 and rdkb-20180220
+
+
+
+project rdk/components/generic/crashupload/
+70974b6 ARRISXB3-7093: The naming format of the mini dump file is wrong
+edd4c2e RDKB-12480 : Debug log message "/lib/rdk/uploadDumps.sh execution completed"
+
+project rdk/components/generic/rdk_logger/
+8687fb2 CPC-2057 : RDK logger config
+dc60cd7 RDKC-1898 : Provide rdklogger support for xwclient
+133a78b RDKB-14425 Refactoring RDK logger APIs used in RDKB stack
+7243a14 RDKB-14946: Added Aker specific rdk_logger missing entry.
+9b516d6 XRE-12422 : Enabled Gstreamer Logs to be printed properly in rtrmfplayer
+58259fb DELIA-24033, BCOM-2287 : Enable Warnings to be printed for HN components
+
+project rdk/components/generic/sys_mon_tools/sys_resource/
+75dd747 RDKCOM-448: musl build fixes
+85fe32b musl build fixes
+
+project rdkb/components/opensource/ccsp/CcspCMAgent/
+e72c67c ARRISXB6-6070 : Clean up old OFDM dmcli implementation
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+4335892f Revert "RDKB3939-56  :syscfg.db upgrade"
+8625343b ARRISXB3-7262 : Content Security Policy and X-Frame options
+02d613ba RDKB-16031 : Logs are getting truncated in TCHCBR and Arris XB6 platforms
+49659943 RDKB-15917: WHIX part 1
+b23d6928 RDKB-14948: Simplified script to launch Aker on non-systemd launched platforms.
+a1b18930 RDKB-15914, RDKB-15917: WHIX part 1
+ca4f1941 RDKB-14948: Disabled Aker on platforms enabled through systemd.
+c5e46ead XF3-2867,TCCBR-2505 : Parodus broken in CBR
+84814299 RDKB-15950 : Implement SelfHeal when the channel utilization is high
+7897ed20 XF3-2867 : Move webpa to be started by systemd
+ca48ce3f Revert "Revert "RDKCOM-436: Setting ptr to NULL to avoid double free and thus eliminate EnableCWMP crash""
+47162e14 Revert "RDKCOM-436: Setting ptr to NULL to avoid double free and thus eliminate EnableCWMP crash"
+9034d6f7 RDKB-14946: Added Aker service file for XB6p2.
+f9dbada1 RDKCOM-451: BD-419: Update license text and notice file.
+e396f654 BD-419: Update license text and notice file.
+21fb452e fix tracking of CCSP_Message_Bus_Connect_Thread threads
+29fcf6f5 Setting ptr to NULL to avoid double free and thus eliminate EnableCWMP crash
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+48f4311 XF3-2918 : reboot/factory reset causes CcspLMlite core dump
+827afef ARRISXB6-6321 : device_mac is empty dont add to report list
+6569b1c CISCOXB3-3750 : Observed LM Lite process crash on the device
+1970bca ARRISXB6-6321 : Add null check to prevent LMLite crash
+0c6b940 Revert "RDKB-13989 : Host.{i}.X_RDKCENTRAL-COM_Layer1Interface should use radio value."
+a723750 RDKB-13989 : Host.{i}.X_RDKCENTRAL-COM_Layer1Interface should use radio value.
+56888dc RDKB-13989 : Host.{i}.X_RDKCENTRAL-COM_Layer1Interface should use radio value.
+7024dc6 Revert "RDKB-13989 : Device.Hosts.Host.{i}.Layer1Interface should use radio as value"
+
+project rdkb/components/opensource/ccsp/CcspMisc/
+638f963 WEBPA-2434 : Fix memory leak in start_parodus.c
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+4fc919b TXB6SHAW-20 : Set Default Destination address
+bbfe738 TCCBR-2521 : To add Device.X_Comcast_com_ParentalControl.RollbackUTC_Local
+8af0b18 RDKBEMU-628 : During boot-up unable to run CcspPandM
+166b5cc RDKB-15916 : [Tr181] implementation for TxRxRateList param.
+d817fcd RDKB-15916 : Tr181 parameter implementation
+7459b5b RDKB-14924: [SECVULN] - WebUI and DMCLI - Fix Command Injection (CVSS 9.0)
+35f2be1 RDKB-15913 : [Tr181] implementation
+23c7cf8 RDKB-15202 : Print the last reboot reason on BOOTTIME.log
+17ca680 RDKB-15792 : Remove Dynamic Port Mapping from PortMapping table.
+86c0c67 RDKB3939-413 : Observed " /etc/network_response.sh: line 419: =418: not found
+7b7709b TCCBR-1960,RDKB-15820,CISCOXB3-3742: Fix missing symbol in PAM
+ea52a11 TCCBR-1960: Fix PAM crash while setting True Static IP
+20c492b RDKB-15791 : xconf script exits abruptly if the earlier xconf download stopped
+83ceabd AXB6SHAW-214,AXB6R-100,AXB6SHAW-215 : GUI issues - syndication partners
+1a3a47d RDKB-15684: restart firewall during enable/disable X_RDKCENTRAL-COM_AkerEnable
+6cf5907 RDKB-15502,RDKB-15503,RDKB-15504,RDKB-15505: Single Build for Syndication
+11bee7b RDKB-15510,RDKB-15519,RDKB-15518,RDKB-15513:Implementing TFTP Configure download
+d5f519e fix gcc 7 issues
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+449fc0e RDKB-15681 : [Tr181] implementation for RDKB-15047 user story.
+cd73a0c RDKB-15591 : [Tr181] parameter for good RSSI threshold.
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+932b881 RDKB-10374: MIB file generation for RDKB Objects
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+7e83e92 RDKBEMU-629 : RDKB Emulator Build is failing due to Ccsp-tr069-pa
+9bfc3c0 RDKB-15905 : Bootfile EnableCWMP isn't honored
+7c829fa RDKB-14425 Refactoring RDK logger APIs used in RDKB stack
+7113a13 RDKB-15864 : Boot to TR069 is not available under BootTime.log.
+47f2382 RDKB-12576, RDKB-15815 : Management Frame Power Control for XB6 and XF3
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+aca6497 RDKB-15924: AP up percent
+373356c ARRISXB3-7261 : [WiFi] Not able to set RSSI threshold value using dmcli
+dd80f54 RDKBEMU-635,RDKBEMU-627 : RDKB Emulator Build is failing due to Ccsp-wifi-agent
+12a57ba TCCBR-2517: Fix missing telemetry markers for CBR
+4fae2b5 RDKB-15914, RDKB-15917: WHIX part 1
+6d36ac2 RDKB-15624: WHIX - Log client time in good RSSI
+879e901 RDKB-15950 : Implement SelfHeal when the channel utilization is high
+078ef06 RDKB-15890 : [Tr181] RegulatoryDomain hookup
+dc5e3ee RDKB3939-409,RDKB-15887: meshapcfg.sh for 3939
+bbbc1e3 RDKB-15853: Create telemetry markers for Normalized RSSI per client
+7fdbce5 Revert "MESH-431:Prevent ath12 and ath13 AP going down"
+b3b1c62 RDKB-15590: [telemetry] Log the good and bad RSSI
+165c0be RDKB3939-409: meshapcfg.sh broken
+1cc27d7 RDKB-15816 : Management Frame Power Control XB6 and XF3 - Telemetry marker
+cef5c81 RDKB-15590: [telemetry] Log the good and bad RSSI
+8a5ed37 RDKBEMU-594 : [TDK][WiFi]Set operation with HAL api wifi_setApEnable()
+3f28f25 RDKB-15681 : [Tr181] implementation for RDKB-15047 user story.
+763ec3a RDKB-15591 : [Tr181] parameter for good RSSI threshold.
+86fb80f RDKB-15726:Channel Score calculation based on utilization and RSSI
+888442a RDKB-15726:Channel Score calculation based on utilization and RSSI
+bc7deb9 RDKB3939-409: meshapcfg.sh broken
+85c2910 RDKB-15709: remove redundant CosaDmlGetApRadiusSettings
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+5adc6a0 REFPLTB-11 : Bridge Mode Support in R-Pi
+
+project rdkb/components/opensource/ccsp/GwProvApp-ePON/
+0e3ab0c XF3-2848:removed unnecessary patch
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+cab60e7 RDKBEMU-502 : Parameters like BytesReceived, PacketsReceived are not
+23d96b7 RDKB-15989: [Field] [Bridge Mode] Self Heal is trying to create
+59225dd RDKB-15785 : Logging nvram disk usage
+d780121 RDKBEMU-621: IPPing.DiagnosticsState returns "Error_Other" while trying to ping
+9bb221d RDKB-15840 : Add idle time out value for local ssh connections
+fcf25f4 RDKB-15750 : Increase the length of speedtest argument
+1e41953 RDKB-15848:Telemetry Markers for APG in Selfheal for XB6
+b6b7354 RDKB-15769:Need to create new RDKB markers for APG
+
+project rdkb/components/opensource/ccsp/Utopia/
+364b975 RDKB-14708 , RDKB-14616 : firewall_nfq_handler.sh not found
+4178da3 RDKB-15386 : Remove CiscoXB3-2671_Utopia.patch file from CISCO repo.
+a5a994e RDKB-15452: Generic Changes Synchronize System Time with
+e249d4e RDKB-14270: Turn off port 7547 based on RFC
+ad36272 RDKB-15633: Enable LXC support for Arris XB6 SDK 7x
+f636ebb RDKB-15452: Generic Changes Synchronize System Time with
+99bcd6f RDKB-15452: Generic Changes Synchronize System Time with
+845b681 RDKB-15072 : Enabling TOS mirroring rules for IPv6 traffic.
+13e3704 RDKB-15379: Disable the exposed zebra (vty) listener.
+a4707b8 RDKB-15502,RDKB-15503,RDKB-15504,RDKB-15505: Single Build for Syndication
+f5d8b54 RDKB-15530 : system() function call always returns -1 for success cases too.
+5ddad26 RDKB-15510 : Implementing RFC to enable/disable TFTP Configure download
+6c385ed REFPLTB-18 : Bridge Mode Support in R-Pi
+
+project rdkb/components/opensource/ccsp/Xconf/
+6de7a19 RDKB-15528 [Field] Xconf connectivty issues with CDVonly devices
+4904f67 RDKB-15791 : xconf script exits abruptly if the earlier xconf download stopped
+870d75c ARRISXB3-7153 : Xconf firmware download script gets aborted abruptly
+
+project rdkb/components/opensource/ccsp/hal/
+89b830c RDKBEMU-626,RDKBEMU-633 : updated wifi_hal to support rtlwifi drivers
+a6cc79e RDKBEMU-623,RDKBEMU-594 : [TDK] [WIFI] [HAL] wifi_getSSIDName HAL API
+
+project rdkb/components/opensource/ccsp/halinterface/
+1d355b7 RDKB-15787:[Wifi hal] associated device hal definition
+
+project rdkb/components/opensource/ccsp/hotspot/
+157c2ff TCXB6-2268 : xfinity wifi tunel failover fix
+
+project rdkb/components/opensource/ccsp/sysint/
+acdc93b RDKB-15574 : utils.sh getCMIPAddress() won't work on all devices
+cc039a3 RDKB-16039: webgui_arm.sh remove headers
+aaa3cc0 RDKB-15202 : Test Pre-Merge CI on custom verification
+5c27038 RDKB-15947 : Change the format of RXTX100.sh script
+7b51290 RDKB-15202 : Test Pre-Merge CI
+496da5a RDKB-15202 : Test Pre-Merge CI
+e609a10 RDKB-15840 : Add idle time out value for local ssh connections
+
+project rdkb/components/opensource/ccsp/webui/
+e352e37 RDKB-12267: webgui.sh Headers CSP and X-frame-options
+f5fae0c RDKB-15664: Changing only SSID is not giving any error message
+19a2d76 RDKB-15724: Update LICENSE, NOTICE for CSRF App Layer
+925bef3 Revert "RDKB-14150: Clients over wifi(Private SSID) are not shown in WebUI"
+ca795ab RDKB-15569: Syndication (Phase 1) - Network Diagnostic Tools
+a894a7c ARRISXB6-5530: Few of reqd channels are greyed out
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+df45584 RDKBEMU-626,RDKBEMU-634 : Updated emulator xfinity wifi scripts
+9bf6deb RDKB-15143 : RDK-B emulator contains unknown binary file
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+7f850ea RDKB-15723 : rdkbemu_xb3 contains Silk Icons not meeting terms of
+e14eaae RDKB-15964 : rdkemu_xb3 contains code snippet matches to Open Audit AGPL

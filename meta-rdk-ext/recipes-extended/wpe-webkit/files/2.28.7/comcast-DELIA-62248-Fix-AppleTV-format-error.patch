@@ -1,0 +1,54 @@
+From 6e88719f790af628d9bf4776507c37a055d546e7 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Thu, 22 Jun 2023 09:54:15 +0000
+Subject: [PATCH] comcast : DELIA-62248 : Fix AppleTV+ format error
+
+This change :
+* Skips initial seeking before PAUSED state
+* Allows pushing initial set of data without discontinuity
+  check to complete pre-rolling
+
+Change-Id: I304b50049d4d440cb090516fe09019a6180f4aa2
+---
+ Source/WebCore/Modules/mediasource/SourceBuffer.cpp           | 4 ++--
+ .../graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+index f6a62b9f8e56..074d6d957dd2 100644
+--- a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
++++ b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+@@ -118,7 +118,7 @@ struct SourceBuffer::TrackBuffer {
+         , highestPresentationTimestamp(MediaTime::invalidTime())
+         , highestEnqueuedPresentationTime(MediaTime::invalidTime())
+         , lastEnqueuedDecodeKey({MediaTime::invalidTime(), MediaTime::invalidTime()})
+-        , enqueueDiscontinuityBoundary(discontinuityTolerance)
++        , enqueueDiscontinuityBoundary(MediaTime::invalidTime())
+     {
+     }
+ };
+@@ -2175,7 +2175,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString&
+         // rather than when all samples have been enqueued.
+         auto sample = trackBuffer.decodeQueue.begin()->second;
+ 
+-        if (sample->decodeTime() > trackBuffer.enqueueDiscontinuityBoundary) {
++        if (trackBuffer.enqueueDiscontinuityBoundary.isValid() && sample->decodeTime() > trackBuffer.enqueueDiscontinuityBoundary) {
+             DEBUG_LOG(LOGIDENTIFIER, "bailing early because of unbuffered gap, new sample: ", sample->decodeTime(), " >= the current discontinuity boundary: ", trackBuffer.enqueueDiscontinuityBoundary);
+             break;
+         }
+diff --git a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+index d39ae2e8a729..fc72840d047a 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -259,8 +259,6 @@ static bool checkShouldDelaySeek(GstStateChangeReturn getStateResult, GstState c
+         return false;
+     if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PLAYING_TO_PAUSED)
+         return false;
+-    if (currentState == GST_STATE_READY && newState >= GST_STATE_PAUSED)
+-        return false;
+     if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PAUSED_TO_PAUSED)
+         return false;
+     if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PAUSED_TO_PLAYING)
+-- 
+2.25.1
+

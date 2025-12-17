@@ -1,0 +1,30 @@
+Date: May 03 22:17:03 2016
+
+From: 0edbf5181631adf7028980b328a23507ba6e0c53 May 03 22:17:03 2016
+
+Subject: [PATCH] BCOM-1201: lxc class and build time lxc support
+
+	Required for multiuser support using lxc container
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: mselvaraj <Mani_selvaraj@comcast.com>
+---
+
+Index: lxc-1.1.2/src/lxc/lxccontainer.c
+===================================================================
+--- lxc-1.1.2.orig/src/lxc/lxccontainer.c
++++ lxc-1.1.2/src/lxc/lxccontainer.c
+@@ -1007,10 +1007,6 @@ static bool create_run_template(struct l
+ 		}
+ 
+ 		if (geteuid() == 0) {
+-			if (unshare(CLONE_NEWNS) < 0) {
+-				ERROR("error unsharing mounts");
+-				exit(1);
+-			}
+ 			if (detect_shared_rootfs()) {
+ 				if (mount(NULL, "/", NULL, MS_SLAVE|MS_REC, NULL)) {
+ 					SYSERROR("Failed to make / rslave to run template");

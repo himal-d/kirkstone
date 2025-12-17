@@ -1,0 +1,154 @@
+Source: Referred from comcast version of opensync ovsschema
+
+diff --git a/interfaces/opensync.ovsschema b/interfaces/opensync.ovsschema
+index 0891bd1..254fceb 100644
+--- a/interfaces/opensync.ovsschema
++++ b/interfaces/opensync.ovsschema
+@@ -6399,6 +6399,91 @@
+       },
+       "isRoot": true
+     },
++    "Wifi_Blaster_Config": {
++      "columns": {
++        "plan_id": {
++          "type": {
++            "key": {
++              "type": "string",
++              "maxLength": 37
++            }
++          },
++          "mutable": false
++        },
++        "step_id_and_dest": {
++          "type": {
++            "key": {
++                "type": "string",
++                "maxLength": 11
++            },
++            "value": {
++                "type": "string",
++                "maxLength": 18
++            },
++            "min": 0,
++            "max": 64
++          },
++          "mutable": false
++        },
++        "blast_packet_size": {
++          "type": "integer",
++          "mutable": false
++        },
++        "blast_duration": {
++          "type": "integer",
++          "mutable": false
++        },
++        "blast_sample_count": {
++          "type": "integer",
++          "mutable": false
++        },
++        "blast_config": {
++          "type": {
++            "key": {
++              "type": "string",
++              "maxLength": 65
++            },
++            "value": {
++              "type": "string",
++              "maxLength": 65
++            },
++            "min": 0,
++            "max": 64
++          },
++          "mutable": false
++        }
++      },
++      "isRoot": true
++    },
++    "Wifi_Blaster_State": {
++      "columns": {
++        "plan_id": {
++          "type": {
++            "key": {
++              "type": "string",
++              "maxLength": 65
++            }
++          },
++          "mutable": false
++        },
++        "state": {
++          "type": {
++            "key": {
++              "type": "string",
++              "enum": [
++                "set",
++                [
++                  "new",
++                  "complete"
++                ]
++              ]
++            }
++          },
++          "mutable": false
++        }
++      },
++      "isRoot": true
++    },
+     "Band_Steering_Config": {
+         "columns": {
+             "if_name_2g": {
+
+--- a/interfaces/opensync.ovsschema	2024-03-29 05:24:49.796732349 +0000
++++ b/interfaces/opensync.ovsschema	2024-03-29 05:25:29.796218123 +0000
+@@ -3630,6 +3630,52 @@
+             "min": 0,
+             "max": 1
+           }
++          },
++        "wpa_key_mgmt": {
++          "type": {
++            "key": {
++              "type": "string",
++              "enum": [
++                "set",
++                [
++                  "dpp",
++                  "wpa-psk",
++                  "wpa2-psk",
++                  "wpa2-eap",
++                  "sae",
++                  "wpa-psk-sha256",
++                  "wpa-eap",
++                  "wpa-eap-sha256",
++                  "wpa-eap-suite-b-192",
++                  "ft-wpa2-psk",
++                  "ft-sae",
++                  "ft-psk",
++                  "ft-eap",
++                  "ft-eap-sha384"
++                ]
++              ]
++            },
++            "min": 0,
++            "max": 1
++          }
++        },
++        "pairwise_cipher": {
++          "type": {
++            "key": {
++              "type": "string",
++              "enum": [
++                "set",
++                [
++                  "wep",
++                  "tkip",
++                  "ccmp-128",
++                  "bip-cmac-128"
++                ]
++              ]
++            },
++            "min": 0,
++            "max": 1
++          } 
+         }
+       },
+       "isRoot": true

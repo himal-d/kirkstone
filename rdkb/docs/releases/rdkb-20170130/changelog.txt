@@ -1,0 +1,91 @@
+Changelog between rdkb-20170116 and rdkb-20170130
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+fae4bc72 RDKB-9950 : Move rdk_wifi_configure_lnf_ap.sh script to oem layer
+e2db339e Revert "ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes"
+fd51bc00 RDKB-6030 : Issue with set attribute for more than 1 param at a time
+735d52e8 ARRISXB6-3380: CCSP WiFi Agent is periodically Restarting itself
+c9a76969 ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes
+8b300d8a RDKB-9883 : Start dcmrfc service during boot up from cosa_start script
+da214f86 RDKB-9853 : start wecb_master once MoCA component is initialized.
+c2c5bd80 RDKB-9747 : Info messages are shown as error in PAM
+1e0ce173 RDKB-9762 : High memory usage by PandM process.
+11e520bc RDKB-6377 : We should be using the single config directory
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+5a5c04b RDKB-8961 : CcspLMLite Memory leak.
+d2fd69d RDKB-9634:Observed Moca Client device IP address as Null
+e9fcc65 RDKB-9824 : CcspLMLite & Harvester : memory leak in avropack
+60c5dc0 RDKB-9596 : Add Logs to Display Current Status of Reports in LMLite
+b5179c6 RDKB-8030,RDKB-8032,RDKB-8039:Remove Device.Hosts.Host.i.X_CISCO_COM_RSSI
+
+project rdkb/components/opensource/ccsp/CcspMoCA/
+17e9736 RDKB-8636 : Implement Device.MoCA.Interface.{i}.LinkUpTime TR181 object
+096e1e9 RDKB-9763:Hard coded header path observed in CCSP component's header files.
+5e7c1d9 RDKB-9853 : start wecb_master once MoCA component is initialized.
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+ca57b1f RDKB-9763:Hard coded header path observed in CCSP component's header files.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+4bdacef TCCBR-487: erouter0 not getting v6 address
+b5a6100 TCCBR-389: Can't configure Static IP via GUI.
+a30e71c RDKB-9763:Hard coded header path observed in CCSP component's header files.
+68d0422 RDKB-9762 : High memory usage by PandM process.
+f49996e RDKB-9327:Create a new parameter xOpsDMRetrieveConfigLogNow
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+935dbb3 RDKB-5679 : Integrate TR069 with Notification component
+b684345 RDKB-9753: TR069 ACS password may be written in plain text to flash
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+68a4273 RDKB-9950 : Move rdk_wifi_configure_lnf_ap.sh script to oem layer
+bcc7c77 RDKB-8934:Develp Code - Log timestamp when the default SSID name is changed
+d656abd ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes
+a5891f4 RDKB-9728:[Field] Lighttpd is not restarted after crash.
+2f90cfe RDKB-7153 : Develop Code - Add ATM Tr181 into wifi agent
+ceb559c RDKB-9771 : LMLite Crash.
+cf00a3d ARRISXB6-2609: XB6 reporting unsupported Security modes
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+73c1eb8 RDKB-9983: Create selfheal for PandM High CPU usage
+c2ff10a Revert "ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes"
+5538932 ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes
+
+project rdkb/components/opensource/ccsp/Utopia/
+2d0a308 CISCOXB3-1837: [FIELD]erouter doesn't have ipv6 address after an RF outage
+90cd8b2 RDKB-9892 : Setting Multicast MAC address early
+336926b RDKCOM-35 Enabling Lan/Wan connectivity for Raspberry Pi platform.
+73fde58 RDKB-9853 : start wecb_master once MoCA component is initialized.
+5c4163c ARRISXB6-3302 : Executing qtn vlan setting earlier than QTN driver ready
+ff77e37 RDKB-9799: SNMP MIBs are accessible from LAN client when no DOCSIS connected
+
+project rdkb/components/opensource/ccsp/hal/
+3d25e77 RDKB-6410 : Suppress Download Status Notification for Background Download.
+
+project rdkb/components/opensource/ccsp/sysint/
+a028dd1 RDKB-9746 : [Field] 2.3p6s2 | No space left on device | AtomConsolelog.txt
+b44a2e5 RDKB-9939 : Add retry logic for network failure case
+0696df9 RDKB-9879 : Create new service to start dcm rfc script
+c0a4bad ARRISXB6-3322 : Telemetry - Duplicate marker issue
+5ea5592 RDKB-9836: Observed rdklogs partition was full
+dd7992e RDKB-8800 : Develop Code
+af3bbc1 RDKB-9777: Update Atom side memory stats to be consumable for telemetry
+
+project rdkb/components/opensource/ccsp/webui/
+b69a329 RDKB-9722: Manage Services with TCP/UDP is not getting saved in GUI
+b5237fa RDKB-9734: Voice Quality Metrics does not display anything
+f1fb907 RDKB-7177: MSO page - Under XH SSID - RSSI is not displayed
+863f85a RDKB-5304: Connected Device Page for WiFi Extender (Local UI)
+5e54043 RDKB-7833: WebUI - No Auth - troubleshooting_logs_sample.php
+b260e05 RDKB-9239: DFS Channels are getting allowed in manual channel mode
+8745c75 ARRISXB6-3368: WPS Does not support 4-digit PIN
+c8a6fb4 RDKB-8812: WPS Does not support 4-digit PIN
+9cea8b4 RDKB-5304: Connected Device Page for WiFi Extender (Local UI)
+e3f9a2e RDKB-9704, RDKB-5373, RDKB-5692: DeviceInfo object issue in GUI
+04c61e6 RDKB-4005: MoCA disgnose - PreferredNCEnable
+be2b348 ARRISXB6-2609: XB6 reporting unsupported Security modes
+3cc05c2 ARRISXB6-3315: Remove Bridge mode from XB6 UI
+4bbeba0 RDKB-4005: Develop Code - MoCA disgnose page on Admin GUI

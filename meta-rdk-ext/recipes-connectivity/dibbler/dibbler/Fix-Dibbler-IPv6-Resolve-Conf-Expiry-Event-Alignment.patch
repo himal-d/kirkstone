@@ -1,0 +1,151 @@
+####################################################################
+Date:  Fri 23 Oct 14:30:48 BST 2020
+From: Deustche Telekom
+Subject: To trigger client notify script whenever the expiry event occurs
+   for addresses/prefixes assigned from remote DHCPv6 server
+Features/BugFix:  IPv6-Basics
+ - Client notify script fix to avoid duplicate nameserver entries
+   in resolv.conf file
+ - Created a new method  TIfaceMgr::notifyScripts() which gets invoked
+   upon expiry events and sets the ipv6 parameters used by RDKB
+   accordingly upon expiry.
+ - Newly created method TIfaceMgr::notifyScripts() gets invoked from
+   removeExpired() and when Rebinding mechanism fails finally hitting
+   the valid lifetime value.
+ - Fix added to ensure that client-notify script updates the FIFO file
+   (/tmp/ccsp_common_fifo) used by PandM when either IA_NA or IA_PD
+   or both of them is obtained from remote DHCPv6 server.
+ - Improvements done in the existing code to have a generic method 
+   notifyExpiredInfo() which will be invoked upon expiry of 
+   addresses/prefixes.
+Source: Deustche Telekom
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Arunkumar Sivadasan <arunkumar.sivadasan@sky.uk>
+####################################################################
+Index: git/ClntTransMgr/ClntTransMgr.cpp
+===================================================================
+--- git.orig/ClntTransMgr/ClntTransMgr.cpp
++++ git/ClntTransMgr/ClntTransMgr.cpp
+@@ -247,6 +247,7 @@ void TClntTransMgr::removeExpired() {
+ 		      << " from IA " << ptrIA->getIAID()
+ 		      << " has been removed from addrDB." << LogEnd;
++            notifyExpiredInfo(params, ptrAddr->get(), IATYPE_IA);
+         }
+ 
+ 	// if there are no more addresses in this IA, declare it freed
+ 	if (!ptrIA->countAddr()) {
+@@ -262,6 +263,8 @@ void TClntTransMgr::removeExpired() {
+ 	    }
+ 	}
+     }
++    // Client Notify script invoked
++    ClntIfaceMgr().notifyScript(ClntCfgMgr().getScript(), "expire", params);
+ 
+     // are there any expired IA_TAs?
+     ClntAddrMgr().firstTA();
+@@ -288,6 +291,7 @@ void TClntTransMgr::removeExpired() {
+ 		      << " from IA " << ptrIA->getIAID()
+ 		      << " has been removed from addrDB." << LogEnd;
++            notifyExpiredInfo(params, ptrAddr->get(), IATYPE_TA);
+         }
+ 
+ 	// if there are no more addresses in this IA, declare it freed
+ 	if (!ptrIA->countAddr()) {
+@@ -333,7 +337,7 @@ void TClntTransMgr::removeExpired() {
+ 		      << " from IA_PD " << ptrPD->getIAID()
+ 		      << " has been removed from addrDB." << LogEnd;
++            notifyExpiredInfo(params, ptrPrefix->get(), IATYPE_PD, ptrPrefix->getLength());
+         }
+-
+ 	// if there are no more addresses in this IA, declare it freed
+ 	if (!ptrPD->countPrefix()) {
+ 	    Log(Debug) << "The IA_PD (with IAID=" << ptrPD->getIAID() << ") has expired. " << LogEnd;
+@@ -1425,6 +1429,31 @@ bool TClntTransMgr::sanitizeAddrDB() {
+                                               currentIndexToName);
+ }
+ 
++/* @brief notifyExpiredInfo() invoked when expiry occurs for addresses/prefixes.
++   This method can be modified as per the client requirements.
++*/
++void TClntTransMgr::notifyExpiredInfo(TNotifyScriptParams& params, SPtr<TIPv6Addr> exp, TIAType type, int prefixLength)
++{
++
++    switch (type) {
++        case IATYPE_IA:
++        {
++            params.addAddr(exp, 0, 0, "");
++            break;
++        }
++        case IATYPE_TA:
++        {
++            params.addAddr(exp, 0, 0, "");
++            break;
++        }
++        case IATYPE_PD:
++        {
++            params.addPrefix(exp, prefixLength, 0, 0);
++            break;
++        }
++    }
++}
++
+ 
+ #ifdef MOD_REMOTE_AUTOCONF
+ SPtr<TClntTransMgr::TNeighborInfo> TClntTransMgr::neighborInfoGet(SPtr<TIPv6Addr> addr) {
+Index: git/ClntIfaceMgr/ClntIfaceMgr.cpp
+===================================================================
+--- git.orig/ClntIfaceMgr/ClntIfaceMgr.cpp
++++ git/ClntIfaceMgr/ClntIfaceMgr.cpp
+@@ -492,6 +492,12 @@ bool TClntIfaceMgr::modifyPrefix(int ifa
+         return false;
+     }
+ 
++	if (mode == PREFIX_MODIFY_DEL) {
++		Log(Info) << "PD: Client notify script invoked as prefix " << prefix->getPlain()
++			<< "/" << (int)prefixLen << " going to be deleted." << LogEnd;
++		ClntTransMgr().notifyExpiredInfo(*params, prefix, IATYPE_PD, (int)prefixLen);
++		notifyScript(ClntCfgMgr().getScript(), "expire", *params);
++	}
+     // get a list of interfaces that we will assign prefixes to
+     TIfaceIfaceLst ifaceLst;
+     vector<string> ifaceNames = ClntCfgMgr().getDownlinkPrefixIfaces();
+Index: git/ClntMessages/ClntMsgRebind.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsgRebind.cpp
++++ git/ClntMessages/ClntMsgRebind.cpp
+@@ -276,6 +276,7 @@ void TClntMsgRebind::releaseIA(int IAID)
+         return;
+     }
+ 
++	TNotifyScriptParams params;
+     SPtr<TAddrAddr> ptrAddr;
+     ptrAddrIA->firstAddr();
+     while(ptrAddr=ptrAddrIA->getAddr())
+@@ -286,9 +287,12 @@ void TClntMsgRebind::releaseIA(int IAID)
+ 	    Log(Error) << "Unable to find interface with ifindex " << ptrAddrIA->getIfindex() << LogEnd;
+ 	    continue;
+ 	}
++	// Client Notify script invoked
++	ClntTransMgr().notifyExpiredInfo(params, ptrAddr->get(), IATYPE_IA);
++	ClntIfaceMgr().notifyScript(ClntCfgMgr().getScript(), "expire", params);
+ 	ptrIface->delAddr(ptrAddr->get(), ptrIface->getPrefixLength());
+-        //and from db
+-        ptrAddrIA->delAddr(ptrAddr->get());
++	//and from db
++    ptrAddrIA->delAddr(ptrAddr->get());
+     }
+     ptrAddrIA->setState(STATE_NOTCONFIGURED);
+ 
+Index: git/ClntTransMgr/ClntTransMgr.h
+===================================================================
+--- git.orig/ClntTransMgr/ClntTransMgr.h
++++ git/ClntTransMgr/ClntTransMgr.h
+@@ -59,6 +59,7 @@ class TClntTransMgr
+     void printAdvertiseLst();
+ 
+     bool sanitizeAddrDB();
++    void notifyExpiredInfo(TNotifyScriptParams& params, SPtr<TIPv6Addr> exp, TIAType type, int prefixLength = 0);
+ 
+ #ifdef MOD_REMOTE_AUTOCONF
+     struct TNeighborInfo {

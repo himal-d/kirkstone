@@ -1,0 +1,9 @@
+[Unit]
+Description=Voice HAL for Asterisk systemd service.
+Before=RdkTelcoVoiceManager.service
+[Service]
+Type=simple
+ExecStart=/usr/bin/hal-voice-asterisk
+ExecStop=/bin/sh -c ' echo "Voice HAL Asterisk service stopped" '
+[Install]
+WantedBy=multi-user.target

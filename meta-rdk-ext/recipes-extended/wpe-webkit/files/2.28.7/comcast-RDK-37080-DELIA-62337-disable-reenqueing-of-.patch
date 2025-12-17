@@ -1,0 +1,80 @@
+From 524025e1f8b9b1685eeabdb1779cc8aa1c9cf822 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Tue, 20 Jun 2023 18:12:04 +0000
+Subject: [PATCH] comcast - RDK-37080, DELIA-62337 -  disable reenqueing of
+ audio samples replaced on append
+
+With exception for YouTube, which uses implicit replacement in multi
+view feature.
+---
+ .../WebCore/Modules/mediasource/SourceBuffer.cpp  |  2 +-
+ Source/WebCore/page/Quirks.cpp                    | 15 +++++++++++++++
+ Source/WebCore/page/Quirks.h                      |  8 ++++++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+index bc51853c5d3e..d5a5f9fbedd4 100644
+--- a/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
++++ b/Source/WebCore/Modules/mediasource/SourceBuffer.cpp
+@@ -1889,7 +1889,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
+             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
+             // not yet displayed samples.
+             MediaTime currentMediaTime = m_source->currentTime();
+-            if (trackBuffer.highestEnqueuedPresentationTime.isValid() && currentMediaTime < trackBuffer.highestEnqueuedPresentationTime) {
++            if (trackBuffer.highestEnqueuedPresentationTime.isValid() && currentMediaTime < trackBuffer.highestEnqueuedPresentationTime && (!hasAudio() || !document().quirks().shouldBypassAudioFlushOnSampleReplacement())) {
+                 PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.highestEnqueuedPresentationTime);
+                 possiblyEnqueuedRanges.intersectWith(erasedRanges);
+                 if (possiblyEnqueuedRanges.length())
+diff --git a/Source/WebCore/page/Quirks.cpp b/Source/WebCore/page/Quirks.cpp
+index 7e6cce14efb8..5a5ef28e6233 100644
+--- a/Source/WebCore/page/Quirks.cpp
++++ b/Source/WebCore/page/Quirks.cpp
+@@ -714,4 +714,19 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
+ #endif
+ }
+ 
++#if ENABLE(MEDIA_SOURCE)
++bool Quirks::shouldBypassAudioFlushOnSampleReplacement() const
++{
++    if (m_shouldBypassAudioFlushOnSampleReplacementQuirk)
++        return m_shouldBypassAudioFlushOnSampleReplacementQuirk.value();
++
++    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
++
++    m_shouldBypassAudioFlushOnSampleReplacementQuirk =
++        !(domain.endsWith(".youtube.com") || domain == "ytlr-cert.appspot.com");
++
++    return m_shouldBypassAudioFlushOnSampleReplacementQuirk.value();
++}
++#endif
++
+ }
+diff --git a/Source/WebCore/page/Quirks.h b/Source/WebCore/page/Quirks.h
+index bb737a02c99c..bd07612842f9 100644
+--- a/Source/WebCore/page/Quirks.h
++++ b/Source/WebCore/page/Quirks.h
+@@ -92,6 +92,10 @@ public:
+ 
+     bool shouldDisableElementFullscreenQuirk() const;
+ 
++#if ENABLE(MEDIA_SOURCE)
++    bool shouldBypassAudioFlushOnSampleReplacement() const;
++#endif
++
+ private:
+     bool needsQuirks() const;
+ 
+@@ -113,6 +117,10 @@ private:
+ #if ENABLE(TOUCH_EVENTS)
+     mutable Optional<bool> m_shouldDispatchSimulatedMouseEventsQuirk;
+ #endif
++#if ENABLE(MEDIA_SOURCE)
++    mutable Optional<bool> m_shouldBypassAudioFlushOnSampleReplacementQuirk;
++#endif
++
+ };
+ 
+ }
+-- 
+2.25.1
+

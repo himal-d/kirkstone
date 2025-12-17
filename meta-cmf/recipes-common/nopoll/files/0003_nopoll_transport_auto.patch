@@ -1,0 +1,255 @@
+Upstream-Status: pending
+Date: September 17, 2021 11:47 PM
+Source: nopoll
+Subject: nopoll auto resolve
+Signed-off-by: Chris Buchter <Chris_Buchter@cable.comcast.com>
+From: Chris Buchter <Chris_Buchter@cable.comcast.com>
+---
+
+Index: git/src/nopoll_conn.c
+===================================================================
+--- git.orig/src/nopoll_conn.c
++++ git/src/nopoll_conn.c
+@@ -316,6 +316,11 @@ NOPOLL_SOCKET __nopoll_conn_sock_connect
+ 			return -1;
+ 		} /* end if */
+ 		break;
++	case NOPOLL_TRANSPORT_AUTO:
++		/* configure hints */
++		nopoll_log(ctx, NOPOLL_LEVEL_CRITICAL, "auto transport not supported...");
++		return -1;
++		break;
+ 	} /* end switch */
+ 	
+ 	for (rp = res; rp != NULL; rp = rp->ai_next) 
+@@ -921,8 +926,20 @@ noPollConn * __nopoll_conn_new_common (n
+ 
+ 	session = socket;
+ 	/* create socket connection in a non block manner */
+-	if (session == NOPOLL_INVALID_SOCKET)
++	if (session == NOPOLL_INVALID_SOCKET) {
++	    char try_ipv6 = 0x0;
++		if(transport == NOPOLL_TRANSPORT_AUTO) {
++			try_ipv6 = 0x1;
++			transport = NOPOLL_TRANSPORT_IPV4;
++			nopoll_log (ctx, NOPOLL_LEVEL_DEBUG, "Transport set to auto.. Attempting IPv4 first (context: %p)", ctx);
++		}
+ 		session = __nopoll_conn_sock_connect_opts_internal (ctx, transport, host_ip, host_port, options);
++		if(session == NOPOLL_INVALID_SOCKET && try_ipv6) {
++			nopoll_log (ctx, NOPOLL_LEVEL_DEBUG, "Transport set to auto.. IPv4 failed.. Try IPv6.. (context: %p)", ctx);
++			transport = NOPOLL_TRANSPORT_IPV6;
++			session = __nopoll_conn_sock_connect_opts_internal (ctx, transport, host_ip, host_port, options);
++		}
++	}
+ 	if (session == NOPOLL_INVALID_SOCKET) {
+ 		/* release connection options */
+ 		__nopoll_conn_opts_release_if_needed (options);
+@@ -1332,6 +1349,48 @@ noPollConn * nopoll_conn_new6 (noPollCtx
+ 
+ /** 
+  * @brief Creates a new Websocket connection to the provided
++ * destination, physically located at host_ip and host_port (IPv4/IPv6 version).
++ *
++ * See \ref nopoll_conn_new for more information about this
++ * function. Both shares same core.
++ *
++ * @param ctx See \ref nopoll_conn_new
++ *
++ * @param host_ip See \ref nopoll_conn_new
++ *
++ * @param host_port See \ref nopoll_conn_new
++ *
++ * @param host_name See \ref nopoll_conn_new
++ *
++ * @param get_url See \ref nopoll_conn_new
++ *
++ * @param origin See \ref nopoll_conn_new
++ *
++ * @param protocols See \ref nopoll_conn_new
++ *
++ * @return See \ref nopoll_conn_new
++ *
++ * See \ref nopoll_conn_new for more information about this
++ * function. Both shares same core.
++ *
++ */
++noPollConn * nopoll_conn_new_auto (noPollCtx  * ctx,
++			       const char * host_ip, 
++			       const char * host_port, 
++			       const char * host_name,
++			       const char * get_url, 
++			       const char * protocols,
++			       const char * origin)
++{
++	/* call common implementation */
++	return __nopoll_conn_new_common (ctx, NULL, NOPOLL_TRANSPORT_AUTO, nopoll_false, 
++					 NOPOLL_INVALID_SOCKET,
++					 host_ip, host_port, host_name, 
++					 get_url, protocols, origin);
++}
++
++/** 
++ * @brief Creates a new Websocket connection to the provided
+  * destination, physically located at host_ip and host_port and
+  * allowing to provide a noPollConnOpts object.
+  *
+@@ -1405,6 +1464,22 @@ noPollConn * nopoll_conn_new_opts6 (noPo
+                 get_url, protocols, origin);
+ }
+ 
++noPollConn * nopoll_conn_new_opts_auto (noPollCtx       * ctx,
++               noPollConnOpts  * opts,
++               const char      * host_ip,
++               const char      * host_port,
++               const char      * host_name,
++               const char      * get_url,
++               const char      * protocols,
++               const char      * origin)
++{
++   /* call common implementation */
++   return __nopoll_conn_new_common (ctx, opts, NOPOLL_TRANSPORT_AUTO, nopoll_false,
++                NOPOLL_INVALID_SOCKET,
++                host_ip, host_port, host_name,
++                get_url, protocols, origin);
++}
++
+ /**
+  * @brief Creates a new Websocket connection using a socket
+  * with a preestablished connection.
+@@ -1585,6 +1660,52 @@ noPollConn * nopoll_conn_tls_new6 (noPol
+ 					 NOPOLL_INVALID_SOCKET,
+ 					 host_ip, host_port, host_name, 
+ 					 get_url, protocols, origin);
++}
++
++/** 
++ * @brief Allows to create a client WebSocket connection over TLS (IPv4/IPv6 version).
++ *
++ * See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param ctx See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param options See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param host_ip See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param host_port See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param host_name See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param get_url See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param origin See \ref nopoll_conn_tls_new for more information.
++ *
++ * @param protocols See \ref nopoll_conn_tls_new for more information.
++ *
++ * @return See \ref nopoll_conn_tls_new for more information.
++ * 
++ */
++noPollConn * nopoll_conn_tls_new_auto (noPollCtx  * ctx,
++				   noPollConnOpts  * options,
++				   const char * host_ip, 
++				   const char * host_port, 
++				   const char * host_name,
++				   const char * get_url, 
++				   const char * protocols,
++				   const char * origin)
++{
++	/* init ssl ciphers and engines */
++	if (! __nopoll_tls_was_init) {
++		__nopoll_tls_was_init = nopoll_true;
++		SSL_library_init ();
++	} /* end if */
++
++	/* call common implementation */
++	return __nopoll_conn_new_common (ctx, options, NOPOLL_TRANSPORT_AUTO, nopoll_true, 
++					 NOPOLL_INVALID_SOCKET,
++					 host_ip, host_port, host_name, 
++					 get_url, protocols, origin);
+ }
+ 
+ /**
+Index: git/src/nopoll_conn.h
+===================================================================
+--- git.orig/src/nopoll_conn.h
++++ git/src/nopoll_conn.h
+@@ -58,6 +58,14 @@ noPollConn * nopoll_conn_new6 (noPollCtx
+ 			       const char * protocols,
+ 			       const char * origin);
+ 
++noPollConn * nopoll_conn_new_auto (noPollCtx  * ctx,
++			       const char * host_ip, 
++			       const char * host_port, 
++			       const char * host_name,
++			       const char * get_url, 
++			       const char * protocols,
++			       const char * origin);
++
+ 
+ noPollConn * nopoll_conn_new_opts (noPollCtx       * ctx,
+ 				   noPollConnOpts  * opts,
+@@ -77,6 +85,15 @@ noPollConn * nopoll_conn_new_opts6 (noPo
+                const char      * protocols,
+                const char      * origin);
+ 
++noPollConn * nopoll_conn_new_opts_auto (noPollCtx       * ctx,
++               noPollConnOpts  * opts,
++               const char      * host_ip,
++               const char      * host_port,
++               const char      * host_name,
++               const char      * get_url,
++               const char      * protocols,
++               const char      * origin);
++
+ noPollConn * nopoll_conn_new_with_socket (noPollCtx  * ctx,
+ 			      noPollConnOpts  * opts,
+ 			      int          socket,
+@@ -100,6 +117,15 @@ noPollConn * nopoll_conn_tls_new6 (noPol
+ 				   noPollConnOpts * options,
+ 				   const char * host_ip, 
+ 				   const char * host_port, 
++				   const char * host_name,
++				   const char * get_url, 
++				   const char * protocols,
++				   const char * origin);
++
++noPollConn * nopoll_conn_tls_new_auto (noPollCtx  * ctx,
++				   noPollConnOpts * options,
++				   const char * host_ip, 
++				   const char * host_port, 
+ 				   const char * host_name,
+ 				   const char * get_url, 
+ 				   const char * protocols,
+Index: git/src/nopoll_decl.h
+===================================================================
+--- git.orig/src/nopoll_decl.h
++++ git/src/nopoll_decl.h
+@@ -557,7 +557,12 @@ typedef enum {
+ 	/** 
+ 	 * Use IPv6 transport
+ 	 */
+-	NOPOLL_TRANSPORT_IPV6 = 2
++	NOPOLL_TRANSPORT_IPV6 = 2,
++	/**
++	 * Automatically determine IPv4/IPv6 transport
++	 * (favors IPv6)
++	 */
++	NOPOLL_TRANSPORT_AUTO = 3
+ } noPollTransport;
+ 
+ BEGIN_C_DECLS
+Index: git/src/nopoll_listener.c
+===================================================================
+--- git.orig/src/nopoll_listener.c
++++ git/src/nopoll_listener.c
+@@ -111,6 +111,10 @@ NOPOLL_SOCKET     __nopoll_listener_sock
+ 			return -1;
+ 		} /* end if */
+ 		break;
++	case NOPOLL_TRANSPORT_AUTO:
++		nopoll_log(ctx, NOPOLL_LEVEL_CRITICAL, "auto transport mode is not supported for listener");
++		return -1;
++		break;
+ 	} /* end switch */
+ 
+ 	/* create socket */

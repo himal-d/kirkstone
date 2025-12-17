@@ -1,0 +1,12 @@
+[Unit]
+Description=To start Stress-ng Testcases 
+
+After=local-fs.target nvram.service network-online.target  
+Requires=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/lib/rdk/stress-ng-tests.sh'
+
+[Install]
+WantedBy=multi-user.target

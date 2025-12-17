@@ -1,0 +1,14 @@
+diff --git a/snmplib/transports/snmpTLSBaseDomain.c b/snmplib/transports/snmpTLSBaseDomain.c
+--- a/snmplib/transports/snmpTLSBaseDomain.c
++++ b/snmplib/transports/snmpTLSBaseDomain.c
+@@ -57,10 +57,0 @@ netsnmp_feature_require(cert_util);
+-#ifndef HAVE_ERR_GET_ERROR_ALL
+-/* A backport of the OpenSSL 1.1.1e ERR_get_error_all() function. */
+-static unsigned long ERR_get_error_all(const char **file, int *line,
+-                                       const char **func,
+-                                       const char **data, int *flags)
+-{
+-    *func = NULL;
+-    return ERR_get_error_line_data(file, line, data, flags);
+-}
+-#endif

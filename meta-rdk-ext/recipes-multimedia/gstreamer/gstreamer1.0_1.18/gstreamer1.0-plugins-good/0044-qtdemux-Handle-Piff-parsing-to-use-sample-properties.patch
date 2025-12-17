@@ -1,0 +1,110 @@
+From 0ebb34b32dda02115caf472c132679420695e005 Mon Sep 17 00:00:00 2001
+From: aahmed878 <Alsameema_Ahmedansar@comcast.com>
+Date: Thu, 13 Apr 2023 14:56:40 +0000
+Subject: [PATCH] qtdemux: Handle Piff parsing to use sample properties KID
+ instead of default properties, if available
+
+DELIA-61231 : [AAMP][Charter] Playback failure with keyrotation on Packager 1246
+
+Reason for change: Handle piff parsing to use sample properties kid if available.
+Test Procedure: Refer Ticket
+Risks: Medium
+Priority: P1
+
+Signed-off-by: Alsameema.A <Alsameema_AhmedAnsar@Comcast.Com>
+---
+ gst/isomp4/qtdemux.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index dbd7babf4..b1864d54e 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -2990,8 +2990,9 @@ qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
+       }
+       buf = gst_buffer_new_wrapped (data, n_subsamples * 6);
+
++      /* Read kid from properties when cenc properties for groups of samples is present, else properties will however hold the default key*/
+       kid_buf_value =
+-          gst_structure_get_value (ss_info->default_properties, "kid");
++          gst_structure_get_value (properties, "kid");
+
+       gst_structure_set (properties,
+           "subsample_count", G_TYPE_UINT, n_subsamples,
+@@ -3894,33 +3895,52 @@ qtdemux_parse_sgpd (GstQTDemux * qtdemux, QtDemuxStream * stream,
+     guint8 is_encrypted = 0;
+     guint8 iv_size = 0;
+     guint8 constant_iv_size = 0;
+-    const guint8 *kid = NULL;
++    guint8 *kid = NULL;
+     guint8 crypt_byte_block = 0;
+     guint8 skip_byte_block = 0;
+     const guint8 *constant_iv = NULL;
+     GstBuffer *kid_buf;
++    guint pos = gst_byte_reader_get_pos(br);
+
+-    if (version == 1 && length == 0) {
+-      if (!gst_byte_reader_get_uint32_be (br, &length))
+-        goto error;
++    if (!gst_byte_reader_skip (br, 2))
++       return FALSE;
++
++    if (!gst_byte_reader_get_uint8 (br, &is_encrypted)) {
++        GST_ERROR_OBJECT (qtdemux, "failed to get is protected");
++        return FALSE;
+     }
+
+-    if (G_UNLIKELY (length < min_entry_size)) {
+-      GST_ERROR_OBJECT (qtdemux, "Invalid entry size: %u", length);
+-      goto error;
++    if (!gst_byte_reader_get_uint8 (br, &iv_size)) {
++        GST_ERROR_OBJECT (qtdemux, "failed to get iv size");
++        return FALSE;
+     }
+
+-    if (!gst_byte_reader_get_data (br, length, &entry_data))
+-      goto error;
++    if (!gst_byte_reader_dup_data (br, 16, &kid)) {
++        GST_ERROR_OBJECT (qtdemux, "failed to get kid");
++        return FALSE;
++    }
+
+-    /* Follows tenc format... */
+-    is_encrypted = QT_UINT8 (entry_data + 2);
+-    iv_size = QT_UINT8 (entry_data + 3);
+-    kid = (entry_data + 4);
++    kid_buf = gst_buffer_new_wrapped (kid, 16);
+
+     if (stream->protection_scheme_type == FOURCC_cbcs) {
+       guint8 possible_pattern_info;
+
++      /* reset the reader so that entrydata & length can be populated */
++      gst_byte_reader_set_pos(br,pos);
++
++      if (version == 1 && length == 0) {
++         if (!gst_byte_reader_get_uint32_be (br, &length))
++          goto error;
++      }
++
++      if (G_UNLIKELY (length < min_entry_size)) {
++         GST_ERROR_OBJECT (qtdemux, "Invalid entry size: %u", length);
++         goto error;
++      }
++
++      if (!gst_byte_reader_get_data (br, length, &entry_data))
++         goto error;
++
+       if (iv_size == 0) {
+         if (G_UNLIKELY (length < min_entry_size + 1)) {
+           GST_ERROR_OBJECT (qtdemux, "Invalid entry size: %u", length);
+@@ -3947,8 +3967,6 @@ qtdemux_parse_sgpd (GstQTDemux * qtdemux, QtDemuxStream * stream,
+       skip_byte_block = possible_pattern_info & 0x0f;
+     }
+
+-    kid_buf = _gst_buffer_new_wrapped ((guint8 *) kid, 16, NULL);
+-
+     props = gst_structure_new ("application/x-cenc",
+         "iv_size", G_TYPE_UINT, iv_size,
+         "encrypted", G_TYPE_BOOLEAN, is_encrypted == 1,
+-- 
+2.17.1

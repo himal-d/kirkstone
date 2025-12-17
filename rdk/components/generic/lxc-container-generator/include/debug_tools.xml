@@ -1,0 +1,47 @@
+<!-- XML CONFIGURATION FOR DEBUG TOOLS  -->
+
+<CONTAINER APPEND="DEBUG">
+    <LxcConfig>
+        <Dbus enable="true"></Dbus>
+
+        <Rootfs create="yes">
+            <MountPoints>
+<!-- /bin -->
+                <Entry type="file">
+                    <Source>/bin/sh.busybox</Source>
+                    <Destination>bin/sh</Destination>
+                    <Options>ro,bind,nosuid,nodev</Options>
+                </Entry>
+
+                <Entry type="file">
+                    <Source>/bin/cat.busybox</Source>
+                    <Destination>bin/cat</Destination>
+                    <Options>ro,bind,nosuid,nodev</Options>
+                </Entry>
+
+                <Entry type="file">
+                    <Source>/bin/ls.busybox-devel</Source>
+                    <Destination>bin/ls</Destination>
+                    <Options>ro,bind,nosuid,nodev</Options>
+                </Entry>
+
+<!-- /usr/bin -->
+                <Entry type="file">
+                    <Source>/usr/bin/strace</Source>
+                    <Destination>usr/bin/strace</Destination>
+                    <Options>ro,bind,nosuid,nodev</Options>
+                </Entry>
+
+                <Entry type="file">
+                    <Source>/usr/bin/dbus-send</Source>
+                    <Destination>usr/bin/dbus-send</Destination>
+                    <Options>ro,bind,nosuid,nodev</Options>
+                </Entry>
+            </MountPoints>
+
+            <LibsRoBindMounts>
+                <Entry>libshell-executor</Entry>
+            </LibsRoBindMounts>
+        </Rootfs>
+    </LxcConfig>
+</CONTAINER>

@@ -1,0 +1,875 @@
+##########################################
+Date: Apr 14, 2022 8:11 PM
+From: a75ae27fb329c8d9098bbacfe13827b9ecccaa27
+Subject: Integrate hostapd 2.10 and 6ghz patches
+Source: Broadcom & Comcast
+Upstream-Status: Pending
+Signed-off-by: Signed-off-by: Damiano Barone <damiano.barone@sky.uk>
+##########################################
+diff --git a/source/hostap-2.9/src/drivers/driver_nl80211_event.c b/source/hostap-2.9/src/drivers/driver_nl80211_event.c
+index 7c16330..0231ac5 100755
+--- a/source/hostap-2.9/src/drivers/driver_nl80211_event.c
++++ b/source/hostap-2.9/src/drivers/driver_nl80211_event.c
+@@ -149,6 +149,10 @@ static void mlme_event_auth(struct wpa_driver_nl80211_data *drv,
+ {
+ 	const struct ieee80211_mgmt *mgmt;
+ 	union wpa_event_data event;
++#ifdef CONFIG_DRIVER_BRCM
++        u16 auth_type;
++        u16 fc, stype;
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	if (!(drv->capa.flags & WPA_DRIVER_FLAGS_SME) &&
+ 	    drv->force_connect_cmd) {
+@@ -172,17 +176,32 @@ static void mlme_event_auth(struct wpa_driver_nl80211_data *drv,
+ 	os_memcpy(drv->auth_bssid, mgmt->sa, ETH_ALEN);
+ 	os_memset(drv->auth_attempt_bssid, 0, ETH_ALEN);
+ 	os_memset(&event, 0, sizeof(event));
+-	os_memcpy(event.auth.peer, mgmt->sa, ETH_ALEN);
+-	event.auth.auth_type = le_to_host16(mgmt->u.auth.auth_alg);
+-	event.auth.auth_transaction =
+-		le_to_host16(mgmt->u.auth.auth_transaction);
+-	event.auth.status_code = le_to_host16(mgmt->u.auth.status_code);
+-	if (len > 24 + sizeof(mgmt->u.auth)) {
+-		event.auth.ies = mgmt->u.auth.variable;
+-		event.auth.ies_len = len - 24 - sizeof(mgmt->u.auth);
++#ifdef CONFIG_DRIVER_BRCM
++        auth_type = le_to_host16(mgmt->u.auth.auth_alg);
++        fc = le_to_host16(mgmt->frame_control);
++        stype = WLAN_FC_GET_STYPE(fc);
++
++        if ((stype == WLAN_FC_STYPE_AUTH) &&
++                        (auth_type == WLAN_AUTH_SAE)) {
++                wpa_printf(MSG_DEBUG, "nl80211: SAE Authenticate event");
++                event.rx_mgmt.frame = frame;
++                event.rx_mgmt.frame_len = len;
++                wpa_supplicant_event(drv->ctx, EVENT_RX_MGMT, &event);
++        } else
++#endif /* CONFIG_DRIVER_BRCM */
++        {
++	        os_memcpy(event.auth.peer, mgmt->sa, ETH_ALEN);
++        	event.auth.auth_type = le_to_host16(mgmt->u.auth.auth_alg);
++        	event.auth.auth_transaction =
++	        	le_to_host16(mgmt->u.auth.auth_transaction);
++        	event.auth.status_code = le_to_host16(mgmt->u.auth.status_code);
++	        if (len > 24 + sizeof(mgmt->u.auth)) {
++		        event.auth.ies = mgmt->u.auth.variable;
++	        	event.auth.ies_len = len - 24 - sizeof(mgmt->u.auth);
++        	}
++
++        	wpa_supplicant_event(drv->ctx, EVENT_AUTH, &event);
+ 	}
+-
+-	wpa_supplicant_event(drv->ctx, EVENT_AUTH, &event);
+ }
+ 
+ 
+@@ -1344,10 +1363,42 @@ static void nl80211_new_station_event(struct wpa_driver_nl80211_data *drv,
+ 	if (is_ap_interface(drv->nlmode) && drv->device_ap_sme) {
+ 		u8 *ies = NULL;
+ 		size_t ies_len = 0;
++#ifdef CONFIG_DRIVER_BRCM
++                struct nl80211_sta_flag_update *sta_flags;
++                static struct nla_policy stats_policy[NL80211_STA_INFO_MAX + 1] = {
++                        [NL80211_STA_INFO_STA_FLAGS] =
++                                { .minlen = sizeof(struct nl80211_sta_flag_update) },
++                };
++                struct nlattr *sinfo[NL80211_STA_INFO_MAX + 1];
++#endif // endif
+ 		if (tb[NL80211_ATTR_IE]) {
+ 			ies = nla_data(tb[NL80211_ATTR_IE]);
+ 			ies_len = nla_len(tb[NL80211_ATTR_IE]);
+ 		}
++#ifdef CONFIG_DRIVER_BRCM
++                if (tb[NL80211_ATTR_STA_INFO]) {
++                        if (nla_parse_nested(sinfo, NL80211_STA_INFO_MAX,
++                                tb[NL80211_ATTR_STA_INFO], stats_policy)) {
++                                wpa_printf(MSG_DEBUG, "nl80211: Failed to parse Station info attribute ");
++                                return ;
++                        }
++                        if (sinfo[NL80211_STA_INFO_STA_FLAGS]) {
++                                sta_flags = (struct nl80211_sta_flag_update *)
++                                            nla_data(sinfo[NL80211_STA_INFO_STA_FLAGS]);
++
++                                wpa_printf(MSG_DEBUG, "nl80211: sinfo sta_flags mask %d set %d ",
++                                                        sta_flags->mask, sta_flags->set);
++                                if ((sta_flags->mask & BIT(NL80211_STA_FLAG_ASSOCIATED)) &&
++                                    (sta_flags->mask & BIT(NL80211_STA_FLAG_AUTHENTICATED))) {
++                                        if ((sta_flags->set & BIT(NL80211_STA_FLAG_ASSOCIATED)) &&
++                                           (sta_flags->set & BIT(NL80211_STA_FLAG_AUTHENTICATED))) {
++                                                drv_event_assoc(bss->ctx, addr, ies, ies_len, 1);
++                                                return;
++                                        }
++                                }
++                        }
++                }
++#endif // endif
+ 		wpa_hexdump(MSG_DEBUG, "nl80211: Assoc Req IEs", ies, ies_len);
+ 		drv_event_assoc(bss->ctx, addr, ies, ies_len, 0);
+ 		return;
+diff --git a/source/hostap-2.9/src/drivers/netlink.c b/source/hostap-2.9/src/drivers/netlink.c
+index 0e960f4..62985ae 100755
+--- a/source/hostap-2.9/src/drivers/netlink.c
++++ b/source/hostap-2.9/src/drivers/netlink.c
+@@ -107,7 +107,11 @@ struct netlink_data * netlink_init(struct netlink_config *cfg)
+ 
+ 	os_memset(&local, 0, sizeof(local));
+ 	local.nl_family = AF_NETLINK;
++#ifdef CONFIG_DRIVER_BRCM
++        local.nl_groups = RTMGRP_LINK | RTMGRP_IPV4_IFADDR;
++#else
+ 	local.nl_groups = RTMGRP_LINK;
++#endif /* CONFIG_DRIVER_BRCM */
+ 	if (bind(netlink->sock, (struct sockaddr *) &local, sizeof(local)) < 0)
+ 	{
+ 		wpa_printf(MSG_ERROR, "netlink: Failed to bind netlink "
+diff --git a/source/hostap-2.9/src/drivers/priv_netlink.h b/source/hostap-2.9/src/drivers/priv_netlink.h
+index d3f091c..d0bc4a2 100755
+--- a/source/hostap-2.9/src/drivers/priv_netlink.h
++++ b/source/hostap-2.9/src/drivers/priv_netlink.h
+@@ -106,4 +106,22 @@ struct rtattr
+ 	unsigned short rta_type;
+ };
+ 
++#ifdef CONFIG_DRIVER_BRCM
++
++#ifndef IFA_LOCAL
++#define IFA_LOCAL 2
++#endif // endif
++#define RTMGRP_IPV4_IFADDR      0x10
++#define RTM_NEWADDR (RTM_BASE + 4)
++
++struct ifaddrmsg
++{
++        u8 ifa_family;
++        u8 ifa_prefixlen;       /* The prefix length    */
++        u8 ifa_flags;           /* Flag                 */
++        u8 ifa_scope;           /* Address scope        */
++        u32 ifa_index;          /* Link index           */
++};
++#endif  /* CONFIG_DRIVER_BRCM */
++
+ #endif /* PRIV_NETLINK_H */
+diff --git a/source/hostap-2.9/hostapd/defconfig b/source/hostap-2.9/hostapd/defconfig
+index 01871c9..67c21f0 100644
+--- a/source/hostap-2.9/hostapd/defconfig
++++ b/source/hostap-2.9/hostapd/defconfig
+@@ -30,6 +30,15 @@ CONFIG_DRIVER_NL80211=y
+ # Use libnl v2.0 (or 3.0) libraries.
+ #CONFIG_LIBNL20=y
+ 
++ifneq ($(STB),1)
++CFLAGS += -I$(LIBNL_DIR)/install/include/libnl3
++LIBS += -L$(LIBNL_DIR)/install/lib
++else
++LIBS += -lm
++CFLAGS += -I$(LIBNL_DIR)/include/libnl3
++LIBS += -L$(LIBNL_DIR)/lib/static
++endif # STB
++
+ # Use libnl 3.2 libraries (if this is selected, CONFIG_LIBNL20 is ignored)
+ CONFIG_LIBNL32=y
+ 
+diff --git a/source/hostap-2.9/hostapd/Makefile.am b/source/hostap-2.9/hostapd/Makefile.am
+index 2ac0c3f..4ceb88d 100644
+--- a/source/hostap-2.9/hostapd/Makefile.am
++++ b/source/hostap-2.9/hostapd/Makefile.am
+@@ -21,6 +21,28 @@ AM_CFLAGS += -D_ANSC_USER
+ AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
+ AM_CPPFLAGS = -Wall -Werror
+ 
++#include ../src/drivers/drivers.mak
++
++##### CLEAR VARS
++
++DRV_CFLAGS =
++DRV_WPA_CFLAGS =
++DRV_AP_CFLAGS =
++DRV_OBJS =
++DRV_WPA_OBJS =
++DRV_AP_OBJS =
++DRV_LIBS =
++DRV_WPA_LIBS =
++DRV_AP_LIBS =
++
++##### COMMON DRIVERS
++
++
++
++
++
++#include ../src/drivers/drivers.mak
++
+ AM_LDFLAGS = -lpthread
+ AM_LDFLAGS += -lz
+ hardware_platform = i686-linux-gnu
+diff --git a/source/hostap-2.9/src/ap/ieee802_11.c b/source/hostap-2.9/src/ap/ieee802_11.c
+index c85a28d..f089b63 100755
+--- a/source/hostap-2.9/src/ap/ieee802_11.c
++++ b/source/hostap-2.9/src/ap/ieee802_11.c
+@@ -2341,6 +2341,11 @@ static void handle_auth(struct hostapd_data *hapd,
+ 
+ 		sta->added_unassoc = 1;
+ 	}
++#ifdef CONFIG_DRIVER_BRCM
++        else {
++                sta->added_unassoc = 1;
++        }
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	switch (auth_alg) {
+ 	case WLAN_AUTH_OPEN:
+@@ -3994,6 +3999,29 @@ static void handle_assoc(struct hostapd_data *hapd,
+ 			wpa_auth_sm_event(sta->wpa_sm, WPA_AUTH);
+ 			sta->auth_alg = WLAN_AUTH_OPEN;
+ 		} else {
++#ifdef CONFIG_DRIVER_BRCM
++                        sta = ap_sta_add(hapd, mgmt->sa);
++                        if (!sta) {
++                                hostapd_logger(hapd, mgmt->sa,
++                                               HOSTAPD_MODULE_IEEE80211,
++                                               HOSTAPD_LEVEL_INFO,
++                                               "Failed to add STA");
++                                resp = WLAN_STATUS_AP_UNABLE_TO_HANDLE_NEW_STA;
++                                goto fail;
++                        }
++                        hostapd_logger(hapd, sta->addr,
++                                       HOSTAPD_MODULE_IEEE80211,
++                                       HOSTAPD_LEVEL_DEBUG,
++                                       "Skip authentication for DMG/IEEE 802.11ad");
++                        sta->flags |= WLAN_STA_AUTH;
++                        wpa_auth_sm_event(sta->wpa_sm, WPA_AUTH);
++                        sta->auth_alg = WLAN_AUTH_OPEN;
++                        /* It comes here only when STA is already authenticated by the driver
++                         * and association request is getting handled by hostapd.
++                         * So set added_unassoc flag here.
++                         */
++                        sta->added_unassoc = 1;
++#else
+ 			hostapd_logger(hapd, mgmt->sa,
+ 				       HOSTAPD_MODULE_IEEE80211,
+ 				       HOSTAPD_LEVEL_INFO,
+@@ -4003,9 +4031,15 @@ static void handle_assoc(struct hostapd_data *hapd,
+ 			send_deauth(hapd, mgmt->sa,
+ 				    WLAN_REASON_CLASS2_FRAME_FROM_NONAUTH_STA);
+ 			return;
++#endif /* CONFIG_DRIVER_BRCM */
+ 		}
+ 	}
+ 
++	os_free(sta->assoc_req);
++	sta->assoc_req = os_malloc(len);
++	os_memcpy(sta->assoc_req, (u8 *)mgmt, len);
++	sta->assoc_req_len = len;
++
+ 	if ((fc & WLAN_FC_RETRY) &&
+ 	    sta->last_seq_ctrl != WLAN_INVALID_MGMT_SEQ &&
+ 	    sta->last_seq_ctrl == seq_ctrl &&
+@@ -4426,6 +4460,7 @@ static int handle_action(struct hostapd_data *hapd,
+ 		return 0;
+ 	}
+ 
++#ifndef CONFIG_DRIVER_BRCM
+ #ifdef CONFIG_IEEE80211W
+ 	if (sta && (sta->flags & WLAN_STA_MFP) &&
+ 	    !(mgmt->frame_control & host_to_le16(WLAN_FC_ISWEP)) &&
+@@ -4437,6 +4472,7 @@ static int handle_action(struct hostapd_data *hapd,
+ 		return 0;
+ 	}
+ #endif /* CONFIG_IEEE80211W */
++#endif /* !CONFIG_DRIVER_BRCM */
+ 
+ 	if (sta) {
+ 		u16 fc = le_to_host16(mgmt->frame_control);
+diff --git a/source/hostap-2.9/src/common/wpa_common.c b/source/hostap-2.9/src/common/wpa_common.c
+index 64e5c5f..f86b4d2 100755
+--- a/source/hostap-2.9/src/common/wpa_common.c
++++ b/source/hostap-2.9/src/common/wpa_common.c
+@@ -1105,6 +1105,11 @@ static int rsn_selector_to_bitfield(const u8 *s)
+ 		return WPA_CIPHER_BIP_CMAC_256;
+ 	if (RSN_SELECTOR_GET(s) == RSN_CIPHER_SUITE_NO_GROUP_ADDRESSED)
+ 		return WPA_CIPHER_GTK_NOT_USED;
++#ifdef CONFIG_DRIVER_BRCM
++        if (RSN_SELECTOR_GET(s) == BRCM_CIPHER_SUITE_NO_GROUP_ADDRESSED)
++                return WPA_CIPHER_CCMP;
++#endif /* CONFIG_DRIVER_BRCM */
++
+ 	return 0;
+ }
+ 
+diff --git a/source/hostap-2.9/src/common/wpa_common.h b/source/hostap-2.9/src/common/wpa_common.h
+index e83d688..a83d6cd 100755
+--- a/source/hostap-2.9/src/common/wpa_common.h
++++ b/source/hostap-2.9/src/common/wpa_common.h
+@@ -94,6 +94,9 @@ WPA_CIPHER_BIP_CMAC_256)
+ #define RSN_CIPHER_SUITE_CMIC RSN_SELECTOR(0x00, 0x40, 0x96, 2)
+ /* KRK is defined for nl80211 use only */
+ #define RSN_CIPHER_SUITE_KRK RSN_SELECTOR(0x00, 0x40, 0x96, 255)
++#ifdef CONFIG_DRIVER_BRCM
++#define BRCM_CIPHER_SUITE_NO_GROUP_ADDRESSED RSN_SELECTOR(0x00, 0x10, 0x18, 0)
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ /* EAPOL-Key Key Data Encapsulation
+  * GroupKey and PeerKey require encryption, otherwise, encryption is optional.
+diff --git a/source/hostap-2.9/src/crypto/random.c b/source/hostap-2.9/src/crypto/random.c
+index 1cabf3f..d17bdda 100755
+--- a/source/hostap-2.9/src/crypto/random.c
++++ b/source/hostap-2.9/src/crypto/random.c
+@@ -255,6 +255,14 @@ int random_pool_ready(void)
+ 	res = -1;
+ #endif /* CONFIG_GETRANDOM */
+ 	if (res < 0) {
++#ifdef CONFIG_DRIVER_BRCM
++                fd = open("/dev/urandom", O_RDONLY | O_NONBLOCK);
++                if (fd < 0) {
++                        wpa_printf(MSG_ERROR, "random: Cannot open /dev/urandom: %s",
++                                        strerror(errno));
++                        return -1;
++                }
++#else
+ 		fd = open("/dev/random", O_RDONLY | O_NONBLOCK);
+ 		if (fd < 0) {
+ 			wpa_printf(MSG_ERROR,
+@@ -262,6 +270,7 @@ int random_pool_ready(void)
+ 				   strerror(errno));
+ 			return -1;
+ 		}
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 		res = read(fd, dummy_key + dummy_key_avail,
+ 			   sizeof(dummy_key) - dummy_key_avail);
+@@ -338,6 +347,17 @@ static void random_read_fd(int sock, void *eloop_ctx, void *sock_ctx)
+ 
+ 	res = read(sock, dummy_key + dummy_key_avail,
+ 		   sizeof(dummy_key) - dummy_key_avail);
++#ifdef CONFIG_DRIVER_BRCM
++        if (res < 0) {
++                wpa_printf(MSG_ERROR, "random: Cannot read from /dev/urandom: "
++                           "%s", strerror(errno));
++                return;
++        }
++
++        wpa_printf(MSG_DEBUG, "random: Got %u/%u bytes from /dev/urandom",
++                   (unsigned) res,
++                   (unsigned) (sizeof(dummy_key) - dummy_key_avail));
++#else
+ 	if (res < 0) {
+ 		wpa_printf(MSG_ERROR, "random: Cannot read from /dev/random: "
+ 			   "%s", strerror(errno));
+@@ -347,6 +367,7 @@ static void random_read_fd(int sock, void *eloop_ctx, void *sock_ctx)
+ 	wpa_printf(MSG_DEBUG, "random: Got %u/%u bytes from /dev/random",
+ 		   (unsigned) res,
+ 		   (unsigned) (sizeof(dummy_key) - dummy_key_avail));
++#endif /* CONFIG_DRIVER_BRCM */
+ 	dummy_key_avail += res;
+ 
+ 	if (dummy_key_avail == sizeof(dummy_key)) {
+@@ -451,6 +472,16 @@ void random_init(const char *entropy_file)
+ 	}
+ #endif /* CONFIG_GETRANDOM */
+ 
++#ifdef CONFIG_DRIVER_BRCM
++        random_fd = open("/dev/urandom", O_RDONLY | O_NONBLOCK);
++        if (random_fd < 0) {
++                wpa_printf(MSG_ERROR, "random: Cannot open /dev/urandom: %s",
++                           strerror(errno));
++                return;
++        }
++        wpa_printf(MSG_DEBUG, "random: Trying to read entropy from "
++                   "/dev/urandom");
++#else
+ 	random_fd = open("/dev/random", O_RDONLY | O_NONBLOCK);
+ 	if (random_fd < 0) {
+ 		wpa_printf(MSG_ERROR, "random: Cannot open /dev/random: %s",
+@@ -459,6 +490,7 @@ void random_init(const char *entropy_file)
+ 	}
+ 	wpa_printf(MSG_DEBUG, "random: Trying to read entropy from "
+ 		   "/dev/random");
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	eloop_register_read_sock(random_fd, random_read_fd, NULL, NULL);
+ #endif /* __linux__ */
+diff --git a/source/hostap-2.9/src/drivers/driver_nl80211.c b/source/hostap-2.9/src/drivers/driver_nl80211.c
+index 0a356ee..dd19b2a 100755
+--- a/source/hostap-2.9/src/drivers/driver_nl80211.c
++++ b/source/hostap-2.9/src/drivers/driver_nl80211.c
+@@ -2461,6 +2461,21 @@ out_err:
+ 
+ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ {
++#ifdef CONFIG_DRIVER_BRCM
++        static const int stypes[] = {
++                WLAN_FC_STYPE_AUTH,
++                WLAN_FC_STYPE_ASSOC_REQ,
++                WLAN_FC_STYPE_REASSOC_REQ,
++                /* Beacon doesn't work as mac80211 doesn't currently allow
++                 * it, but it wouldn't really be the right thing anyway as
++                 * it isn't per interface ... maybe just dump the scan
++                 * results periodically for OLBC?
++                 */
++                /* WLAN_FC_STYPE_BEACON, */
++        };
++        unsigned int i;
++#endif /* CONFIG_DRIVER_BRCM */
++
+ 	if (nl80211_alloc_mgmt_handle(bss))
+ 		return -1;
+ 	wpa_printf(MSG_DEBUG, "nl80211: Subscribe to mgmt frames with AP "
+@@ -2470,6 +2485,16 @@ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ 		goto out_err;
+ 
+ 	if (bss->drv->device_ap_sme) {
++#ifdef CONFIG_DRIVER_BRCM
++        for (i = 0; i < ARRAY_SIZE(stypes); i++) {
++                if (nl80211_register_frame(bss, bss->nl_mgmt,
++                                           (WLAN_FC_TYPE_MGMT << 2) |
++                                           (stypes[i] << 4),
++                                           NULL, 0) < 0) {
++                        goto out_err;
++                }
++        }
++#else
+ 		u16 type = (WLAN_FC_TYPE_MGMT << 2) | (WLAN_FC_STYPE_AUTH << 4);
+ 
+ 		/* Register for all Authentication frames */
+@@ -2477,6 +2502,7 @@ static int nl80211_mgmt_subscribe_ap_dev_sme(struct i802_bss *bss)
+ 		    < 0)
+ 			wpa_printf(MSG_DEBUG,
+ 				   "nl80211: Failed to subscribe to handle Authentication frames - SAE offload may not work");
++#endif /* CONFIG_DRIVER_BRCM */
+ 	}
+ 
+ 	nl80211_mgmt_handle_register_eloop(bss);
+@@ -4871,6 +4897,9 @@ static int nl80211_create_iface_once(struct wpa_driver_nl80211_data *drv,
+ 	msg = nl80211_cmd_msg(drv->first_bss, 0, NL80211_CMD_NEW_INTERFACE);
+ 	if (!msg ||
+ 	    nla_put_string(msg, NL80211_ATTR_IFNAME, ifname) ||
++#ifdef CONFIG_DRIVER_BRCM
++            nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN, addr) ||
++#endif /* CONFIG_DRIVER_BRCM */
+ 	    nla_put_u32(msg, NL80211_ATTR_IFTYPE, iftype))
+ 		goto fail;
+ 
+@@ -4888,12 +4917,15 @@ static int nl80211_create_iface_once(struct wpa_driver_nl80211_data *drv,
+ 			goto fail;
+ 	}
+ 
++/* CMWIFI_RDKB_COMCAST */
++#ifndef CONFIG_DRIVER_BRCM
+ 	/*
+ 	 * Tell cfg80211 that the interface belongs to the socket that created
+ 	 * it, and the interface should be deleted when the socket is closed.
+ 	 */
+ 	if (nla_put_flag(msg, NL80211_ATTR_IFACE_SOCKET_OWNER))
+ 		goto fail;
++#endif /* CONFIG_DRIVER_BRCM */
+ 
+ 	ret = send_and_recv_msgs(drv, msg, handler, arg);
+ 	msg = NULL;
+@@ -11039,7 +11071,11 @@ const struct wpa_driver_ops wpa_driver_nl80211_ops = {
+ 	.get_capa = wpa_driver_nl80211_get_capa,
+ 	.set_operstate = wpa_driver_nl80211_set_operstate,
+ 	.set_supp_port = wpa_driver_nl80211_set_supp_port,
++#ifdef CONFIG_DRIVER_BRCM
++        .set_country = NULL,
++#else
+ 	.set_country = wpa_driver_nl80211_set_country,
++#endif /* CONFIG_DRIVER_BRCM  */
+ 	.get_country = wpa_driver_nl80211_get_country,
+ 	.set_ap = wpa_driver_nl80211_set_ap,
+ 	.set_acl = wpa_driver_nl80211_set_acl,
+diff --git a/source/hostap-2.9/hostapd/main.c b/source/hostap-2.9/hostapd/main.c
+index 08896ff..1248d38 100644
+--- a/source/hostap-2.9/hostapd/main.c
++++ b/source/hostap-2.9/hostapd/main.c
+@@ -31,14 +31,14 @@
+ #include "eap_register.h"
+ #include "ctrl_iface.h"
+ 
+-
++#if 0
+ struct hapd_global {
+ 	void **drv_priv;
+ 	size_t drv_count;
+ };
+ 
+ static struct hapd_global global;
+-
++#endif
+ 
+ #ifndef CONFIG_NO_HOSTAPD_LOGGER
+ static void hostapd_logger_cb(void *ctx, const u8 *addr, unsigned int module,
+@@ -152,7 +152,7 @@ static void hostapd_logger_cb(void *ctx, const u8 *addr, unsigned int module,
+ /**
+  * hostapd_driver_init - Preparate driver interface
+  */
+-static int hostapd_driver_init(struct hostapd_iface *iface)
++int hostapd_driver_init(struct hostapd_iface *iface)
+ {
+ 	struct wpa_init_params params;
+ 	size_t i;
+@@ -256,7 +256,7 @@ static int hostapd_driver_init(struct hostapd_iface *iface)
+  * or more BSSes sharing the same radio) and allocate memory for the BSS
+  * interfaces. No actual driver operations are started.
+  */
+-static struct hostapd_iface *
++struct hostapd_iface *
+ hostapd_interface_init(struct hapd_interfaces *interfaces, const char *if_name,
+ 		       const char *config_fname, int debug)
+ {
+@@ -334,7 +334,7 @@ static void handle_dump_state(int sig, void *signal_ctx)
+ #endif /* CONFIG_NATIVE_WINDOWS */
+ 
+ 
+-static int hostapd_global_init(struct hapd_interfaces *interfaces,
++int hostapd_global_init(struct hapd_interfaces *interfaces,
+ 			       const char *entropy_file)
+ {
+ 	int i;
+@@ -380,7 +380,7 @@ static int hostapd_global_init(struct hapd_interfaces *interfaces,
+ }
+ 
+ 
+-static void hostapd_global_deinit(const char *pid_file, int eloop_initialized)
++void hostapd_global_deinit(const char *pid_file, int eloop_initialized)
+ {
+ 	int i;
+ 
+@@ -411,7 +411,7 @@ static void hostapd_global_deinit(const char *pid_file, int eloop_initialized)
+ }
+ 
+ 
+-static int hostapd_global_run(struct hapd_interfaces *ifaces, int daemonize,
++int hostapd_global_run(struct hapd_interfaces *ifaces, int daemonize,
+ 			      const char *pid_file)
+ {
+ #ifdef EAP_SERVER_TNC
+@@ -618,7 +618,7 @@ static int gen_uuid(const char *txt_addr)
+ #define HOSTAPD_CLEANUP_INTERVAL 10
+ #endif /* HOSTAPD_CLEANUP_INTERVAL */
+ 
+-static int hostapd_periodic_call(struct hostapd_iface *iface, void *ctx)
++int hostapd_periodic_call(struct hostapd_iface *iface, void *ctx)
+ {
+ 	hostapd_periodic_iface(iface);
+ 	return 0;
+@@ -626,7 +626,7 @@ static int hostapd_periodic_call(struct hostapd_iface *iface, void *ctx)
+ 
+ 
+ /* Periodic cleanup tasks */
+-static void hostapd_periodic(void *eloop_ctx, void *timeout_ctx)
++void hostapd_periodic(void *eloop_ctx, void *timeout_ctx)
+ {
+ 	struct hapd_interfaces *interfaces = eloop_ctx;
+ 
+diff --git a/source/hostap-2.9/src/ap/hostapd.h b/source/hostap-2.9/src/ap/hostapd.h
+index 518c7f1..88003c2 100755
+--- a/source/hostap-2.9/src/ap/hostapd.h
++++ b/source/hostap-2.9/src/ap/hostapd.h
+@@ -655,4 +655,11 @@ void fst_hostapd_fill_iface_obj(struct hostapd_data *hapd,
+ 				struct fst_wpa_obj *iface_obj);
+ #endif /* CONFIG_FST */
+ 
++struct hapd_global {
++        void **drv_priv;
++        size_t drv_count;
++};
++
++struct hapd_global global;
++
+ #endif /* HOSTAPD_H */
+diff --git a/source/hostap-2.9/src/Makefile.am b/source/hostap-2.9/src/Makefile.am
+index 37b1aa8..71ef1ad 100644
+--- a/source/hostap-2.9/src/Makefile.am
++++ b/source/hostap-2.9/src/Makefile.am
+@@ -37,6 +37,8 @@ hardware_platform = i686-linux-gnu
+ lib_LTLIBRARIES = libhostap.la
+ 
+ libhostap_la_CPPFLAGS = -I$(top_srcdir)/source/hostap-2.9/src -I$(top_srcdir)/source/hostap-2.9/src/utils/ -I$(top_srcdir)/source/hostap-2.9/src/ap
++libhostap_la_CPPFLAGS += -I$(top_srcdir)/libnl/include
++libhostap_la_CPPFLAGS += -I$(top_srcdir)/openssl/usr/include/
+ 
+ libhostap_la_SOURCES = ap/wpa_auth_glue.c
+ libhostap_la_SOURCES += ap/wpa_auth.c
+@@ -88,8 +90,8 @@ libhostap_la_SOURCES += eap_common/eap_sake_common.c
+ libhostap_la_SOURCES += eap_common/eap_gpsk_common.c
+ libhostap_la_SOURCES += eap_common/chap.c
+ libhostap_la_SOURCES += eap_common/eap_pwd_common.c
+-libhostap_la_SOURCES += eap_common/eap_sim_common.c
+-libhostap_la_SOURCES += eap_common/eap_fast_common.c
++#libhostap_la_SOURCES += eap_common/eap_sim_common.c
++#libhostap_la_SOURCES += eap_common/eap_fast_common.c
+ libhostap_la_SOURCES += eap_common/eap_ikev2_common.c
+ libhostap_la_SOURCES += eap_common/ikev2_common.c
+ libhostap_la_SOURCES += eap_common/eap_wsc_common.c
+@@ -114,9 +116,9 @@ libhostap_la_SOURCES += eap_common/eap_wsc_common.c
+ 
+ libhostap_la_SOURCES += eap_server/eap_server_tls.c
+ libhostap_la_SOURCES += eap_server/eap_server_peap.c
+-libhostap_la_SOURCES += eap_server/eap_server_ttls.c
++#libhostap_la_SOURCES += eap_server/eap_server_ttls.c
+ libhostap_la_SOURCES += eap_server/eap_server_md5.c
+-libhostap_la_SOURCES += eap_server/eap_server_mschapv2.c
++#libhostap_la_SOURCES += eap_server/eap_server_mschapv2.c
+ libhostap_la_SOURCES += eap_server/eap_server_gtc.c
+ libhostap_la_SOURCES += eap_server/eap_server_psk.c
+ libhostap_la_SOURCES += eap_server/eap_server_pax.c
+@@ -132,10 +134,10 @@ libhostap_la_SOURCES += eap_server/tncs.c
+ libhostap_la_SOURCES += eap_server/eap_server_ikev2.c
+ libhostap_la_SOURCES += eap_server/eap_server_wsc.c
+ #libhostap_la_SOURCES += eap_server/eap_server_teap.c
+-libhostap_la_SOURCES += eap_server/eap_server_fast.c
+-libhostap_la_SOURCES += eap_server/eap_server_aka.c
+-libhostap_la_SOURCES += eap_server/eap_server_sim.c
+-libhostap_la_SOURCES += eap_server/eap_sim_db.c
++#libhostap_la_SOURCES += eap_server/eap_server_fast.c
++#libhostap_la_SOURCES += eap_server/eap_server_aka.c
++#libhostap_la_SOURCES += eap_server/eap_server_sim.c
++#libhostap_la_SOURCES += eap_server/eap_sim_db.c
+ libhostap_la_SOURCES += eap_server/ikev2.c
+ 
+ libhostap_la_SOURCES += common/wpa_common.c
+@@ -144,8 +146,8 @@ libhostap_la_SOURCES += common/wpa_helpers.c
+ libhostap_la_SOURCES += common/ieee802_11_common.c
+ libhostap_la_SOURCES += common/hw_features_common.c
+ libhostap_la_SOURCES += common/ctrl_iface_common.c
+-#libhostap_la_SOURCES += common/sae.c
+-#libhostap_la_SOURCES += common/dragonfly.c
++libhostap_la_SOURCES += common/sae.c
++libhostap_la_SOURCES += common/dragonfly.c
+ 
+ libhostap_la_SOURCES += utils/wpa_debug.c
+ libhostap_la_SOURCES += utils/eloop.c
+@@ -157,51 +159,55 @@ libhostap_la_SOURCES += utils/uuid.c
+ libhostap_la_SOURCES += utils/base64.c
+ 
+ libhostap_la_SOURCES += crypto/random.c
+-libhostap_la_SOURCES += crypto/md5.c
+-libhostap_la_SOURCES += crypto/md5-internal.c
+-libhostap_la_SOURCES += crypto/sha1.c
++#libhostap_la_SOURCES += crypto/md5.c
++#libhostap_la_SOURCES += crypto/md5-internal.c
++#libhostap_la_SOURCES += crypto/sha1.c
+ libhostap_la_SOURCES += crypto/sha256-kdf.c
+-libhostap_la_SOURCES += crypto/sha1-internal.c
+-libhostap_la_SOURCES += crypto/sha1-pbkdf2.c
++#libhostap_la_SOURCES += crypto/sha1-internal.c
++#libhostap_la_SOURCES += crypto/sha1-pbkdf2.c
+ libhostap_la_SOURCES += crypto/sha1-prf.c
+-libhostap_la_SOURCES += crypto/aes-cbc.c
+-libhostap_la_SOURCES += crypto/aes-ccm.c
++#libhostap_la_SOURCES += crypto/aes-cbc.c
++#libhostap_la_SOURCES += crypto/aes-ccm.c
+ libhostap_la_SOURCES += crypto/aes-ctr.c
+ libhostap_la_SOURCES += crypto/aes-eax.c
+ libhostap_la_SOURCES += crypto/aes-encblock.c
+-libhostap_la_SOURCES += crypto/aes-gcm.c
+-libhostap_la_SOURCES += crypto/aes-internal.c
+-libhostap_la_SOURCES += crypto/aes-internal-dec.c
+-libhostap_la_SOURCES += crypto/aes-internal-enc.c
++#libhostap_la_SOURCES += crypto/aes-gcm.c
++#libhostap_la_SOURCES += crypto/aes-internal.c
++#libhostap_la_SOURCES += crypto/aes-internal-dec.c
++#libhostap_la_SOURCES += crypto/aes-internal-enc.c
+ libhostap_la_SOURCES += crypto/aes-omac1.c
+ libhostap_la_SOURCES += crypto/aes-siv.c
+-libhostap_la_SOURCES += crypto/aes-wrap.c
+-libhostap_la_SOURCES += crypto/aes-unwrap.c
+-libhostap_la_SOURCES += crypto/rc4.c
+-libhostap_la_SOURCES += crypto/tls_internal.c
+-libhostap_la_SOURCES += crypto/ms_funcs.c
++#libhostap_la_SOURCES += crypto/aes-wrap.c
++#libhostap_la_SOURCES += crypto/aes-unwrap.c
++#libhostap_la_SOURCES += crypto/rc4.c
++libhostap_la_SOURCES += crypto/tls_none.c
++#libhostap_la_SOURCES += crypto/tls_internal.c
++ libhostap_la_SOURCES += crypto/ms_funcs.c
+ libhostap_la_SOURCES += crypto/dh_groups.c
+-libhostap_la_SOURCES += crypto/des-internal.c
+-libhostap_la_SOURCES += crypto/dh_group5.c
+-libhostap_la_SOURCES += crypto/md4-internal.c
+-libhostap_la_SOURCES += crypto/milenage.c
++#libhostap_la_SOURCES += crypto/des-internal.c
++#libhostap_la_SOURCES += crypto/dh_group5.c
++#libhostap_la_SOURCES += crypto/md4-internal.c
++#libhostap_la_SOURCES += crypto/milenage.c
+ libhostap_la_SOURCES += crypto/sha1-tlsprf.c
+-libhostap_la_SOURCES += crypto/sha1-tprf.c
+-libhostap_la_SOURCES += crypto/sha256.c
++#libhostap_la_SOURCES += crypto/sha1-tprf.c
++#libhostap_la_SOURCES += crypto/sha256.c
+ libhostap_la_SOURCES += crypto/sha256-prf.c
+ libhostap_la_SOURCES += crypto/sha256-tlsprf.c
+-libhostap_la_SOURCES += crypto/sha256-internal.c
+-libhostap_la_SOURCES += crypto/crypto_internal.c
+-libhostap_la_SOURCES += crypto/crypto_internal-cipher.c
+-libhostap_la_SOURCES += crypto/crypto_internal-modexp.c
+-libhostap_la_SOURCES += crypto/crypto_internal-rsa.c
+-libhostap_la_SOURCES += crypto/sha384.c
++#libhostap_la_SOURCES += crypto/sha256-internal.c
++#libhostap_la_SOURCES += crypto/crypto_internal.c
++#libhostap_la_SOURCES += crypto/crypto_internal-cipher.c
++#libhostap_la_SOURCES += crypto/crypto_internal-modexp.c
++#libhostap_la_SOURCES += crypto/crypto_internal-rsa.c
++#libhostap_la_SOURCES += crypto/sha384.c
+ libhostap_la_SOURCES += crypto/sha384-prf.c
+-libhostap_la_SOURCES += crypto/sha384-internal.c
+-libhostap_la_SOURCES += crypto/sha512-internal.c
+-libhostap_la_SOURCES += crypto/fips_prf_internal.c
++libhostap_la_SOURCES += crypto/sha384-kdf.c
++#libhostap_la_SOURCES += crypto/sha384-internal.c
++#libhostap_la_SOURCES += crypto/sha512-internal.c
++libhostap_la_SOURCES += crypto/sha512-kdf.c
++libhostap_la_SOURCES += crypto/sha512-prf.c
++#libhostap_la_SOURCES += crypto/fips_prf_internal.c
+ #libhostap_la_SOURCES += crypto/tls_openssl.c
+-#libhostap_la_SOURCES += crypto/crypto_openssl.c
++libhostap_la_SOURCES += crypto/crypto_openssl.c
+ 
+ #libhostap_la_SOURCES += crypto/dh_group5.c
+ #libhostap_la_SOURCES += crypto/dh_groups.c
+@@ -219,6 +225,19 @@ libhostap_la_SOURCES += drivers/netlink.c
+ libhostap_la_SOURCES += drivers/drivers.c #Added for hostapd.c support, will be removed later once only needed API(s) used
+ libhostap_la_SOURCES += drivers/driver_common.c #event_to_string API, will be removed later once only needed API(s) used
+ 
++#AM_CFLAGS += -DCONFIG_DRIVER_NL80211
++libhostap_la_SOURCES += drivers/driver_nl80211.c
++libhostap_la_SOURCES += drivers/driver_nl80211_android.c
++libhostap_la_SOURCES += drivers/driver_nl80211_capa.c
++libhostap_la_SOURCES += drivers/driver_nl80211_event.c
++libhostap_la_SOURCES += drivers/driver_nl80211_monitor.c
++libhostap_la_SOURCES += drivers/driver_nl80211_scan.c
++libhostap_la_SOURCES += drivers/linux_ioctl.c
++libhostap_la_SOURCES += drivers/rfkill.c
++libhostap_la_SOURCES += drivers/driver_hostap.c
++libhostap_la_SOURCES += utils/radiotap.c
++libhostap_la_SOURCES += ap/acs.c
++
+ libhostap_la_SOURCES += wps/wps.c
+ libhostap_la_SOURCES += wps/wps_attr_build.c
+ libhostap_la_SOURCES += wps/wps_registrar.c
+@@ -229,23 +248,29 @@ libhostap_la_SOURCES += wps/wps_attr_parse.c
+ libhostap_la_SOURCES += wps/wps_attr_process.c
+ 
+ libhostap_la_SOURCES += tls/asn1.c
+-libhostap_la_SOURCES += tls/bignum.c
+-libhostap_la_SOURCES += tls/pkcs1.c
+-libhostap_la_SOURCES += tls/pkcs5.c
+-libhostap_la_SOURCES += tls/pkcs8.c
+-libhostap_la_SOURCES += tls/rsa.c
+-libhostap_la_SOURCES += tls/tlsv1_client.c
+-libhostap_la_SOURCES += tls/tlsv1_client_read.c
+-libhostap_la_SOURCES += tls/tlsv1_client_write.c
+-libhostap_la_SOURCES += tls/tlsv1_common.c
+-libhostap_la_SOURCES += tls/tlsv1_cred.c
+-libhostap_la_SOURCES += tls/tlsv1_record.c
+-libhostap_la_SOURCES += tls/tlsv1_server.c
+-libhostap_la_SOURCES += tls/tlsv1_server_read.c
+-libhostap_la_SOURCES += tls/tlsv1_server_write.c
+-libhostap_la_SOURCES += tls/tlsv1_client_ocsp.c
+-libhostap_la_SOURCES += tls/x509v3.c
++#libhostap_la_SOURCES += tls/bignum.c
++#libhostap_la_SOURCES += tls/pkcs1.c
++#libhostap_la_SOURCES += tls/pkcs5.c
++#libhostap_la_SOURCES += tls/pkcs8.c
++#libhostap_la_SOURCES += tls/rsa.c
++#libhostap_la_SOURCES += tls/tlsv1_client.c
++#libhostap_la_SOURCES += tls/tlsv1_client_read.c
++#libhostap_la_SOURCES += tls/tlsv1_client_write.c
++#libhostap_la_SOURCES += tls/tlsv1_common.c
++#libhostap_la_SOURCES += tls/tlsv1_cred.c
++#libhostap_la_SOURCES += tls/tlsv1_record.c
++#libhostap_la_SOURCES += tls/tlsv1_server.c
++#libhostap_la_SOURCES += tls/tlsv1_server_read.c
++#libhostap_la_SOURCES += tls/tlsv1_server_write.c
++#libhostap_la_SOURCES += tls/tlsv1_client_ocsp.c
++#libhostap_la_SOURCES += tls/x509v3.c
+ 
++AM_CFLAGS += -DCONFIG_HS20
++AM_CFLAGS += -DCONFIG_INTERWORKING
++libhostap_la_SOURCES += ap/hs20.c
++libhostap_la_SOURCES += ap/gas_serv.c
++libhostap_la_SOURCES += common/gas.c
++libhostap_la_SOURCES += ../hostapd/main.c
+ libhostap_la_SOURCES += ../hostapd/ctrl_iface.c
+ libhostap_la_SOURCES += ../hostapd/config_file.c
+ libhostap_la_SOURCES += ../hostapd/eap_register.c
+@@ -268,7 +293,7 @@ AM_CFLAGS += -DCONFIG_ETH_P_OUI    #applicable ap
+ AM_CFLAGS += -DCONFIG_IEEE80211R #ap/
+ AM_CFLAGS += -DCONFIG_IEEE80211W #ap/
+ #AM_CFLAGS += -DCONFIG_HS20 #ap/ eap_server/
+-#AM_CFLAGS += -DCONFIG_SAE
++AM_CFLAGS += -DCONFIG_SAE
+ AM_CFLAGS += -DCONFIG_SUITE
+ AM_CFLAGS += -DCONFIG_SUITEB
+ AM_CFLAGS += -DCONFIG_SUITEB192
+@@ -283,6 +308,7 @@ AM_CFLAGS += -DCONFIG_TLS_INTERNAL_SERVER
+ #AM_CFLAGS += -DALL_DH_GROUPS
+ AM_CFLAGS += -DCONFIG_SHA256
+ AM_CFLAGS += -DCONFIG_SHA384
++AM_CFLAGS += -DCONFIG_SHA512
+ AM_CFLAGS += -DCONFIG_HMAC_SHA384_KDF
+ AM_CFLAGS += -DCONFIG_INTERNAL_SHA384
+ ##endif
+@@ -306,9 +332,9 @@ AM_CFLAGS += -DLINUX_PORT -DRDK_PORT -DCONFIG_CRYPTO_INTERNAL -DCONFIG_DEBUG_FIL
+ AM_CFLAGS += -DEAP_SERVER_IDENTITY
+ AM_CFLAGS += -DEAP_SERVER_TLS
+ AM_CFLAGS += -DEAP_SERVER_PEAP
+-AM_CFLAGS += -DEAP_SERVER_TTLS
++#AM_CFLAGS += -DEAP_SERVER_TTLS
+ AM_CFLAGS += -DEAP_SERVER_MD5
+-AM_CFLAGS += -DEAP_SERVER_MSCHAPV2
++#AM_CFLAGS += -DEAP_SERVER_MSCHAPV2
+ AM_CFLAGS += -DEAP_SERVER_GTC
+ AM_CFLAGS += -DEAP_SERVER_PSK
+ AM_CFLAGS += -DEAP_SERVER_PAX
+@@ -320,10 +346,10 @@ AM_CFLAGS += -DEAP_SERVER_TNC
+ AM_CFLAGS += -DEAP_SERVER_IKEV2
+ AM_CFLAGS += -DEAP_SERVER_WSC
+ #AM_CFLAGS += -DEAP_SERVER_TEAP
+-AM_CFLAGS += -DEAP_SERVER_FAST
+-AM_CFLAGS += -DEAP_SERVER_AKA_PRIME
+-AM_CFLAGS += -DEAP_SERVER_AKA
+-AM_CFLAGS += -DEAP_SERVER_SIM
++#AM_CFLAGS += -DEAP_SERVER_FAST
++#AM_CFLAGS += -DEAP_SERVER_AKA_PRIME
++#AM_CFLAGS += -DEAP_SERVER_AKA
++#AM_CFLAGS += -DEAP_SERVER_SIM
+ #AM_CFLAGS += -DEAP_SERVER_TLV
+ AM_CFLAGS += -DEAP_SERVER_UNAUTH_TLS
+ 
+@@ -337,8 +363,15 @@ AM_CFLAGS += -DCONFIG_TLSV11
+ AM_CFLAGS += -DCONFIG_TLSV12
+ 
+ #Needed to compile
+-#AM_CFLAGS += -DCONFIG_ECC
++AM_CFLAGS += -DCONFIG_ECC
+ 
+ #AM_CFLAGS += -DCONFIG_CTRL_IFACE_UDP
+ 
+-libhostap_la_LDFLAGS = -lpthread -ldl
++libhostap_la_LDFLAGS = -lpthread -ldl -lssl
++libhostap_la_SOURCES += rsn_supp/wpa.c
++libhostap_la_SOURCES += rsn_supp/wpa_ie.c
++libhostap_la_SOURCES += rsn_supp/wpa_ft.c
++libhostap_la_SOURCES += rsn_supp/pmksa_cache.c
++libhostap_la_SOURCES += rsn_supp/preauth.c
++libhostap_la_SOURCES += eapol_supp/eapol_supp_sm.c
++libhostap_la_SOURCES += ap/ieee802_11_he.c
+diff --git a/source/hostap-2.9/src/ap/utils.c b/source/hostap-2.9/src/ap/utils.c
+index fcb371b..a7322cb 100755
+--- a/source/hostap-2.9/src/ap/utils.c
++++ b/source/hostap-2.9/src/ap/utils.c
+@@ -89,6 +89,12 @@ void hostapd_prune_associations(struct hostapd_data *hapd, const u8 *addr)
+ 	struct prune_data data;
+ 	data.hapd = hapd;
+ 	data.addr = addr;
++
++        if(hapd && hapd->iface == NULL) {
++                wpa_printf(MSG_ERROR, "%s:%d hapd->iface is NULL", __func__, __LINE__);
++                return;
++        }
++
+ 	if (hapd->iface->interfaces &&
+ 	    hapd->iface->interfaces->for_each_interface)
+ 		hapd->iface->interfaces->for_each_interface(

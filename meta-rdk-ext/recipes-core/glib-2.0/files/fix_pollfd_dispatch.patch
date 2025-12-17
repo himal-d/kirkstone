@@ -1,0 +1,37 @@
+Date: Nov 12 11:31:23 2018
+
+From: 8e3571ed61e1f9b6a1a5390722e929c4d9153605 Nov 15 19:37:36 2018
+
+Subject: [PATCH] XRE-13662: fix dispatching of gpollfd sources
+
+	GLib incorrectly skips pollfd sources when there is at least 1 timer
+	source ready with priority higher than default one. This is regression
+	after https://bugzilla.gnome.org/show_bug.cgi?id=11059 which changed
+	sorting order of poll records.
+	
+	The change fixes this by traversing through poll records untill ready
+	fd is found.
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+
+---
+
+Index: glib-2.48.1/glib/gmain.c
+===================================================================
+--- glib-2.48.1.orig/glib/gmain.c
++++ glib-2.48.1/glib/gmain.c
+@@ -3644,6 +3644,10 @@ g_main_context_check (GMainContext *cont
+   i = 0;
+   while (pollrec && i < n_fds)
+     {
++      while (pollrec && pollrec->fd->fd != fds[i].fd)
++        {
++          pollrec = pollrec->next;
++        }
+       while (pollrec && pollrec->fd->fd == fds[i].fd)
+         {
+           if (pollrec->priority <= max_priority)

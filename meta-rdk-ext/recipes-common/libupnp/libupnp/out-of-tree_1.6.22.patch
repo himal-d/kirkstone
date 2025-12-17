@@ -1,0 +1,63 @@
+Date: Feb 5, 2016 9:37 AM
+
+From: 560bf904ed7c707bd45e474d825e80d71638fcb4 Feb 5, 2016 12:54 PM
+
+Subject: [PATCH] RDKSYSINTSW-1306: Fix out of tree build for libupnp
+
+        This is windows specific code. It assumes that
+        build is happening in same dir as sources. This
+        breaks out of tree builds.
+
+        We dont have windows case, so just delete it
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: Khem Raj <khem_raj@cable.comcast.com>
+---
+
+Index: libupnp-1.6.22/ixml/Makefile.am
+===================================================================
+--- libupnp-1.6.22.orig/ixml/Makefile.am
++++ libupnp-1.6.22/ixml/Makefile.am
+@@ -7,7 +7,7 @@
+ 
+ SUBDIRS 		= doc
+ 
+-AM_CPPFLAGS		= -I$(srcdir)/inc -I$(srcdir)/src/inc \
++AM_CPPFLAGS		= -I$(top_srcdir)/ixml/inc -I$(top_srcdir)/ixml/src/inc \
+                           -I$(top_srcdir)/upnp/inc
+ AM_CFLAGS		= 
+ 
+Index: libupnp-1.6.22/threadutil/Makefile.am
+===================================================================
+--- libupnp-1.6.22.orig/threadutil/Makefile.am
++++ libupnp-1.6.22/threadutil/Makefile.am
+@@ -4,7 +4,7 @@
+ # (C) Copyright 2005 Remi Turboult <r3mi@users.sourceforge.net>
+ #
+ 
+-AM_CPPFLAGS		= -I$(srcdir)/inc -I$(srcdir)/src/inc \
++AM_CPPFLAGS		= -I$(top_srcdir)/threadutil/inc -I$(top_srcdir)/threadutil/src/inc \
+                           -I$(top_srcdir)/upnp/inc
+ 
+ if ENABLE_DEBUG
+Index: libupnp-1.6.22/configure.ac
+===================================================================
+--- libupnp-1.6.22.orig/configure.ac
++++ libupnp-1.6.22/configure.ac
+@@ -757,13 +757,3 @@ AC_CONFIG_FILES([
+ 
+ 
+ AC_OUTPUT
+-
+-#
+-# Files copied for windows compilation.
+-#
+-echo "configure: copying \"autoconfig.h\"          to \"build/inc/autoconfig.h\""
+-test -d build/inc || mkdir -p build/inc
+-cp autoconfig.h build/inc/autoconfig.h
+-echo "configure: copying \"upnp/inc/upnpconfig.h\" to \"build/inc/upnpconfig.h\""
+-cp upnp/inc/upnpconfig.h build/inc/upnpconfig.h
+-

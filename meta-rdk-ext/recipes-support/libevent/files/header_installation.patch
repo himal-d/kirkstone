@@ -1,0 +1,28 @@
+Date: Nov 01 13:18:21 2017
+
+From: 4ed348f478562b65578b3cccb3aff8f66c80d3ef Nov 02 14:21:35 2017
+
+Subject: [PATCH] RDKB-14734 : Update LibEvent to Export Headers to Libevent Folder
+
+	Libev and Libevent have folder conflict
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: 	Shubham Baheti <shubham_baheti@comcast.com>
+---
+
+Index: libevent-2.0.21-stable/Makefile.am
+===================================================================
+--- libevent-2.0.21-stable.orig/Makefile.am
++++ libevent-2.0.21-stable/Makefile.am
+@@ -226,7 +226,7 @@ noinst_HEADERS = util-internal.h mm-inte
+ EVENT1_HDRS = event.h evhttp.h evdns.h evrpc.h evutil.h
+ 
+ if INSTALL_LIBEVENT
+-include_HEADERS = $(EVENT1_HDRS)
++pkginclude_HEADERS = $(EVENT1_HDRS)
+ else
+ noinst_HEADERS += $(EVENT1_HDRS)
+ endif

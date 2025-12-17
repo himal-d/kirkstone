@@ -1,0 +1,32 @@
+From 6d645da1fd4b238edab1927d9fa2acfb0f5bb77a Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Wed, 20 Mar 2024 13:23:21 +0000
+Subject: [PATCH] Disable blending of hole punching buffers with rounded rect
+ clip
+
+---
+ Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp b/Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp
+index b85c80ed313be..2ea13966a0b92 100644
+--- a/Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp
++++ b/Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp
+@@ -712,7 +712,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
+         flags |= ShouldAntialias | (isBlendingAllowed ? ShouldBlend : 0);
+     }
+ 
+-    if (clipStack().isRoundedRectClipEnabled()) {
++    if (clipStack().isRoundedRectClipEnabled() && isBlendingAllowed) {
+         options.add(TextureMapperShaderProgram::RoundedRectClip);
+         flags |= ShouldBlend;
+     }
+@@ -720,7 +720,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
+     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
+     glUseProgram(program->programID());
+ 
+-    if (clipStack().isRoundedRectClipEnabled())
++    if (options.contains(TextureMapperShaderProgram::RoundedRectClip))
+         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
+ 
+     auto [r, g, b, a] = premultiplied(color.toColorTypeLossy<SRGBA<float>>()).resolved();

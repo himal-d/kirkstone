@@ -1,0 +1,17 @@
+Date: Fri, 09 Dec 2022 11:02:04
+Subject: [PATCH] X509_VERIFY_PARAM_set1_host function is upgraded in openssl 3.0 and it is accepting three parameters now.
+         So added the extra parameter as it is expecting the namelen. 
+
+Signed-off-by: Arjun<arjun_daasuramdass@comcast.com>
+---
+--- a/tls/openssl/gtlsclientconnection-openssl.c.orig	2022-12-09 05:35:54.133796965 +0000
++++ b/tls/openssl/gtlsclientconnection-openssl.c	2022-12-09 05:36:13.645751380 +0000
+@@ -465,7 +465,7 @@
+       X509_VERIFY_PARAM *param;
+ 
+       param = X509_VERIFY_PARAM_new ();
+-      X509_VERIFY_PARAM_set1_host (param, hostname);
++      X509_VERIFY_PARAM_set1_host (param, hostname, strlen(hostname));
+       SSL_CTX_set1_param (priv->ssl_ctx, param);
+       X509_VERIFY_PARAM_free (param);
+     }

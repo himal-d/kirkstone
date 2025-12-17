@@ -1,0 +1,64 @@
+Date: Mar 24, 2023 1:41 PM
+
+From: f6f86450d7d8d5fcaa44953c8bb5a4684b2fb489 Mar 24, 2023 1:41 PM
+
+Subject: [PATCH] RDKTV-22150: File name having special chinese characters
+           Chinese characters cannot be displayed without modifying the ls command. Even if the kernel is set to support Chinese characters, 
+           the ls command in shell cannot display Chinese characters, because support for Chinese characters is limited in Versions later than 
+           busybox1.17.0. To make busybox1.17.0 and later versions support Chinese, we need to modify two files: printable_string.c and unicode. c.
+
+           we can see that the characters larger than 0x7F are directly broken by break, or are directly "?" Instead. 
+           Therefore, even if the Linux kernel supports Chinese characters, it cannot be displayed. 
+           https://programmer.help/blogs/linux-busybox-chinese-display-modification-instructions.html
+           https://topic.alibabacloud.com/a/solution-to-busyboxs-support-for-chinese-characters_8_8_32030280.html
+
+Source: NXP
+Upstream-Status: Pending
+
+Signed-off-by: Naveen Hanasi <naveenkumar_hanasi@cable.comcast.com>
+---
+diff -ruPN a/libbb/printable_string.c b/libbb/printable_string.c
+--- a/libbb/printable_string.c	2023-03-21 20:48:27.525118550 +0000
++++ b/libbb/printable_string.c	2023-03-21 20:50:50.371957719 +0000
+@@ -28,8 +28,6 @@
+ 		}
+ 		if (c < ' ')
+ 			break;
+-		if (c >= 0x7f)
+-			break;
+ 		s++;
+ 	}
+ 
+@@ -42,7 +40,8 @@
+ 			unsigned char c = *d;
+ 			if (c == '\0')
+ 				break;
+-			if (c < ' ' || c >= 0x7f)
++		        /* Enable Chinese Chars */
++			if (c < ' ' )
+ 				*d = '?';
+ 			d++;
+ 		}
+diff -ruPN a/libbb/unicode.c b/libbb/unicode.c
+--- a/libbb/unicode.c	2023-03-21 20:48:43.616086536 +0000
++++ b/libbb/unicode.c	2023-03-21 20:51:58.331600017 +0000
+@@ -1019,7 +1019,8 @@
+ 					while ((int)--width >= 0);
+ 					break;
+ 				}
+-				*d++ = (c >= ' ' && c < 0x7f) ? c : '?';
++				/*Enable Chinese Char*/
++				*d++ = (c >= ' ') ? c : '?';
+ 				src++;
+ 			}
+ 			*d = '\0';
+@@ -1027,7 +1028,8 @@
+ 			d = dst = xstrndup(src, width);
+ 			while (*d) {
+ 				unsigned char c = *d;
+-				if (c < ' ' || c >= 0x7f)
++				/*Enable Chinese Char*/
++				if (c < ' ')
+ 					*d = '?';
+ 				d++;
+ 			}

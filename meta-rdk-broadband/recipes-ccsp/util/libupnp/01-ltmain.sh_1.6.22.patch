@@ -1,0 +1,69 @@
+Date: Jul 14, 2017 12:53 PM
+
+From: 53e6de464176a78ab05ec82da022043bd8f00cc3 Aug 30, 2017 12:08 PM
+
+Subject: [PATCH] RDKB-12500 : Upgrade UPnP library to version 1.6.22
+
+	Upgrade libupnp to resolve CVE's in older versions
+        Adding 'libdir' from the .la file to our library search paths
+        breaks crosscompilation horribly.  We cheat here and don't add
+        it, instead adding the path where we found the .la.  -CL
+
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: dthiyagarajan <Deva_Thiyagarajan@comcast.com>
+---
+
+Index: libupnp-1.6.22/build-aux/ltmain.sh
+===================================================================
+--- libupnp-1.6.22.orig/build-aux/ltmain.sh
++++ libupnp-1.6.22/build-aux/ltmain.sh
+@@ -6518,8 +6518,14 @@ func_mode_link ()
+ 	    absdir="$abs_ladir"
+ 	    libdir="$abs_ladir"
+ 	  else
+-	    dir="$lt_sysroot$libdir"
+-	    absdir="$lt_sysroot$libdir"
++            # Adding 'libdir' from the .la file to our library search paths
++            # breaks crosscompilation horribly.  We cheat here and don't add
++            # it, instead adding the path where we found the .la.  -CL
++            dir="$abs_ladir"
++            absdir="$abs_ladir"
++            libdir="$abs_ladir"
++            #dir="$lt_sysroot$libdir"
++            #absdir="$lt_sysroot$libdir"
+ 	  fi
+ 	  test "X$hardcode_automatic" = Xyes && avoidtemprpath=yes
+ 	else
+@@ -6918,7 +6924,7 @@ func_mode_link ()
+ 	      fi
+ 	    else
+ 	      # We cannot seem to hardcode it, guess we'll fake it.
+-	      add_dir="-L$libdir"
++	      #add_dir="-L$libdir"
+ 	      # Try looking first in the location we're being installed to.
+ 	      if test -n "$inst_prefix_dir"; then
+ 		case $libdir in
+@@ -7073,7 +7079,18 @@ func_mode_link ()
+ 		  fi
+ 		  ;;
+ 		*)
+-		  path="-L$absdir/$objdir"
++                  #path="-L$absdir/$objdir"
++                  # OE sets installed=no in staging. We need to look in $objdir and $absdir,
++                  # preferring $objdir. RP 31/04/2008
++                  if test -f "$absdir/$objdir/$depdepl" ; then
++                   depdepl="$absdir/$objdir/$depdepl"
++                   path="-L$absdir/$objdir"
++                  elif test -f "$absdir/$depdepl" ; then
++                   depdepl="$absdir/$depdepl"
++                   path="-L$absdir"
++                  else
++                   path="-L$absdir/$objdir"
++                  fi
+ 		  ;;
+ 		esac
+ 		else

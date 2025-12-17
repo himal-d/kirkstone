@@ -1,0 +1,19 @@
+Index: rpcbind-1.2.5/systemd/rpcbind.socket
+===================================================================
+--- rpcbind-1.2.5.orig/systemd/rpcbind.socket
++++ rpcbind-1.2.5/systemd/rpcbind.socket
+@@ -9,10 +9,10 @@ ListenStream=/run/rpcbind.sock
+ 
+ # RPC netconfig can't handle ipv6/ipv4 dual sockets
+ BindIPv6Only=ipv6-only
+-ListenStream=0.0.0.0:111
+-ListenDatagram=0.0.0.0:111
+-ListenStream=[::]:111
+-ListenDatagram=[::]:111
++ListenStream=127.0.0.1:111
++ListenDatagram=127.0.0.1:111
++ListenStream=[::1]:111
++ListenDatagram=[::1]:111
+ 
+ [Install]
+ WantedBy=sockets.target

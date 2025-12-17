@@ -1,0 +1,108 @@
+From a3ea102dd91b98cda8790a5adc5301be6dbf92b8 Mon Sep 17 00:00:00 2001
+From: Ievgen Mutavchi <Ievgen_Mutavchi@comcast.com>
+Subject: [PATCH] XRE-14265: request client cert support
+License: GPLV2
+Date: Nov 6, 2018 1:41 AM
+From: ebecd56aaa2727b6305d39c69951fbdc8740f800 Oct 31, 2018 11:56 PM
+Subject: request client cert support
+Source: COMCAST
+Upstream-Status: None
+Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+
+---
+ tls/openssl/gtlsconnection-openssl.c | 58 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 56 insertions(+), 2 deletions(-)
+
+Index: glib-networking-2.72.0/tls/openssl/gtlsconnection-openssl.c
+===================================================================
+--- glib-networking-2.72.0.orig/tls/openssl/gtlsconnection-openssl.c
++++ glib-networking-2.72.0/tls/openssl/gtlsconnection-openssl.c
+@@ -25,6 +25,7 @@
+ 
+ #include "config.h"
+ #include "glib.h"
++#include <glib/gstdio.h>
+ 
+ #include <errno.h>
+ #include <stdarg.h>
+@@ -66,6 +67,7 @@ typedef struct _WriteRequest
+ } WriteRequest;
+ 
+ static void g_tls_connection_openssl_initable_iface_init (GInitableIface *iface);
++static GTlsInteractionResult request_client_certificate(GTlsConnection *conn);
+ 
+ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (GTlsConnectionOpenssl, g_tls_connection_openssl, G_TYPE_TLS_CONNECTION_BASE,
+                                   G_ADD_PRIVATE (GTlsConnectionOpenssl)
+Index: glib-networking-2.72.0/tls/openssl/gtlsclientconnection-openssl.c
+===================================================================
+--- glib-networking-2.72.0.orig/tls/openssl/gtlsclientconnection-openssl.c
++++ glib-networking-2.72.0/tls/openssl/gtlsclientconnection-openssl.c
+@@ -65,6 +65,8 @@ static void g_tls_client_connection_open
+ 
+ static void g_tls_client_connection_openssl_client_connection_interface_init (GTlsClientConnectionInterface *iface);
+ 
++static gboolean request_client_certificate(GTlsConnection *conn);
++
+ static GInitableIface *g_tls_client_connection_openssl_parent_initable_iface;
+ 
+ G_DEFINE_TYPE_WITH_CODE (GTlsClientConnectionOpenssl, g_tls_client_connection_openssl, G_TYPE_TLS_CONNECTION_OPENSSL,
+@@ -320,7 +322,7 @@ handshake_thread_retrieve_certificate (S
+   cert = g_tls_connection_get_certificate (G_TLS_CONNECTION (client));
+   if (!cert)
+     {
+-      if (g_tls_connection_base_handshake_thread_request_certificate (tls))
++      if (g_tls_connection_base_handshake_thread_request_certificate (tls) || request_client_certificate (tls))
+         cert = g_tls_connection_get_certificate (G_TLS_CONNECTION (client));
+     }
+ 
+@@ -549,3 +551,50 @@ g_tls_client_connection_openssl_initable
+ 
+   iface->init = g_tls_client_connection_openssl_initable_init;
+ }
++
++static gpointer
++client_certificate_init (gpointer data)
++{
++  GError *error = NULL;
++  const gchar *certPath = NULL, *keyPath = NULL;
++  GTlsCertificate *cert = NULL;
++
++  certPath = g_getenv ("G_TLS_OPENSSL_CLIENT_CERT_PATH");
++  if (!certPath)
++    return NULL;
++
++  keyPath = g_getenv ("G_TLS_OPENSSL_CLIENT_CERT_KEY_PATH");
++
++  if (keyPath)
++    cert = g_tls_certificate_new_from_files (certPath, keyPath, &error);
++  else
++    cert = g_tls_certificate_new_from_file (certPath, &error);
++
++  if (error)
++    {
++      g_printerr ("Cert load failed. %s\n", error ? error->message : "unknown");
++      g_error_free (error);
++    }
++
++  return cert;
++}
++
++static gboolean
++request_client_certificate(GTlsConnection *conn)
++{
++  static GOnce cpc_cert_inited = G_ONCE_INIT;
++
++  GTlsCertificate *cert;
++
++  g_once (&cpc_cert_inited, client_certificate_init, NULL);
++
++  cert = cpc_cert_inited.retval;
++
++  if (cert && conn)
++    {
++      g_tls_connection_set_certificate (conn, cert);
++      return TRUE;
++    }
++
++  return FALSE;
++ }

@@ -1,0 +1,85 @@
+diff --git a/meson.build b/meson.build
+index 6ef703f18..0d2c2ae71 100644
+--- a/meson.build
++++ b/meson.build
+@@ -267,10 +267,10 @@ cdata.set('HAVE_DBUS', dbus_dep.found())
+ sdl_dep = dependency('sdl2', required : get_option('sdl2'))
+ summary({'SDL2 (video examples)': sdl_dep.found()}, bool_yn: true, section: 'Misc dependencies')
+ drm_dep = dependency('libdrm', required : false)
+-readline_dep = dependency('readline', required : get_option('readline'))
++readline_dep = dependency('readline', required : false)
+
+ if not readline_dep.found()
+-  readline_dep = cc.find_library('readline', required : get_option('readline'))
++  readline_dep = cc.find_library('readline', required: false)
+ endif
+
+ # Both the FFmpeg SPA plugin and the pw-cat FFmpeg integration use libavcodec.
+diff --git a/spa/plugins/avb/avb-pcm.c b/spa/plugins/avb/avb-pcm.c
+index ffe1c7489..23e5a38e5 100644
+--- a/spa/plugins/avb/avb-pcm.c
++++ b/spa/plugins/avb/avb-pcm.c
+@@ -25,7 +25,22 @@
+
+ #define TAI_OFFSET    (37ULL * SPA_NSEC_PER_SEC)
+ #define TAI_TO_UTC(t) (t - TAI_OFFSET)
+-
++#define SO_TXTIME 61
++#define SCM_TXTIME SO_TXTIME
++
++enum txtime_flags {
++SOF_TXTIME_DEADLINE_MODE = (1 << 0),
++SOF_TXTIME_REPORT_ERRORS = (1 << 1),
++
++SOF_TXTIME_FLAGS_LAST = SOF_TXTIME_REPORT_ERRORS,
++SOF_TXTIME_FLAGS_MASK = (SOF_TXTIME_FLAGS_LAST - 1) |
++             SOF_TXTIME_FLAGS_LAST
++};
++
++struct sock_txtime {
++__kernel_clockid_t clockid;// reference clockid /
++__u32 flags; // as defined by enum txtime_flags
++};
+ static int avb_set_param(struct state *state, const char *k, const char *s)
+ {
+ 	struct props *p = &state->props;
+diff --git a/src/modules/module-avb/stream.c b/src/modules/module-avb/stream.c
+index dd8eccaee..796819a67 100644
+--- a/src/modules/module-avb/stream.c
++++ b/src/modules/module-avb/stream.c
+@@ -18,6 +18,22 @@
+ #include "utils.h"
+ #include "aecp-aem-descriptors.h"
+
++#define SO_TXTIME 61
++#define SCM_TXTIME SO_TXTIME
++
++enum txtime_flags {
++SOF_TXTIME_DEADLINE_MODE = (1 << 0),
++SOF_TXTIME_REPORT_ERRORS = (1 << 1),
++
++SOF_TXTIME_FLAGS_LAST = SOF_TXTIME_REPORT_ERRORS,
++SOF_TXTIME_FLAGS_MASK = (SOF_TXTIME_FLAGS_LAST - 1) |
++             SOF_TXTIME_FLAGS_LAST
++};
++
++struct sock_txtime {
++__kernel_clockid_t clockid;// reference clockid /
++__u32 flags; // as defined by enum txtime_flags
++};
+ static void on_stream_destroy(void *d)
+ {
+ 	struct stream *stream = d;
+diff --git a/src/modules/module-rtp/opus.c b/src/modules/module-rtp/opus.c
+index be31fa576..7c079d3c5 100644
+--- a/src/modules/module-rtp/opus.c
++++ b/src/modules/module-rtp/opus.c
+@@ -166,7 +166,7 @@ static int rtp_opus_receive(struct impl *impl, uint8_t *buffer, ssize_t len)
+ 				write, expected_write);
+ 	}
+
+-	if (filled + plen > BUFFER_SIZE2 / stride) {
++       if (filled + plen > (int)BUFFER_SIZE2 / (int)stride) {
+ 		pw_log_debug("capture overrun %u + %zd > %u", filled, plen,
+ 				BUFFER_SIZE2 / stride);
+ 		impl->have_sync = false;

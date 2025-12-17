@@ -1,0 +1,16 @@
+Date: 31-Aug-2023
+From: kathiravan.eswaran@sky.uk
+Source: SKY
+
+diff --git a/source/hostap-2.10/src/Makefile.am b/source/hostap-2.10/src/Makefile.am
+index ae44e50..17899f6 100644
+--- a/source/hostap-2.10/src/Makefile.am
++++ b/source/hostap-2.10/src/Makefile.am
+@@ -77,6 +77,7 @@ libhostap_la_SOURCES += ap/drv_callbacks.c
+ libhostap_la_SOURCES += ap/eth_p_oui.c
+ libhostap_la_SOURCES += ap/ctrl_iface_ap.c
+ libhostap_la_SOURCES += ap/greylist.c
++libhostap_la_SOURCES += ap/wnm_ap.c
+
+ libhostap_la_SOURCES += radius/radius.c
+ libhostap_la_SOURCES += radius/radius_client.c

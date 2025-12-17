@@ -1,0 +1,35 @@
+##########################################
+Date: Jun 17, 2021 10:47 PM
+From: 53841f78c274c28c1d57bfb2159ff7e0f61ac0ba
+Subject: Hostapd lib crash debug
+Source: Comcast
+Upstream-Status: Pending
+Signed-off-by: Manish Dharanenthiran <manish_dharanenthiran@comcast.com>
+##########################################
+diff --git a/source/hostap-2.9/src/utils/eloop.c b/source/hostap-2.9/src/utils/eloop.c
+index bb375be..489e8ea 100755
+--- a/source/hostap-2.9/src/utils/eloop.c
++++ b/source/hostap-2.9/src/utils/eloop.c
+@@ -552,6 +552,9 @@ static void eloop_sock_table_dispatch(struct eloop_sock_table *readers,
+ 				      struct pollfd **pollfds_map,
+ 				      int max_pollfd_map)
+ {
++	if (eloop.terminate)
++		return;
++
+ 	if (eloop_sock_table_dispatch_table(readers, pollfds_map,
+ 					    max_pollfd_map, POLLIN | POLLERR |
+ 					    POLLHUP))
+@@ -1175,10 +1178,11 @@ void eloop_run(void)
+ 			goto out;
+ 		}
+ 
++		if (eloop.terminate)
++			break;
+ 		eloop.readers.changed = 0;
+ 		eloop.writers.changed = 0;
+ 		eloop.exceptions.changed = 0;
+-
+ 		eloop_process_pending_signals();
+ 
+ 

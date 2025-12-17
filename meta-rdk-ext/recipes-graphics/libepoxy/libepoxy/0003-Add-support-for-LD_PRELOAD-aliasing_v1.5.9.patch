@@ -1,0 +1,68 @@
+From 78f53a8f0b968c814b96a6f69d1d000c5d29d5cf Mon Sep 17 00:00:00 2001
+From: Damian Wrobel <dwrobel@ertelnet.rybnik.pl>
+Source: LGI
+Upstream-Status: Pending https://github.com/anholt/libepoxy/pull/208
+Date: Mon, 8 Jul 2019 10:56:35 +0200
+Subject: [PATCH] Add support for LD_PRELOAD/aliasing.
+On platforms where the LD_PRELOAD is used to overwrite functions
+it is needed to look first at the existing (preloaded/aliased) symbol
+instead of the real one from the shared library.
+For example on Broadcom Nexus platform the following libraries are preloaded:
+    - libwayland-egl.so.1
+    - libGLESv2.so
+where the libwayland-egl.so.1 overwrites eglGetDisplay() from the libGLESv2.so.
+In that situation it is inapropriate for libepoxy to select the eglGetDisplay()
+from the libGLESv2.so shared library.
+
+
+Signed-off-by: thulasiram_kadiyala <thulasiram_kadiyala@comcast.com>
+
+Recreated From : https://gerrit.teamccp.com/plugins/gitiles/rdk/yocto_oe/layers/meta-rdk-ext/+/topic/fr_yocto4.0/recipes-graphics/libepoxy/libepoxy/0003-Add-support-for-LD_PRELOAD-aliasing_v1.5.4.patch
+
+
+Index: libepoxy-1.5.9/meson.build
+===================================================================
+--- libepoxy-1.5.9.orig/meson.build
++++ libepoxy-1.5.9/meson.build
+@@ -30,6 +30,10 @@ conf.set_quoted('PACKAGE_LOCALEDIR', joi
+ conf.set_quoted('PACKAGE_LIBEXECDIR', join_paths(get_option('prefix'), get_option('libexecdir')))
+ conf.set('HAVE_KHRPLATFORM_H', cc.has_header('KHR/khrplatform.h'))
+ 
++if target_machine.system() == 'linux'
++  conf.set('_GNU_SOURCE', 1)
++endif  
++
+ # GLX can be used on different platforms, so we expose a
+ # configure time switch to enable or disable it; in case
+ # the "auto" default value is set, we only enable GLX
+Index: libepoxy-1.5.9/src/dispatch_common.c
+===================================================================
+--- libepoxy-1.5.9.orig/src/dispatch_common.c
++++ libepoxy-1.5.9/src/dispatch_common.c
+@@ -158,6 +158,8 @@
+  *        glXQueryVersion queries."
+  */
+ 
++#include "config.h"
++
+ #include <assert.h>
+ #include <stdlib.h>
+ #ifdef _WIN32
+@@ -334,6 +336,17 @@ do_dlsym(void **handle, const char *name
+ #ifdef _WIN32
+     result = GetProcAddress(*handle, name);
+ #else
++  
++#ifdef _GNU_SOURCE
++        /*
++	 *      * Check if the symbol is not already defined either by
++	 *           * using aliasing or LD_PRELOAD.
++	 *                */
++        result = dlsym(RTLD_DEFAULT, name);
++	    if (result)
++		            return result;
++#endif
++	    
+     result = dlsym(*handle, name);
+     if (!result)
+         error = dlerror();

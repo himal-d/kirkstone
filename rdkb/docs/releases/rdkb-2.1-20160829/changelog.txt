@@ -1,0 +1,140 @@
+Changelog between rdkb-2.1-20160829 and rdkb-2.1-20160815
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+b8093bb ARRISXB6-2022: Telemetry
+003d907 RDKB-7166 : Log WiFi messages to ATOM side directly .
+d67490c RDKB-7265 : Need to have system statistics on the atom side
+23ed27c RDKB-7248: [GWProvApp] Workaround
+e054250 CISCOXB3-1311 : DCA process from ARM to ATOM
+89aad2e ARRISXB6-1461 RDKB-5808: SystemD New MoCA Component
+e899e66 CISCOXB3-1302 : Move Webui from ATOM back to ARM
+a902934 RDKB-7248: [GWProvApp] Workaround
+3c1bc65 WEBPA-1123:[systemd] Update All Devices: CM MAC value is empty
+2b8b4e5 WEBPA-1109 : To start CMAgent before webpa
+24fe893 RDKB-6930: Fixed argument passing for coredump uploader script.
+7ca50c5 WEBPA-1044 ARRISXB6-1734: [CcspSafeNAT, SYSTEMD] - Create Service
+97fd46e RDKB-7214: Commonlibrary changes fro webui movement
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+a2a3e2e XF3-1284 : Dont register callback for SIGTERM
+a78c0a4 RDKB-7357 : Memory Leak for Extender Parsed Devices
+e7e0c3b RDKB-7308 : RSSI of Clients connected over MoCA is showing as -200dBm
+79eaffe RDKB-6679: [Field] Repeated online/offline status for connected devices
+f1a3a81 XF3-546 : Wi-Fi and MoCA clients are shown as ethernet
+4194466 RDKB-7207: Added SysResourceMonitor thread creation.
+0394346 RDKB-7160 : Make Polling and Reporting param writable
+022b60c RDKB-7187 : Update Static Config for Network Device Polling/Reporting
+Interval
+f916987 RDKB-6434: Keep the Last Polled Entry in the Subsequent Traffic Report
+902ae63 RDKB-7207: Added mlt headers to track allocation.
+
+project rdkb/components/opensource/ccsp/CcspMtaAgent/
+09b1b7a XF3-1294: Sync XF3 MTA data model with XB3
+1508389 XF3-800: CALLP Enable/Disable Logging Button Doesn't Work As Expected.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+a8d6afb RDKB-5941 : Inclusion of puma_autoconf.h is not required
+95eb146 RDKB-7318 : Replacing echo with echo_t to add timestamp in pandm
+8f8bf9c TCXB6-565:Modify _dibbler_client_operation func to start dibbler client
+46def4c XF3-1297,XF3-1299,RDKB-3199: Fix undefined symbol from RDKB checkin
+7054232 RDKB-3199: notify atom to change br0 ip
+a7fceb2 RDKB-5655 : WPS LED not flashing after Enable and Disable bridge mode
+29e5ea5 RDKB-7148 : dmcli eRT getv Device. is failing to load PandM parameters.
+1aa69d1 RDKB-7014 : DHCPv4.Client.1.IPAddress not returning IP address
+da563e2 RDKB-7157 : X_RDKCENTRAL-COM_CloudUIEnable parameter not able to set
+"true"
+5b6d61f RDKBEMU-197 : Upstream PSM feature in ccsp-p-and-m component
+
+project rdkb/components/opensource/ccsp/CcspPsm/
+41277a9 RDKB-7278 : Persist data for Actual and Default Polling and reporting
+params
+e931847 RDKB-7226 : Persist data for Actual and Default
+
+project rdkb/components/opensource/ccsp/CcspWecbController/
+8d39feb RDKB-4235: Fixed length of string for IP as recommended in the ticket.
+f3fe2d2 RDKB-7221: Disabled comment that is filling up WECB Master logs.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+146f4ba RDKB-7122: Beacon rate control object
+9b3e9bf RDKB-7122: Beacon rate control object
+5efe355 RDKB-7362: bug fix in CosaDmlWiFiSsidFillSinfoCache
+c5427cc RDKB-7166, RDKB-7287, RDKB-7120 : Log WiFi messages to ATOM side
+directly .
+a1064b8 ARRISXB3-5057 : Wifiagent cored
+5a92ff2 ARRISXB6-2046 : LnF setup for arrisxb6.
+2a67780 RDKB-7294: MAC address print correction
+ca05602 RDKB-7184 : Bandsteering logging enhancement
+dd24d1a RDKB-3198: change Device.WiFi.X_RDKCENTRAL-COM_Br0_Sync
+0fb5971 RDKB-7264: Add lighttpd to ATOM process monitoring script
+27bcf82 RDKB-7252 : Log when app is stuck during wifiinit(Telemetry)
+199528f RDKB-5366 : Not able to set SSID name
+47bf16c RDKB-3198: Add Device.WiFi.X_RDKCENTRAL-COM_Br0_Sync
+98f6a75 RDKB-7211, ARRISXB3-5037: rdk_wifi_configure_lnf_ap.sh bug.
+a850bac RDKB-3196: Add IP from ATOM side private
+10ded46 RDKBEMU-188 : Emulator Specific Ccsp-wifi-agent Implementation
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+a02c4aa RDKB-7361 : Self heal is not working for Mta agent.
+dd892e2 RDKB-7276 : Remove XB3 Specific Binary Call From Generic Script
+ba4f873 RDKB-7316 : log /proc/interrupts in case of high cpu
+16dc628 RDKB-7314 : log full output of 'iccctl mal'
+209f902 RDKB-7115: dropbear is crashed and DCA fails
+c5cf291 RDKB-6529 : RDK-B: TestAndDiagnostic unknown origin of source code in
+diag.c
+
+project rdkb/components/opensource/ccsp/Utopia/
+d0121dd ARRISXB6-2045 : LnF setup for arrisxb6.
+03d2c3e RDKB-7296 : Adding echo_t function definition in log_capture_path.sh
+d930ab0 RDKB-7143 : Security issues found on Static Analysis in Utopia
+Component.
+9b48787 RDKB-7146 : Security issues found on Static Analysis in Utopia
+Component.
+86a30b0 RDKB-7144 : Security issues found on Static Analysis in Utopia
+Component.
+998f800 RDKB-7142 : Security issues found on Static Analysis in Utopia
+Component.
+2b8111b RDKB-7141 : Security issues found on Static Analysis in Utopia
+Component.
+0080742 RDKB-7140 : Security issues found on Static Analysis in Utopia
+Component.
+ddd5c06 RDKB-7138 : Security issues found on Static Analysis in Utopia
+Component.
+71edf06 RDKB-7137 : Security issues found on Static Analysis in Utopia
+Component.
+d42c906 RDKB-7135 : Security issues found on Static Analysis in Utopia
+Component.
+97d8268 RDKB-7134 : Security issues found on Static Analysis in Utopia
+Component.
+80d3c1f RDKB-7133 : Security issues found on Static Analysis in Utopia
+Component.
+693af0d RDKB-7132 : Security issues found on Static Analysis in Utopia
+Component.
+f5ae406 RDKB-7131 : Security issues found on Static Analysis in Utopia
+Component.
+aed4e3c RDKB-7130 : Security issues found on Static Analysis in Utopia
+Component.
+1c67a41 RDKB-7129 : Security issues found on Static Analysis in Utopia
+Component.
+b925fe0 RDKB-7128 : Security issues found on Static Analysis in Utopia
+Component.
+2261fa5 RDKB-7225: Drop bear not running for rsync when wan0 is in ipv4
+
+project rdkb/components/opensource/ccsp/hal/
+62f5737 RDKB-3981: [Resiliency] Validate Downloaded Firmware Image Execution
+835a59b RDKBEMU-198 : Emulator specific hal modification
+394bb92 RDKBEMU-187 : Emulator Specific Hal Implementation for MAC Filtering
+
+project rdkb/components/opensource/ccsp/webui/
+0808984 RDKB-6768: [XB Cloud] Update The Block Page UX
+589fc72 RDKB-7372 : Logs parsing from GUI fails as /var is not writable on atom
+63e5d21 RDKB-6984: DHCP start and end addresses are not getting auto populated
+94074be RDKB-5456: Port trigger rule with same target and trigger port
+6765dcc RDKB-7247: Command Injection - at_mycomputer_upload.php
+b0ff93c ARRISXB6-1953: [WiFi] MSO GUI put the XHS wifi into public wifi
+catigory
+5d37c8c RDKB-7158: Not able to access GUI when Cloud UI is enabled
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+d2118bc RDKBEMU-191 : Modify ajax file scripts in rdkbemu_xb3 repo

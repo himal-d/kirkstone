@@ -1,0 +1,11 @@
+./plot_start_times.py ram_only=./ram_only/start_times.txt ram_stress50=./ram_stress50/start_times.txt  zram_stress50_swapi60=./zram_stress50_swapi60/start_times.txt 
+
+./plot_load_avg.py ram_only=./ram_only/netflix_youtube_allocate_alive_loadavg.txt ram_stress50=./ram_stress50/netflix_youtube_allocate_alive_loadavg.txt  zram_stress50_swapi60=./zram_stress50_swapi60/netflix_youtube_allocate_alive_loadavg.txt 
+
+./plot_vmstat.py ram_only=./ram_only/netflix_youtube_allocate_alive_vmstat.txt ram_stress50=./ram_stress50/netflix_youtube_allocate_alive_vmstat.txt  zram_stress50_swapi60=./zram_stress50_swapi60/netflix_youtube_allocate_alive_vmstat.txt
+
+./plot_load_avg.py zram_stress50_swapi20=./zram_stress50_swapi20/netflix_youtube_allocate_alive_loadavg.txt zram_stress50_swapi60=./zram_stress50_swapi60/netflix_youtube_allocate_alive_loadavg.txt zram_stress50_swapi100=./zram_stress50_swapi100/netflix_youtube_allocate_alive_loadavg.txt
+
+./plot_vmstat.py zram_stress50_swapi20=./zram_stress50_swapi20/netflix_youtube_allocate_alive_vmstat.txt zram_stress50_swapi60=./zram_stress50_swapi60/netflix_youtube_allocate_alive_vmstat.txt zram_stress50_swapi100=./zram_stress50_swapi100/netflix_youtube_allocate_alive_vmstat.txt
+
+./plot_start_times.py zram_stress50_swapi20=./zram_stress50_swapi20/start_times.txt zram_stress50_swapi60=./zram_stress50_swapi60/start_times.txt zram_stress50_swapi100=./zram_stress50_swapi100/start_times.txt

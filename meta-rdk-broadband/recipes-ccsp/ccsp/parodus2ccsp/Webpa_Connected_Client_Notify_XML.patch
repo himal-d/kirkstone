@@ -1,0 +1,32 @@
+Date: November 24, 2021 1:15 PM
+From: I196a262add98ac0159f4e1ffff78e7ab3b1233a2 November 24, 2021 1:15 PM
+Subject: RDKB-38828
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: sv618 <sreedevi_v@comcast.com>
+
+diff -wNurp A/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml B/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml
+--- A/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml	2021-11-24 13:07:35.044717613 +0530
++++ B/source/arch/intel_usg/boards/rdkb_atom/config/comcast/WebpaAgent.xml	2021-11-24 13:11:18.192721383 +0530
+@@ -28,6 +28,21 @@
+             </parameters>
+         </object>
+         <object>
++            <name>X_RDK_Webpa</name>
++            <objectType>object</objectType>
++            <functions>
++                <func_SetParamStringValue>X_RDK_Webpa_SetParamStringValue</func_SetParamStringValue>
++            </functions>
++            <parameters>
++                <parameter>
++                    <name>ConnectedClientNotify</name>
++                    <type>string</type>
++                    <syntax>string</syntax>
++                    <writable>true</writable>
++                </parameter>
++            </parameters>
++        </object> 
++        <object>
+             <name>X_RDKCENTRAL-COM_Webpa</name>
+             <objectType>object</objectType>
+             <functions>

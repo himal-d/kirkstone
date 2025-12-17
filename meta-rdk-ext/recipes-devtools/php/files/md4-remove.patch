@@ -1,0 +1,61 @@
+Date: Sep 10, 2018 10:20 PM
+
+From: d82599ca4b4764af42189b5a0d482d376215aacc 	Sep 26, 2018 8:45 PM
+
+Subject: [PATCH] RDKB-18052: Use OAUTH to replace POTD
+
+	Turn on curl and openssl in php and add patch file to remove md4 from openssl.
+	
+Source: COMCAST
+
+Upstream-Status: Pending 
+
+Signed-off-by: Kirk Davis <kirk_davis@cable.comcast.com>
+---
+
+Index: php-7.2.8/ext/openssl/openssl.c
+===================================================================
+--- php-7.2.8.orig/ext/openssl/openssl.c
++++ php-7.2.8/ext/openssl/openssl.c
+@@ -1322,9 +1322,11 @@ static EVP_MD * php_openssl_get_evp_md_f
+ 		case OPENSSL_ALGO_MD5:
+ 			mdtype = (EVP_MD *) EVP_md5();
+ 			break;
++#ifdef HAVE_OPENSSL_MD4_H
+ 		case OPENSSL_ALGO_MD4:
+ 			mdtype = (EVP_MD *) EVP_md4();
+ 			break;
++#endif
+ #ifdef HAVE_OPENSSL_MD2_H
+ 		case OPENSSL_ALGO_MD2:
+ 			mdtype = (EVP_MD *) EVP_md2();
+@@ -1347,9 +1349,11 @@ static EVP_MD * php_openssl_get_evp_md_f
+ 		case OPENSSL_ALGO_SHA512:
+ 			mdtype = (EVP_MD *) EVP_sha512();
+ 			break;
++#ifdef HAVE_OPENSSL_RMD160_H
+ 		case OPENSSL_ALGO_RMD160:
+ 			mdtype = (EVP_MD *) EVP_ripemd160();
+ 			break;
++#endif
+ 		default:
+ 			return NULL;
+ 			break;
+@@ -6031,7 +6035,7 @@ PHP_FUNCTION(openssl_seal)
+ 			RETURN_FALSE;
+ 		}
+ 	} else {
+-		cipher = EVP_rc4();
++		cipher = EVP_enc_null();
+ 	}
+ 
+ 	iv_len = EVP_CIPHER_iv_length(cipher);
+@@ -6164,7 +6168,7 @@ PHP_FUNCTION(openssl_open)
+ 			RETURN_FALSE;
+ 		}
+ 	} else {
+-		cipher = EVP_rc4();
++		cipher = EVP_enc_null();
+ 	}
+ 
+ 	cipher_iv_len = EVP_CIPHER_iv_length(cipher);

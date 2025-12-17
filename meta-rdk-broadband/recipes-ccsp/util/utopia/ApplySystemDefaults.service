@@ -1,0 +1,14 @@
+[Unit]
+Description=Handle the partner_defaults.json file
+
+After=PsmSsp.service
+Before=CcspPandMSsp.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/apply_system_defaults_psm
+ExecStartPost=/bin/sh -c  'touch /tmp/apply_system_defaults_psm-finished'
+
+[Install]
+WantedBy=sysinit.target

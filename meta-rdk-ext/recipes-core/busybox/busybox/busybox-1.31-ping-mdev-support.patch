@@ -1,0 +1,44 @@
+Index: busybox-1.31.1/networking/ping.c
+===================================================================
+--- busybox-1.31.1.orig/networking/ping.c
++++ busybox-1.31.1/networking/ping.c
+@@ -383,6 +383,7 @@ struct globals {
+ 	uint8_t pattern;
+ 	unsigned tmin, tmax; /* in us */
+ 	unsigned long long tsum; /* in us, sum of all times */
++	unsigned long long tsum2;
+ 	unsigned cur_us; /* low word only, we don't need more */
+ 	unsigned deadline_us;
+ 	unsigned interval_us;
+@@ -412,6 +413,7 @@ struct globals {
+ #define tmin         (G.tmin        )
+ #define tmax         (G.tmax        )
+ #define tsum         (G.tsum        )
++#define tsum2        (G.tsum2       )
+ #define timeout      (G.timeout     )
+ #define hostname     (G.hostname    )
+ #define dotted       (G.dotted      )
+@@ -454,10 +456,13 @@ static void print_stats_and_exit(int jun
+ 	printf("%lu%% packet loss\n", ul);
+ 	if (tmin != UINT_MAX) {
+ 		unsigned tavg = tsum / (nrecv + G.nrepeats);
+-		printf("round-trip min/avg/max = %u.%03u/%u.%03u/%u.%03u ms\n",
++		unsigned tavg2 = tsum2 / (nrecv + G.nrepeats);
++		unsigned long tmdev = sqrt(tavg2 - tavg * tavg );
++		printf("round-trip min/avg/max/mdev = %u.%03u/%u.%03u/%u.%03u/%u.%03u ms\n",
+ 			tmin / 1000, tmin % 1000,
+ 			tavg / 1000, tavg % 1000,
+-			tmax / 1000, tmax % 1000);
++			tmax / 1000, tmax % 1000,
++			tmdev / 1000, tmdev % 1000);
+ 	}
+ 	/* if condition is true, exit with 1 -- 'failure' */
+ 	exit(nrecv == 0 || (G.deadline_us && nrecv < pingcount));
+@@ -616,6 +621,7 @@ static void unpack_tail(int sz, uint32_t
+ 		/* (doesn't hurt 32-bit real-world anyway) */
+ 		triptime = (int32_t) ((uint32_t)monotonic_us() - *tp);
+ 		tsum += triptime;
++		tsum2 += triptime * triptime;
+ 		if (triptime < tmin)
+ 			tmin = triptime;
+ 		if (triptime > tmax)

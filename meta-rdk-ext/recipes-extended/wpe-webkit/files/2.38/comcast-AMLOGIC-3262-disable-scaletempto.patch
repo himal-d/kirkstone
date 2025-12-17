@@ -1,0 +1,30 @@
+From dfb1c5277324ad1ac6b489f43a9fc160f1ce9189 Mon Sep 17 00:00:00 2001
+From: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+Date: Thu, 8 Sep 2022 18:23:40 +0000
+Subject: [PATCH] comcast AMLOGIC-3262 disable scaletempto
+
+Let platform handle playback rate
+---
+ .../platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 71719b8fe2a8..5bab53b73dc7 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -3025,10 +3025,12 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
+ 
+     g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), "video-sink", createVideoSink(), nullptr);
+ 
++#if 0
+     if (m_shouldPreservePitch && !isMediaStream) {
+         if (auto* scale = makeGStreamerElement("scaletempo", nullptr))
+             g_object_set(m_pipeline.get(), "audio-filter", scale, nullptr);
+     }
++#endif
+ 
+     if (!m_player->isVideoPlayer())
+         return;
+-- 
+2.25.1
+

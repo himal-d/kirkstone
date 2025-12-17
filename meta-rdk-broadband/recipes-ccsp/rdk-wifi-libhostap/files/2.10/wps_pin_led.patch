@@ -1,0 +1,111 @@
+Date: 28-Nov-2023
+From: roman_skakun@comcast.com
+Source: COMCAST
+
+diff --git a/source/hostap-2.10/src/wps/wps.h b/source/hostap-2.10/src/wps/wps.h
+index fed3e28..5119d85 100644
+--- a/source/hostap-2.10/src/wps/wps.h
++++ b/source/hostap-2.10/src/wps/wps.h
+@@ -484,6 +484,21 @@ enum wps_event {
+ 	 */
+ 	WPS_EV_PBC_DISABLE,
+ 
++	/**
++	 * WPS_EV_PIN_TIMEOUT - PIN session was expired
++	 */
++	WPS_EV_PIN_TIMEOUT,
++
++	/**
++	 * WPS_EV_PIN_DISABLE - PIN session was disabled
++	 */
++	WPS_EV_PIN_DISABLE,
++
++	/**
++	 * WPS_EV_PIN_ACTIVE - PIN mode was activated
++	 */
++	WPS_EV_PIN_ACTIVE,
++
+ 	/**
+ 	 * WPS_EV_ER_AP_ADD - ER: AP added
+ 	 */
+diff --git a/source/hostap-2.10/src/wps/wps_common.c b/source/hostap-2.10/src/wps/wps_common.c
+index 747dc47..a8747ce 100644
+--- a/source/hostap-2.10/src/wps/wps_common.c
++++ b/source/hostap-2.10/src/wps/wps_common.c
+@@ -351,6 +351,33 @@ void wps_pbc_disable_event(struct wps_context *wps)
+ }
+ 
+ 
++void wps_pin_timeout_event(struct wps_context *wps)
++{
++	if (wps->event_cb == NULL)
++		return;
++
++	wps->event_cb(wps->cb_ctx, WPS_EV_PIN_TIMEOUT, NULL);
++}
++
++
++void wps_pin_active_event(struct wps_context *wps)
++{
++	if (wps->event_cb == NULL)
++		return;
++
++	wps->event_cb(wps->cb_ctx, WPS_EV_PIN_ACTIVE, NULL);
++}
++
++
++void wps_pin_disable_event(struct wps_context *wps)
++{
++	if (wps->event_cb == NULL)
++		return;
++
++	wps->event_cb(wps->cb_ctx, WPS_EV_PIN_DISABLE, NULL);
++}
++
++
+ #ifdef CONFIG_WPS_OOB
+ 
+ struct wpabuf * wps_get_oob_cred(struct wps_context *wps, int rf_band,
+diff --git a/source/hostap-2.10/src/wps/wps_i.h b/source/hostap-2.10/src/wps/wps_i.h
+index 2cf22d4..e5f5ae9 100644
+--- a/source/hostap-2.10/src/wps/wps_i.h
++++ b/source/hostap-2.10/src/wps/wps_i.h
+@@ -148,6 +148,10 @@ void wps_pbc_timeout_event(struct wps_context *wps);
+ void wps_pbc_active_event(struct wps_context *wps);
+ void wps_pbc_disable_event(struct wps_context *wps);
+ 
++void wps_pin_timeout_event(struct wps_context *wps);
++void wps_pin_active_event(struct wps_context *wps);
++void wps_pin_disable_event(struct wps_context *wps);
++
+ struct wpabuf * wps_build_wsc_ack(struct wps_data *wps);
+ struct wpabuf * wps_build_wsc_nack(struct wps_data *wps);
+ 
+diff --git a/source/hostap-2.10/src/wps/wps_registrar.c b/source/hostap-2.10/src/wps/wps_registrar.c
+index 9587293..c3f77e1 100644
+--- a/source/hostap-2.10/src/wps/wps_registrar.c
++++ b/source/hostap-2.10/src/wps/wps_registrar.c
+@@ -832,6 +832,7 @@ int wps_registrar_add_pin(struct wps_registrar *reg, const u8 *addr,
+ 	eloop_register_timeout(WPS_PBC_WALK_TIME, 0,
+ 			       wps_registrar_set_selected_timeout,
+ 			       reg, NULL);
++	wps_pin_active_event(reg->wps);
+ 
+ 	return 0;
+ }
+@@ -1128,6 +1129,7 @@ int wps_registrar_wps_cancel(struct wps_registrar *reg)
+ 		wpa_printf(MSG_DEBUG, "WPS: PIN is set - cancelling it");
+ 		wps_registrar_pin_completed(reg);
+ 		wps_registrar_invalidate_wildcard_pin(reg, NULL, 0);
++		wps_pin_disable_event(reg->wps);
+ 		return 1;
+ 	}
+ 	return 0;
+@@ -3474,6 +3476,7 @@ static void wps_registrar_set_selected_timeout(void *eloop_ctx,
+ 	reg->pbc = 0;
+ 	wps_registrar_expire_pins(reg);
+ 	wps_registrar_selected_registrar_changed(reg, 0);
++	wps_pin_timeout_event(reg->wps);
+ }
+ 
+ 

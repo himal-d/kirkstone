@@ -1,0 +1,67 @@
+Changelog between rdkb-20170213 and rdkb-20170227
+
+
+
+project rdkb/components/opensource/ccsp/CcspCommonLibrary/
+b2812a05 RDKB-7180:RDK-B: Approval for use of RSA-Licensed code in CcspCommonLibrary
+
+project rdkb/components/opensource/ccsp/CcspLMLite/
+6f92549 RDKB-10253: WiFi clients reported as Ethernet
+e40b04e RDKB-10253: WiFi clients reported as Ethernet
+723eaa2 RDKB-10194: LMLite report is sending incorrect CPE mac address.
+
+project rdkb/components/opensource/ccsp/CcspPandM/
+30758a3 RDKB-8016 :Saved and Restore of user Configuration not working
+69df9fd ARRISXB6-3256: [WiFi] factory reset via snmp not resetting wifi
+45908b0 TCCBR-447: No DHCP response is received for DHCPv6 request from client.
+7d61024 Revert "XF3-1716: Parental Control Should Use Local Time"
+a014052 XF3-1716: Parental Control Should Use Local Time
+775d19e RDKB-9471: Enable MoCA post device activation and WiFi personalization
+8cb2686 TCCBR-674: Parameters to customize maintenance window
+f3ba002 ARRISXB6-2598: error fetching interface information
+73b355f TCCBR-365: Removing macro for MOCA switch port
+
+project rdkb/components/opensource/ccsp/CcspSnmpPa/
+d02116d ARRISXB6-3256: [WiFi] factory reset via snmp not resetting wifi
+5ebfb15 Revert "ARRISXB6-3256: [WiFi] factory reset via snmp not resetting wifi"
+95d0133 ARRISXB6-3256: [WiFi] factory reset via snmp not resetting wifi
+f60fd25 RDKB-10198:Remove SNMP Support for XHS WiFi password
+6c71839 RDKB-9999: SNMP.txt.0 | getBSSEnable wrongly classified as error
+
+project rdkb/components/opensource/ccsp/CcspTr069Pa/
+9d2bfd2 RDKBEMU-371 : Upstream Tr069 Implementation in ccsp-tr069-pa.
+5757949 RDKBEMU-358 : Upstream Tr069 Implementation in ccsp-tr069-pa.
+
+project rdkb/components/opensource/ccsp/CcspWifiAgent/
+0310255 Revert "Revert "ARRISXB6-3328 RDKB-8135: CCSP WiFi Agent doesn't Restart if it crashes""
+
+project rdkb/components/opensource/ccsp/GwProvApp/
+855c36b Revert "CISCOXB3-2045: High failure rate of ITG update passphrase flow on CiscoXB3"
+5335b5d CISCOXB3-2045: High failure rate of ITG update passphrase flow on CiscoXB3
+
+project rdkb/components/opensource/ccsp/TestAndDiagnostic/
+df9ed99 RDKB-10250: PAM is not running and SelfHeal is not restarting the process.
+b2b2086 RDKB-10329 : Prioritize the atom hang check in selfhealbootup.sh script
+01bff83 RDKB-10287 : LastRebootReason returns unknown during atom connection failure.
+865d49c CISCOXB3-2021:continuous dmcli error for SyncandUploadLogs parameter
+f896167 RDKB-9867 :  Log Top 5 Processes When CPU Usage Reaches 100%.
+e276c8e RDKB-10240:Bring proper time-stamp in all logs of RDK-B Devices-TandD
+
+project rdkb/components/opensource/ccsp/Utopia/
+a7a1ea2 RDKBCMF-41 : Changes In Utopia for making lan/wan services and firewall/parental control for RaspberryPi Platform
+
+project rdkb/components/opensource/ccsp/hal/
+d32d45a RDKBEMU-365 : Implementation of radio_enable parameter in hal.
+
+project rdkb/components/opensource/ccsp/sysint/
+b442beb RDKB-10341 : syncLogs_nvram2 is not happening immidiate after bootup
+fd3ab37 CISCOXB3-2021:continuous dmcli error for SyncandUploadLogs parameter
+
+project rdkb/devices/rdkbemu/ccsp/rdkb/
+d865562 RDKBEMU-370 : Added EnableCWMP parameters in PSM XML
+b52b1bf RDKBEMU-363 : Modified restore-wifi script to reset default values
+0d76233 RDKBEMU-361 : Modified snmp servcie file to bring up snmp_agent
+343e77f RDKBEMU-359 : upstream restore-wifi script to provide factory-reset
+
+project rdkb/devices/rdkbemu/rdkbemu_xb3/
+671c7e8 RDKBEMU-366 : Modification of PHP file to support radio_enable parameter

@@ -1,0 +1,209 @@
+####################################################################
+Date:  Fri 23 Oct 14:30:48 BST 2020
+From:  Deustche Telekom
+Subject: This Patch is added to fix intermittent dibbler-client crash occurring
+         during rebinding-> expiry -> solicit transition.
+Features/BugFix:
+ 1) Fix intermittent dibbler-client crash occurring during
+    rebinding-> expiry -> solicit transition.
+ 2) Fixed incorrect invocation for getNotifyScriptParams() to a proper one
+    through static_cast<TNotifyScriptParams*>(this->OriginalMsg->getNotifyScriptParams())
+ 3) Request is being send with server identifier and IA_PD list from Renew.
+Source: Deustche Telekom
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Arunkumar Sivadasan <arunkumar.sivadasan@sky.uk>
+Patch recreated for kirkstone by : Arjun <arjun_daasuramdass@comcast.com>
+  ####################################################################
+
+Index: git/ClntMessages/ClntMsg.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsg.cpp
++++ git/ClntMessages/ClntMsg.cpp
+@@ -1178,7 +1178,7 @@ void TClntMsg::answer(SPtr<TClntMsg> rep
+ 	// send new Request to another server
+ 	Log(Notice) << "There are still " << (iaLeft?"some IA(s)":"")
+ 		    << (taLeft?"TA":"") << (pdLeft?"some PD(s)":"") << " to configure." << LogEnd;
+-	ClntTransMgr().sendRequest(this->Options, this->Iface);
++	ClntTransMgr().sendRequest(this->Options, this->Iface, {});
+     } else {
+ 	if (optORO)
+ 	    optORO->delOption(OPTION_ADDRPARAMS); // don't insist on getting ADDR-PARAMS
+Index: git/ClntMessages/ClntMsgRenew.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsgRenew.cpp
++++ git/ClntMessages/ClntMsgRenew.cpp
+@@ -114,7 +114,7 @@ void TClntMsgRenew::answer(SPtr<TClntMsg
+             SPtr<TClntOptIA_NA> ptrOptIA = SPtr_cast<TClntOptIA_NA>(opt);
+             if (ptrOptIA->getStatusCode() != STATUSCODE_SUCCESS) {
+                 if(ptrOptIA->getStatusCode() == STATUSCODE_NOBINDING){
+-                    ClntTransMgr().sendRequest(Options, Iface);
++		    ClntTransMgr().sendRequest(Options, Iface, srvDUID);
+                     IsDone = true;
+                     return;
+                 }else{
+@@ -137,7 +137,7 @@ void TClntMsgRenew::answer(SPtr<TClntMsg
+             SPtr<TClntOptIA_PD> pd = SPtr_cast<TClntOptIA_PD>(opt);
+             if (pd->getStatusCode() != STATUSCODE_SUCCESS) {
+                 if(pd->getStatusCode() == STATUSCODE_NOBINDING){
+-                    ClntTransMgr().sendRequest(Options,Iface);
++		    ClntTransMgr().sendRequest(Options,Iface, srvDUID);
+                     IsDone = true;
+                     return;
+                 }
+Index: git/ClntMessages/ClntMsgRequest.h
+===================================================================
+--- git.orig/ClntMessages/ClntMsgRequest.h
++++ git/ClntMessages/ClntMsgRequest.h
+@@ -19,6 +19,7 @@ class TClntMsgRequest : public TClntMsg
+ {
+   public:
+     TClntMsgRequest(TOptList opts, int iface);
++    TClntMsgRequest(TOptList opts, int iface, SPtr<TOptDUID> srvDUID);
+     TClntMsgRequest(List(TAddrIA) requestIALst,
+                     SPtr<TDUID> srvDUID,
+                     int iface);
+Index: git/ClntMessages/ClntMsgSolicit.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsgSolicit.cpp
++++ git/ClntMessages/ClntMsgSolicit.cpp
+@@ -133,14 +133,14 @@ void TClntMsgSolicit::answer(SPtr<TClntM
+ 	{
+ 	    Log(Info) << "ADVERTISE message with preference set to 255 received, so wait time for"
+ 		" other possible ADVERTISE messages is skipped." << LogEnd;
+-	    ClntTransMgr().sendRequest(Options, Iface);
++	    ClntTransMgr().sendRequest(Options, Iface, {});
+ 	    IsDone = true;
+ 	    return;
+ 	}
+ 
+ 	if (this->RC > 1)
+ 	{
+-	    ClntTransMgr().sendRequest(Options, Iface);
++	    ClntTransMgr().sendRequest(Options, Iface, {});
+ 	    IsDone = true;
+ 	    return;
+ 	}
+@@ -397,7 +397,7 @@ void TClntMsgSolicit::doDuties()
+ {
+     if ( ClntTransMgr().getAdvertiseLstCount() ) { 
+         // there is a timeout, but we have already answers and all is ok
+-        ClntTransMgr().sendRequest(Options, Iface);
++	ClntTransMgr().sendRequest(Options, Iface, {});
+         IsDone = true;
+         return;
+     }
+Index: git/ClntOptions/ClntOptIA_PD.cpp
+===================================================================
+--- git.orig/ClntOptions/ClntOptIA_PD.cpp
++++ git/ClntOptions/ClntOptIA_PD.cpp
+@@ -259,7 +259,7 @@ bool TClntOptIA_PD::modifyPrefixes(TClnt
+ 
+     TNotifyScriptParams* scriptParams = 0;
+     if (OriginalMsg) {
+-        scriptParams = static_cast<TNotifyScriptParams*>(OriginalMsg->getNotifyScriptParams());
++	scriptParams = static_cast<TNotifyScriptParams*>(this->OriginalMsg->getNotifyScriptParams());
+     }
+ 
+     this->firstPrefix();
+Index: git/ClntTransMgr/ClntTransMgr.cpp
+===================================================================
+--- git.orig/ClntTransMgr/ClntTransMgr.cpp
++++ git/ClntTransMgr/ClntTransMgr.cpp
+@@ -787,7 +787,7 @@ void TClntTransMgr::stop()
+ /**
+  * Note: requestOptions list MUST NOT contain server DUID.
+  */
+-void TClntTransMgr::sendRequest(TOptList requestOptions, int iface)
++void TClntTransMgr::sendRequest(TOptList requestOptions, int iface, SPtr<TOptDUID> srvDUID)
+ {
+     sortAdvertiseLst();
+ 
+@@ -798,7 +798,7 @@ void TClntTransMgr::sendRequest(TOptList
+ 	    (*opt)->getOptType() == OPTION_AUTH)
+             opt = requestOptions.erase(opt);
+     }
+-    SPtr<TClntMsg> ptr = new TClntMsgRequest(requestOptions, iface);
++    SPtr<TClntMsg> ptr = new TClntMsgRequest(requestOptions, iface, srvDUID);
+     Transactions.append(ptr);
+ }
+ 
+Index: git/ClntTransMgr/ClntTransMgr.h
+===================================================================
+--- git.orig/ClntTransMgr/ClntTransMgr.h
++++ git/ClntTransMgr/ClntTransMgr.h
+@@ -33,7 +33,7 @@ class TClntTransMgr
+     void relayMsg(SPtr<TClntMsg> msg);
+     unsigned long getTimeout();
+     void stop();
+-    void sendRequest(TOptList requestOptions, int iface);
++    void sendRequest(TOptList requestOptions, int iface, SPtr<TOptDUID> srvDUID);
+     void sendInfRequest(TOptList requestOptions, int iface);
+     void sendRebind(TOptList ptrIA, int iface);
+     void sendRelease(List(TAddrIA) iaLst, SPtr<TAddrIA> ta, List(TAddrIA) pdLst);
+Index: git/ClntMessages/ClntMsgRequest.cpp
+===================================================================
+--- git.orig/ClntMessages/ClntMsgRequest.cpp
++++ git/ClntMessages/ClntMsgRequest.cpp
+@@ -31,8 +31,8 @@
+ /*
+  * opts - options list WITHOUT serverDUID
+  */
+-TClntMsgRequest::TClntMsgRequest(TOptList opts, int iface)
+-    :TClntMsg(iface, SPtr<TIPv6Addr>(), REQUEST_MSG) {
++TClntMsgRequest::TClntMsgRequest(TOptList opts, int iface, SPtr<TOptDUID> srvDUID)
++	:TClntMsg(iface, SPtr<TIPv6Addr>(), REQUEST_MSG) {
+     IRT = REQ_TIMEOUT;
+     MRT = REQ_MAX_RT;
+     MRC = REQ_MAX_RC;
+@@ -42,6 +42,22 @@ TClntMsgRequest::TClntMsgRequest(TOptLis
+     Iface=iface;
+     IsDone=false;
+ 
++    if (srvDUID != NULL){
++	    Log(Info) << "Send Request when NOBINDING status is obtained" << LogEnd ;
++	    SPtr<TOpt> ptr;
++	    ptr = new TOptDUID(OPTION_CLIENTID, ClntCfgMgr().getDUID(), this );
++	    if ( ptr ) {
++		    Options.push_back( ptr );
++	    }
++	    Options.push_back( new TOptDUID(OPTION_SERVERID,srvDUID->getDUID(),this));
++	    SPtr<TAddrIA> pd;
++	    ClntAddrMgr().firstPD();
++	    while (pd = ClntAddrMgr().getPD())
++		    Options.push_back(new TClntOptIA_PD(pd, this));
++    }
++
++    else {
++
+     int backupCount = ClntTransMgr().getAdvertiseLstCount();
+     if (!backupCount) 
+     {
+@@ -56,7 +72,7 @@ TClntMsgRequest::TClntMsgRequest(TOptLis
+     ClntTransMgr().printAdvertiseLst();
+ 
+     // get server DUID from the first advertise
+-    SPtr<TOpt> srvDUID = ClntTransMgr().getAdvertiseDUID();
++    SPtr<TOpt> SrvDUID = ClntTransMgr().getAdvertiseDUID();
+ 
+     ClntTransMgr().firstAdvertise();
+     SPtr<TClntMsg> advertise = SPtr_cast<TClntMsg>(ClntTransMgr().getAdvertise());
+@@ -121,7 +137,8 @@ TClntMsgRequest::TClntMsgRequest(TOptLis
+     }
+     
+     // ... and append server's DUID from ADVERTISE
+-    Options.push_back( srvDUID );
++    Options.push_back( SrvDUID );
++    }
+     
+     appendElapsedOption();
+     appendAuthenticationOption();
+@@ -210,7 +227,7 @@ void TClntMsgRequest::doDuties()
+     // timeout is reached and we still don't have answer, retransmit
+     if (RC>MRC) 
+     {
+-        ClntTransMgr().sendRequest(Options, Iface);
++	ClntTransMgr().sendRequest(Options, Iface, {});
+ 
+         IsDone = true;
+         return;

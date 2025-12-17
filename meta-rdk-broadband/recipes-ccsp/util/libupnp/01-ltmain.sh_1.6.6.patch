@@ -1,0 +1,46 @@
+Date: Aug 01 14:43:05 2018
+
+From: 7ea2ea0592e000fdcfb091d71d6a21e8876cdf44  
+
+Subject: [PATCH] ARRISXB3-4105: Removed libdir variable  
+
+	Adding 'libdir' from the .la file to our library search paths
+	breaks crosscompilation horribly.  We cheat here and don't add
+	it, instead adding the path where we found the .la.  -CL
+     
+Source: COMCAST
+
+
+Upstream-Status: Pending
+
+Signed-off-by: rthangamani <ramakrishnan.thangamani@wipro.com>
+---
+
+--- a/build-aux/ltmain.sh	2013-02-19 17:38:50.831930000 +0800
++++ b/build-aux/ltmain.sh	2013-02-19 17:58:15.643132000 +0800
+@@ -2404,8 +2404,14 @@
+ 	    absdir="$abs_ladir"
+ 	    libdir="$abs_ladir"
+ 	  else
+-	    dir="$libdir"
+-	    absdir="$libdir"
++	    # Adding 'libdir' from the .la file to our library search paths
++	    # breaks crosscompilation horribly.  We cheat here and don't add
++	    # it, instead adding the path where we found the .la.  -CL
++	    dir="$abs_ladir"
++	    absdir="$abs_ladir"
++	    libdir="$abs_ladir"
++	    #dir="$libdir"
++	    #absdir="$libdir"
+ 	  fi
+ 	  test "X$hardcode_automatic" = Xyes && avoidtemprpath=yes
+ 	else
+@@ -2767,7 +2773,7 @@
+ 	      fi
+ 	    else
+ 	      # We cannot seem to hardcode it, guess we'll fake it.
+-	      add_dir="-L$libdir"
++	      #add_dir="-L$libdir"
+ 	      # Try looking first in the location we're being installed to.
+ 	      if test -n "$inst_prefix_dir"; then
+ 		case $libdir in

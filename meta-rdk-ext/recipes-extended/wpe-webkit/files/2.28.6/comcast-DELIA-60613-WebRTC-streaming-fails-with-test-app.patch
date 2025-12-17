@@ -1,0 +1,31 @@
+From 1e3a4d60a6bdb26a1bf17ec2cb42bf749db4c2c2 Mon Sep 17 00:00:00 2001
+From: "Vivek.A" <Vivek_Arumugam@comcast.com>
+Date: Mon, 13 Mar 2023 08:34:28 +0000
+Subject: [PATCH] comcast DELIA-60613 WebRTC streaming fails with test app
+
+Reason for change: Disable ICE candidate filtering as in wpe-2.22
+Test Procedure: Refer ticket
+Priority: P1
+Risks: None
+
+Signed-off-by: Vivek.A <vivek_arumugam@comcast.com>
+---
+ Source/WebKit/Shared/WebPreferences.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/Shared/WebPreferences.yaml b/Source/WebKit/Shared/WebPreferences.yaml
+index 7b96905bb52c..253e2aa56aff 100644
+--- a/Source/WebKit/Shared/WebPreferences.yaml
++++ b/Source/WebKit/Shared/WebPreferences.yaml
+@@ -1961,7 +1961,7 @@ AllowScriptsToCloseWindows:
+ 
+ ICECandidateFilteringEnabled:
+   type: bool
+-  defaultValue: true
++  defaultValue: false
+ 
+ MockCaptureDevicesEnabled:
+   type: bool
+-- 
+2.17.1
+
