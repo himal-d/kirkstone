@@ -6,6 +6,7 @@ SRC_URI = "gitsm://github.com/openthread/ot-br-posix.git;branch=main;protocol=ht
            file://0001-disable-tests.patch \
 	   file://ot-br-posix.service \
 	   file://otbr-agent-wrapper.sh \
+	   file://get-thread-dataset.sh \
           "
 SRCREV = "9537b07470dc1cd98ee6c5e3e4486c7ba2223966"
 
@@ -31,7 +32,7 @@ EXTRA_OECMAKE = "\
 SYSTEMD_SERVICE:${PN} = "ot-br-posix.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
-FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh"
+FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset"
 
 do_install:append() {
     install -d ${D}/usr/local/bin
@@ -39,4 +40,8 @@ do_install:append() {
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${THISDIR}/files/ot-br-posix.service ${D}${systemd_system_unitdir}/
+    
+    # Install Thread dataset helper script
+    install -d -m 755 ${D}${bindir}
+    install -m 755 ${WORKDIR}/get-thread-dataset.sh ${D}${bindir}/get-thread-dataset
 }

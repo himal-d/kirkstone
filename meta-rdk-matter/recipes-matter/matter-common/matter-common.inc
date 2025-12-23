@@ -3,6 +3,9 @@ SUMMARY = "Matter Application Common Config"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
+# Trusty deployment flag (default: false for POC)
+DEPLOY_TRUSTY ??= "false"
+
 SRCBRANCH = "v1.4-branch-nxp_imx_2025_q1"
 IMX_MATTER_SRC ?= "gitsm://github.com/NXP/matter.git;protocol=https"
 SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"

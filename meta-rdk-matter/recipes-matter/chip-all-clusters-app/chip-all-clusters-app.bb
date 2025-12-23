@@ -70,6 +70,9 @@ common_configure() {
         target_cflags=[
                         "-DCHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME=\"wlan0\"",
                         "-DCHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD=\"udhcpc -b -i %s \"",
+                        "-DCHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME=\"wpan0\"",
+                        "-DCHIP_DEVICE_CONFIG_ENABLE_WIFI=1",
+                        "-DCHIP_DEVICE_CONFIG_ENABLE_THREAD=1",
                        ]
         custom_toolchain="${build_root}/toolchain/custom"
         target_cc="${CC}"

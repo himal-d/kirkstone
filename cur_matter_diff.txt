@@ -1,0 +1,255 @@
+diff --git a/meta-rdk-matter/recipes-matter/chip-all-clusters-app/chip-all-clusters-app.bb b/meta-rdk-matter/recipes-matter/chip-all-clusters-app/chip-all-clusters-app.bb
+index 814326e4..e62d5fb4 100644
+--- a/meta-rdk-matter/recipes-matter/chip-all-clusters-app/chip-all-clusters-app.bb
++++ b/meta-rdk-matter/recipes-matter/chip-all-clusters-app/chip-all-clusters-app.bb
+@@ -70,6 +70,9 @@ common_configure() {
+         target_cflags=[
+                         "-DCHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME=\"wlan0\"",
+                         "-DCHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD=\"udhcpc -b -i %s \"",
++                        "-DCHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME=\"wpan0\"",
++                        "-DCHIP_DEVICE_CONFIG_ENABLE_WIFI=1",
++                        "-DCHIP_DEVICE_CONFIG_ENABLE_THREAD=1",
+                        ]
+         custom_toolchain="${build_root}/toolchain/custom"
+         target_cc="${CC}"
+diff --git a/meta-rdk-matter/recipes-matter/chip-all-clusters-app/files/chip-all-clusters-app.service b/meta-rdk-matter/recipes-matter/chip-all-clusters-app/files/chip-all-clusters-app.service
+index 49ccd4e6..6389ecaa 100644
+--- a/meta-rdk-matter/recipes-matter/chip-all-clusters-app/files/chip-all-clusters-app.service
++++ b/meta-rdk-matter/recipes-matter/chip-all-clusters-app/files/chip-all-clusters-app.service
+@@ -1,16 +1,18 @@
+ [Unit]
+ Description=Chip All Cluster App for Matter IoT
+-After=network.target avahi-daemon.service dbus.service
++After=network-online.target avahi-daemon.service dbus.service ot-br-posix.service
++Wants=network-online.target
+ Requires=avahi-daemon.service
+ 
+ [Service]
+ Type=simple
+-ExecStartPre=/bin/rm -f /var/run/chip-all-clusters-app.pid
++ExecStartPre=/bin/sh -c 'while ! ip link show wpan0 >/dev/null 2>&1; do sleep 1; done'
+ ExecStart=/usr/bin/chip-all-clusters-app
+ Restart=on-failure
+ RestartSec=3
+ Environment=CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME="wlan0"
+ Environment=CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD="udhcpc -b -i %s"
++Environment=CHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME="wpan0"
+ StandardOutput=journal
+ StandardError=journal
+ LimitNOFILE=65536
+diff --git a/meta-rdk-matter/recipes-matter/chip-lighting-app/files/chip-lighting-app.service b/meta-rdk-matter/recipes-matter/chip-lighting-app/files/chip-lighting-app.service
+index c34de987..bc3478be 100644
+--- a/meta-rdk-matter/recipes-matter/chip-lighting-app/files/chip-lighting-app.service
++++ b/meta-rdk-matter/recipes-matter/chip-lighting-app/files/chip-lighting-app.service
+@@ -6,9 +6,13 @@ Requires=avahi-daemon.service
+ 
+ [Service]
+ Type=simple
++ExecStartPre=/bin/sh -c 'while ! ip link show wpan0 >/dev/null 2>&1; do sleep 1; done'
+ ExecStart=/usr/bin/chip-lighting-app
+ Restart=on-failure
+ RestartSec=3
++Environment=CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME="wlan0"
++Environment=CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD="udhcpc -b -i %s"
++Environment=CHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME="wpan0"
+ StandardOutput=journal
+ StandardError=journal
+ LimitNOFILE=65536
+diff --git a/meta-rdk-matter/recipes-matter/chip-tool/chip-tool.bb b/meta-rdk-matter/recipes-matter/chip-tool/chip-tool.bb
+index 6c36e422..7d8d7c3c 100644
+--- a/meta-rdk-matter/recipes-matter/chip-tool/chip-tool.bb
++++ b/meta-rdk-matter/recipes-matter/chip-tool/chip-tool.bb
+@@ -7,6 +7,7 @@ SRCBRANCH = "v1.4-branch-nxp_imx_2025_q1"
+ IMX_MATTER_SRC ?= "gitsm://github.com/NXP/matter.git;protocol=https"
+ SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
+ SRC_URI += "file://chip-tool.service"
++SRC_URI += "file://matter-commission.sh"
+ MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
+ 
+ inherit systemd
+@@ -67,6 +68,9 @@ common_configure() {
+         target_cflags=[
+                         "-DCHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME=\"wlan0\"",
+                         "-DCHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD=\"udhcpc -b -i %s \"",
++                        "-DCHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME=\"wpan0\"",
++                        "-DCHIP_DEVICE_CONFIG_ENABLE_WIFI=1",
++                        "-DCHIP_DEVICE_CONFIG_ENABLE_THREAD=1",
+                        ]
+         custom_toolchain="${build_root}/toolchain/custom"
+         target_cc="${CC}"
+@@ -97,6 +101,10 @@ do_install() {
+ 
+     install -d ${D}/lib/systemd/system/
+     install -m 644 ${WORKDIR}/chip-tool.service ${D}/lib/systemd/system/
++    
++    # Install commissioning helper script
++    install -d -m 755 ${D}${bindir}
++    install -m 755 ${WORKDIR}/matter-commission.sh ${D}${bindir}/matter-commission
+ }
+ 
+ INSANE_SKIP_${PN} = "ldflags"
+diff --git a/meta-rdk-matter/recipes-matter/chip-tool/files/chip-tool.service b/meta-rdk-matter/recipes-matter/chip-tool/files/chip-tool.service
+index 2f049a16..16870a88 100644
+--- a/meta-rdk-matter/recipes-matter/chip-tool/files/chip-tool.service
++++ b/meta-rdk-matter/recipes-matter/chip-tool/files/chip-tool.service
+@@ -1,16 +1,16 @@
+ [Unit]
+-Description=Chip Tool for Matter IoT
+-After=network-online.target avahi-daemon.service
++Description=Chip Tool for Matter IoT (Manual Commissioning Tool)
++After=network-online.target avahi-daemon.service ot-br-posix.service
+ Wants=network-online.target
+ 
+ [Service]
+-ExecStart=/usr/bin/chip-tool pairing onnetwork 1 20202021
+-Restart=on-failure
+-RestartSec=5
+-User=root
+-Group=root
++Type=oneshot
++RemainAfterExit=yes
++# Don't auto-run pairing - user must run manually
++ExecStart=/bin/true
+ Environment=CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME="wlan0"
+ Environment=CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD="udhcpc -b -i %s"
++Environment=CHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME="wpan0"
+ StandardOutput=journal
+ StandardError=journal
+ 
+diff --git a/meta-rdk-matter/recipes-matter/matter-common/matter-common.inc b/meta-rdk-matter/recipes-matter/matter-common/matter-common.inc
+index 0095247c..fd4e607d 100644
+--- a/meta-rdk-matter/recipes-matter/matter-common/matter-common.inc
++++ b/meta-rdk-matter/recipes-matter/matter-common/matter-common.inc
+@@ -3,6 +3,9 @@ SUMMARY = "Matter Application Common Config"
+ LICENSE = "Apache-2.0"
+ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+ 
++# Trusty deployment flag (default: false for POC)
++DEPLOY_TRUSTY ??= "false"
++
+ SRCBRANCH = "v1.4-branch-nxp_imx_2025_q1"
+ IMX_MATTER_SRC ?= "gitsm://github.com/NXP/matter.git;protocol=https"
+ SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
+diff --git a/meta-rdk-matter/recipes-matter/matter/files/chip-tool.service b/meta-rdk-matter/recipes-matter/matter/files/chip-tool.service
+index 2f049a16..ac949963 100644
+--- a/meta-rdk-matter/recipes-matter/matter/files/chip-tool.service
++++ b/meta-rdk-matter/recipes-matter/matter/files/chip-tool.service
+@@ -4,13 +4,14 @@ After=network-online.target avahi-daemon.service
+ Wants=network-online.target
+ 
+ [Service]
+-ExecStart=/usr/bin/chip-tool pairing onnetwork 1 20202021
++ExecStart=/usr/bin/chip-tool pairing onnetwork 1 ${MATTER_PAIRING_CODE:-20202021}
+ Restart=on-failure
+ RestartSec=5
+ User=root
+ Group=root
+ Environment=CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME="wlan0"
+ Environment=CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD="udhcpc -b -i %s"
++Environment=MATTER_PAIRING_CODE=20202021
+ StandardOutput=journal
+ StandardError=journal
+ 
+diff --git a/meta-rdk-matter/recipes-thread/ot-br-posix/files/otbr-agent-wrapper.sh b/meta-rdk-matter/recipes-thread/ot-br-posix/files/otbr-agent-wrapper.sh
+index d795f90a..4cf25cfc 100755
+--- a/meta-rdk-matter/recipes-thread/ot-br-posix/files/otbr-agent-wrapper.sh
++++ b/meta-rdk-matter/recipes-thread/ot-br-posix/files/otbr-agent-wrapper.sh
+@@ -4,9 +4,51 @@ set -e
+ # ==========================
+ # Configuration
+ # ==========================
+-RCP_DEVICE="/dev/ttyACM0"
++# Detect RCP device with fallback
++detect_rcp_device() {
++    # Check common paths
++    for dev in /dev/ttyACM0 /dev/ttyUSB0 /dev/ttyACM1; do
++        if [ -e "$dev" ]; then
++            # Verify it's a character device
++            if [ -c "$dev" ]; then
++                echo "$dev"
++                return 0
++            fi
++        fi
++    done
++    # Use environment variable if set
++    if [ -n "$RCP_DEVICE" ]; then
++        echo "$RCP_DEVICE"
++        return 0
++    fi
++    # Default fallback
++    echo "/dev/ttyACM0"
++}
++
++# Detect bridge interface for Raspberry Pi 4
++detect_bridge_interface() {
++    # Check for common bridge interfaces (prefer eth0 for Pi 4)
++    for iface in eth0 wlan0 br0; do
++        if ip link show "$iface" &>/dev/null 2>&1; then
++            # Prefer eth0 (wired) over wlan0
++            if [ "$iface" = "eth0" ]; then
++                echo "$iface"
++                return 0
++            fi
++        fi
++    done
++    # Use environment variable if set
++    if [ -n "$BRIDGE_IF" ]; then
++        echo "$BRIDGE_IF"
++        return 0
++    fi
++    # Default to eth0 for Raspberry Pi 4
++    echo "eth0"
++}
++
++RCP_DEVICE=$(detect_rcp_device)
+ WPAN_IF="wpan0"
+-BR_IF="brlan0"
++BR_IF=$(detect_bridge_interface)
+ OTBR_AGENT_BIN="/usr/sbin/otbr-agent"
+ 
+ # ==========================
+diff --git a/meta-rdk-matter/recipes-thread/ot-br-posix/ot-br-posix.bb b/meta-rdk-matter/recipes-thread/ot-br-posix/ot-br-posix.bb
+index 550d1d8c..fbb99978 100644
+--- a/meta-rdk-matter/recipes-thread/ot-br-posix/ot-br-posix.bb
++++ b/meta-rdk-matter/recipes-thread/ot-br-posix/ot-br-posix.bb
+@@ -6,6 +6,7 @@ SRC_URI = "gitsm://github.com/openthread/ot-br-posix.git;branch=main;protocol=ht
+            file://0001-disable-tests.patch \
+ 	   file://ot-br-posix.service \
+ 	   file://otbr-agent-wrapper.sh \
++	   file://get-thread-dataset.sh \
+           "
+ SRCREV = "9537b07470dc1cd98ee6c5e3e4486c7ba2223966"
+ 
+@@ -31,7 +32,7 @@ EXTRA_OECMAKE = "\
+ SYSTEMD_SERVICE:${PN} = "ot-br-posix.service"
+ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+ 
+-FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh"
++FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset"
+ 
+ do_install:append() {
+     install -d ${D}/usr/local/bin
+@@ -39,4 +40,8 @@ do_install:append() {
+ 
+     install -d ${D}${systemd_system_unitdir}
+     install -m 0644 ${THISDIR}/files/ot-br-posix.service ${D}${systemd_system_unitdir}/
++    
++    # Install Thread dataset helper script
++    install -d -m 755 ${D}${bindir}
++    install -m 755 ${WORKDIR}/get-thread-dataset.sh ${D}${bindir}/get-thread-dataset
+ }
+diff --git a/meta-rdk-matter/recipes-thread/ot-daemon/files/ot-daemon.service b/meta-rdk-matter/recipes-thread/ot-daemon/files/ot-daemon.service
+index 872304ce..5ed776d0 100644
+--- a/meta-rdk-matter/recipes-thread/ot-daemon/files/ot-daemon.service
++++ b/meta-rdk-matter/recipes-thread/ot-daemon/files/ot-daemon.service
+@@ -4,7 +4,9 @@ After=network.target
+ 
+ [Service]
+ Type=simple
+-ExecStart=/usr/sbin/ot-daemon -v 'spinel+hdlc+uart:///dev/ttyACM0?baudrate=115200' -I wpan0
++ExecStartPre=/bin/sh -c 'RCP_DEV=${RCP_DEVICE:-/dev/ttyACM0}; [ -e "$RCP_DEV" ] || exit 1'
++ExecStart=/usr/sbin/ot-daemon -v 'spinel+hdlc+uart://${RCP_DEVICE:-/dev/ttyACM0}?baudrate=115200' -I wpan0
++Environment=RCP_DEVICE=/dev/ttyACM0
+ 
+ [Install]
+ WantedBy=multi-user.target

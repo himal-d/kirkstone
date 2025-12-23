@@ -4,9 +4,51 @@ set -e
 # ==========================
 # Configuration
 # ==========================
-RCP_DEVICE="/dev/ttyACM0"
+# Detect RCP device with fallback
+detect_rcp_device() {
+    # Check common paths
+    for dev in /dev/ttyACM0 /dev/ttyUSB0 /dev/ttyACM1; do
+        if [ -e "$dev" ]; then
+            # Verify it's a character device
+            if [ -c "$dev" ]; then
+                echo "$dev"
+                return 0
+            fi
+        fi
+    done
+    # Use environment variable if set
+    if [ -n "$RCP_DEVICE" ]; then
+        echo "$RCP_DEVICE"
+        return 0
+    fi
+    # Default fallback
+    echo "/dev/ttyACM0"
+}
+
+# Detect bridge interface for Raspberry Pi 4
+detect_bridge_interface() {
+    # Check for common bridge interfaces (prefer eth0 for Pi 4)
+    for iface in eth0 wlan0 br0; do
+        if ip link show "$iface" &>/dev/null 2>&1; then
+            # Prefer eth0 (wired) over wlan0
+            if [ "$iface" = "eth0" ]; then
+                echo "$iface"
+                return 0
+            fi
+        fi
+    done
+    # Use environment variable if set
+    if [ -n "$BRIDGE_IF" ]; then
+        echo "$BRIDGE_IF"
+        return 0
+    fi
+    # Default to eth0 for Raspberry Pi 4
+    echo "eth0"
+}
+
+RCP_DEVICE=$(detect_rcp_device)
 WPAN_IF="wpan0"
-BR_IF="brlan0"
+BR_IF=$(detect_bridge_interface)
 OTBR_AGENT_BIN="/usr/sbin/otbr-agent"
 
 # ==========================
