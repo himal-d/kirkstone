@@ -321,3 +321,4 @@ journalctl -u chip-lighting-app -f   # Watch logs
 
 **Ready for POC demonstration!**
 
+

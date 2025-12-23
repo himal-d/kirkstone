@@ -21,7 +21,7 @@ SRCREV = "${AUTOREV}"
 TARGET_CC_ARCH += "${LDFLAGS}"
 
 DEPENDS += " gn-native ninja-native openssl avahi dbus-glib-native pkgconfig-native boost python3-native python3-pip-native python3-packaging-native python3-click "
-RDEPENDS_${PN} += " libavahi-client boost boost-staticdev "
+RDEPENDS_${PN} += " libavahi-client boost boost-staticdev bash "
 FILES:${PN} += "usr/share"
 
 INSANE_SKIP:${PN} += "dev-so debug-deps strip"

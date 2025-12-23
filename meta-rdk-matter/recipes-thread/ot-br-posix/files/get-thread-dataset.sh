@@ -32,3 +32,4 @@ echo "Or use the helper script:"
 echo "matter-commission.sh thread-ble <NODE_ID> <PIN_CODE> <DISCRIMINATOR>"
 echo ""
 
+
