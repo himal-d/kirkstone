@@ -7,6 +7,8 @@ SRC_URI = "gitsm://github.com/openthread/ot-br-posix.git;branch=main;protocol=ht
 	   file://ot-br-posix.service \
 	   file://otbr-agent-wrapper.sh \
 	   file://get-thread-dataset.sh \
+	   file://otbr-diagnose.sh \
+	   file://check-wpan0.sh \
           "
 SRCREV = "9537b07470dc1cd98ee6c5e3e4486c7ba2223966"
 
@@ -32,7 +34,7 @@ EXTRA_OECMAKE = "\
 SYSTEMD_SERVICE:${PN} = "ot-br-posix.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
-FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset"
+FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset ${bindir}/otbr-diagnose ${bindir}/check-wpan0"
 
 do_install:append() {
     install -d ${D}/usr/local/bin
@@ -44,4 +46,10 @@ do_install:append() {
     # Install Thread dataset helper script
     install -d -m 755 ${D}${bindir}
     install -m 755 ${WORKDIR}/get-thread-dataset.sh ${D}${bindir}/get-thread-dataset
+    
+    # Install diagnostic script
+    install -m 755 ${WORKDIR}/otbr-diagnose.sh ${D}${bindir}/otbr-diagnose
+    
+    # Install wpan0 check script
+    install -m 755 ${WORKDIR}/check-wpan0.sh ${D}${bindir}/check-wpan0
 }

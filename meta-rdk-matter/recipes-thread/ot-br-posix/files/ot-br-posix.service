@@ -1,7 +1,7 @@
 [Unit]
 Description=OpenThread Border Router
-After=network.target ot-daemon.service
-Wants=network.target ot-daemon.service
+After=network.target
+Wants=network.target
 
 [Service]
 Type=simple
