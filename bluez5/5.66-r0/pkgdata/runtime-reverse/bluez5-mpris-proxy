@@ -1,0 +1,16 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0@EXTENDPRAUTO@
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.
+SUMMARY: Generate a information to build logrotate data configuration for the recipe
+RDEPENDS:bluez5-mpris-proxy: dbus-lib (>= 1.14.0) glib-2.0 (>= 2.74.6) glibc (>= 2.35)
+SECTION: libs
+PKG:bluez5-mpris-proxy: bluez5-mpris-proxy
+FILES:bluez5-mpris-proxy: /usr/bin/mpris-proxy
+FILES_INFO:bluez5-mpris-proxy: {"/usr/bin/mpris-proxy": 81488}
+FILERDEPENDSFLIST:bluez5-mpris-proxy: /usr/bin/mpris-proxy
+FILERDEPENDS:/usr/bin/mpris-proxy:bluez5-mpris-proxy:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libglib-2.0.so.0()(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:bluez5-mpris-proxy: 81488

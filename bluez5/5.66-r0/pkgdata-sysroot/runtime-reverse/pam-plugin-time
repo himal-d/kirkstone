@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-time: PAM plugin for -time
+SUMMARY:pam-plugin-time: PAM plugin for -time
+RDEPENDS:pam-plugin-time: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-time: pam-plugin-time-suffix
+SECTION: base
+PKG:pam-plugin-time: pam-plugin-time
+FILES:pam-plugin-time: /lib/security/pam_time.so
+FILES_INFO:pam-plugin-time: {"/lib/security/pam_time.so": 14480}
+FILERDEPENDSFLIST:pam-plugin-time: /lib/security/pam@underscore@time.so
+FILERDEPENDS:/lib/security/pam@underscore@time.so:pam-plugin-time:  libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-time: 14480

@@ -1,0 +1,20 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.
+SUMMARY: A System and service manager
+RDEPENDS:systemd-kernel-install: bash
+SECTION: base/shell
+PKG:systemd-kernel-install: systemd-kernel-install
+FILES:systemd-kernel-install: /usr/bin/kernel-install                               /etc/kernel/                               /usr/lib/kernel                              
+FILES_INFO:systemd-kernel-install: {"/usr/bin/kernel-install": 6610, "/usr/lib/kernel/install.conf": 353, "/usr/lib/kernel/install.d/50-depmod.install": 1556, "/usr/lib/kernel/install.d/90-loaderentry.install": 4384}
+FILERDEPENDSFLIST:systemd-kernel-install: /usr/bin/kernel-install /usr/lib/kernel/install.d/50-depmod.install /usr/lib/kernel/install.d/90-loaderentry.install
+FILERDEPENDS:/usr/bin/kernel-install:systemd-kernel-install:  /usr/bin/env
+FILERDEPENDS:/usr/lib/kernel/install.d/50-depmod.install:systemd-kernel-install:  /usr/bin/env
+FILERDEPENDS:/usr/lib/kernel/install.d/90-loaderentry.install:systemd-kernel-install:  /usr/bin/env
+PKGSIZE:systemd-kernel-install: 12903

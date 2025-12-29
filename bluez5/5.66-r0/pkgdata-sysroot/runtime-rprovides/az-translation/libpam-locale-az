@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-az: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the az locale.
+SUMMARY:libpam-locale-az: Linux-PAM (Pluggable Authentication Modules) - az translations
+RPROVIDES:libpam-locale-az: libpam-locale az-translation
+RRECOMMENDS:libpam-locale-az: virtual-locale-az
+SECTION: base
+PKG:libpam-locale-az: libpam-locale-az
+FILES:libpam-locale-az: /usr/share/locale/az
+FILES_INFO:libpam-locale-az: {"/usr/share/locale/az/LC_MESSAGES/Linux-PAM.mo": 1996}
+PKGSIZE:libpam-locale-az: 1996

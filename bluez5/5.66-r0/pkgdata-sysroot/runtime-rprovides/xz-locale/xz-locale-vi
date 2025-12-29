@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-vi: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the vi locale.
+SUMMARY:xz-locale-vi: Utilities for managing LZMA compressed files - vi translations
+RPROVIDES:xz-locale-vi: xz-locale vi-translation
+RRECOMMENDS:xz-locale-vi: virtual-locale-vi
+SECTION: base
+PKG:xz-locale-vi: xz-locale-vi
+FILES:xz-locale-vi: /usr/share/locale/vi
+FILES_INFO:xz-locale-vi: {"/usr/share/locale/vi/LC_MESSAGES/xz.mo": 27552}
+PKGSIZE:xz-locale-vi: 27552

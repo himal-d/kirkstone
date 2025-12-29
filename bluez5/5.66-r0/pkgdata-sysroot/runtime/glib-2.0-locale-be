@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-be: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the be locale.
+SUMMARY:glib-2.0-locale-be: A general-purpose utility library - be translations
+RPROVIDES:glib-2.0-locale-be: glib-2.0-locale be-translation glib-2.0-locale-be (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-be: virtual-locale-be
+SECTION: libs
+PKG:glib-2.0-locale-be: libglib-2.0-locale-be
+FILES:glib-2.0-locale-be: /usr/share/locale/be
+FILES_INFO:glib-2.0-locale-be: {"/usr/share/locale/be/LC_MESSAGES/glib20.mo": 103490}
+PKGSIZE:glib-2.0-locale-be: 103490

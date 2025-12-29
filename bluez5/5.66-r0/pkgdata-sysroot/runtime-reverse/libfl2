@@ -1,0 +1,20 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE:flex-libfl: BSD-3-Clause
+DESCRIPTION: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.
+SUMMARY: Flex (The Fast Lexical Analyzer)
+RDEPENDS:flex-libfl: glibc (>= 2.35)
+RPROVIDES:flex-libfl:  flex-libfl (=2.6.4)
+SECTION: devel
+PKG:flex-libfl: libfl2
+FILES:flex-libfl: /usr/lib/libfl.so.* /usr/lib/libfl_pic.so.*
+FILES_INFO:flex-libfl: {"/usr/lib/libfl.so.2": 14, "/usr/lib/libfl.so.2.0.0": 6000}
+pkg_postinst:flex-libfl: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:flex-libfl: /usr/lib/libfl.so.2.0.0
+FILERPROVIDES:/usr/lib/libfl.so.2.0.0:flex-libfl:  libfl.so.2()(64bit)
+FILERDEPENDSFLIST:flex-libfl: /usr/lib/libfl.so.2.0.0
+FILERDEPENDS:/usr/lib/libfl.so.2.0.0:flex-libfl:  libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:flex-libfl: 6014

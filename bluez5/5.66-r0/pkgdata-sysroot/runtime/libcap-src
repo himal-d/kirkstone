@@ -1,0 +1,12 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION:libcap-src: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.  This package contains sources for debugging purposes.
+SUMMARY:libcap-src: Library for getting/setting POSIX.1e capabilities - Source files
+SECTION:libcap-src: devel
+PKG:libcap-src: libcap-src
+FILES_INFO:libcap-src: {}
+PKGSIZE:libcap-src: 0

@@ -1,0 +1,20 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+RDEPENDS:libssl: glibc (>= 2.35) libcrypto (>= 3.0.5)
+RPROVIDES:libssl:  libssl (=3.0.5)
+SECTION: libs/network
+PKG:libssl: libssl3
+FILES:libssl: /usr/lib/libssl.so.*
+FILES_INFO:libssl: {"/usr/lib/libssl.so.3": 581576}
+pkg_postinst:libssl: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libssl: /usr/lib/libssl.so.3
+FILERPROVIDES:/usr/lib/libssl.so.3:libssl:  libssl.so.3(OPENSSL_3.0.0)(64bit) libssl.so.3()(64bit)
+FILERDEPENDSFLIST:libssl: /usr/lib/libssl.so.3
+FILERDEPENDS:/usr/lib/libssl.so.3:libssl:  libc.so.6(GLIBC_2.17)(64bit) libcrypto.so.3(OPENSSL_3.0.3)(64bit) libcrypto.so.3(OPENSSL_3.0.0)(64bit) libcrypto.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libssl: 581576

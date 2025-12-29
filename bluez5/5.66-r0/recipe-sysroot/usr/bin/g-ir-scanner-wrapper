@@ -1,0 +1,5 @@
+#!/bin/sh
+# This prevents g-ir-scanner from writing cache data to user's HOME dir
+export GI_SCANNER_DISABLE_CACHE=1
+
+g-ir-scanner --lib-dirs-envvar=GIR_EXTRA_LIBS_PATH --use-binary-wrapper=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/g-ir-scanner-qemuwrapper --use-ldd-wrapper=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/g-ir-scanner-lddwrapper --add-include-path=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/gir-1.0 --add-include-path=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/gir-1.0 "$@"

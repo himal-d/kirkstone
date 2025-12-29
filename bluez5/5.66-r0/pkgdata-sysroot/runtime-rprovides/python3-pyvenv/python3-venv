@@ -1,0 +1,15 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-venv: Provides support for creating lightweight virtual environments with their own site directories, optionally isolated from system site directories.
+RDEPENDS:python3-venv: python3-core python3-logging python3-stringold
+RPROVIDES:python3-venv:  python3-pyvenv
+SECTION: devel/python
+PKG:python3-venv: python3-venv
+FILES:python3-venv:  /usr/bin/pyvenv* /usr/lib/python3.10/venv
+FILES_INFO:python3-venv: {"/usr/lib/python3.10/venv/__init__.py": 23213, "/usr/lib/python3.10/venv/__main__.py": 145, "/usr/lib/python3.10/venv/__pycache__/__init__.cpython-310.pyc": 15640, "/usr/lib/python3.10/venv/__pycache__/__main__.cpython-310.pyc": 338, "/usr/lib/python3.10/venv/scripts/common/Activate.ps1": 9033, "/usr/lib/python3.10/venv/scripts/common/activate": 2009, "/usr/lib/python3.10/venv/scripts/posix/activate.csh": 935, "/usr/lib/python3.10/venv/scripts/posix/activate.fish": 2077}
+PKGSIZE:python3-venv: 53390

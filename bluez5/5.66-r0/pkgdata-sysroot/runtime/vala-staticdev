@@ -1,0 +1,14 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:vala-staticdev: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.  This package contains static libraries for software development.
+SUMMARY:vala-staticdev: C#-like programming language for easing GObject programming - Development files (Static Libraries)
+RDEPENDS:vala-staticdev: vala-dev (= 0.56.3-r0)
+SECTION:vala-staticdev: devel
+PKG:vala-staticdev: vala-staticdev
+FILES:vala-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/vala/*.a
+FILES_INFO:vala-staticdev: {}
+PKGSIZE:vala-staticdev: 0

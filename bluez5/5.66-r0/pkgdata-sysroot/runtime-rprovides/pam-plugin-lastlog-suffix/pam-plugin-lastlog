@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-lastlog: PAM plugin for -lastlog
+SUMMARY:pam-plugin-lastlog: PAM plugin for -lastlog
+RDEPENDS:pam-plugin-lastlog: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-lastlog: pam-plugin-lastlog-suffix
+SECTION: base
+PKG:pam-plugin-lastlog: pam-plugin-lastlog
+FILES:pam-plugin-lastlog: /lib/security/pam_lastlog.so
+FILES_INFO:pam-plugin-lastlog: {"/lib/security/pam_lastlog.so": 14536}
+FILERDEPENDSFLIST:pam-plugin-lastlog: /lib/security/pam@underscore@lastlog.so
+FILERDEPENDS:/lib/security/pam@underscore@lastlog.so:pam-plugin-lastlog:  libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-lastlog: 14536

@@ -1,0 +1,17 @@
+PN: expat
+PV: 2.4.9
+PR: r0
+PKGV: 2.4.9
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: Expat is an XML parser library written in C. It is a stream-oriented parser in which an application registers handlers for things the parser might find in the XML document (like start tags)
+SUMMARY: A stream-oriented XML parser library
+RDEPENDS:expat-bin: expat (>= 2.4.9) glibc (>= 2.35)
+RPROVIDES:expat-bin:  expat-bin (=2.4.9)
+SECTION: libs
+PKG:expat-bin: libexpat-bin
+FILES:expat-bin: /usr/bin/* /usr/sbin/*
+FILES_INFO:expat-bin: {"/usr/bin/xmlwf": 31312}
+FILERDEPENDSFLIST:expat-bin: /usr/bin/xmlwf
+FILERDEPENDS:/usr/bin/xmlwf:expat-bin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libexpat.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:expat-bin: 31312

@@ -1,0 +1,15 @@
+PN: util-linux-libuuid
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:util-linux-libuuid-staticdev: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains static libraries for software development.
+SUMMARY:util-linux-libuuid-staticdev: A suite of basic system administration utilities - Development files (Static Libraries)
+RDEPENDS:util-linux-libuuid-staticdev: util-linux-libuuid-dev (= 2.37.4-r0)
+RPROVIDES:util-linux-libuuid-staticdev:  util-linux-libuuid-staticdev (=2.37.4)
+SECTION:util-linux-libuuid-staticdev: devel
+PKG:util-linux-libuuid-staticdev: libuuid-staticdev
+FILES:util-linux-libuuid-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/util-linux-libuuid/*.a
+FILES_INFO:util-linux-libuuid-staticdev: {"/usr/lib/libuuid.a": 143554}
+PKGSIZE:util-linux-libuuid-staticdev: 143554

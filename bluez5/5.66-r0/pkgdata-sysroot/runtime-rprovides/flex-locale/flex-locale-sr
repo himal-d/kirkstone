@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-sr: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the sr locale.
+SUMMARY:flex-locale-sr: Flex (The Fast Lexical Analyzer) - sr translations
+RPROVIDES:flex-locale-sr: flex-locale sr-translation
+RRECOMMENDS:flex-locale-sr: virtual-locale-sr
+SECTION: devel
+PKG:flex-locale-sr: flex-locale-sr
+FILES:flex-locale-sr: /usr/share/locale/sr
+FILES_INFO:flex-locale-sr: {"/usr/share/locale/sr/LC_MESSAGES/flex.mo": 19958}
+PKGSIZE:flex-locale-sr: 19958

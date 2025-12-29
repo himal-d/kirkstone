@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-zh-tw: Tools to change and administer password and group data  This package contains language translation files for the zh_TW locale.
+SUMMARY:shadow-locale-zh-tw: Tools to change and administer password and group data - zh_TW translations
+RPROVIDES:shadow-locale-zh-tw: shadow-locale zh-tw-translation
+RRECOMMENDS:shadow-locale-zh-tw: virtual-locale-zh-tw
+SECTION: base/utils
+PKG:shadow-locale-zh-tw: shadow-locale-zh-tw
+FILES:shadow-locale-zh-tw: /usr/share/locale/zh_TW
+FILES_INFO:shadow-locale-zh-tw: {"/usr/share/locale/zh_TW/LC_MESSAGES/shadow.mo": 66658}
+PKGSIZE:shadow-locale-zh-tw: 66658

@@ -1,0 +1,32 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE:xz: GPL-2.0-or-later
+DESCRIPTION: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.
+SUMMARY: Utilities for managing LZMA compressed files
+RDEPENDS:xz: update-alternatives-opkg glibc (>= 2.35) liblzma (>= 5.2.6)
+SECTION: base
+PKG:xz: xz
+FILES:xz: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/xz /usr/lib/xz/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:xz: {"/usr/bin/lzcat.xz": 5, "/usr/bin/lzcmp": 6, "/usr/bin/lzdiff": 6, "/usr/bin/lzegrep": 6, "/usr/bin/lzfgrep": 6, "/usr/bin/lzgrep": 6, "/usr/bin/lzless": 6, "/usr/bin/lzma.xz": 5, "/usr/bin/lzmadec": 10464, "/usr/bin/lzmainfo": 10464, "/usr/bin/lzmore": 6, "/usr/bin/unlzma.xz": 5, "/usr/bin/unxz.xz": 5, "/usr/bin/xz.xz": 68752, "/usr/bin/xzcat.xz": 5, "/usr/bin/xzcmp": 6, "/usr/bin/xzdec": 10464, "/usr/bin/xzdiff": 7307, "/usr/bin/xzegrep": 6, "/usr/bin/xzfgrep": 6, "/usr/bin/xzgrep": 10293, "/usr/bin/xzless": 1821, "/usr/bin/xzmore": 2198}
+pkg_postinst:xz: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/bin/xz xz /usr/bin/xz.xz 100\n\tupdate-alternatives --install /usr/bin/xzcat xzcat /usr/bin/xzcat.xz 100\n\tupdate-alternatives --install /usr/bin/unxz unxz /usr/bin/unxz.xz 100\n\tupdate-alternatives --install /usr/bin/lzma lzma /usr/bin/lzma.xz 100\n\tupdate-alternatives --install /usr/bin/lzcat lzcat /usr/bin/lzcat.xz 100\n\tupdate-alternatives --install /usr/bin/unlzma unlzma /usr/bin/unlzma.xz 100\n
+pkg_prerm:xz: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  xz /usr/bin/xz.xz\n\tupdate-alternatives --remove  xzcat /usr/bin/xzcat.xz\n\tupdate-alternatives --remove  unxz /usr/bin/unxz.xz\n\tupdate-alternatives --remove  lzma /usr/bin/lzma.xz\n\tupdate-alternatives --remove  lzcat /usr/bin/lzcat.xz\n\tupdate-alternatives --remove  unlzma /usr/bin/unlzma.xz\n
+FILERPROVIDESFLIST:xz:  /usr/bin/xz.xz /usr/bin/xzcat.xz /usr/bin/unxz.xz /usr/bin/lzma.xz /usr/bin/lzcat.xz /usr/bin/unlzma.xz
+FILERPROVIDES:/usr/bin/lzcat.xz:xz:  /usr/bin/lzcat
+FILERPROVIDES:/usr/bin/lzma.xz:xz:  /usr/bin/lzma
+FILERPROVIDES:/usr/bin/unlzma.xz:xz:  /usr/bin/unlzma
+FILERPROVIDES:/usr/bin/unxz.xz:xz:  /usr/bin/unxz
+FILERPROVIDES:/usr/bin/xz.xz:xz:  /usr/bin/xz
+FILERPROVIDES:/usr/bin/xzcat.xz:xz:  /usr/bin/xzcat
+FILERDEPENDSFLIST:xz: /usr/bin/lzmadec /usr/bin/lzmainfo /usr/bin/xz.xz /usr/bin/xzdec /usr/bin/xzdiff /usr/bin/xzgrep /usr/bin/xzless /usr/bin/xzmore
+FILERDEPENDS:/usr/bin/lzmadec:xz:  liblzma.so.5(XZ_5.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) liblzma.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/lzmainfo:xz:  liblzma.so.5(XZ_5.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) liblzma.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/xz.xz:xz:  libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) liblzma.so.5(XZ_5.2)(64bit) liblzma.so.5(XZ_5.0)(64bit) liblzma.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/xzdec:xz:  liblzma.so.5(XZ_5.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) liblzma.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/xzdiff:xz:  /bin/sh
+FILERDEPENDS:/usr/bin/xzgrep:xz:  /bin/sh
+FILERDEPENDS:/usr/bin/xzless:xz:  /bin/sh
+FILERDEPENDS:/usr/bin/xzmore:xz:  /bin/sh
+PKGSIZE:xz: 121848

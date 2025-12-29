@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-hi: Password strength checker library  This package contains language translation files for the hi locale.
+SUMMARY:cracklib-locale-hi: Password strength checker library - hi translations
+RPROVIDES:cracklib-locale-hi: cracklib-locale hi-translation
+RRECOMMENDS:cracklib-locale-hi: virtual-locale-hi
+SECTION: base
+PKG:cracklib-locale-hi: cracklib-locale-hi
+FILES:cracklib-locale-hi: /usr/share/locale/hi
+FILES_INFO:cracklib-locale-hi: {"/usr/share/locale/hi/LC_MESSAGES/cracklib.mo": 2704}
+PKGSIZE:cracklib-locale-hi: 2704

@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-gdbm: Python GNU database support
+RDEPENDS:python3-gdbm: python3-core gdbm (>= 1.8.3) glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-gdbm: python3-gdbm
+FILES:python3-gdbm:  /usr/lib/python3.10/lib-dynload/_gdbm.*.so
+FILES_INFO:python3-gdbm: {"/usr/lib/python3.10/lib-dynload/_gdbm.cpython-310-aarch64-linux-gnu.so": 23984}
+FILERDEPENDSFLIST:python3-gdbm: /usr/lib/python3.10/lib-dynload/@underscore@gdbm.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@gdbm.cpython-310-aarch64-linux-gnu.so:python3-gdbm:  libc.so.6(GLIBC_2.17)(64bit) libgdbm.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-gdbm: 23984

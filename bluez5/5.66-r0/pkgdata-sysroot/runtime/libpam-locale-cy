@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-cy: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the cy locale.
+SUMMARY:libpam-locale-cy: Linux-PAM (Pluggable Authentication Modules) - cy translations
+RPROVIDES:libpam-locale-cy: libpam-locale cy-translation
+RRECOMMENDS:libpam-locale-cy: virtual-locale-cy
+SECTION: base
+PKG:libpam-locale-cy: libpam-locale-cy
+FILES:libpam-locale-cy: /usr/share/locale/cy
+FILES_INFO:libpam-locale-cy: {"/usr/share/locale/cy/LC_MESSAGES/Linux-PAM.mo": 535}
+PKGSIZE:libpam-locale-cy: 535

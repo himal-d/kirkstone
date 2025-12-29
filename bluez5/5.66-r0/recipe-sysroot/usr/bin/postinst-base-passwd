@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Install passwd.master and group.master to sysconfdir
+install -d -m 755 /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/etc
+for i in passwd group; do
+	install -p -m 644 /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/base-passwd/$i.master 		/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/etc/$i
+done
+
+# Run any useradd postinsts
+for script in /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/postinst-useradd-*; do
+	if [ -f $script ]; then
+		$script
+	fi
+done
+

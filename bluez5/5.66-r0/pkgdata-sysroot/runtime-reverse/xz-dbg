@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE:xz-dbg: GPL-2.0-or-later
+DESCRIPTION:xz-dbg: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:xz-dbg: Utilities for managing LZMA compressed files - Debugging files
+RRECOMMENDS:xz-dbg: glibc-dbg liblzma-dbg
+SECTION:xz-dbg: devel
+PKG:xz-dbg: xz-dbg
+ALLOW_EMPTY:xz-dbg: 1
+FILES:xz-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:xz-dbg: {"/usr/bin/.debug/lzmadec": 25008, "/usr/bin/.debug/lzmainfo": 25336, "/usr/bin/.debug/xz.xz": 163168, "/usr/bin/.debug/xzdec": 25032, "/usr/lib/.debug/liblzma.so.5.2.6": 523240}
+PKGSIZE:xz-dbg: 761784

@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-eu: Password strength checker library  This package contains language translation files for the eu locale.
+SUMMARY:cracklib-locale-eu: Password strength checker library - eu translations
+RPROVIDES:cracklib-locale-eu: cracklib-locale eu-translation
+RRECOMMENDS:cracklib-locale-eu: virtual-locale-eu
+SECTION: base
+PKG:cracklib-locale-eu: cracklib-locale-eu
+FILES:cracklib-locale-eu: /usr/share/locale/eu
+FILES_INFO:cracklib-locale-eu: {"/usr/share/locale/eu/LC_MESSAGES/cracklib.mo": 1315}
+PKGSIZE:cracklib-locale-eu: 1315

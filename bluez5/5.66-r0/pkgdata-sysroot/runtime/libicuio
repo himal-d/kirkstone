@@ -1,0 +1,20 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.
+SUMMARY: International Component for Unicode libraries
+RDEPENDS:libicuio: glibc (>= 2.35) libgcc (>= 11.3.0) libicudata (>= 70.1) libicui18n (>= 70.1) libicuuc (>= 70.1) libstdc++ (>= 11.3.0)
+RPROVIDES:libicuio:  libicuio (=70.1)
+SECTION: base
+PKG:libicuio: libicuio70
+FILES:libicuio: /usr/lib/libicuio.so.*
+FILES_INFO:libicuio: {"/usr/lib/libicuio.so.70": 16, "/usr/lib/libicuio.so.70.1": 51920}
+pkg_postinst:libicuio: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libicuio: /usr/lib/libicuio.so.70.1
+FILERPROVIDES:/usr/lib/libicuio.so.70.1:libicuio:  libicuio.so.70()(64bit)
+FILERDEPENDSFLIST:libicuio: /usr/lib/libicuio.so.70.1
+FILERDEPENDS:/usr/lib/libicuio.so.70.1:libicuio:  libgcc_s.so.1(GCC_3.0)(64bit) libstdc++.so.6(CXXABI_1.3)(64bit) libstdc++.so.6(GLIBCXX_3.4)(64bit) libstdc++.so.6(GLIBCXX_3.4.9)(64bit) libc.so.6(GLIBC_2.17)(64bit) libicuuc.so.70()(64bit) libicudata.so.70()(64bit) libicui18n.so.70()(64bit) libpthread.so.0()(64bit) libstdc++.so.6()(64bit) libm.so.6()(64bit) libgcc_s.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libicuio: 51936

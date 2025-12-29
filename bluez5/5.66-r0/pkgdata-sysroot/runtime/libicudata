@@ -1,0 +1,20 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.
+SUMMARY: International Component for Unicode libraries
+RDEPENDS:libicudata: glibc (>= 2.35)
+RPROVIDES:libicudata:  libicudata (=70.1)
+SECTION: base
+PKG:libicudata: libicudata70
+FILES:libicudata: /usr/lib/libicudata.so.*
+FILES_INFO:libicudata: {"/usr/lib/libicudata.so.70": 18, "/usr/lib/libicudata.so.70.1": 29472600}
+pkg_postinst:libicudata: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libicudata: /usr/lib/libicudata.so.70.1
+FILERPROVIDES:/usr/lib/libicudata.so.70.1:libicudata:  libicudata.so.70()(64bit)
+FILERDEPENDSFLIST:libicudata: /usr/lib/libicudata.so.70.1
+FILERDEPENDS:/usr/lib/libicudata.so.70.1:libicudata:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libicudata: 29472618

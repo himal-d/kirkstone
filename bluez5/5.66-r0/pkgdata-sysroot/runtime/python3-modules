@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-modules: All Python modules
+RDEPENDS:python3-modules: python3-2to3 python3-asyncio python3-audio python3-codecs python3-compile python3-compression python3-core python3-crypt python3-ctypes python3-curses python3-datetime python3-db python3-debugger python3-difflib python3-distutils python3-doctest python3-email python3-fcntl python3-html python3-idle python3-image python3-io python3-json python3-logging python3-mailbox python3-math python3-mime python3-misc python3-mmap python3-multiprocessing python3-netclient python3-netserver python3-numbers python3-pickle python3-pkgutil python3-plistlib python3-pprint python3-profile python3-pydoc python3-resource python3-shell python3-smtpd python3-sqlite3 python3-statistics python3-stringold python3-syslog python3-terminal python3-threading python3-tkinter python3-unittest python3-unixadmin python3-venv python3-xml python3-xmlrpc
+RPROVIDES:python3-modules: python3
+RRECOMMENDS:python3-modules:  python3-distutils-windows
+SECTION: devel/python
+PKG:python3-modules: python3-modules
+ALLOW_EMPTY:python3-modules: 1
+FILES_INFO:python3-modules: {}
+PKGSIZE:python3-modules: 0

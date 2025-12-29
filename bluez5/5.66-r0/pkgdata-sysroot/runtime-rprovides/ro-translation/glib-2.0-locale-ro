@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-ro: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the ro locale.
+SUMMARY:glib-2.0-locale-ro: A general-purpose utility library - ro translations
+RPROVIDES:glib-2.0-locale-ro: glib-2.0-locale ro-translation glib-2.0-locale-ro (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-ro: virtual-locale-ro
+SECTION: libs
+PKG:glib-2.0-locale-ro: libglib-2.0-locale-ro
+FILES:glib-2.0-locale-ro: /usr/share/locale/ro
+FILES_INFO:glib-2.0-locale-ro: {"/usr/share/locale/ro/LC_MESSAGES/glib20.mo": 141596}
+PKGSIZE:glib-2.0-locale-ro: 141596

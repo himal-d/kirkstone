@@ -1,0 +1,22 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:libnss-mymachines: Systemd nss-mymachines library
+SUMMARY:libnss-mymachines: Systemd nss-mymachines library
+RDEPENDS:libnss-mymachines: glibc (>= 2.35) libcap (>= 2.65)
+RPROVIDES:libnss-mymachines:  libnss-mymachines (=250.5)
+SECTION: base/shell
+PKG:libnss-mymachines: libnss-mymachines2
+FILES:libnss-mymachines: /lib/libnss_mymachines.so.2
+FILES_INFO:libnss-mymachines: {"/lib/libnss_mymachines.so.2": 358240}
+pkg_postinst:libnss-mymachines: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libnss-mymachines: /lib/libnss@underscore@mymachines.so.2
+FILERPROVIDES:/lib/libnss@underscore@mymachines.so.2:libnss-mymachines:  libnss_mymachines.so.2()(64bit)
+FILERDEPENDSFLIST:libnss-mymachines: /lib/libnss@underscore@mymachines.so.2
+FILERDEPENDS:/lib/libnss@underscore@mymachines.so.2:libnss-mymachines:  ld-linux-aarch64.so.1(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.26)(64bit) libc.so.6(GLIBC_2.30)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libc.so.6()(64bit) ld-linux-aarch64.so.1()(64bit) rtld(GNU_HASH)
+PKGSIZE:libnss-mymachines: 358240

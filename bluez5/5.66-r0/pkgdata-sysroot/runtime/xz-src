@@ -1,0 +1,12 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-src: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains sources for debugging purposes.
+SUMMARY:xz-src: Utilities for managing LZMA compressed files - Source files
+SECTION:xz-src: devel
+PKG:xz-src: xz-src
+FILES_INFO:xz-src: {}
+PKGSIZE:xz-src: 0

@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-he: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the he locale.
+SUMMARY:libpam-locale-he: Linux-PAM (Pluggable Authentication Modules) - he translations
+RPROVIDES:libpam-locale-he: libpam-locale he-translation
+RRECOMMENDS:libpam-locale-he: virtual-locale-he
+SECTION: base
+PKG:libpam-locale-he: libpam-locale-he
+FILES:libpam-locale-he: /usr/share/locale/he
+FILES_INFO:libpam-locale-he: {"/usr/share/locale/he/LC_MESSAGES/Linux-PAM.mo": 10834}
+PKGSIZE:libpam-locale-he: 10834

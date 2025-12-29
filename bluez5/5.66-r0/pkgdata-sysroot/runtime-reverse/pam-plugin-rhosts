@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-rhosts: PAM plugin for -rhosts
+SUMMARY:pam-plugin-rhosts: PAM plugin for -rhosts
+RDEPENDS:pam-plugin-rhosts: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-rhosts: pam-plugin-rhosts-suffix
+SECTION: base
+PKG:pam-plugin-rhosts: pam-plugin-rhosts
+FILES:pam-plugin-rhosts: /lib/security/pam_rhosts.so
+FILES_INFO:pam-plugin-rhosts: {"/lib/security/pam_rhosts.so": 10216}
+FILERDEPENDSFLIST:pam-plugin-rhosts: /lib/security/pam@underscore@rhosts.so
+FILERDEPENDS:/lib/security/pam@underscore@rhosts.so:pam-plugin-rhosts:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-rhosts: 10216

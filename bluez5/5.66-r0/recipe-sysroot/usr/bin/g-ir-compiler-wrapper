@@ -1,0 +1,2 @@
+#!/bin/sh
+/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/g-ir-scanner-qemuwrapper /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/g-ir-compiler "$@"

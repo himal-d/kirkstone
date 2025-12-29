@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-terminal: Python terminal controlling support
+RDEPENDS:python3-terminal: python3-core python3-io
+SECTION: devel/python
+PKG:python3-terminal: python3-terminal
+FILES:python3-terminal:  /usr/lib/python3.10/pty.py /usr/lib/python3.10/tty.py /usr/lib/python3.10/__pycache__/pty.*.pyc /usr/lib/python3.10/__pycache__/tty.*.pyc
+FILES_INFO:python3-terminal: {"/usr/lib/python3.10/__pycache__/pty.cpython-310.pyc": 4179, "/usr/lib/python3.10/__pycache__/tty.cpython-310.pyc": 1079, "/usr/lib/python3.10/pty.py": 5289, "/usr/lib/python3.10/tty.py": 879}
+PKGSIZE:python3-terminal: 11426

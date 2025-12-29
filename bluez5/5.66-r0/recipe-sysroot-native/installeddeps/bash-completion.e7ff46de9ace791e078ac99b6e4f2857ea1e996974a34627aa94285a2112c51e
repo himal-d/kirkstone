@@ -1,0 +1,10 @@
+recipe-sysroot/sysroot-providers/bash-completion
+recipe-sysroot/usr/share/cmake/bash-completion/bash-completion-config-version.cmake
+recipe-sysroot/usr/share/cmake/bash-completion/bash-completion-config.cmake
+recipe-sysroot/usr/share/pkgconfig/bash-completion.pc
+recipe-sysroot/usr/share/cmake/bash-completion/
+recipe-sysroot/usr/share/pkgconfig/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/share/cmake/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/

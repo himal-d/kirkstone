@@ -1,0 +1,10 @@
+Index: bluez-5.66/profiles/network/network.conf
+===================================================================
+--- bluez-5.66.orig/profiles/network/network.conf
++++ bluez-5.66/profiles/network/network.conf
+@@ -3,4 +3,4 @@
+ [General]
+ 
+ # Disable link encryption: default=false
+-#DisableSecurity=true
++DisableSecurity = false

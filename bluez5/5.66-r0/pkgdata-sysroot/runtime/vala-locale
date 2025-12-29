@@ -1,0 +1,13 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.
+SUMMARY: C#-like programming language for easing GObject programming
+SECTION: devel
+PKG:vala-locale: vala-locale
+FILES:vala-locale: /usr/share/locale
+FILES_INFO:vala-locale: {}
+PKGSIZE:vala-locale: 0

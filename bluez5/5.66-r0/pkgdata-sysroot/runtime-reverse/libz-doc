@@ -1,0 +1,14 @@
+PN: zlib
+PV: 1.2.11
+PR: r0
+PKGV: 1.2.11
+PKGR: r0
+LICENSE: Zlib
+DESCRIPTION:zlib-doc: Zlib is a general-purpose, patent-free, lossless data compression library which is used by many different programs.  This package contains documentation.
+SUMMARY:zlib-doc: Zlib Compression Library - Documentation files
+RPROVIDES:zlib-doc:  zlib-doc (=1.2.11)
+SECTION:zlib-doc: doc
+PKG:zlib-doc: libz-doc
+FILES:zlib-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:zlib-doc: {"/usr/share/man/man3/zlib.3": 4477}
+PKGSIZE:zlib-doc: 4477

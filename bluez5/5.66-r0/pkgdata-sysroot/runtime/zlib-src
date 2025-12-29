@@ -1,0 +1,13 @@
+PN: zlib
+PV: 1.2.11
+PR: r0
+PKGV: 1.2.11
+PKGR: r0
+LICENSE: Zlib
+DESCRIPTION:zlib-src: Zlib is a general-purpose, patent-free, lossless data compression library which is used by many different programs.  This package contains sources for debugging purposes.
+SUMMARY:zlib-src: Zlib Compression Library - Source files
+RPROVIDES:zlib-src:  zlib-src (=1.2.11)
+SECTION:zlib-src: devel
+PKG:zlib-src: libz-src
+FILES_INFO:zlib-src: {}
+PKGSIZE:zlib-src: 0

@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-mount: util-linux mount
+SUMMARY:util-linux-mount: util-linux mount
+RDEPENDS:util-linux-mount: update-alternatives-opkg glibc (>= 2.35) util-linux-libmount (>= 2.37.4)
+SECTION: base
+PKG:util-linux-mount: util-linux-mount
+FILES:util-linux-mount: /etc/default/mountall /bin/mount.util-linux
+FILES_INFO:util-linux-mount: {"/bin/mount.util-linux": 56600, "/etc/default/mountall": 36}
+pkg_postinst:util-linux-mount: #!/bin/sh\nset -e\n\tupdate-alternatives --install /bin/mount mount /bin/mount.util-linux 80\n
+pkg_prerm:util-linux-mount: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  mount /bin/mount.util-linux\n
+FILERPROVIDESFLIST:util-linux-mount:  /bin/mount.util-linux
+FILERPROVIDES:/bin/mount.util-linux:util-linux-mount:  /bin/mount
+FILERDEPENDSFLIST:util-linux-mount: /bin/mount.util-linux
+FILERDEPENDS:/bin/mount.util-linux:util-linux-mount:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libmount.so.1(MOUNT_2.25)(64bit) libmount.so.1(MOUNT_2.33)(64bit) libmount.so.1(MOUNT_2.34)(64bit) libmount.so.1(MOUNT_2.30)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.22)(64bit) libmount.so.1(MOUNT_2_35)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-mount: 56636

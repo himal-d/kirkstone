@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-rfkill: util-linux rfkill
+SUMMARY:util-linux-rfkill: util-linux rfkill
+RDEPENDS:util-linux-rfkill: update-alternatives-opkg glibc (>= 2.35) util-linux-libsmartcols (>= 2.37.4)
+SECTION: base
+PKG:util-linux-rfkill: util-linux-rfkill
+FILES:util-linux-rfkill: /usr/sbin/rfkill.util-linux
+FILES_INFO:util-linux-rfkill: {"/usr/sbin/rfkill.util-linux": 43816}
+pkg_postinst:util-linux-rfkill: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/sbin/rfkill rfkill /usr/sbin/rfkill.util-linux 80\n
+pkg_prerm:util-linux-rfkill: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  rfkill /usr/sbin/rfkill.util-linux\n
+FILERPROVIDESFLIST:util-linux-rfkill:  /usr/sbin/rfkill.util-linux
+FILERPROVIDES:/usr/sbin/rfkill.util-linux:util-linux-rfkill:  /usr/sbin/rfkill
+FILERDEPENDSFLIST:util-linux-rfkill: /usr/sbin/rfkill.util-linux
+FILERDEPENDS:/usr/sbin/rfkill.util-linux:util-linux-rfkill:  libsmartcols.so.1(SMARTCOLS_2.27)(64bit) libsmartcols.so.1(SMARTCOLS_2.25)(64bit) libsmartcols.so.1(SMARTCOLS_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libsmartcols.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-rfkill: 43816

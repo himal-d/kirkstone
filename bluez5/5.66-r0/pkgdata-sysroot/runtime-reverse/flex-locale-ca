@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-ca: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the ca locale.
+SUMMARY:flex-locale-ca: Flex (The Fast Lexical Analyzer) - ca translations
+RPROVIDES:flex-locale-ca: flex-locale ca-translation
+RRECOMMENDS:flex-locale-ca: virtual-locale-ca
+SECTION: devel
+PKG:flex-locale-ca: flex-locale-ca
+FILES:flex-locale-ca: /usr/share/locale/ca
+FILES_INFO:flex-locale-ca: {"/usr/share/locale/ca/LC_MESSAGES/flex.mo": 16553}
+PKGSIZE:flex-locale-ca: 16553

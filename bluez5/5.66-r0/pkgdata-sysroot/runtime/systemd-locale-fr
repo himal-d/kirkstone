@@ -1,0 +1,17 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:systemd-locale-fr: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.  This package contains language translation files for the fr locale.
+SUMMARY:systemd-locale-fr: A System and service manager - fr translations
+RPROVIDES:systemd-locale-fr: systemd-locale fr-translation
+RRECOMMENDS:systemd-locale-fr: virtual-locale-fr
+SECTION: base/shell
+PKG:systemd-locale-fr: systemd-locale-fr
+FILES:systemd-locale-fr: /usr/share/locale/fr
+FILES_INFO:systemd-locale-fr: {"/usr/share/locale/fr/LC_MESSAGES/systemd.mo": 27410}
+PKGSIZE:systemd-locale-fr: 27410

@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-hi: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the hi locale.
+SUMMARY:glib-2.0-locale-hi: A general-purpose utility library - hi translations
+RPROVIDES:glib-2.0-locale-hi: glib-2.0-locale hi-translation glib-2.0-locale-hi (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-hi: virtual-locale-hi
+SECTION: libs
+PKG:glib-2.0-locale-hi: libglib-2.0-locale-hi
+FILES:glib-2.0-locale-hi: /usr/share/locale/hi
+FILES_INFO:glib-2.0-locale-hi: {"/usr/share/locale/hi/LC_MESSAGES/glib20.mo": 147327}
+PKGSIZE:glib-2.0-locale-hi: 147327

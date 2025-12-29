@@ -1,0 +1,16 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE:xz-dev: GPL-2.0-or-later
+DESCRIPTION:xz-dev: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:xz-dev: Utilities for managing LZMA compressed files - Development files
+RDEPENDS:xz-dev: liblzma xz (= 5.2.6-r0)
+RRECOMMENDS:xz-dev: glibc-dev liblzma-dev update-alternatives-opkg-dev
+SECTION:xz-dev: devel
+PKG:xz-dev: xz-dev
+ALLOW_EMPTY:xz-dev: 1
+FILES:xz-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/xz/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:xz-dev: {"/usr/include/lzma.h": 9922, "/usr/include/lzma/base.h": 24859, "/usr/include/lzma/bcj.h": 2630, "/usr/include/lzma/block.h": 21929, "/usr/include/lzma/check.h": 4255, "/usr/include/lzma/container.h": 24844, "/usr/include/lzma/delta.h": 1865, "/usr/include/lzma/filter.h": 16520, "/usr/include/lzma/hardware.h": 2604, "/usr/include/lzma/index.h": 23491, "/usr/include/lzma/index_hash.h": 3914, "/usr/include/lzma/lzma12.h": 14744, "/usr/include/lzma/stream_flags.h": 8253, "/usr/include/lzma/version.h": 3497, "/usr/include/lzma/vli.h": 6622, "/usr/lib/liblzma.so": 16, "/usr/lib/pkgconfig/liblzma.pc": 390}
+PKGSIZE:xz-dev: 170355

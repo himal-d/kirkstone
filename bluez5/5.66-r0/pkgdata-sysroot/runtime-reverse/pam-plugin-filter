@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-filter: PAM plugin for -filter
+SUMMARY:pam-plugin-filter: PAM plugin for -filter
+RDEPENDS:pam-plugin-filter: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-filter: pam-plugin-filter-suffix
+SECTION: base
+PKG:pam-plugin-filter: pam-plugin-filter
+FILES:pam-plugin-filter: /lib/security/pam_filter.so
+FILES_INFO:pam-plugin-filter: {"/lib/security/pam_filter.so": 14480}
+FILERDEPENDSFLIST:pam-plugin-filter: /lib/security/pam@underscore@filter.so
+FILERDEPENDS:/lib/security/pam@underscore@filter.so:pam-plugin-filter:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-filter: 14480

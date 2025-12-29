@@ -1,0 +1,16 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:libcap-ng-dev: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:libcap-ng-dev: An alternate posix capabilities library - Development files
+RDEPENDS:libcap-ng-dev: libcap-ng (= 0.8.2-r0)
+RRECOMMENDS:libcap-ng-dev: glibc-dev
+SECTION:libcap-ng-dev: devel
+PKG:libcap-ng-dev: libcap-ng-dev
+ALLOW_EMPTY:libcap-ng-dev: 1
+FILES:libcap-ng-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/libcap-ng/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:libcap-ng-dev: {"/usr/include/cap-ng.h": 3402, "/usr/lib/libcap-ng.so": 28, "/usr/lib/libdrop_ambient.so": 24, "/usr/lib/pkgconfig/libcap-ng.pc": 207, "/usr/share/aclocal/cap-ng.m4": 1256}
+PKGSIZE:libcap-ng-dev: 4917

@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-kn: Password strength checker library  This package contains language translation files for the kn locale.
+SUMMARY:cracklib-locale-kn: Password strength checker library - kn translations
+RPROVIDES:cracklib-locale-kn: cracklib-locale kn-translation
+RRECOMMENDS:cracklib-locale-kn: virtual-locale-kn
+SECTION: base
+PKG:cracklib-locale-kn: cracklib-locale-kn
+FILES:cracklib-locale-kn: /usr/share/locale/kn
+FILES_INFO:cracklib-locale-kn: {"/usr/share/locale/kn/LC_MESSAGES/cracklib.mo": 2769}
+PKGSIZE:cracklib-locale-kn: 2769

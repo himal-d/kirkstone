@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-vi: Tools to change and administer password and group data  This package contains language translation files for the vi locale.
+SUMMARY:shadow-locale-vi: Tools to change and administer password and group data - vi translations
+RPROVIDES:shadow-locale-vi: shadow-locale vi-translation
+RRECOMMENDS:shadow-locale-vi: virtual-locale-vi
+SECTION: base/utils
+PKG:shadow-locale-vi: shadow-locale-vi
+FILES:shadow-locale-vi: /usr/share/locale/vi
+FILES_INFO:shadow-locale-vi: {"/usr/share/locale/vi/LC_MESSAGES/shadow.mo": 74108}
+PKGSIZE:shadow-locale-vi: 74108

@@ -1,0 +1,21 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-su: util-linux su
+SUMMARY:util-linux-su: util-linux su
+RDEPENDS:util-linux-su: update-alternatives-opkg glibc (>= 2.35) libpam (>= 1.5.2)
+SECTION: base
+PKG:util-linux-su: util-linux-su
+FILES:util-linux-su: /etc/pam.d/su-l /bin/su.util-linux
+CONFFILES:util-linux-su: /etc/pam.d/su-l
+FILES_INFO:util-linux-su: {"/bin/su.util-linux": 68736, "/etc/pam.d/su-l": 2}
+pkg_postinst:util-linux-su: #!/bin/sh\nset -e\n\tupdate-alternatives --install /bin/su su /bin/su.util-linux 80\n
+pkg_prerm:util-linux-su: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  su /bin/su.util-linux\n
+FILERPROVIDESFLIST:util-linux-su:  /bin/su.util-linux
+FILERPROVIDES:/bin/su.util-linux:util-linux-su:  /bin/su
+FILERDEPENDSFLIST:util-linux-su: /bin/su.util-linux
+FILERDEPENDS:/bin/su.util-linux:util-linux-su:  libpam_misc.so.0(LIBPAM_MISC_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libpam_misc.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-su: 68738

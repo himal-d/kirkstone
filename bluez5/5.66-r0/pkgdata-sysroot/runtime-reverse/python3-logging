@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-logging: Python logging support
+RDEPENDS:python3-logging: python3-core python3-io python3-netserver python3-pickle python3-stringold python3-threading
+SECTION: devel/python
+PKG:python3-logging: python3-logging
+FILES:python3-logging:  /usr/lib/python3.10/logging
+FILES_INFO:python3-logging: {"/usr/lib/python3.10/logging/__init__.py": 80205, "/usr/lib/python3.10/logging/__pycache__/__init__.cpython-310.pyc": 66886, "/usr/lib/python3.10/logging/__pycache__/config.cpython-310.pyc": 23175, "/usr/lib/python3.10/logging/__pycache__/handlers.cpython-310.pyc": 44543, "/usr/lib/python3.10/logging/config.py": 36463, "/usr/lib/python3.10/logging/handlers.py": 60629}
+PKGSIZE:python3-logging: 311901

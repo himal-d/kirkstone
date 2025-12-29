@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-nl: Tools to change and administer password and group data  This package contains language translation files for the nl locale.
+SUMMARY:shadow-locale-nl: Tools to change and administer password and group data - nl translations
+RPROVIDES:shadow-locale-nl: shadow-locale nl-translation
+RRECOMMENDS:shadow-locale-nl: virtual-locale-nl
+SECTION: base/utils
+PKG:shadow-locale-nl: shadow-locale-nl
+FILES:shadow-locale-nl: /usr/share/locale/nl
+FILES_INFO:shadow-locale-nl: {"/usr/share/locale/nl/LC_MESSAGES/shadow.mo": 84111}
+PKGSIZE:shadow-locale-nl: 84111

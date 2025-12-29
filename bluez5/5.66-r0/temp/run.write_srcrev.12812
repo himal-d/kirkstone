@@ -1,0 +1,65 @@
+def write_srcrev(d):
+    write_latest_srcrev(d, d.getVar('BUILDHISTORY_DIR_PACKAGE'))
+
+write_srcrev(d)
+
+def write_latest_srcrev(d, pkghistdir):
+    srcrevfile = os.path.join(pkghistdir, 'latest_srcrev')
+
+    srcrevs, tag_srcrevs = _get_srcrev_values(d)
+    if srcrevs:
+        if not os.path.exists(pkghistdir):
+            bb.utils.mkdirhier(pkghistdir)
+        old_tag_srcrevs = {}
+        if os.path.exists(srcrevfile):
+            with open(srcrevfile) as f:
+                for line in f:
+                    if line.startswith('# tag_'):
+                        key, value = line.split("=", 1)
+                        key = key.replace('# tag_', '').strip()
+                        value = value.replace('"', '').strip()
+                        old_tag_srcrevs[key] = value
+        with open(srcrevfile, 'w') as f:
+            for name, srcrev in sorted(srcrevs.items()):
+                suffix = "_" + name
+                if name == "default":
+                    suffix = ""
+                orig_srcrev = d.getVar('SRCREV%s' % suffix, False)
+                if orig_srcrev:
+                    f.write('# SRCREV%s = "%s"\n' % (suffix, orig_srcrev))
+                f.write('SRCREV%s = "%s"\n' % (suffix, srcrev))
+            for name, srcrev in sorted(tag_srcrevs.items()):
+                f.write('# tag_%s = "%s"\n' % (name, srcrev))
+                if name in old_tag_srcrevs and old_tag_srcrevs[name] != srcrev:
+                    pkg = d.getVar('PN')
+                    bb.warn("Revision for tag %s in package %s was changed since last build (from %s to %s)" % (name, pkg, old_tag_srcrevs[name], srcrev))
+
+    else:
+        if os.path.exists(srcrevfile):
+            os.remove(srcrevfile)
+
+def _get_srcrev_values(d):
+    """
+    Return the version strings for the current recipe
+    """
+
+    scms = []
+    fetcher = bb.fetch.Fetch(d.getVar('SRC_URI').split(), d)
+    urldata = fetcher.ud
+    for u in urldata:
+        if urldata[u].method.supports_srcrev():
+            scms.append(u)
+
+    dict_srcrevs = {}
+    dict_tag_srcrevs = {}
+    for scm in scms:
+        ud = urldata[scm]
+        for name in ud.names:
+            autoinc, rev = ud.method.sortable_revision(ud, d, name)
+            dict_srcrevs[name] = rev
+            if 'tag' in ud.parm:
+                tag = ud.parm['tag'];
+                key = name+'_'+tag
+                dict_tag_srcrevs[key] = rev
+    return (dict_srcrevs, dict_tag_srcrevs)
+

@@ -1,0 +1,15 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:bluez5-dbg: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:bluez5-dbg: Generate a information to build logrotate data configuration for the recipe - Debugging files
+RRECOMMENDS:bluez5-dbg: dbus-lib-dbg glib-2.0-dbg glibc-dbg json-c-dbg libical-dbg libudev-dbg readline-dbg
+SECTION:bluez5-dbg: devel
+PKG:bluez5-dbg: bluez5-dbg
+ALLOW_EMPTY:bluez5-dbg: 1
+FILES:bluez5-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:bluez5-dbg: {"/usr/bin/.debug/advtest": 145144, "/usr/bin/.debug/bdaddr": 131576, "/usr/bin/.debug/bluemoon": 108216, "/usr/bin/.debug/bluetooth-player": 344384, "/usr/bin/.debug/bluetoothctl": 595096, "/usr/bin/.debug/bneptest": 285488, "/usr/bin/.debug/btmgmt": 550224, "/usr/bin/.debug/btmon": 1479184, "/usr/bin/.debug/check-selftest": 16648, "/usr/bin/.debug/ciptool": 246832, "/usr/bin/.debug/create-image": 19496, "/usr/bin/.debug/eddystone": 91120, "/usr/bin/.debug/gatttool": 585664, "/usr/bin/.debug/hciattach": 223696, "/usr/bin/.debug/hciconfig": 166872, "/usr/bin/.debug/hcidump": 599416, "/usr/bin/.debug/hcitool": 194160, "/usr/bin/.debug/hex2hcd": 26416, "/usr/bin/.debug/isotest": 142872, "/usr/bin/.debug/l2ping": 125336, "/usr/bin/.debug/l2test": 149632, "/usr/bin/.debug/mesh-cfgclient": 821016, "/usr/bin/.debug/mesh-cfgtest": 476136, "/usr/bin/.debug/meshctl": 604696, "/usr/bin/.debug/mpris-proxy": 234888, "/usr/bin/.debug/nokfw": 19720, "/usr/bin/.debug/obex-client-tool": 269240, "/usr/bin/.debug/obex-server-tool": 269112, "/usr/bin/.debug/obexctl": 313192, "/usr/bin/.debug/rctest": 249848, "/usr/bin/.debug/rfcomm": 139360, "/usr/bin/.debug/sdptool": 373872, "/usr/bin/.debug/test-runner": 41016, "/usr/lib/.debug/libbluetooth.so.3.19.8": 221440, "/usr/lib/bluez5/bluetooth/.debug/bluetooth-meshd": 1635048, "/usr/lib/bluez5/bluetooth/.debug/bluetoothd": 3563184, "/usr/lib/bluez5/bluetooth/.debug/obexd": 1177400}
+PKGSIZE:bluez5-dbg: 16636640

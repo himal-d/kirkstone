@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-nologin: util-linux nologin
+SUMMARY:util-linux-nologin: util-linux nologin
+RDEPENDS:util-linux-nologin: update-alternatives-opkg glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-nologin: util-linux-nologin
+FILES:util-linux-nologin: /sbin/nologin.util-linux
+FILES_INFO:util-linux-nologin: {"/sbin/nologin.util-linux": 14720}
+pkg_postinst:util-linux-nologin: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/nologin nologin /sbin/nologin.util-linux 80\n
+pkg_prerm:util-linux-nologin: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  nologin /sbin/nologin.util-linux\n
+FILERPROVIDESFLIST:util-linux-nologin:  /sbin/nologin.util-linux
+FILERPROVIDES:/sbin/nologin.util-linux:util-linux-nologin:  /sbin/nologin
+FILERDEPENDSFLIST:util-linux-nologin: /sbin/nologin.util-linux
+FILERDEPENDS:/sbin/nologin.util-linux:util-linux-nologin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-nologin: 14720

@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-plistlib: Generate and parse Mac OS X .plist files
+RDEPENDS:python3-plistlib: python3-core python3-datetime python3-xml
+SECTION: devel/python
+PKG:python3-plistlib: python3-plistlib
+FILES:python3-plistlib:  /usr/lib/python3.10/plistlib.py /usr/lib/python3.10/__pycache__/plistlib.*.pyc
+FILES_INFO:python3-plistlib: {"/usr/lib/python3.10/__pycache__/plistlib.cpython-310.pyc": 23452, "/usr/lib/python3.10/plistlib.py": 28248}
+PKGSIZE:python3-plistlib: 51700

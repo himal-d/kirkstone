@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-eu: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the eu locale.
+SUMMARY:util-linux-locale-eu: A suite of basic system administration utilities - eu translations
+RPROVIDES:util-linux-locale-eu: util-linux-locale eu-translation
+RRECOMMENDS:util-linux-locale-eu: virtual-locale-eu
+SECTION: base
+PKG:util-linux-locale-eu: util-linux-locale-eu
+FILES:util-linux-locale-eu: /usr/share/locale/eu
+FILES_INFO:util-linux-locale-eu: {"/usr/share/locale/eu/LC_MESSAGES/util-linux.mo": 20015}
+PKGSIZE:util-linux-locale-eu: 20015

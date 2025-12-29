@@ -1,0 +1,21 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-last: util-linux last
+SUMMARY:util-linux-last: util-linux last
+RDEPENDS:util-linux-last: update-alternatives-opkg glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-last: util-linux-last
+FILES:util-linux-last: /usr/bin/last.util-linux /usr/bin/lastb.util-linux
+FILES_INFO:util-linux-last: {"/usr/bin/last.util-linux": 43784, "/usr/bin/lastb.util-linux": 15}
+pkg_postinst:util-linux-last: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/bin/last last /usr/bin/last.util-linux 80\n\tupdate-alternatives --install /usr/bin/lastb lastb /usr/bin/lastb.util-linux 80\n
+pkg_prerm:util-linux-last: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  last /usr/bin/last.util-linux\n\tupdate-alternatives --remove  lastb /usr/bin/lastb.util-linux\n
+FILERPROVIDESFLIST:util-linux-last:  /usr/bin/last.util-linux /usr/bin/lastb.util-linux
+FILERPROVIDES:/usr/bin/last.util-linux:util-linux-last:  /usr/bin/last
+FILERPROVIDES:/usr/bin/lastb.util-linux:util-linux-last:  /usr/bin/lastb
+FILERDEPENDSFLIST:util-linux-last: /usr/bin/last.util-linux
+FILERDEPENDS:/usr/bin/last.util-linux:util-linux-last:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-last: 43799

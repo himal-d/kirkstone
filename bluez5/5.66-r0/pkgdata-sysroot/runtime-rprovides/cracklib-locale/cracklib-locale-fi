@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-fi: Password strength checker library  This package contains language translation files for the fi locale.
+SUMMARY:cracklib-locale-fi: Password strength checker library - fi translations
+RPROVIDES:cracklib-locale-fi: cracklib-locale fi-translation
+RRECOMMENDS:cracklib-locale-fi: virtual-locale-fi
+SECTION: base
+PKG:cracklib-locale-fi: cracklib-locale-fi
+FILES:cracklib-locale-fi: /usr/share/locale/fi
+FILES_INFO:cracklib-locale-fi: {"/usr/share/locale/fi/LC_MESSAGES/cracklib.mo": 1826}
+PKGSIZE:cracklib-locale-fi: 1826

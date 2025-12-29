@@ -1,0 +1,17 @@
+PN: util-linux-libuuid
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:util-linux-libuuid-dev: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:util-linux-libuuid-dev: A suite of basic system administration utilities - Development files
+RDEPENDS:util-linux-libuuid-dev: util-linux-libuuid (= 2.37.4-r0)
+RPROVIDES:util-linux-libuuid-dev:  util-linux-libuuid-dev (=2.37.4)
+RRECOMMENDS:util-linux-libuuid-dev: glibc-dev
+SECTION:util-linux-libuuid-dev: devel
+PKG:util-linux-libuuid-dev: libuuid-dev
+ALLOW_EMPTY:util-linux-libuuid-dev: 1
+FILES:util-linux-libuuid-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/util-linux-libuuid/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:util-linux-libuuid-dev: {"/usr/include/uuid/uuid.h": 4023, "/usr/lib/libuuid.so": 16, "/usr/lib/pkgconfig/uuid.pc": 204}
+PKGSIZE:util-linux-libuuid-dev: 4243

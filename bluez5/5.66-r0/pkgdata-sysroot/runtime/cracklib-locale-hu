@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-hu: Password strength checker library  This package contains language translation files for the hu locale.
+SUMMARY:cracklib-locale-hu: Password strength checker library - hu translations
+RPROVIDES:cracklib-locale-hu: cracklib-locale hu-translation
+RRECOMMENDS:cracklib-locale-hu: virtual-locale-hu
+SECTION: base
+PKG:cracklib-locale-hu: cracklib-locale-hu
+FILES:cracklib-locale-hu: /usr/share/locale/hu
+FILES_INFO:cracklib-locale-hu: {"/usr/share/locale/hu/LC_MESSAGES/cracklib.mo": 1780}
+PKGSIZE:cracklib-locale-hu: 1780

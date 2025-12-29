@@ -1,0 +1,17 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:systemd-doc: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.  This package contains documentation.
+SUMMARY:systemd-doc: A System and service manager - Documentation files
+SECTION:systemd-doc: doc
+PKG:systemd-doc: systemd-doc
+FILES:systemd-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:systemd-doc: {"/usr/share/doc/systemd/CODING_STYLE.md": 26659, "/usr/share/doc/systemd/DISTRO_PORTING.md": 3365, "/usr/share/doc/systemd/ENVIRONMENT.md": 21891, "/usr/share/doc/systemd/GVARIANT-SERIALIZATION.md": 4174, "/usr/share/doc/systemd/HACKING.md": 14742, "/usr/share/doc/systemd/LICENSE.GPL2": 17987, "/usr/share/doc/systemd/LICENSE.LGPL2.1": 26530, "/usr/share/doc/systemd/LICENSES/BSD-2-Clause.txt": 1287, "/usr/share/doc/systemd/LICENSES/BSD-3-Clause.txt": 1562, "/usr/share/doc/systemd/LICENSES/CC0-1.0.txt": 7048, "/usr/share/doc/systemd/LICENSES/LGPL-2.0-or-later.txt": 24842, "/usr/share/doc/systemd/LICENSES/Linux-syscall-note.txt": 638, "/usr/share/doc/systemd/LICENSES/MIT.txt": 1078, "/usr/share/doc/systemd/LICENSES/OFL-1.1.txt": 4598, "/usr/share/doc/systemd/LICENSES/README.md": 3207, "/usr/share/doc/systemd/LICENSES/lookup3-public-domain.txt": 52, "/usr/share/doc/systemd/LICENSES/murmurhash2-public-domain.txt": 138, "/usr/share/doc/systemd/NEWS": 749664, "/usr/share/doc/systemd/README": 15595, "/usr/share/doc/systemd/README.logs": 1040, "/usr/share/doc/systemd/TRANSIENT-SETTINGS.md": 10063, "/usr/share/doc/systemd/TRANSLATORS.md": 2506, "/usr/share/doc/systemd/UIDS-GIDS.md": 17470}
+pkg_postinst:systemd-doc: set -e\n\t# only update manual page index caches when manual files are built and installed\n\tif false; then\n\t\tif test -n "$D"; then\n\t\t\tif true; then\n\t\t\t\tsed "s:\\(\\s\\)/:\\1$D/:g" $D/etc/man_db.conf | PSEUDO_UNLOAD=1 qemu-aarch64 -r 3.14  -L $D -E LD_LIBRARY_PATH=$D/usr/lib:$D/lib $D/usr/bin/mandb -C - -u -q $D/usr/share/man\n\t\t\t\tchown -R root:root $D/usr/share/man\n\n\t\t\t\tmkdir -p $D/var/cache/man\n\t\t\t\tcd $D/usr/share/man\n\t\t\t\tfind . -name index.db | while read index; do\n\t\t\t\t\tmkdir -p $D/var/cache/man/$(dirname ${index})\n\t\t\t\t\tmv ${index} $D/var/cache/man/${index}\n\t\t\t\t\tchown man:man $D/var/cache/man/${index}\n\t\t\t\tdone\n\t\t\t\tcd -\n\t\t\telse\n\t\t\t\t$INTERCEPT_DIR/postinst_intercept delay_to_first_boot ${PKG} mlprefix=\n\t\t\tfi\n\t\telse\n\t\t\tmandb -q\n\t\tfi\n\tfi\n
+pkg_postrm:systemd-doc: set -e\n\t# only update manual page index caches when manual files are built and installed\n\tif false; then\n\t\tmandb -q\n\tfi\n
+PKGSIZE:systemd-doc: 956136

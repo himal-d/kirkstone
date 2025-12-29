@@ -1,0 +1,119 @@
+DEBUG: Executing python function extend_recipe_sysroot
+NOTE: Direct dependencies are ['/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/binutils/binutils-cross_2.38.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/pseudo/pseudo_git.bb:do_populate_sysroot']
+NOTE: Installed into sysroot: []
+NOTE: Skipping as already exists in sysroot: ['binutils-cross-aarch64', 'pseudo-native', 'gnu-config-native', 'texinfo-dummy-native', 'zlib-native', 'flex-native', 'xz-native', 'libtool-native', 'm4-native', 'gettext-minimal-native']
+DEBUG: Python function extend_recipe_sysroot finished
+DEBUG: Executing python function sstate_task_prefunc
+DEBUG: Python function sstate_task_prefunc finished
+DEBUG: Executing python function do_package_qa
+NOTE: DO PACKAGE QA
+DEBUG: Executing python function read_subpackage_metadata
+DEBUG: Python function read_subpackage_metadata finished
+NOTE: Checking Package: bluez5-staticdev
+NOTE: Checking Package: bluez5
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/lib/bluez5/bluetooth/bluetooth-meshd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/lib/bluez5/bluetooth/obexd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/lib/libbluetooth.so.3.19.8
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/lib/libbluetooth.so.3
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/hcitool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/mesh-cfgclient
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/hcidump
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/isotest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/hciconfig
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/hciattach
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/hex2hcd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/l2test
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/bluetoothctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/mesh-cfgtest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/meshctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/l2ping
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/ciptool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/btmon
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/bluemoon
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/rfcomm
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/rctest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5/usr/bin/sdptool
+WARNING: QA Issue: bluez5: /etc/logrotate/bluez5bluez_orig.metadata is owned by uid 1009, which is the same as the user running bitbake. This may be due to host contamination
+bluez5: /etc/logrotate/bluez5bluez_mem.metadata is owned by uid 1009, which is the same as the user running bitbake. This may be due to host contamination [host-user-contaminated]
+NOTE: Checking Package: bluez5-doc
+NOTE: Checking Package: bluez5-locale
+NOTE: Checking Package: bluez5-dbg
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/lib/.debug/libbluetooth.so.3.19.8
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/lib/bluez5/bluetooth/.debug/bluetoothd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/lib/bluez5/bluetooth/.debug/bluetooth-meshd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/lib/bluez5/bluetooth/.debug/obexd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/obexctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/hcitool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/check-selftest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/mesh-cfgclient
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/advtest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/test-runner
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/hcidump
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/eddystone
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/nokfw
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/obex-client-tool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/isotest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/hciconfig
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/hciattach
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/hex2hcd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/gatttool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/l2test
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/bluetoothctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/mesh-cfgtest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/bluetooth-player
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/meshctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/obex-server-tool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/l2ping
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/bdaddr
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/create-image
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/ciptool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/btmon
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/bluemoon
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/btmgmt
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/rfcomm
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/rctest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/bneptest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/mpris-proxy
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-dbg/usr/bin/.debug/sdptool
+NOTE: Checking Package: bluez5-noinst-tools
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/obexctl
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/check-selftest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/advtest
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/test-runner
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/eddystone
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/nokfw
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/obex-client-tool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/gatttool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/bluetooth-player
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/obex-server-tool
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/bdaddr
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/create-image
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/btmgmt
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-noinst-tools/usr/bin/bneptest
+NOTE: Checking Package: bluez5-src
+NOTE: Checking Package: bluez5-obex
+NOTE: Checking Package: bluez5-mpris-proxy
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-mpris-proxy/usr/bin/mpris-proxy
+NOTE: Checking Package: bluez5-testtools
+NOTE: Checking Package: bluez5-dev
+NOTE: Checking Package: bluez5-bluetoothd
+NOTE: aarch64-rdk-linux-objdump -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/packages-split/bluez5-bluetoothd/usr/lib/bluez5/bluetooth/bluetoothd
+DEBUG: Python function do_package_qa finished
+DEBUG: Executing python function sstate_task_postfunc
+NOTE: Using umask 0o002 (not 22) for sstate packaging
+DEBUG: Executing python function target_add_sysroot_deps
+DEBUG: Python function target_add_sysroot_deps finished
+DEBUG: Executing python function sstate_hardcode_path
+NOTE: Removing hardcoded paths from sstate package: 'find /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-package_qa/ \( -name "*.la" -o -name "*-config" -o -name "*_config" -o -name "postinst-*" \) -type f | xargs grep -l -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot' -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native' -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools' | tee /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-package_qa/fixmepath | xargs --no-run-if-empty sed -i -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native:FIXMESTAGINGDIRHOST:g' -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot:FIXMESTAGINGDIRTARGET:g' -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools:FIXME_HOSTTOOLS_DIR:g''
+DEBUG: Python function sstate_hardcode_path finished
+DEBUG: Executing python function sstate_report_unihash
+DEBUG: Python function sstate_report_unihash finished
+DEBUG: Executing shell function sstate_create_package
+DEBUG: Shell function sstate_create_package finished
+DEBUG: Executing python function sstate_hardcode_path_unpack
+DEBUG: Python function sstate_hardcode_path_unpack finished
+DEBUG: Executing python function buildhistory_emit_outputsigs
+DEBUG: Python function buildhistory_emit_outputsigs finished
+DEBUG: Executing python function buildhistory_emit_pkghistory
+DEBUG: Python function buildhistory_emit_pkghistory finished
+DEBUG: Python function sstate_task_postfunc finished

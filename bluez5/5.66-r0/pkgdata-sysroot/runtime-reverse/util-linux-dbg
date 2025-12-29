@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-dbg: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:util-linux-dbg: A suite of basic system administration utilities - Debugging files
+RRECOMMENDS:util-linux-dbg: glibc-dbg libcap-ng-dbg libpam-dbg libxcrypt-dbg ncurses-libtinfo-dbg util-linux-libblkid-dbg util-linux-libfdisk-dbg util-linux-libmount-dbg util-linux-libsmartcols-dbg util-linux-libuuid-dbg zlib-dbg
+SECTION:util-linux-dbg: devel
+PKG:util-linux-dbg: util-linux-dbg
+ALLOW_EMPTY:util-linux-dbg: 1
+FILES:util-linux-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:util-linux-dbg: {"/bin/.debug/getopt.util-linux": 103224, "/bin/.debug/mount.util-linux": 141920, "/bin/.debug/mountpoint.util-linux": 26608, "/bin/.debug/su.util-linux": 195464, "/bin/.debug/umount.util-linux": 61736, "/lib/.debug/libblkid.so.1.1.0": 1078096, "/lib/.debug/libfdisk.so.1.1.0": 1000600, "/lib/.debug/libmount.so.1.1.0": 865648, "/lib/.debug/libsmartcols.so.1.1.0": 605800, "/sbin/.debug/agetty": 181280, "/sbin/.debug/blkid.util-linux": 311112, "/sbin/.debug/fdisk.util-linux": 368504, "/sbin/.debug/fsck.util-linux": 152216, "/sbin/.debug/nologin.util-linux": 30128, "/sbin/.debug/pivot_root.util-linux": 21448, "/sbin/.debug/sulogin.util-linux": 148312, "/sbin/.debug/switch_root.util-linux": 29104, "/usr/bin/.debug/findmnt": 170392, "/usr/bin/.debug/last.util-linux": 137280, "/usr/bin/.debug/setarch": 28384, "/usr/bin/.debug/setpriv.util-linux": 142352, "/usr/bin/.debug/unshare.util-linux": 141424, "/usr/bin/.debug/uuidgen.util-linux": 25208, "/usr/sbin/.debug/addpart": 91456, "/usr/sbin/.debug/fsck.cramfs": 130312, "/usr/sbin/.debug/mkfs": 23672, "/usr/sbin/.debug/mkfs.cramfs": 127928, "/usr/sbin/.debug/readprofile.util-linux": 104512, "/usr/sbin/.debug/rfkill.util-linux": 133064, "/usr/sbin/.debug/runuser": 195480, "/usr/sbin/.debug/sfdisk": 344872, "/usr/sbin/.debug/uuidd": 126096}
+PKGSIZE:util-linux-dbg: 7243632

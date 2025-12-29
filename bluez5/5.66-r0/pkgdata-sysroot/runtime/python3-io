@@ -1,0 +1,18 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-io: Python low-level I/O
+RDEPENDS:python3-io: python3-core python3-crypt python3-math python3-netclient python3-shell glibc (>= 2.35) libcrypto (>= 3.0.5) libssl (>= 3.0.5)
+SECTION: devel/python
+PKG:python3-io: python3-io
+FILES:python3-io:  /usr/lib/python3.10/_pyio.py /usr/lib/python3.10/ipaddress.py /usr/lib/python3.10/lib-dynload/_socket.*.so /usr/lib/python3.10/lib-dynload/_ssl.*.so /usr/lib/python3.10/lib-dynload/termios.*.so /usr/lib/python3.10/pipes.py /usr/lib/python3.10/socket.py /usr/lib/python3.10/ssl.py /usr/lib/python3.10/tempfile.py /usr/lib/python3.10/__pycache__/_pyio.*.pyc /usr/lib/python3.10/__pycache__/ipaddress.*.pyc /usr/lib/python3.10/__pycache__/pipes.*.pyc /usr/lib/python3.10/__pycache__/socket.*.pyc /usr/lib/python3.10/__pycache__/ssl.*.pyc /usr/lib/python3.10/__pycache__/tempfile.*.pyc
+FILES_INFO:python3-io: {"/usr/lib/python3.10/__pycache__/_pyio.cpython-310.pyc": 73662, "/usr/lib/python3.10/__pycache__/ipaddress.cpython-310.pyc": 61463, "/usr/lib/python3.10/__pycache__/pipes.cpython-310.pyc": 7769, "/usr/lib/python3.10/__pycache__/socket.cpython-310.pyc": 28951, "/usr/lib/python3.10/__pycache__/ssl.cpython-310.pyc": 44814, "/usr/lib/python3.10/__pycache__/tempfile.cpython-310.pyc": 23481, "/usr/lib/python3.10/_pyio.py": 94467, "/usr/lib/python3.10/ipaddress.py": 74786, "/usr/lib/python3.10/lib-dynload/_socket.cpython-310-aarch64-linux-gnu.so": 87712, "/usr/lib/python3.10/lib-dynload/_ssl.cpython-310-aarch64-linux-gnu.so": 203960, "/usr/lib/python3.10/lib-dynload/termios.cpython-310-aarch64-linux-gnu.so": 26984, "/usr/lib/python3.10/pipes.py": 8914, "/usr/lib/python3.10/socket.py": 36733, "/usr/lib/python3.10/ssl.py": 52116, "/usr/lib/python3.10/tempfile.py": 28457}
+FILERDEPENDSFLIST:python3-io: /usr/lib/python3.10/lib-dynload/@underscore@socket.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@ssl.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/termios.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@socket.cpython-310-aarch64-linux-gnu.so:python3-io:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@ssl.cpython-310-aarch64-linux-gnu.so:python3-io:  libc.so.6(GLIBC_2.17)(64bit) libcrypto.so.3(OPENSSL_3.0.0)(64bit) libssl.so.3(OPENSSL_3.0.0)(64bit) libssl.so.3()(64bit) libcrypto.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/termios.cpython-310-aarch64-linux-gnu.so:python3-io:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-io: 854269

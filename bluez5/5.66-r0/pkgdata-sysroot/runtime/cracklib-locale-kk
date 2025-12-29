@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-kk: Password strength checker library  This package contains language translation files for the kk locale.
+SUMMARY:cracklib-locale-kk: Password strength checker library - kk translations
+RPROVIDES:cracklib-locale-kk: cracklib-locale kk-translation
+RRECOMMENDS:cracklib-locale-kk: virtual-locale-kk
+SECTION: base
+PKG:cracklib-locale-kk: cracklib-locale-kk
+FILES:cracklib-locale-kk: /usr/share/locale/kk
+FILES_INFO:cracklib-locale-kk: {"/usr/share/locale/kk/LC_MESSAGES/cracklib.mo": 691}
+PKGSIZE:cracklib-locale-kk: 691

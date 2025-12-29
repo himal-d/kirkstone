@@ -1,0 +1,14 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE:xz-staticdev: GPL-2.0-or-later
+DESCRIPTION:xz-staticdev: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains static libraries for software development.
+SUMMARY:xz-staticdev: Utilities for managing LZMA compressed files - Development files (Static Libraries)
+RDEPENDS:xz-staticdev: xz-dev (= 5.2.6-r0)
+SECTION:xz-staticdev: devel
+PKG:xz-staticdev: xz-staticdev
+FILES:xz-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/xz/*.a
+FILES_INFO:xz-staticdev: {"/usr/lib/liblzma.a": 1436420}
+PKGSIZE:xz-staticdev: 1436420

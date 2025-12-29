@@ -1,0 +1,14 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:gdbm-staticdev: Key/value database library with extensible hashing.  This package contains static libraries for software development.
+SUMMARY:gdbm-staticdev: Key/value database library with extensible hashing - Development files (Static Libraries)
+RDEPENDS:gdbm-staticdev: gdbm-dev (= 1.8.3-r4)
+SECTION:gdbm-staticdev: devel
+PKG:gdbm-staticdev: gdbm-staticdev
+FILES:gdbm-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/gdbm/*.a
+FILES_INFO:gdbm-staticdev: {"/usr/lib/libgdbm.a": 213896, "/usr/lib/libgdbm_compat.a": 132426}
+PKGSIZE:gdbm-staticdev: 346322

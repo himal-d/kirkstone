@@ -1,0 +1,13 @@
+PN: libxcrypt
+PV: 4.4.33
+PR: r0
+PKGV: 4.4.33
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:libxcrypt-src: Forked code from glibc libary to extract only crypto part.  This package contains sources for debugging purposes.
+SUMMARY:libxcrypt-src: Extended cryptographic library (from glibc) - Source files
+RPROVIDES:libxcrypt-src:  libxcrypt-src (=4.4.33)
+SECTION:libxcrypt-src: devel
+PKG:libxcrypt-src: libcrypt-src
+FILES_INFO:libxcrypt-src: {}
+PKGSIZE:libxcrypt-src: 0

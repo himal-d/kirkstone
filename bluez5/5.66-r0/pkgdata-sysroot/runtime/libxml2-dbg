@@ -1,0 +1,15 @@
+PN: libxml2
+PV: 2.9.14
+PR: r0
+PKGV: 2.9.14
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:libxml2-dbg: The XML Parser Library allows for manipulation of XML files.  Libxml2 exports Push and Pull type parser interfaces for both XML and HTML.  It can do DTD validation at parse time, on a parsed document instance or with an arbitrary DTD.  Libxml2 includes complete XPath, XPointer and Xinclude implementations.  It also has a SAX like interface, which is designed to be compatible with Expat.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:libxml2-dbg: XML C Parser Library and Toolkit - Debugging files
+RRECOMMENDS:libxml2-dbg: glibc-dbg libxcrypt-dbg zlib-dbg
+SECTION:libxml2-dbg: devel
+PKG:libxml2-dbg: libxml2-dbg
+ALLOW_EMPTY:libxml2-dbg: 1
+FILES:libxml2-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:libxml2-dbg: {"/usr/bin/.debug/xmlcatalog": 28592, "/usr/bin/.debug/xmllint": 125080, "/usr/lib/.debug/libxml2.so.2.9.14": 2996264, "/usr/lib/python3.10/site-packages/.debug/libxml2mod.so": 688008}
+PKGSIZE:libxml2-dbg: 3837944

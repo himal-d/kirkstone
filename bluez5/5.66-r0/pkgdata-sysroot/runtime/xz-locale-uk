@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-uk: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the uk locale.
+SUMMARY:xz-locale-uk: Utilities for managing LZMA compressed files - uk translations
+RPROVIDES:xz-locale-uk: xz-locale uk-translation
+RRECOMMENDS:xz-locale-uk: virtual-locale-uk
+SECTION: base
+PKG:xz-locale-uk: xz-locale-uk
+FILES:xz-locale-uk: /usr/share/locale/uk
+FILES_INFO:xz-locale-uk: {"/usr/share/locale/uk/LC_MESSAGES/xz.mo": 34694}
+PKGSIZE:xz-locale-uk: 34694

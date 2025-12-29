@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-debugger: Python debugger
+RDEPENDS:python3-debugger: python3-core python3-pprint python3-shell python3-stringold
+SECTION: devel/python
+PKG:python3-debugger: python3-debugger
+FILES:python3-debugger:  /usr/lib/python3.10/bdb.py /usr/lib/python3.10/pdb.py /usr/lib/python3.10/__pycache__/bdb.*.pyc /usr/lib/python3.10/__pycache__/pdb.*.pyc
+FILES_INFO:python3-debugger: {"/usr/lib/python3.10/__pycache__/bdb.cpython-310.pyc": 25582, "/usr/lib/python3.10/__pycache__/pdb.cpython-310.pyc": 47608, "/usr/lib/python3.10/bdb.py": 32227, "/usr/lib/python3.10/pdb.py": 63239}
+FILERDEPENDSFLIST:python3-debugger: /usr/lib/python3.10/pdb.py
+FILERDEPENDS:/usr/lib/python3.10/pdb.py:python3-debugger:  /usr/bin/env
+PKGSIZE:python3-debugger: 168656

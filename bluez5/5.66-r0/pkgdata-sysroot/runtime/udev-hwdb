@@ -1,0 +1,18 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.
+SUMMARY: A System and service manager
+RDEPENDS:udev-hwdb: udev
+SECTION: base/shell
+PKG:udev-hwdb: udev-hwdb
+FILES:udev-hwdb: /lib/udev/hwdb.d                    
+FILES_INFO:udev-hwdb: {"/lib/udev/hwdb.d/20-OUI.hwdb": 2382408, "/lib/udev/hwdb.d/20-acpi-vendor.hwdb": 151674, "/lib/udev/hwdb.d/20-bluetooth-vendor-product.hwdb": 140340, "/lib/udev/hwdb.d/20-dmi-id.hwdb": 189, "/lib/udev/hwdb.d/20-net-ifname.hwdb": 111, "/lib/udev/hwdb.d/20-pci-classes.hwdb": 15708, "/lib/udev/hwdb.d/20-pci-vendor-model.hwdb": 3457555, "/lib/udev/hwdb.d/20-sdio-classes.hwdb": 783, "/lib/udev/hwdb.d/20-sdio-vendor-model.hwdb": 4181, "/lib/udev/hwdb.d/20-usb-classes.hwdb": 8070, "/lib/udev/hwdb.d/20-usb-vendor-model.hwdb": 1471007, "/lib/udev/hwdb.d/20-vmbus-class.hwdb": 1810, "/lib/udev/hwdb.d/60-autosuspend-chromiumos.hwdb": 2218, "/lib/udev/hwdb.d/60-autosuspend-fingerprint-reader.hwdb": 5862, "/lib/udev/hwdb.d/60-autosuspend.hwdb": 2224, "/lib/udev/hwdb.d/60-evdev.hwdb": 20203, "/lib/udev/hwdb.d/60-input-id.hwdb": 2462, "/lib/udev/hwdb.d/60-keyboard.hwdb": 88509, "/lib/udev/hwdb.d/60-seat.hwdb": 1119, "/lib/udev/hwdb.d/60-sensor.hwdb": 39220, "/lib/udev/hwdb.d/70-analyzers.hwdb": 1015, "/lib/udev/hwdb.d/70-av-production.hwdb": 2719, "/lib/udev/hwdb.d/70-cameras.hwdb": 679, "/lib/udev/hwdb.d/70-joystick.hwdb": 1751, "/lib/udev/hwdb.d/70-mouse.hwdb": 24696, "/lib/udev/hwdb.d/70-pointingstick.hwdb": 7273, "/lib/udev/hwdb.d/70-touchpad.hwdb": 2316, "/lib/udev/hwdb.d/80-ieee1394-unit-function.hwdb": 47289, "/lib/udev/hwdb.d/README": 518}
+pkg_postinst:udev-hwdb: set -e\n\tif test -n "$D"; then\n\t\t$INTERCEPT_DIR/postinst_intercept update_udev_hwdb ${PKG} mlprefix= binprefix= rootlibexecdir="/lib" PREFERRED_PROVIDER_udev="systemd" base_bindir="/bin"\n\telse\n\t\tudevadm hwdb --update\n\tfi\n
+pkg_prerm:udev-hwdb: set -e\n\trm -f $D/etc/udev/hwdb.bin\n
+PKGSIZE:udev-hwdb: 7883909

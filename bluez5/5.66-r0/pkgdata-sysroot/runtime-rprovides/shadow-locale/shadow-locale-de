@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-de: Tools to change and administer password and group data  This package contains language translation files for the de locale.
+SUMMARY:shadow-locale-de: Tools to change and administer password and group data - de translations
+RPROVIDES:shadow-locale-de: shadow-locale de-translation
+RRECOMMENDS:shadow-locale-de: virtual-locale-de
+SECTION: base/utils
+PKG:shadow-locale-de: shadow-locale-de
+FILES:shadow-locale-de: /usr/share/locale/de
+FILES_INFO:shadow-locale-de: {"/usr/share/locale/de/LC_MESSAGES/shadow.mo": 67942}
+PKGSIZE:shadow-locale-de: 67942

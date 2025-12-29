@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-yi: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the yi locale.
+SUMMARY:glib-2.0-locale-yi: A general-purpose utility library - yi translations
+RPROVIDES:glib-2.0-locale-yi: glib-2.0-locale yi-translation glib-2.0-locale-yi (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-yi: virtual-locale-yi
+SECTION: libs
+PKG:glib-2.0-locale-yi: libglib-2.0-locale-yi
+FILES:glib-2.0-locale-yi: /usr/share/locale/yi
+FILES_INFO:glib-2.0-locale-yi: {"/usr/share/locale/yi/LC_MESSAGES/glib20.mo": 15877}
+PKGSIZE:glib-2.0-locale-yi: 15877

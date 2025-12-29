@@ -1,0 +1,17 @@
+PN: libxcrypt
+PV: 4.4.33
+PR: r0
+PKGV: 4.4.33
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:libxcrypt-dev: Forked code from glibc libary to extract only crypto part.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:libxcrypt-dev: Extended cryptographic library (from glibc) - Development files
+RDEPENDS:libxcrypt-dev: libxcrypt (= 4.4.33-r0)
+RPROVIDES:libxcrypt-dev:  libxcrypt-dev (=4.4.33)
+RRECOMMENDS:libxcrypt-dev: glibc-dev
+SECTION:libxcrypt-dev: devel
+PKG:libxcrypt-dev: libcrypt-dev
+ALLOW_EMPTY:libxcrypt-dev: 1
+FILES:libxcrypt-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/libxcrypt/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:libxcrypt-dev: {"/usr/include/crypt.h": 11131, "/usr/lib/libcrypt.so": 17, "/usr/lib/pkgconfig/libcrypt.pc": 12, "/usr/lib/pkgconfig/libxcrypt.pc": 367}
+PKGSIZE:libxcrypt-dev: 11527

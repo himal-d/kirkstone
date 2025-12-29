@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-et: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the et locale.
+SUMMARY:libpam-locale-et: Linux-PAM (Pluggable Authentication Modules) - et translations
+RPROVIDES:libpam-locale-et: libpam-locale et-translation
+RRECOMMENDS:libpam-locale-et: virtual-locale-et
+SECTION: base
+PKG:libpam-locale-et: libpam-locale-et
+FILES:libpam-locale-et: /usr/share/locale/et
+FILES_INFO:libpam-locale-et: {"/usr/share/locale/et/LC_MESSAGES/Linux-PAM.mo": 2251}
+PKGSIZE:libpam-locale-et: 2251

@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-ftp: PAM plugin for -ftp
+SUMMARY:pam-plugin-ftp: PAM plugin for -ftp
+RDEPENDS:pam-plugin-ftp: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-ftp: pam-plugin-ftp-suffix
+SECTION: base
+PKG:pam-plugin-ftp: pam-plugin-ftp
+FILES:pam-plugin-ftp: /lib/security/pam_ftp.so
+FILES_INFO:pam-plugin-ftp: {"/lib/security/pam_ftp.so": 10224}
+FILERDEPENDSFLIST:pam-plugin-ftp: /lib/security/pam@underscore@ftp.so
+FILERDEPENDS:/lib/security/pam@underscore@ftp.so:pam-plugin-ftp:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-ftp: 10224

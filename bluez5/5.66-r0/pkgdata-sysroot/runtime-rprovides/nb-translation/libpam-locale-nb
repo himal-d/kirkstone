@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-nb: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the nb locale.
+SUMMARY:libpam-locale-nb: Linux-PAM (Pluggable Authentication Modules) - nb translations
+RPROVIDES:libpam-locale-nb: libpam-locale nb-translation
+RRECOMMENDS:libpam-locale-nb: virtual-locale-nb
+SECTION: base
+PKG:libpam-locale-nb: libpam-locale-nb
+FILES:libpam-locale-nb: /usr/share/locale/nb
+FILES_INFO:libpam-locale-nb: {"/usr/share/locale/nb/LC_MESSAGES/Linux-PAM.mo": 9536}
+PKGSIZE:libpam-locale-nb: 9536

@@ -1,0 +1,12 @@
+PN: kmod
+PV: 29
+PR: r0
+PKGV: 29
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:kmod-src: kmod is a set of tools to handle common tasks with Linux kernel modules like                insert, remove, list, check properties, resolve dependencies and aliases.  This package contains sources for debugging purposes.
+SUMMARY:kmod-src: Tools for managing Linux kernel modules - Source files
+SECTION:kmod-src: devel
+PKG:kmod-src: kmod-src
+FILES_INFO:kmod-src: {}
+PKGSIZE:kmod-src: 0

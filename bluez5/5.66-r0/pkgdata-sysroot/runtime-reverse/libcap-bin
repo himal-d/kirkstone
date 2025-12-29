@@ -1,0 +1,19 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.
+SUMMARY: Library for getting/setting POSIX.1e capabilities
+RDEPENDS:libcap-bin: glibc (>= 2.35) libcap (>= 2.65)
+SECTION: base
+PKG:libcap-bin: libcap-bin
+FILES:libcap-bin: /usr/bin/* /usr/sbin/*
+FILES_INFO:libcap-bin: {"/usr/sbin/capsh": 42192, "/usr/sbin/getcap": 10416, "/usr/sbin/getpcaps": 10448, "/usr/sbin/setcap": 10488}
+FILERDEPENDSFLIST:libcap-bin: /usr/sbin/capsh /usr/sbin/getcap /usr/sbin/getpcaps /usr/sbin/setcap
+FILERDEPENDS:/usr/sbin/capsh:libcap-bin:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/getcap:libcap-bin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/getpcaps:libcap-bin:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/setcap:libcap-bin:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libcap-bin: 73544

@@ -1,0 +1,15 @@
+PN: libxcrypt
+PV: 4.4.33
+PR: r0
+PKGV: 4.4.33
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:libxcrypt-staticdev: Forked code from glibc libary to extract only crypto part.  This package contains static libraries for software development.
+SUMMARY:libxcrypt-staticdev: Extended cryptographic library (from glibc) - Development files (Static Libraries)
+RDEPENDS:libxcrypt-staticdev: libxcrypt-dev (= 4.4.33-r0)
+RPROVIDES:libxcrypt-staticdev:  libxcrypt-staticdev (=4.4.33)
+SECTION:libxcrypt-staticdev: devel
+PKG:libxcrypt-staticdev: libcrypt-staticdev
+FILES:libxcrypt-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/libxcrypt/*.a
+FILES_INFO:libxcrypt-staticdev: {"/usr/lib/libcrypt.a": 812446}
+PKGSIZE:libxcrypt-staticdev: 812446

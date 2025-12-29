@@ -1,0 +1,14 @@
+recipe-sysroot/sysroot-providers/sqlite3
+recipe-sysroot/usr/include/sqlite3ext.h
+recipe-sysroot/usr/include/sqlite3.h
+recipe-sysroot/usr/lib/libsqlite3.so
+recipe-sysroot/usr/lib/libsqlite3.so.0
+recipe-sysroot/usr/lib/libsqlite3.so.0.8.6
+recipe-sysroot/usr/lib/libsqlite3.a
+recipe-sysroot/usr/lib/pkgconfig/sqlite3.pc
+recipe-sysroot/usr/lib/pkgconfig/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

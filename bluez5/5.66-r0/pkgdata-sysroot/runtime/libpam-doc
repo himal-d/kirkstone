@@ -1,0 +1,13 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-doc: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains documentation.
+SUMMARY:libpam-doc: Linux-PAM (Pluggable Authentication Modules) - Documentation files
+SECTION:libpam-doc: doc
+PKG:libpam-doc: libpam-doc
+FILES:libpam-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:libpam-doc: {}
+PKGSIZE:libpam-doc: 0

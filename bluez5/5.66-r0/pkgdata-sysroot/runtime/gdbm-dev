@@ -1,0 +1,16 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:gdbm-dev: Key/value database library with extensible hashing.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:gdbm-dev: Key/value database library with extensible hashing - Development files
+RDEPENDS:gdbm-dev: gdbm (= 1.8.3-r4)
+RRECOMMENDS:gdbm-dev: glibc-dev
+SECTION:gdbm-dev: devel
+PKG:gdbm-dev: gdbm-dev
+ALLOW_EMPTY:gdbm-dev: 1
+FILES:gdbm-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/gdbm/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:gdbm-dev: {"/usr/include/dbm.h": 1563, "/usr/include/gdbm.h": 4744, "/usr/include/gdbm/gdbm.h": 9, "/usr/include/gdbm/ndbm.h": 9, "/usr/include/ndbm.h": 2003, "/usr/lib/libgdbm.so": 16, "/usr/lib/libgdbm_compat.so": 23}
+PKGSIZE:gdbm-dev: 8367

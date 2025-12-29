@@ -1,0 +1,16 @@
+PN: readline
+PV: 5.2
+PR: r9
+PKGV: 5.2
+PKGR: r9
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:readline-dbg: The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in. Both Emacs and vi editing modes are available. The Readline library includes  additional functions to maintain a list of previously-entered command lines, to recall and perhaps reedit those   lines, and perform csh-like history expansion on previous commands.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:readline-dbg: Library for editing typed command lines - Debugging files
+RPROVIDES:readline-dbg:  readline-dbg (=5.2)
+RRECOMMENDS:readline-dbg: glibc-dbg ncurses-libtinfo-dbg
+SECTION:readline-dbg: devel
+PKG:readline-dbg: libreadline-dbg
+ALLOW_EMPTY:readline-dbg: 1
+FILES:readline-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:readline-dbg: {"/usr/lib/.debug/libhistory.so.5.2": 71160, "/usr/lib/.debug/libreadline.so.5.2": 428592}
+PKGSIZE:readline-dbg: 499752

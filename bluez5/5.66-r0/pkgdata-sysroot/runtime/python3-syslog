@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-syslog: Python syslog interface
+RDEPENDS:python3-syslog: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-syslog: python3-syslog
+FILES:python3-syslog:  /usr/lib/python3.10/lib-dynload/syslog.*.so
+FILES_INFO:python3-syslog: {"/usr/lib/python3.10/lib-dynload/syslog.cpython-310-aarch64-linux-gnu.so": 10736}
+FILERDEPENDSFLIST:python3-syslog: /usr/lib/python3.10/lib-dynload/syslog.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/syslog.cpython-310-aarch64-linux-gnu.so:python3-syslog:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-syslog: 10736

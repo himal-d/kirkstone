@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-hr: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the hr locale.
+SUMMARY:libpam-locale-hr: Linux-PAM (Pluggable Authentication Modules) - hr translations
+RPROVIDES:libpam-locale-hr: libpam-locale hr-translation
+RRECOMMENDS:libpam-locale-hr: virtual-locale-hr
+SECTION: base
+PKG:libpam-locale-hr: libpam-locale-hr
+FILES:libpam-locale-hr: /usr/share/locale/hr
+FILES_INFO:libpam-locale-hr: {"/usr/share/locale/hr/LC_MESSAGES/Linux-PAM.mo": 565}
+PKGSIZE:libpam-locale-hr: 565

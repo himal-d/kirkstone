@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-loginuid: PAM plugin for -loginuid
+SUMMARY:pam-plugin-loginuid: PAM plugin for -loginuid
+RDEPENDS:pam-plugin-loginuid: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-loginuid: pam-plugin-loginuid-suffix
+SECTION: base
+PKG:pam-plugin-loginuid: pam-plugin-loginuid
+FILES:pam-plugin-loginuid: /lib/security/pam_loginuid.so
+FILES_INFO:pam-plugin-loginuid: {"/lib/security/pam_loginuid.so": 10256}
+FILERDEPENDSFLIST:pam-plugin-loginuid: /lib/security/pam@underscore@loginuid.so
+FILERDEPENDS:/lib/security/pam@underscore@loginuid.so:pam-plugin-loginuid:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-loginuid: 10256

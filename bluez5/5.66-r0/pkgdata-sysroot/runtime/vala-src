@@ -1,0 +1,12 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:vala-src: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.  This package contains sources for debugging purposes.
+SUMMARY:vala-src: C#-like programming language for easing GObject programming - Source files
+SECTION:vala-src: devel
+PKG:vala-src: vala-src
+FILES_INFO:vala-src: {}
+PKGSIZE:vala-src: 0

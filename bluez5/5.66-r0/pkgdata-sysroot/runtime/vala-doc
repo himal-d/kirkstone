@@ -1,0 +1,13 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:vala-doc: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.  This package contains documentation.
+SUMMARY:vala-doc: C#-like programming language for easing GObject programming - Documentation files
+SECTION:vala-doc: doc
+PKG:vala-doc: vala-doc
+FILES:vala-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help /usr/share/devhelp
+FILES_INFO:vala-doc: {"/usr/share/man/man1/vala-gen-introspect-0.56.1": 1620, "/usr/share/man/man1/vala-gen-introspect.1": 26, "/usr/share/man/man1/valac-0.56.1": 6942, "/usr/share/man/man1/valac.1": 12, "/usr/share/man/man1/vapigen-0.56.1": 1705, "/usr/share/man/man1/vapigen.1": 14}
+PKGSIZE:vala-doc: 10319

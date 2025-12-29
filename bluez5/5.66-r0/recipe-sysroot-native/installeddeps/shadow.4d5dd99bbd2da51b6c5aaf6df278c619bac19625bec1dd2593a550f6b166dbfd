@@ -1,0 +1,12 @@
+recipe-sysroot/sysroot-providers/shadow
+recipe-sysroot/usr/include/shadow/subid.h
+recipe-sysroot/usr/lib/libsubid.a
+recipe-sysroot/usr/lib/libsubid.so.4.0.0
+recipe-sysroot/usr/lib/libsubid.so
+recipe-sysroot/usr/lib/libsubid.so.4
+recipe-sysroot/usr/include/shadow/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

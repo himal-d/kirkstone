@@ -1,0 +1,13 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:libcap-ng-doc: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.  This package contains documentation.
+SUMMARY:libcap-ng-doc: An alternate posix capabilities library - Documentation files
+SECTION:libcap-ng-doc: doc
+PKG:libcap-ng-doc: libcap-ng-doc
+FILES:libcap-ng-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:libcap-ng-doc: {"/usr/share/man/man3/capng_apply.3": 1924, "/usr/share/man/man3/capng_apply_caps_fd.3": 776, "/usr/share/man/man3/capng_capability_to_name.3": 907, "/usr/share/man/man3/capng_change_id.3": 2759, "/usr/share/man/man3/capng_clear.3": 648, "/usr/share/man/man3/capng_fill.3": 760, "/usr/share/man/man3/capng_get_caps_fd.3": 807, "/usr/share/man/man3/capng_get_caps_process.3": 1028, "/usr/share/man/man3/capng_get_rootid.3": 617, "/usr/share/man/man3/capng_have_capabilities.3": 1509, "/usr/share/man/man3/capng_have_capability.3": 873, "/usr/share/man/man3/capng_lock.3": 954, "/usr/share/man/man3/capng_name_to_capability.3": 890, "/usr/share/man/man3/capng_print_caps_numeric.3": 1254, "/usr/share/man/man3/capng_print_caps_text.3": 1060, "/usr/share/man/man3/capng_restore_state.3": 800, "/usr/share/man/man3/capng_save_state.3": 867, "/usr/share/man/man3/capng_set_rootid.3": 565, "/usr/share/man/man3/capng_setpid.3": 1011, "/usr/share/man/man3/capng_update.3": 996, "/usr/share/man/man3/capng_updatev.3": 1138, "/usr/share/man/man7/libdrop_ambient.7": 525, "/usr/share/man/man8/captest.8": 2069, "/usr/share/man/man8/filecap.8": 1643, "/usr/share/man/man8/netcap.8": 899, "/usr/share/man/man8/pscap.8": 988}
+PKGSIZE:libcap-ng-doc: 28267

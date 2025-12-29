@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-mkfs.cramfs: util-linux mkfs.cramfs
+SUMMARY:util-linux-mkfs.cramfs: util-linux mkfs.cramfs
+RDEPENDS:util-linux-mkfs.cramfs: glibc (>= 2.35) zlib (>= 1.2.11)
+SECTION: base
+PKG:util-linux-mkfs.cramfs: util-linux-mkfs.cramfs
+FILES:util-linux-mkfs.cramfs: /usr/sbin/mkfs.cramfs
+FILES_INFO:util-linux-mkfs.cramfs: {"/usr/sbin/mkfs.cramfs": 43592}
+FILERDEPENDSFLIST:util-linux-mkfs.cramfs: /usr/sbin/mkfs.cramfs
+FILERDEPENDS:/usr/sbin/mkfs.cramfs:util-linux-mkfs.cramfs:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libz.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-mkfs.cramfs: 43592

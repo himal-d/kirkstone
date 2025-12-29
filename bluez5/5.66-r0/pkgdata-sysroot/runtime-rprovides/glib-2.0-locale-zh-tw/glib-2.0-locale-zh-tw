@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-zh-tw: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the zh_TW locale.
+SUMMARY:glib-2.0-locale-zh-tw: A general-purpose utility library - zh_TW translations
+RPROVIDES:glib-2.0-locale-zh-tw: glib-2.0-locale zh-tw-translation glib-2.0-locale-zh-tw (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-zh-tw: virtual-locale-zh-tw
+SECTION: libs
+PKG:glib-2.0-locale-zh-tw: libglib-2.0-locale-zh-tw
+FILES:glib-2.0-locale-zh-tw: /usr/share/locale/zh_TW
+FILES_INFO:glib-2.0-locale-zh-tw: {"/usr/share/locale/zh_TW/LC_MESSAGES/glib20.mo": 123273}
+PKGSIZE:glib-2.0-locale-zh-tw: 123273

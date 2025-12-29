@@ -1,0 +1,16 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.
+SUMMARY: A System and service manager
+RRECOMMENDS:systemd-vconsole-setup: kbd kbd-consolefonts kbd-keymaps
+SECTION: base/shell
+PKG:systemd-vconsole-setup: systemd-vconsole-setup
+FILES:systemd-vconsole-setup: /lib/systemd/systemd-vconsole-setup                               /lib/systemd/system/systemd-vconsole-setup.service                               /lib/systemd/system/sysinit.target.wants/systemd-vconsole-setup.service
+FILES_INFO:systemd-vconsole-setup: {}
+PKGSIZE:systemd-vconsole-setup: 0

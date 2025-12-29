@@ -1,0 +1,24 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION: Password strength checker library
+SUMMARY: Password strength checker library
+RDEPENDS:cracklib: glibc (>= 2.35) zlib (>= 1.2.11)
+SECTION: base
+PKG:cracklib: cracklib
+FILES:cracklib: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/cracklib /usr/lib/cracklib/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:cracklib: {"/lib/libcrack.so.2": 17, "/lib/libcrack.so.2.9.0": 39376, "/usr/sbin/cracklib-check": 6272, "/usr/sbin/cracklib-format": 575, "/usr/sbin/cracklib-packer": 10392, "/usr/sbin/cracklib-unpacker": 6264, "/usr/sbin/create-cracklib-dict": 990, "/usr/share/cracklib/cracklib-small": 492822, "/usr/share/cracklib/cracklib.magic": 360, "/usr/share/cracklib/pw_dict.hwm": 1024, "/usr/share/cracklib/pw_dict.pwd": 245161, "/usr/share/cracklib/pw_dict.pwi": 12896}
+pkg_postinst:cracklib: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:cracklib: /lib/libcrack.so.2.9.0
+FILERPROVIDES:/lib/libcrack.so.2.9.0:cracklib:  libcrack.so.2()(64bit)
+FILERDEPENDSFLIST:cracklib: /lib/libcrack.so.2.9.0 /usr/sbin/cracklib-check /usr/sbin/cracklib-format /usr/sbin/cracklib-packer /usr/sbin/cracklib-unpacker /usr/sbin/create-cracklib-dict
+FILERDEPENDS:/lib/libcrack.so.2.9.0:cracklib:  libc.so.6(GLIBC_2.17)(64bit) libz.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/cracklib-check:cracklib:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrack.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/cracklib-format:cracklib:  /bin/sh
+FILERDEPENDS:/usr/sbin/cracklib-packer:cracklib:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.34)(64bit) libcrack.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/cracklib-unpacker:cracklib:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.34)(64bit) libcrack.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/create-cracklib-dict:cracklib:  /bin/sh
+PKGSIZE:cracklib: 816149

@@ -1,0 +1,13 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+SECTION: libs/network
+PKG:openssl-locale: openssl-locale
+FILES:openssl-locale: /usr/share/locale
+FILES_INFO:openssl-locale: {}
+PKGSIZE:openssl-locale: 0

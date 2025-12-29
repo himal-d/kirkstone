@@ -1,0 +1,14 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.
+SUMMARY: Embedded Linux Library
+RPROVIDES:ell-locale:  ell-locale (=0.50)
+SECTION: libs
+PKG:ell-locale: libell-locale
+FILES:ell-locale: /usr/share/locale
+FILES_INFO:ell-locale: {}
+PKGSIZE:ell-locale: 0

@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-et: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the et locale.
+SUMMARY:util-linux-locale-et: A suite of basic system administration utilities - et translations
+RPROVIDES:util-linux-locale-et: util-linux-locale et-translation
+RRECOMMENDS:util-linux-locale-et: virtual-locale-et
+SECTION: base
+PKG:util-linux-locale-et: util-linux-locale-et
+FILES:util-linux-locale-et: /usr/share/locale/et
+FILES_INFO:util-linux-locale-et: {"/usr/share/locale/et/LC_MESSAGES/util-linux.mo": 20833}
+PKGSIZE:util-linux-locale-et: 20833

@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-be: Password strength checker library  This package contains language translation files for the be locale.
+SUMMARY:cracklib-locale-be: Password strength checker library - be translations
+RPROVIDES:cracklib-locale-be: cracklib-locale be-translation
+RRECOMMENDS:cracklib-locale-be: virtual-locale-be
+SECTION: base
+PKG:cracklib-locale-be: cracklib-locale-be
+FILES:cracklib-locale-be: /usr/share/locale/be
+FILES_INFO:cracklib-locale-be: {"/usr/share/locale/be/LC_MESSAGES/cracklib.mo": 2229}
+PKGSIZE:cracklib-locale-be: 2229

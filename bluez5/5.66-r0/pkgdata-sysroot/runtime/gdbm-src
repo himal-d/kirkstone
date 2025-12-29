@@ -1,0 +1,12 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:gdbm-src: Key/value database library with extensible hashing.  This package contains sources for debugging purposes.
+SUMMARY:gdbm-src: Key/value database library with extensible hashing - Source files
+SECTION:gdbm-src: devel
+PKG:gdbm-src: gdbm-src
+FILES_INFO:gdbm-src: {}
+PKGSIZE:gdbm-src: 0

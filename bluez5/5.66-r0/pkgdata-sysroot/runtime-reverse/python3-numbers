@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-numbers: Python number APIs
+RDEPENDS:python3-numbers: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-numbers: python3-numbers
+FILES:python3-numbers:  /usr/lib/python3.10/_pydecimal.py /usr/lib/python3.10/contextvars.py /usr/lib/python3.10/decimal.py /usr/lib/python3.10/fractions.py /usr/lib/python3.10/lib-dynload/_contextvars.*.so /usr/lib/python3.10/lib-dynload/_decimal.*.so /usr/lib/python3.10/numbers.py /usr/lib/python3.10/__pycache__/_pydecimal.*.pyc /usr/lib/python3.10/__pycache__/contextvars.*.pyc /usr/lib/python3.10/__pycache__/decimal.*.pyc /usr/lib/python3.10/__pycache__/fractions.*.pyc /usr/lib/python3.10/__pycache__/numbers.*.pyc
+FILES_INFO:python3-numbers: {"/usr/lib/python3.10/__pycache__/_pydecimal.cpython-310.pyc": 157754, "/usr/lib/python3.10/__pycache__/contextvars.cpython-310.pyc": 246, "/usr/lib/python3.10/__pycache__/decimal.cpython-310.pyc": 362, "/usr/lib/python3.10/__pycache__/fractions.cpython-310.pyc": 18600, "/usr/lib/python3.10/__pycache__/numbers.cpython-310.pyc": 11853, "/usr/lib/python3.10/_pydecimal.py": 228676, "/usr/lib/python3.10/contextvars.py": 129, "/usr/lib/python3.10/decimal.py": 320, "/usr/lib/python3.10/fractions.py": 28242, "/usr/lib/python3.10/lib-dynload/_contextvars.cpython-310-aarch64-linux-gnu.so": 6152, "/usr/lib/python3.10/lib-dynload/_decimal.cpython-310-aarch64-linux-gnu.so": 233056, "/usr/lib/python3.10/numbers.py": 10338}
+FILERDEPENDSFLIST:python3-numbers: /usr/lib/python3.10/lib-dynload/@underscore@contextvars.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@decimal.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@contextvars.cpython-310-aarch64-linux-gnu.so:python3-numbers:  rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@decimal.cpython-310-aarch64-linux-gnu.so:python3-numbers:  libm.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-numbers: 695728

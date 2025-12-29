@@ -1,0 +1,18 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.
+SUMMARY: A System and service manager
+RDEPENDS:systemd-analyze: glibc (>= 2.35) libsystemd-shared (>= 250.5) util-linux-libmount (>= 2.37.4)
+SECTION: base/shell
+PKG:systemd-analyze: systemd-analyze
+FILES:systemd-analyze: /usr/bin/systemd-analyze
+FILES_INFO:systemd-analyze: {"/usr/bin/systemd-analyze": 1523368}
+FILERDEPENDSFLIST:systemd-analyze: /usr/bin/systemd-analyze
+FILERDEPENDS:/usr/bin/systemd-analyze:systemd-analyze:  ld-linux-aarch64.so.1(GLIBC_2.17)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.26)(64bit) libsystemd-shared-250.so(SD_SHARED)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.26)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libsystemd-shared-250.so()(64bit) libmount.so.1()(64bit) libc.so.6()(64bit) ld-linux-aarch64.so.1()(64bit) rtld(GNU_HASH)
+PKGSIZE:systemd-analyze: 1523368

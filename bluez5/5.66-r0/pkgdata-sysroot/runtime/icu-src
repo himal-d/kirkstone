@@ -1,0 +1,12 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION:icu-src: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.  This package contains sources for debugging purposes.
+SUMMARY:icu-src: International Component for Unicode libraries - Source files
+SECTION:icu-src: devel
+PKG:icu-src: icu-src
+FILES_INFO:icu-src: {}
+PKGSIZE:icu-src: 0

@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-ko: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the ko locale.
+SUMMARY:flex-locale-ko: Flex (The Fast Lexical Analyzer) - ko translations
+RPROVIDES:flex-locale-ko: flex-locale ko-translation
+RRECOMMENDS:flex-locale-ko: virtual-locale-ko
+SECTION: devel
+PKG:flex-locale-ko: flex-locale-ko
+FILES:flex-locale-ko: /usr/share/locale/ko
+FILES_INFO:flex-locale-ko: {"/usr/share/locale/ko/LC_MESSAGES/flex.mo": 10308}
+PKGSIZE:flex-locale-ko: 10308

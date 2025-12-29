@@ -1,0 +1,16 @@
+bluez-systemd-service.patch
+0001-tests-add-a-target-for-building-tests-without-runnin.patch
+0001-test-gatt-Fix-hung-issue.patch
+0001-bluetooth-debug-enable.patch
+0002-ble-privacy-device.patch
+0001-libexecdir-location.patch
+0002-bluez-5.6xx-bluetooth_autoenable_policy_main_conf.patch
+0007-add-configurable-secure-connections_5_66.patch
+0005-clear_old_cache_list.patch
+0008-enabling_network_security_5_66.patch
+CVE-2023-45866-5.66.patch
+Move-the-43xx-firmware-into-lib-firmware.patch
+CVE-2021-3588_fix.patch
+0001-bcm43xx-Add-bcm43xx-3wire-variant.patch
+0002-bcm43xx-The-UART-speed-must-be-reset-after-the-firmw.patch
+0003-Increase-firmware-load-timeout-to-30s.patch

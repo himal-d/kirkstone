@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION:python3-staticdev: Python is a programming language that lets you work more quickly and integrate your systems more effectively.  This package contains static libraries for software development.
+SUMMARY:python3-staticdev: The Python Programming Language - Development files (Static Libraries)
+RDEPENDS:python3-staticdev: python3-dev (= 3.10.4-r0)
+SECTION:python3-staticdev: devel
+PKG:python3-staticdev: python3-staticdev
+FILES:python3-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/python3/*.a
+FILES_INFO:python3-staticdev: {}
+PKGSIZE:python3-staticdev: 0

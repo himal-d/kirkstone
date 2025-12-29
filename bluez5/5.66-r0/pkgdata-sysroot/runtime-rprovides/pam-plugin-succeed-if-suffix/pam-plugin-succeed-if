@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-succeed-if: PAM plugin for -succeed-if
+SUMMARY:pam-plugin-succeed-if: PAM plugin for -succeed-if
+RDEPENDS:pam-plugin-succeed-if: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-succeed-if: pam-plugin-succeed-if-suffix
+SECTION: base
+PKG:pam-plugin-succeed-if: pam-plugin-succeed-if
+FILES:pam-plugin-succeed-if: /lib/security/pam_succeed_if.so
+FILES_INFO:pam-plugin-succeed-if: {"/lib/security/pam_succeed_if.so": 14432}
+FILERDEPENDSFLIST:pam-plugin-succeed-if: /lib/security/pam@underscore@succeed@underscore@if.so
+FILERDEPENDS:/lib/security/pam@underscore@succeed@underscore@if.so:pam-plugin-succeed-if:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-succeed-if: 14432

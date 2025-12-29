@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-mn: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the mn locale.
+SUMMARY:libpam-locale-mn: Linux-PAM (Pluggable Authentication Modules) - mn translations
+RPROVIDES:libpam-locale-mn: libpam-locale mn-translation
+RRECOMMENDS:libpam-locale-mn: virtual-locale-mn
+SECTION: base
+PKG:libpam-locale-mn: libpam-locale-mn
+FILES:libpam-locale-mn: /usr/share/locale/mn
+FILES_INFO:libpam-locale-mn: {"/usr/share/locale/mn/LC_MESSAGES/Linux-PAM.mo": 494}
+PKGSIZE:libpam-locale-mn: 494

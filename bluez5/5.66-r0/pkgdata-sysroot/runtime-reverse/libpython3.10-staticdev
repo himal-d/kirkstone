@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY: The Python Programming Language
+RPROVIDES:libpython3-staticdev:  libpython3-staticdev (=3.10.4)
+SECTION: devel/python
+PKG:libpython3-staticdev: libpython3.10-staticdev
+FILES:libpython3-staticdev:  /usr/lib/python3.10/config-3.10-*/libpython3.10.a
+FILES_INFO:libpython3-staticdev: {"/usr/lib/python3.10/config-3.10-aarch64-linux-gnu/libpython3.10.a": 22592362}
+PKGSIZE:libpython3-staticdev: 22592362

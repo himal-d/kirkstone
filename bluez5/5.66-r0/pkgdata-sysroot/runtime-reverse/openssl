@@ -1,0 +1,13 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+SECTION: libs/network
+PKG:openssl: openssl
+FILES:openssl:  /usr/bin/c_rehash /usr/lib/ssl-3/* /usr/lib/ossl-modules/ /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/openssl /usr/lib/openssl/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:openssl: {"/usr/lib/ssl-3/ct_log_list.cnf": 412, "/usr/lib/ssl-3/ct_log_list.cnf.dist": 412}
+PKGSIZE:openssl: 824

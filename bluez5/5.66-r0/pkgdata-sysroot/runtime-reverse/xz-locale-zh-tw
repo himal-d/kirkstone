@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-zh-tw: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the zh_TW locale.
+SUMMARY:xz-locale-zh-tw: Utilities for managing LZMA compressed files - zh_TW translations
+RPROVIDES:xz-locale-zh-tw: xz-locale zh-tw-translation
+RRECOMMENDS:xz-locale-zh-tw: virtual-locale-zh-tw
+SECTION: base
+PKG:xz-locale-zh-tw: xz-locale-zh-tw
+FILES:xz-locale-zh-tw: /usr/share/locale/zh_TW
+FILES_INFO:xz-locale-zh-tw: {"/usr/share/locale/zh_TW/LC_MESSAGES/xz.mo": 23142}
+PKGSIZE:xz-locale-zh-tw: 23142

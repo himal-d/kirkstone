@@ -1,0 +1,16 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:ell-dbg: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:ell-dbg: Embedded Linux Library - Debugging files
+RPROVIDES:ell-dbg:  ell-dbg (=0.50)
+RRECOMMENDS:ell-dbg: glibc-dbg
+SECTION:ell-dbg: devel
+PKG:ell-dbg: libell-dbg
+ALLOW_EMPTY:ell-dbg: 1
+FILES:ell-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:ell-dbg: {"/usr/lib/.debug/libell.so.0.0.2": 1236160}
+PKGSIZE:ell-dbg: 1236160

@@ -1,0 +1,15 @@
+PN: libtirpc
+PV: 1.3.2
+PR: r0
+PKGV: 1.3.2
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:libtirpc-dbg: Libtirpc is a port of Suns Transport-Independent RPC library to Linux  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:libtirpc-dbg: Transport-Independent RPC library - Debugging files
+RRECOMMENDS:libtirpc-dbg: glibc-dbg
+SECTION:libtirpc-dbg: devel
+PKG:libtirpc-dbg: libtirpc-dbg
+ALLOW_EMPTY:libtirpc-dbg: 1
+FILES:libtirpc-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:libtirpc-dbg: {"/usr/lib/.debug/libtirpc.so.3.0.0": 556192}
+PKGSIZE:libtirpc-dbg: 556192

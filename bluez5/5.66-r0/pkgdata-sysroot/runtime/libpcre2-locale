@@ -1,0 +1,13 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.
+SUMMARY: Perl Compatible Regular Expressions version 2
+SECTION: devel
+PKG:libpcre2-locale: libpcre2-locale
+FILES:libpcre2-locale: /usr/share/locale
+FILES_INFO:libpcre2-locale: {}
+PKGSIZE:libpcre2-locale: 0

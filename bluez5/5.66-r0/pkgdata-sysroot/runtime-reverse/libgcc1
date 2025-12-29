@@ -1,0 +1,20 @@
+PN: libgcc
+PV: 11.3.0
+PR: r0
+PKGV: 11.3.0
+PKGR: r0
+LICENSE:libgcc: GPL-3.0-with-GCC-exception
+DESCRIPTION: The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages (libstdc++,...). GCC was originally written as the compiler for the GNU operating system.
+SUMMARY: GNU cc and gcc C compilers
+RDEPENDS:libgcc: glibc (>= 2.35)
+RPROVIDES:libgcc:  libgcc (=11.3.0)
+SECTION: devel
+PKG:libgcc: libgcc1
+FILES:libgcc: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libgcc /usr/lib/libgcc/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libgcc: {"/lib/libgcc_s.so.1": 84352}
+pkg_postinst:libgcc: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libgcc: /lib/libgcc@underscore@s.so.1
+FILERPROVIDES:/lib/libgcc@underscore@s.so.1:libgcc:  libgcc_s.so.1(GLIBC_2.0)(64bit) libgcc_s.so.1(GCC_3.0)(64bit) libgcc_s.so.1(GCC_3.0)(64bit) libgcc_s.so.1(GCC_3.3)(64bit) libgcc_s.so.1(GCC_3.3)(64bit) libgcc_s.so.1(GCC_3.3.1)(64bit) libgcc_s.so.1(GCC_3.3.1)(64bit) libgcc_s.so.1(GCC_3.4)(64bit) libgcc_s.so.1(GCC_3.4)(64bit) libgcc_s.so.1(GCC_3.4.2)(64bit) libgcc_s.so.1(GCC_3.4.2)(64bit) libgcc_s.so.1(GCC_3.4.4)(64bit) libgcc_s.so.1(GCC_3.4.4)(64bit) libgcc_s.so.1(GCC_4.0.0)(64bit) libgcc_s.so.1(GCC_4.0.0)(64bit) libgcc_s.so.1(GCC_4.2.0)(64bit) libgcc_s.so.1(GCC_4.2.0)(64bit) libgcc_s.so.1(GCC_4.3.0)(64bit) libgcc_s.so.1(GCC_4.3.0)(64bit) libgcc_s.so.1(GCC_4.5.0)(64bit) libgcc_s.so.1(GCC_4.5.0)(64bit) libgcc_s.so.1(GCC_4.7.0)(64bit) libgcc_s.so.1(GCC_4.7.0)(64bit) libgcc_s.so.1(GCC_7.0.0)(64bit) libgcc_s.so.1(GCC_7.0.0)(64bit) libgcc_s.so.1(GCC_11.0)(64bit) libgcc_s.so.1()(64bit)
+FILERDEPENDSFLIST:libgcc: /lib/libgcc@underscore@s.so.1
+FILERDEPENDS:/lib/libgcc@underscore@s.so.1:libgcc:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libgcc: 84352

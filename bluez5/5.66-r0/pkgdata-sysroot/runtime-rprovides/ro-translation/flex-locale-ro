@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-ro: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the ro locale.
+SUMMARY:flex-locale-ro: Flex (The Fast Lexical Analyzer) - ro translations
+RPROVIDES:flex-locale-ro: flex-locale ro-translation
+RRECOMMENDS:flex-locale-ro: virtual-locale-ro
+SECTION: devel
+PKG:flex-locale-ro: flex-locale-ro
+FILES:flex-locale-ro: /usr/share/locale/ro
+FILES_INFO:flex-locale-ro: {"/usr/share/locale/ro/LC_MESSAGES/flex.mo": 14641}
+PKGSIZE:flex-locale-ro: 14641

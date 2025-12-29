@@ -1,0 +1,13 @@
+PN: gobject-introspection
+PV: 1.72.0
+PR: r0
+PKGV: 1.72.0
+PKGR: r0
+LICENSE: LGPL-2.0-or-later & GPL-2.0-or-later & MIT
+DESCRIPTION:gobject-introspection-doc: GObject Introspection is a project for providing machine readable introspection data of the API of C libraries. This introspection data can be used in several different use cases, for example automatic code generation for bindings, API verification and documentation generation.  This package contains documentation.
+SUMMARY:gobject-introspection-doc: Middleware layer between GObject-using C libraries and language bindings - Documentation files
+SECTION:gobject-introspection-doc: doc
+PKG:gobject-introspection-doc: gobject-introspection-doc
+FILES:gobject-introspection-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:gobject-introspection-doc: {"/usr/share/man/man1/g-ir-compiler.1": 1848, "/usr/share/man/man1/g-ir-doc-tool.1": 1799, "/usr/share/man/man1/g-ir-generate.1": 1579, "/usr/share/man/man1/g-ir-scanner.1": 7142}
+PKGSIZE:gobject-introspection-doc: 12368

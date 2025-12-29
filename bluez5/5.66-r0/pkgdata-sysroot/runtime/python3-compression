@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-compression: Python high-level compression support
+RDEPENDS:python3-compression: python3-core
+SECTION: devel/python
+PKG:python3-compression: python3-compression
+FILES:python3-compression:  /usr/lib/python3.10/gzip.py /usr/lib/python3.10/tarfile.py /usr/lib/python3.10/zipfile.py /usr/lib/python3.10/__pycache__/gzip.*.pyc /usr/lib/python3.10/__pycache__/tarfile.*.pyc /usr/lib/python3.10/__pycache__/zipfile.*.pyc
+FILES_INFO:python3-compression: {"/usr/lib/python3.10/__pycache__/gzip.cpython-310.pyc": 18546, "/usr/lib/python3.10/__pycache__/tarfile.cpython-310.pyc": 63608, "/usr/lib/python3.10/__pycache__/zipfile.cpython-310.pyc": 60521, "/usr/lib/python3.10/gzip.py": 21849, "/usr/lib/python3.10/tarfile.py": 95533, "/usr/lib/python3.10/zipfile.py": 88745}
+FILERDEPENDSFLIST:python3-compression: /usr/lib/python3.10/tarfile.py
+FILERDEPENDS:/usr/lib/python3.10/tarfile.py:python3-compression:  /usr/bin/env
+PKGSIZE:python3-compression: 348802

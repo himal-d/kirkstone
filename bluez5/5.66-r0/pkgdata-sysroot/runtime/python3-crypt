@@ -1,0 +1,24 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-crypt: Python basic cryptographic and hashing support
+RDEPENDS:python3-crypt: python3-core python3-math python3-stringold glibc (>= 2.35) libcrypto (>= 3.0.5) libxcrypt (>= 4.4.33)
+RRECOMMENDS:python3-crypt:  openssl ca-certificates
+SECTION: devel/python
+PKG:python3-crypt: python3-crypt
+FILES:python3-crypt:  /usr/lib/python3.10/crypt.py /usr/lib/python3.10/hashlib.py /usr/lib/python3.10/lib-dynload/_blake2.*.so /usr/lib/python3.10/lib-dynload/_crypt.*.so /usr/lib/python3.10/lib-dynload/_hashlib.*.so /usr/lib/python3.10/lib-dynload/_md5.*.so /usr/lib/python3.10/lib-dynload/_sha1.*.so /usr/lib/python3.10/lib-dynload/_sha256.*.so /usr/lib/python3.10/lib-dynload/_sha3.*.so /usr/lib/python3.10/lib-dynload/_sha512.*.so /usr/lib/python3.10/__pycache__/crypt.*.pyc /usr/lib/python3.10/__pycache__/hashlib.*.pyc
+FILES_INFO:python3-crypt: {"/usr/lib/python3.10/__pycache__/crypt.cpython-310.pyc": 3525, "/usr/lib/python3.10/__pycache__/hashlib.cpython-310.pyc": 6845, "/usr/lib/python3.10/crypt.py": 3819, "/usr/lib/python3.10/hashlib.py": 10229, "/usr/lib/python3.10/lib-dynload/_blake2.cpython-310-aarch64-linux-gnu.so": 36272, "/usr/lib/python3.10/lib-dynload/_crypt.cpython-310-aarch64-linux-gnu.so": 10424, "/usr/lib/python3.10/lib-dynload/_hashlib.cpython-310-aarch64-linux-gnu.so": 51232, "/usr/lib/python3.10/lib-dynload/_md5.cpython-310-aarch64-linux-gnu.so": 15288, "/usr/lib/python3.10/lib-dynload/_sha1.cpython-310-aarch64-linux-gnu.so": 15288, "/usr/lib/python3.10/lib-dynload/_sha256.cpython-310-aarch64-linux-gnu.so": 23680, "/usr/lib/python3.10/lib-dynload/_sha3.cpython-310-aarch64-linux-gnu.so": 57136, "/usr/lib/python3.10/lib-dynload/_sha512.cpython-310-aarch64-linux-gnu.so": 23776}
+FILERDEPENDSFLIST:python3-crypt: /usr/lib/python3.10/lib-dynload/@underscore@blake2.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@crypt.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@hashlib.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@md5.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@sha1.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@sha256.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@sha3.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@sha512.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@blake2.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@crypt.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libcrypt.so.2(XCRYPT_2.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@hashlib.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libcrypto.so.3(OPENSSL_3.0.0)(64bit) libcrypto.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@md5.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@sha1.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@sha256.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@sha3.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@sha512.cpython-310-aarch64-linux-gnu.so:python3-crypt:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-crypt: 257514

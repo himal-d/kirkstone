@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-ja: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the ja locale.
+SUMMARY:util-linux-locale-ja: A suite of basic system administration utilities - ja translations
+RPROVIDES:util-linux-locale-ja: util-linux-locale ja-translation
+RRECOMMENDS:util-linux-locale-ja: virtual-locale-ja
+SECTION: base
+PKG:util-linux-locale-ja: util-linux-locale-ja
+FILES:util-linux-locale-ja: /usr/share/locale/ja
+FILES_INFO:util-linux-locale-ja: {"/usr/share/locale/ja/LC_MESSAGES/util-linux.mo": 406256}
+PKGSIZE:util-linux-locale-ja: 406256

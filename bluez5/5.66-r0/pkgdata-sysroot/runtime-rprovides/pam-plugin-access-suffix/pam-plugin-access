@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-access: PAM plugin for -access
+SUMMARY:pam-plugin-access: PAM plugin for -access
+RDEPENDS:pam-plugin-access: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-access: pam-plugin-access-suffix
+SECTION: base
+PKG:pam-plugin-access: pam-plugin-access
+FILES:pam-plugin-access: /lib/security/pam_access.so
+FILES_INFO:pam-plugin-access: {"/lib/security/pam_access.so": 14520}
+FILERDEPENDSFLIST:pam-plugin-access: /lib/security/pam@underscore@access.so
+FILERDEPENDS:/lib/security/pam@underscore@access.so:pam-plugin-access:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.27)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-access: 14520

@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-addpart: util-linux addpart
+SUMMARY:util-linux-addpart: util-linux addpart
+RDEPENDS:util-linux-addpart: glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-addpart: util-linux-addpart
+FILES:util-linux-addpart: /usr/sbin/addpart
+FILES_INFO:util-linux-addpart: {"/usr/sbin/addpart": 27008}
+FILERDEPENDSFLIST:util-linux-addpart: /usr/sbin/addpart
+FILERDEPENDS:/usr/sbin/addpart:util-linux-addpart:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-addpart: 27008

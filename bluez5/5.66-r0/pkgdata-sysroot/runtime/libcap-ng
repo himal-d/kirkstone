@@ -1,0 +1,21 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.
+SUMMARY: An alternate posix capabilities library
+RDEPENDS:libcap-ng: glibc (>= 2.35)
+SECTION: base
+PKG:libcap-ng: libcap-ng
+FILES:libcap-ng: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libcap-ng /usr/lib/libcap-ng/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libcap-ng: {"/lib/libcap-ng.so.0": 18, "/lib/libcap-ng.so.0.0.0": 22864, "/usr/lib/libdrop_ambient.so.0": 24, "/usr/lib/libdrop_ambient.so.0.0.0": 6000}
+pkg_postinst:libcap-ng: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libcap-ng: /lib/libcap-ng.so.0.0.0 /usr/lib/libdrop@underscore@ambient.so.0.0.0
+FILERPROVIDES:/lib/libcap-ng.so.0.0.0:libcap-ng:  libcap-ng.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libdrop@underscore@ambient.so.0.0.0:libcap-ng:  libdrop_ambient.so.0()(64bit)
+FILERDEPENDSFLIST:libcap-ng: /lib/libcap-ng.so.0.0.0 /usr/lib/libdrop@underscore@ambient.so.0.0.0
+FILERDEPENDS:/lib/libcap-ng.so.0.0.0:libcap-ng:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libdrop@underscore@ambient.so.0.0.0:libcap-ng:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libcap-ng: 28906

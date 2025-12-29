@@ -1,0 +1,14 @@
+PN: bash-completion
+PV: 2.11
+PR: r0
+PKGV: 2.11
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:bash-completion-staticdev: Collection of command line command completions for the Bash shell, collection of helper functions to assist in creating new completions, and set of facilities for loading completions automatically on demand, as well as installing them.  This package contains static libraries for software development.
+SUMMARY:bash-completion-staticdev: Programmable Completion for Bash 4 - Development files (Static Libraries)
+RDEPENDS:bash-completion-staticdev: bash-completion-dev (= 2.11-r0)
+SECTION:bash-completion-staticdev: devel
+PKG:bash-completion-staticdev: bash-completion-staticdev
+FILES:bash-completion-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/bash-completion/*.a
+FILES_INFO:bash-completion-staticdev: {}
+PKGSIZE:bash-completion-staticdev: 0

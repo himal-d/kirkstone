@@ -1,0 +1,20 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:ncurses-libmenuw: ncurses menuw library
+SUMMARY:ncurses-libmenuw: ncurses menuw library
+RDEPENDS:ncurses-libmenuw: glibc (>= 2.35) ncurses-libncursesw (>= 6.3+20220423) ncurses-libtinfo (>= 6.3+20220423)
+RPROVIDES:ncurses-libmenuw:  ncurses-libmenuw (=6.3+20220423)
+SECTION: libs
+PKG:ncurses-libmenuw: libmenuw5
+FILES:ncurses-libmenuw: /usr/lib/libmenuw.so.5 /usr/lib/libmenuw.so.5.9
+FILES_INFO:ncurses-libmenuw: {"/usr/lib/libmenuw.so.5": 15, "/usr/lib/libmenuw.so.5.9": 31312}
+pkg_postinst:ncurses-libmenuw: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:ncurses-libmenuw: /usr/lib/libmenuw.so.5.9
+FILERPROVIDES:/usr/lib/libmenuw.so.5.9:ncurses-libmenuw:  libmenuw.so.5()(64bit)
+FILERDEPENDSFLIST:ncurses-libmenuw: /usr/lib/libmenuw.so.5.9
+FILERDEPENDS:/usr/lib/libmenuw.so.5.9:ncurses-libmenuw:  libc.so.6(GLIBC_2.17)(64bit) libncursesw.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ncurses-libmenuw: 31327

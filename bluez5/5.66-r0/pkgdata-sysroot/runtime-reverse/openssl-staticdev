@@ -1,0 +1,14 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION:openssl-staticdev: Secure Socket Layer (SSL) binary and related cryptographic tools.  This package contains static libraries for software development.
+SUMMARY:openssl-staticdev: Secure Socket Layer - Development files (Static Libraries)
+RDEPENDS:openssl-staticdev: openssl-dev (= 3.0.5-r0)
+SECTION:openssl-staticdev: devel
+PKG:openssl-staticdev: openssl-staticdev
+FILES:openssl-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/openssl/*.a
+FILES_INFO:openssl-staticdev: {"/usr/lib/libcrypto.a": 27907922, "/usr/lib/libssl.a": 5335352}
+PKGSIZE:openssl-staticdev: 33243274

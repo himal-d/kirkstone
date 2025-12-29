@@ -1,0 +1,30 @@
+PN: libical
+PV: 3.0.14
+PR: r0
+PKGV: 3.0.14
+PKGR: r0
+LICENSE: LGPL-2.1-only | MPL-2.0
+DESCRIPTION: An Open Source implementation of the iCalendar protocols and protocol data units. The iCalendar specification describes how calendar clients can communicate with calendar servers so users can store their calendar data and arrange meetings with other users. 
+SUMMARY: iCal and scheduling (RFC 2445, 2446, 2447) library
+RDEPENDS:libical: glib-2.0 (>= 2.74.6) glibc (>= 2.35) libgcc (>= 11.3.0) libicui18n (>= 70.1) libicuuc (>= 70.1) libstdc++ (>= 11.3.0) libxml2 (>= 2.9.14)
+SECTION: libs
+PKG:libical: libical
+FILES:libical: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libical /usr/lib/libical/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers /usr/lib/girepository-*/*.typelib
+FILES_INFO:libical: {"/usr/lib/libical-glib.so.3": 22, "/usr/lib/libical-glib.so.3.0.14": 419608, "/usr/lib/libical.so.3": 17, "/usr/lib/libical.so.3.0.14": 458248, "/usr/lib/libical_cxx.so.3": 21, "/usr/lib/libical_cxx.so.3.0.14": 144920, "/usr/lib/libicalss.so.3": 19, "/usr/lib/libicalss.so.3.0.14": 77328, "/usr/lib/libicalss_cxx.so.3": 23, "/usr/lib/libicalss_cxx.so.3.0.14": 10488, "/usr/lib/libicalvcal.so.3": 21, "/usr/lib/libicalvcal.so.3.0.14": 77272, "/usr/libexec/libical/ical-glib-src-generator": 51800}
+pkg_postinst:libical: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libical: /usr/lib/libical-glib.so.3.0.14 /usr/lib/libical.so.3.0.14 /usr/lib/libical@underscore@cxx.so.3.0.14 /usr/lib/libicalss.so.3.0.14 /usr/lib/libicalss@underscore@cxx.so.3.0.14 /usr/lib/libicalvcal.so.3.0.14
+FILERPROVIDES:/usr/lib/libical-glib.so.3.0.14:libical:  libical-glib.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libical.so.3.0.14:libical:  libical.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libical@underscore@cxx.so.3.0.14:libical:  libical_cxx.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libicalss.so.3.0.14:libical:  libicalss.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libicalss@underscore@cxx.so.3.0.14:libical:  libicalss_cxx.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libicalvcal.so.3.0.14:libical:  libicalvcal.so.3()(64bit)
+FILERDEPENDSFLIST:libical: /usr/lib/libical-glib.so.3.0.14 /usr/lib/libical.so.3.0.14 /usr/lib/libical@underscore@cxx.so.3.0.14 /usr/lib/libicalss.so.3.0.14 /usr/lib/libicalss@underscore@cxx.so.3.0.14 /usr/lib/libicalvcal.so.3.0.14 /usr/libexec/libical/ical-glib-src-generator
+FILERDEPENDS:/usr/lib/libical-glib.so.3.0.14:libical:  libc.so.6(GLIBC_2.17)(64bit) libical.so.3()(64bit) libgobject-2.0.so.0()(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libical.so.3.0.14:libical:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libicuuc.so.70()(64bit) libicui18n.so.70()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libical@underscore@cxx.so.3.0.14:libical:  libgcc_s.so.1(GCC_3.0)(64bit) libstdc++.so.6(GLIBCXX_3.4.21)(64bit) libstdc++.so.6(CXXABI_1.3.9)(64bit) libstdc++.so.6(GLIBCXX_3.4)(64bit) libstdc++.so.6(CXXABI_1.3)(64bit) libc.so.6(GLIBC_2.17)(64bit) libical.so.3()(64bit) libstdc++.so.6()(64bit) libgcc_s.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libicalss.so.3.0.14:libical:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libical.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libicalss@underscore@cxx.so.3.0.14:libical:  libgcc_s.so.1(GCC_3.0)(64bit) libstdc++.so.6(CXXABI_1.3.9)(64bit) libstdc++.so.6(GLIBCXX_3.4)(64bit) libstdc++.so.6(CXXABI_1.3)(64bit) libc.so.6(GLIBC_2.17)(64bit) libicalss.so.3()(64bit) libical_cxx.so.3()(64bit) libical.so.3()(64bit) libstdc++.so.6()(64bit) libgcc_s.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libicalvcal.so.3.0.14:libical:  libc.so.6(GLIBC_2.17)(64bit) libical.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/libexec/libical/ical-glib-src-generator:libical:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libxml2.so.2(LIBXML2_2.7.3)(64bit) libxml2.so.2(LIBXML2_2.4.30)(64bit) libglib-2.0.so.0()(64bit) libxml2.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libical: 1239787

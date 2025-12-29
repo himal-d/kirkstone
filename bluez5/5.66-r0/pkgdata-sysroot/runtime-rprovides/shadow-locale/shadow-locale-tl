@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-tl: Tools to change and administer password and group data  This package contains language translation files for the tl locale.
+SUMMARY:shadow-locale-tl: Tools to change and administer password and group data - tl translations
+RPROVIDES:shadow-locale-tl: shadow-locale tl-translation
+RRECOMMENDS:shadow-locale-tl: virtual-locale-tl
+SECTION: base/utils
+PKG:shadow-locale-tl: shadow-locale-tl
+FILES:shadow-locale-tl: /usr/share/locale/tl
+FILES_INFO:shadow-locale-tl: {"/usr/share/locale/tl/LC_MESSAGES/shadow.mo": 18989}
+PKGSIZE:shadow-locale-tl: 18989

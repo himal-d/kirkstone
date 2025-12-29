@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-ru: Password strength checker library  This package contains language translation files for the ru locale.
+SUMMARY:cracklib-locale-ru: Password strength checker library - ru translations
+RPROVIDES:cracklib-locale-ru: cracklib-locale ru-translation
+RRECOMMENDS:cracklib-locale-ru: virtual-locale-ru
+SECTION: base
+PKG:cracklib-locale-ru: cracklib-locale-ru
+FILES:cracklib-locale-ru: /usr/share/locale/ru
+FILES_INFO:cracklib-locale-ru: {"/usr/share/locale/ru/LC_MESSAGES/cracklib.mo": 2239}
+PKGSIZE:cracklib-locale-ru: 2239

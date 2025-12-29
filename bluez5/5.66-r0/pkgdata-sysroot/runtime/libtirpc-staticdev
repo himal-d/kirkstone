@@ -1,0 +1,14 @@
+PN: libtirpc
+PV: 1.3.2
+PR: r0
+PKGV: 1.3.2
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:libtirpc-staticdev: Libtirpc is a port of Suns Transport-Independent RPC library to Linux  This package contains static libraries for software development.
+SUMMARY:libtirpc-staticdev: Transport-Independent RPC library - Development files (Static Libraries)
+RDEPENDS:libtirpc-staticdev: libtirpc-dev (= 1.3.2-r0)
+SECTION:libtirpc-staticdev: devel
+PKG:libtirpc-staticdev: libtirpc-staticdev
+FILES:libtirpc-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/libtirpc/*.a
+FILES_INFO:libtirpc-staticdev: {"/usr/lib/libtirpc.a": 1589126}
+PKGSIZE:libtirpc-staticdev: 1589126

@@ -1,0 +1,20 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY: The Python Programming Language
+RDEPENDS:libpython3: libgcc glibc (>= 2.35)
+RPROVIDES:libpython3:  libpython3 (=3.10.4)
+SECTION: devel/python
+PKG:libpython3: libpython3.10-1.0
+FILES:libpython3: /usr/lib/libpython*.so.*
+FILES_INFO:libpython3: {"/usr/lib/libpython3.10.so.1.0": 2988784}
+pkg_postinst:libpython3: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libpython3: /usr/lib/libpython3.10.so.1.0
+FILERPROVIDES:/usr/lib/libpython3.10.so.1.0:libpython3:  libpython3.10.so.1.0()(64bit)
+FILERDEPENDSFLIST:libpython3: /usr/lib/libpython3.10.so.1.0
+FILERDEPENDS:/usr/lib/libpython3.10.so.1.0:libpython3:  libm.so.6(GLIBC_2.35)(64bit) libm.so.6(GLIBC_2.17)(64bit) libm.so.6(GLIBC_2.29)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.26)(64bit) libc.so.6(GLIBC_2.27)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libpython3: 2988784

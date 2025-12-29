@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-mk: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the mk locale.
+SUMMARY:libpam-locale-mk: Linux-PAM (Pluggable Authentication Modules) - mk translations
+RPROVIDES:libpam-locale-mk: libpam-locale mk-translation
+RRECOMMENDS:libpam-locale-mk: virtual-locale-mk
+SECTION: base
+PKG:libpam-locale-mk: libpam-locale-mk
+FILES:libpam-locale-mk: /usr/share/locale/mk
+FILES_INFO:libpam-locale-mk: {"/usr/share/locale/mk/LC_MESSAGES/Linux-PAM.mo": 525}
+PKGSIZE:libpam-locale-mk: 525

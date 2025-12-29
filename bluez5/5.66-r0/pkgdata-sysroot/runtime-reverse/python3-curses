@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-curses: Python curses support
+RDEPENDS:python3-curses: python3-core glibc (>= 2.35) ncurses-libncursesw (>= 6.3+20220423) ncurses-libpanelw (>= 6.3+20220423) ncurses-libtinfo (>= 6.3+20220423)
+SECTION: devel/python
+PKG:python3-curses: python3-curses
+FILES:python3-curses:  /usr/lib/python3.10/curses /usr/lib/python3.10/lib-dynload/_curses.*.so /usr/lib/python3.10/lib-dynload/_curses_panel.*.so
+FILES_INFO:python3-curses: {"/usr/lib/python3.10/curses/__init__.py": 3369, "/usr/lib/python3.10/curses/__pycache__/__init__.cpython-310.pyc": 1849, "/usr/lib/python3.10/curses/__pycache__/ascii.cpython-310.pyc": 3610, "/usr/lib/python3.10/curses/__pycache__/has_key.cpython-310.pyc": 4910, "/usr/lib/python3.10/curses/__pycache__/panel.cpython-310.pyc": 226, "/usr/lib/python3.10/curses/__pycache__/textpad.cpython-310.pyc": 5989, "/usr/lib/python3.10/curses/ascii.py": 2547, "/usr/lib/python3.10/curses/has_key.py": 5634, "/usr/lib/python3.10/curses/panel.py": 87, "/usr/lib/python3.10/curses/textpad.py": 7657, "/usr/lib/python3.10/lib-dynload/_curses.cpython-310-aarch64-linux-gnu.so": 116016, "/usr/lib/python3.10/lib-dynload/_curses_panel.cpython-310-aarch64-linux-gnu.so": 19896}
+FILERDEPENDSFLIST:python3-curses: /usr/lib/python3.10/lib-dynload/@underscore@curses.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@curses@underscore@panel.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@curses.cpython-310-aarch64-linux-gnu.so:python3-curses:  libc.so.6(GLIBC_2.17)(64bit) libncursesw.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@curses@underscore@panel.cpython-310-aarch64-linux-gnu.so:python3-curses:  libpanelw.so.5()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-curses: 171790

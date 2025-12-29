@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-netserver: Python Internet Protocol servers
+RDEPENDS:python3-netserver: python3-core python3-crypt python3-datetime python3-email python3-html python3-io python3-math python3-mime python3-netclient python3-stringold
+SECTION: devel/python
+PKG:python3-netserver: python3-netserver
+FILES:python3-netserver:  /usr/lib/python3.10/cgi.py /usr/lib/python3.10/socketserver.py /usr/lib/python3.10/__pycache__/cgi.*.pyc /usr/lib/python3.10/__pycache__/socketserver.*.pyc
+FILES_INFO:python3-netserver: {"/usr/lib/python3.10/__pycache__/cgi.cpython-310.pyc": 26723, "/usr/lib/python3.10/__pycache__/socketserver.cpython-310.pyc": 25347, "/usr/lib/python3.10/cgi.py": 33609, "/usr/lib/python3.10/socketserver.py": 27296}
+FILERDEPENDSFLIST:python3-netserver: /usr/lib/python3.10/cgi.py
+FILERDEPENDS:/usr/lib/python3.10/cgi.py:python3-netserver:  /usr/bin/env
+PKGSIZE:python3-netserver: 112975

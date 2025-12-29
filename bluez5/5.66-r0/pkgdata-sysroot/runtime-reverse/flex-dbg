@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-dbg: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:flex-dbg: Flex (The Fast Lexical Analyzer) - Debugging files
+RRECOMMENDS:flex-dbg: glibc-dbg
+SECTION:flex-dbg: devel
+PKG:flex-dbg: flex-dbg
+ALLOW_EMPTY:flex-dbg: 1
+FILES:flex-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:flex-dbg: {"/usr/bin/.debug/flex": 316568, "/usr/lib/.debug/libfl.so.2.0.0": 7696}
+PKGSIZE:flex-dbg: 324264

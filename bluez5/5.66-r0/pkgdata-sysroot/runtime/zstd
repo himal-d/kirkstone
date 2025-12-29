@@ -1,0 +1,19 @@
+PN: zstd
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: BSD-3-Clause & GPL-2.0-only
+DESCRIPTION: Zstandard is a fast lossless compression algorithm, targeting real-time compression scenarios at zlib-level and better compression ratios. It's backed by a very fast entropy stage, provided by Huff0 and FSE library.
+SUMMARY: Zstandard - Fast real-time compression algorithm
+RDEPENDS:zstd: glibc (>= 2.35) libgcc (>= 11.3.0) libstdc++ (>= 11.3.0)
+SECTION: console/utils
+PKG:zstd: zstd
+FILES:zstd: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/zstd /usr/lib/zstd/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:zstd: {"/usr/bin/pzstd": 437184, "/usr/bin/unzstd": 4, "/usr/bin/zstd": 559872, "/usr/bin/zstdcat": 4, "/usr/bin/zstdgrep": 3869, "/usr/bin/zstdless": 30, "/usr/bin/zstdmt": 4}
+FILERDEPENDSFLIST:zstd: /usr/bin/pzstd /usr/bin/zstd /usr/bin/zstdgrep /usr/bin/zstdless
+FILERDEPENDS:/usr/bin/pzstd:zstd:  libgcc_s.so.1(GCC_3.0)(64bit) libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libstdc++.so.6(GLIBCXX_3.4.17)(64bit) libstdc++.so.6(GLIBCXX_3.4.29)(64bit) libstdc++.so.6(GLIBCXX_3.4.11)(64bit) libstdc++.so.6(CXXABI_1.3)(64bit) libstdc++.so.6(GLIBCXX_3.4.14)(64bit) libstdc++.so.6(GLIBCXX_3.4.21)(64bit) libstdc++.so.6(GLIBCXX_3.4.22)(64bit) libstdc++.so.6(GLIBCXX_3.4.19)(64bit) libstdc++.so.6(GLIBCXX_3.4)(64bit) libstdc++.so.6()(64bit) libgcc_s.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/zstd:zstd:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/zstdgrep:zstd:  /bin/sh
+FILERDEPENDS:/usr/bin/zstdless:zstd:  /bin/sh
+PKGSIZE:zstd: 1000967

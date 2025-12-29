@@ -1,0 +1,16 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-filter-upperlower: PAM filter for upperlower
+SUMMARY:pam-filter-upperlower: PAM filter for upperlower
+RDEPENDS:pam-filter-upperlower: glibc (>= 2.35) libpam (>= 1.5.2)
+SECTION: base
+PKG:pam-filter-upperlower: pam-filter-upperlower
+FILES:pam-filter-upperlower: /lib/security/pam_filter/upperLOWER
+FILES_INFO:pam-filter-upperlower: {"/lib/security/pam_filter/upperLOWER": 10216}
+FILERDEPENDSFLIST:pam-filter-upperlower: /lib/security/pam@underscore@filter/upperLOWER
+FILERDEPENDS:/lib/security/pam@underscore@filter/upperLOWER:pam-filter-upperlower:  libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-filter-upperlower: 10216

@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-staticdev: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains static libraries for software development.
+SUMMARY:glib-2.0-staticdev: A general-purpose utility library - Development files (Static Libraries)
+RDEPENDS:glib-2.0-staticdev: glib-2.0-dev (= 1:2.74.6-r0)
+RPROVIDES:glib-2.0-staticdev:  glib-2.0-staticdev (=2.74.6)
+SECTION:glib-2.0-staticdev: devel
+PKG:glib-2.0-staticdev: libglib-2.0-staticdev
+FILES:glib-2.0-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/glib-2.0/*.a
+FILES_INFO:glib-2.0-staticdev: {}
+PKGSIZE:glib-2.0-staticdev: 0

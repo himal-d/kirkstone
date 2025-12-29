@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-namespace: PAM plugin for -namespace
+SUMMARY:pam-plugin-namespace: PAM plugin for -namespace
+RDEPENDS:pam-plugin-namespace: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-namespace: pam-plugin-namespace-suffix
+SECTION: base
+PKG:pam-plugin-namespace: pam-plugin-namespace
+FILES:pam-plugin-namespace: /lib/security/pam_namespace.so
+FILES_INFO:pam-plugin-namespace: {"/lib/security/pam_namespace.so": 31248}
+FILERDEPENDSFLIST:pam-plugin-namespace: /lib/security/pam@underscore@namespace.so
+FILERDEPENDS:/lib/security/pam@underscore@namespace.so:pam-plugin-namespace:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.27)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-namespace: 31248

@@ -1,0 +1,20 @@
+PN: json-c
+PV: 0.15
+PR: r0
+PKGV: 0.15
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: JSON-C implements a reference counting object model that allows you to easily construct JSON objects in C.
+SUMMARY: C bindings for apps which will manipulate JSON data
+RDEPENDS:json-c: glibc (>= 2.35)
+RPROVIDES:json-c: libjson json-c (=0.15)
+SECTION: base
+PKG:json-c: libjson-c5
+FILES:json-c: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/json-c /usr/lib/json-c/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:json-c: {"/usr/lib/libjson-c.so.5": 18, "/usr/lib/libjson-c.so.5.1.0": 60096}
+pkg_postinst:json-c: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:json-c: /usr/lib/libjson-c.so.5.1.0
+FILERPROVIDES:/usr/lib/libjson-c.so.5.1.0:json-c:  libjson-c.so.5(JSONC_PRIVATE)(64bit) libjson-c.so.5(JSONC_0.14)(64bit) libjson-c.so.5(JSONC_0.15)(64bit) libjson-c.so.5(JSONC_0.15)(64bit) libjson-c.so.5()(64bit)
+FILERDEPENDSFLIST:json-c: /usr/lib/libjson-c.so.5.1.0
+FILERDEPENDS:/usr/lib/libjson-c.so.5.1.0:json-c:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:json-c: 60114

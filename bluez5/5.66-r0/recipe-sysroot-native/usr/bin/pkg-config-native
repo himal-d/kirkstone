@@ -1,0 +1,7 @@
+#! /bin/sh
+
+export PKG_CONFIG_PATH="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib/pkgconfig:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/pkgconfig"
+export PKG_CONFIG_LIBDIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib/pkgconfig"
+unset PKG_CONFIG_SYSROOT_DIR
+
+pkg-config "$@"

@@ -1,0 +1,20 @@
+PN: zstd
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: BSD-3-Clause & GPL-2.0-only
+DESCRIPTION: Zstandard is a fast lossless compression algorithm, targeting real-time compression scenarios at zlib-level and better compression ratios. It's backed by a very fast entropy stage, provided by Huff0 and FSE library.
+SUMMARY: Zstandard - Fast real-time compression algorithm
+RDEPENDS:libzstd: glibc (>= 2.35)
+RPROVIDES:libzstd:  libzstd (=1.5.2)
+SECTION: console/utils
+PKG:libzstd: libzstd1
+FILES:libzstd: /usr/lib/libzstd.so.*
+FILES_INFO:libzstd: {"/usr/lib/libzstd.so.1": 16, "/usr/lib/libzstd.so.1.5.2": 478528}
+pkg_postinst:libzstd: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libzstd: /usr/lib/libzstd.so.1.5.2
+FILERPROVIDES:/usr/lib/libzstd.so.1.5.2:libzstd:  libzstd.so.1()(64bit)
+FILERDEPENDSFLIST:libzstd: /usr/lib/libzstd.so.1.5.2
+FILERDEPENDS:/usr/lib/libzstd.so.1.5.2:libzstd:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libzstd: 478544

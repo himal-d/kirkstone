@@ -1,0 +1,12 @@
+PN: libical
+PV: 3.0.14
+PR: r0
+PKGV: 3.0.14
+PKGR: r0
+LICENSE: LGPL-2.1-only | MPL-2.0
+DESCRIPTION:libical-src: An Open Source implementation of the iCalendar protocols and protocol data units. The iCalendar specification describes how calendar clients can communicate with calendar servers so users can store their calendar data and arrange meetings with other users.   This package contains sources for debugging purposes.
+SUMMARY:libical-src: iCal and scheduling (RFC 2445, 2446, 2447) library - Source files
+SECTION:libical-src: devel
+PKG:libical-src: libical-src
+FILES_INFO:libical-src: {}
+PKGSIZE:libical-src: 0

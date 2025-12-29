@@ -1,0 +1,22 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:libudev: Systemd udev library
+SUMMARY:libudev: Systemd udev library
+RDEPENDS:libudev: glibc (>= 2.35)
+RPROVIDES:libudev:  libudev (=250.5)
+SECTION: base/shell
+PKG:libudev: libudev1
+FILES:libudev: /lib/libudev.so /lib/libudev.so.1 /lib/libudev.so.1.7.3
+FILES_INFO:libudev: {"/lib/libudev.so.1": 16, "/lib/libudev.so.1.7.3": 211488}
+pkg_postinst:libudev: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libudev: /lib/libudev.so.1.7.3
+FILERPROVIDES:/lib/libudev.so.1.7.3:libudev:  libudev.so.1(LIBUDEV_183)(64bit) libudev.so.1(LIBUDEV_189)(64bit) libudev.so.1(LIBUDEV_189)(64bit) libudev.so.1(LIBUDEV_196)(64bit) libudev.so.1(LIBUDEV_196)(64bit) libudev.so.1(LIBUDEV_199)(64bit) libudev.so.1(LIBUDEV_199)(64bit) libudev.so.1(LIBUDEV_215)(64bit) libudev.so.1(LIBUDEV_215)(64bit) libudev.so.1(LIBUDEV_247)(64bit) libudev.so.1(LIBUDEV_247)(64bit) libudev.so.1()(64bit)
+FILERDEPENDSFLIST:libudev: /lib/libudev.so.1.7.3
+FILERDEPENDS:/lib/libudev.so.1.7.3:libudev:  ld-linux-aarch64.so.1(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.30)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) ld-linux-aarch64.so.1()(64bit) rtld(GNU_HASH)
+PKGSIZE:libudev: 211504

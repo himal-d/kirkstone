@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-deny: PAM plugin for -deny
+SUMMARY:pam-plugin-deny: PAM plugin for -deny
+RDEPENDS:pam-plugin-deny: libpam-suffix libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-deny: pam-plugin-deny-suffix
+SECTION: base
+PKG:pam-plugin-deny: pam-plugin-deny
+FILES:pam-plugin-deny: /lib/security/pam_deny.so
+FILES_INFO:pam-plugin-deny: {"/lib/security/pam_deny.so": 5824}
+FILERDEPENDSFLIST:pam-plugin-deny: /lib/security/pam@underscore@deny.so
+FILERDEPENDS:/lib/security/pam@underscore@deny.so:pam-plugin-deny:  libpam.so.0()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-deny: 5824

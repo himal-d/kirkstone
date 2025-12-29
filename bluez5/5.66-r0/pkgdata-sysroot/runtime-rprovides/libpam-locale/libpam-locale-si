@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-si: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the si locale.
+SUMMARY:libpam-locale-si: Linux-PAM (Pluggable Authentication Modules) - si translations
+RPROVIDES:libpam-locale-si: libpam-locale si-translation
+RRECOMMENDS:libpam-locale-si: virtual-locale-si
+SECTION: base
+PKG:libpam-locale-si: libpam-locale-si
+FILES:libpam-locale-si: /usr/share/locale/si
+FILES_INFO:libpam-locale-si: {"/usr/share/locale/si/LC_MESSAGES/Linux-PAM.mo": 8618}
+PKGSIZE:libpam-locale-si: 8618

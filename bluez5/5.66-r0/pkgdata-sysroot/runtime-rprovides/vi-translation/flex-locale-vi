@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-vi: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the vi locale.
+SUMMARY:flex-locale-vi: Flex (The Fast Lexical Analyzer) - vi translations
+RPROVIDES:flex-locale-vi: flex-locale vi-translation
+RRECOMMENDS:flex-locale-vi: virtual-locale-vi
+SECTION: devel
+PKG:flex-locale-vi: flex-locale-vi
+FILES:flex-locale-vi: /usr/share/locale/vi
+FILES_INFO:flex-locale-vi: {"/usr/share/locale/vi/LC_MESSAGES/flex.mo": 17671}
+PKGSIZE:flex-locale-vi: 17671

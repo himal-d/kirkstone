@@ -1,0 +1,16 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0@EXTENDPRAUTO@
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:bluez5-dev: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:bluez5-dev: Generate a information to build logrotate data configuration for the recipe - Development files
+RDEPENDS:bluez5-dev: bluez5 (= 5.66-r0@EXTENDPRAUTO@)
+RRECOMMENDS:bluez5-dev: dbus-dev ell-dev glib-2.0-dev json-c-dev libical-dev readline-dev udev-dev bluez5-noinst-tools-dev dbus-lib-dev glibc-dev libudev-dev pi-bluetooth-dev python3-core-dev python3-dbus-dev
+SECTION:bluez5-dev: devel
+PKG:bluez5-dev: bluez5-dev
+ALLOW_EMPTY:bluez5-dev: 1
+FILES:bluez5-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/bluez5/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake      /usr/lib/bluetooth/plugins/*.la 
+FILES_INFO:bluez5-dev: {"/usr/include/bluetooth/audio/a2dp-codecs.h": 12284, "/usr/include/bluetooth/bluetooth.h": 10506, "/usr/include/bluetooth/bnep.h": 3258, "/usr/include/bluetooth/cmtp.h": 920, "/usr/include/bluetooth/hci.h": 63198, "/usr/include/bluetooth/hci_lib.h": 9814, "/usr/include/bluetooth/hidp.h": 1407, "/usr/include/bluetooth/l2cap.h": 5968, "/usr/include/bluetooth/rfcomm.h": 1629, "/usr/include/bluetooth/sco.h": 861, "/usr/include/bluetooth/sdp.h": 17517, "/usr/include/bluetooth/sdp_lib.h": 21045, "/usr/include/bluetooth/uuid.h": 8309, "/usr/lib/libbluetooth.so": 22, "/usr/lib/pkgconfig/bluez.pc": 199}
+PKGSIZE:bluez5-dev: 156937

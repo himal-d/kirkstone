@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-sfdisk: util-linux sfdisk
+SUMMARY:util-linux-sfdisk: util-linux sfdisk
+RDEPENDS:util-linux-sfdisk: glibc (>= 2.35) ncurses-libtinfo (>= 6.3+20220423) util-linux-libfdisk (>= 2.37.4) util-linux-libsmartcols (>= 2.37.4)
+SECTION: base
+PKG:util-linux-sfdisk: util-linux-sfdisk
+FILES:util-linux-sfdisk: /usr/sbin/sfdisk
+FILES_INFO:util-linux-sfdisk: {"/usr/sbin/sfdisk": 135440}
+FILERDEPENDSFLIST:util-linux-sfdisk: /usr/sbin/sfdisk
+FILERDEPENDS:/usr/sbin/sfdisk:util-linux-sfdisk:  libsmartcols.so.1(SMARTCOLS_2.25)(64bit) libfdisk.so.1(FDISK_2.33)(64bit) libfdisk.so.1(FDISK_2.28)(64bit) libfdisk.so.1(FDISK_2.29)(64bit) libfdisk.so.1(FDISK_2.36)(64bit) libfdisk.so.1(FDISK_2.30)(64bit) libfdisk.so.1(FDISK_2.27)(64bit) libfdisk.so.1(FDISK_2.31)(64bit) libfdisk.so.1(FDISK_2.26)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libfdisk.so.1()(64bit) libsmartcols.so.1()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-sfdisk: 135440

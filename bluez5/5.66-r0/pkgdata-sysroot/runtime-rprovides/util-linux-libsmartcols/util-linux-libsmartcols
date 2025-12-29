@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE:util-linux-libsmartcols: LGPL-2.1-or-later
+DESCRIPTION:util-linux-libsmartcols: util-linux libsmartcols
+SUMMARY:util-linux-libsmartcols: util-linux libsmartcols
+RDEPENDS:util-linux-libsmartcols: glibc (>= 2.35)
+RPROVIDES:util-linux-libsmartcols:  util-linux-libsmartcols (=2.37.4)
+SECTION: base
+PKG:util-linux-libsmartcols: libsmartcols1
+FILES:util-linux-libsmartcols: /lib/libsmartcols.so.1 /lib/libsmartcols.so.1.1.0
+FILES_INFO:util-linux-libsmartcols: {"/lib/libsmartcols.so.1": 21, "/lib/libsmartcols.so.1.1.0": 213104}
+pkg_postinst:util-linux-libsmartcols: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:util-linux-libsmartcols: /lib/libsmartcols.so.1.1.0
+FILERPROVIDES:/lib/libsmartcols.so.1.1.0:util-linux-libsmartcols:  libsmartcols.so.1(SMARTCOLS_2.25)(64bit) libsmartcols.so.1(SMARTCOLS_2.27)(64bit) libsmartcols.so.1(SMARTCOLS_2.27)(64bit) libsmartcols.so.1(SMARTCOLS_2.28)(64bit) libsmartcols.so.1(SMARTCOLS_2.28)(64bit) libsmartcols.so.1(SMARTCOLS_2.29)(64bit) libsmartcols.so.1(SMARTCOLS_2.29)(64bit) libsmartcols.so.1(SMARTCOLS_2.30)(64bit) libsmartcols.so.1(SMARTCOLS_2.30)(64bit) libsmartcols.so.1(SMARTCOLS_2.31)(64bit) libsmartcols.so.1(SMARTCOLS_2.31)(64bit) libsmartcols.so.1(SMARTCOLS_2.33)(64bit) libsmartcols.so.1(SMARTCOLS_2.33)(64bit) libsmartcols.so.1(SMARTCOLS_2.34)(64bit) libsmartcols.so.1(SMARTCOLS_2.34)(64bit) libsmartcols.so.1(SMARTCOLS_2.35)(64bit) libsmartcols.so.1(SMARTCOLS_2.35)(64bit) libsmartcols.so.1()(64bit)
+FILERDEPENDSFLIST:util-linux-libsmartcols: /lib/libsmartcols.so.1.1.0
+FILERDEPENDS:/lib/libsmartcols.so.1.1.0:util-linux-libsmartcols:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-libsmartcols: 213125

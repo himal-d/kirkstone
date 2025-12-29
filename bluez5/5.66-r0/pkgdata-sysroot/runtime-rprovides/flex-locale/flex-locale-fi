@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-fi: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the fi locale.
+SUMMARY:flex-locale-fi: Flex (The Fast Lexical Analyzer) - fi translations
+RPROVIDES:flex-locale-fi: flex-locale fi-translation
+RRECOMMENDS:flex-locale-fi: virtual-locale-fi
+SECTION: devel
+PKG:flex-locale-fi: flex-locale-fi
+FILES:flex-locale-fi: /usr/share/locale/fi
+FILES_INFO:flex-locale-fi: {"/usr/share/locale/fi/LC_MESSAGES/flex.mo": 16333}
+PKGSIZE:flex-locale-fi: 16333

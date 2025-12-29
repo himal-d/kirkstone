@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-pl: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the pl locale.
+SUMMARY:glib-2.0-locale-pl: A general-purpose utility library - pl translations
+RPROVIDES:glib-2.0-locale-pl: glib-2.0-locale pl-translation glib-2.0-locale-pl (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-pl: virtual-locale-pl
+SECTION: libs
+PKG:glib-2.0-locale-pl: libglib-2.0-locale-pl
+FILES:glib-2.0-locale-pl: /usr/share/locale/pl
+FILES_INFO:glib-2.0-locale-pl: {"/usr/share/locale/pl/LC_MESSAGES/glib20.mo": 142104}
+PKGSIZE:glib-2.0-locale-pl: 142104

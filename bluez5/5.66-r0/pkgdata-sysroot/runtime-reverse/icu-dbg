@@ -1,0 +1,15 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION:icu-dbg: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:icu-dbg: International Component for Unicode libraries - Debugging files
+RRECOMMENDS:icu-dbg: glibc-dbg libgcc-dbg libicudata-dbg libicui18n-dbg libicuio-dbg libicutu-dbg libicuuc-dbg libstdc++-dbg
+SECTION:icu-dbg: devel
+PKG:icu-dbg: icu-dbg
+ALLOW_EMPTY:icu-dbg: 1
+FILES:icu-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:icu-dbg: {"/usr/bin/.debug/derb": 115376, "/usr/bin/.debug/genbrk": 44752, "/usr/bin/.debug/gencfu": 40744, "/usr/bin/.debug/gencnval": 42528, "/usr/bin/.debug/gendict": 119560, "/usr/bin/.debug/genrb": 954280, "/usr/bin/.debug/icuexportdata": 159272, "/usr/bin/.debug/icuinfo": 53464, "/usr/bin/.debug/makeconv": 173480, "/usr/bin/.debug/pkgdata": 144272, "/usr/bin/.debug/uconv": 100632, "/usr/lib/.debug/libicudata.so.70.1": 5888, "/usr/lib/.debug/libicui18n.so.70.1": 16377096, "/usr/lib/.debug/libicuio.so.70.1": 282496, "/usr/lib/.debug/libicutest.so.70.1": 195392, "/usr/lib/.debug/libicutu.so.70.1": 1152224, "/usr/lib/.debug/libicuuc.so.70.1": 8461624, "/usr/sbin/.debug/escapesrc": 112792, "/usr/sbin/.debug/genccode": 17504, "/usr/sbin/.debug/gencmn": 22000, "/usr/sbin/.debug/gennorm2": 326856, "/usr/sbin/.debug/gensprep": 47288, "/usr/sbin/.debug/icupkg": 43608}
+PKGSIZE:icu-dbg: 28993128

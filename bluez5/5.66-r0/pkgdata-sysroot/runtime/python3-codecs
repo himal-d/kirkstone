@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-codecs: Python codec
+RDEPENDS:python3-codecs: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-codecs: python3-codecs
+FILES:python3-codecs:  /usr/lib/python3.10/lib-dynload/_multibytecodec.*.so /usr/lib/python3.10/xdrlib.py /usr/lib/python3.10/__pycache__/xdrlib.*.pyc
+FILES_INFO:python3-codecs: {"/usr/lib/python3.10/__pycache__/xdrlib.cpython-310.pyc": 7880, "/usr/lib/python3.10/lib-dynload/_multibytecodec.cpython-310-aarch64-linux-gnu.so": 37688, "/usr/lib/python3.10/xdrlib.py": 5913}
+FILERDEPENDSFLIST:python3-codecs: /usr/lib/python3.10/lib-dynload/@underscore@multibytecodec.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@multibytecodec.cpython-310-aarch64-linux-gnu.so:python3-codecs:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-codecs: 51481

@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ro: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ro locale.
+SUMMARY:libpam-locale-ro: Linux-PAM (Pluggable Authentication Modules) - ro translations
+RPROVIDES:libpam-locale-ro: libpam-locale ro-translation
+RRECOMMENDS:libpam-locale-ro: virtual-locale-ro
+SECTION: base
+PKG:libpam-locale-ro: libpam-locale-ro
+FILES:libpam-locale-ro: /usr/share/locale/ro
+FILES_INFO:libpam-locale-ro: {"/usr/share/locale/ro/LC_MESSAGES/Linux-PAM.mo": 10103}
+PKGSIZE:libpam-locale-ro: 10103

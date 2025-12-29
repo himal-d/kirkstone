@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-localuser: PAM plugin for -localuser
+SUMMARY:pam-plugin-localuser: PAM plugin for -localuser
+RDEPENDS:pam-plugin-localuser: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-localuser: pam-plugin-localuser-suffix
+SECTION: base
+PKG:pam-plugin-localuser: pam-plugin-localuser
+FILES:pam-plugin-localuser: /lib/security/pam_localuser.so
+FILES_INFO:pam-plugin-localuser: {"/lib/security/pam_localuser.so": 6112}
+FILERDEPENDSFLIST:pam-plugin-localuser: /lib/security/pam@underscore@localuser.so
+FILERDEPENDS:/lib/security/pam@underscore@localuser.so:pam-plugin-localuser:  libpam.so.0(LIBPAM_MODUTIL_1.4.1)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-localuser: 6112

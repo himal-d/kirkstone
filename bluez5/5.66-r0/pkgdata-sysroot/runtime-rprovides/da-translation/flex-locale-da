@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-da: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the da locale.
+SUMMARY:flex-locale-da: Flex (The Fast Lexical Analyzer) - da translations
+RPROVIDES:flex-locale-da: flex-locale da-translation
+RRECOMMENDS:flex-locale-da: virtual-locale-da
+SECTION: devel
+PKG:flex-locale-da: flex-locale-da
+FILES:flex-locale-da: /usr/share/locale/da
+FILES_INFO:flex-locale-da: {"/usr/share/locale/da/LC_MESSAGES/flex.mo": 15398}
+PKGSIZE:flex-locale-da: 15398

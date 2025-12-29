@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-eo: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the eo locale.
+SUMMARY:flex-locale-eo: Flex (The Fast Lexical Analyzer) - eo translations
+RPROVIDES:flex-locale-eo: flex-locale eo-translation
+RRECOMMENDS:flex-locale-eo: virtual-locale-eo
+SECTION: devel
+PKG:flex-locale-eo: flex-locale-eo
+FILES:flex-locale-eo: /usr/share/locale/eo
+FILES_INFO:flex-locale-eo: {"/usr/share/locale/eo/LC_MESSAGES/flex.mo": 15388}
+PKGSIZE:flex-locale-eo: 15388

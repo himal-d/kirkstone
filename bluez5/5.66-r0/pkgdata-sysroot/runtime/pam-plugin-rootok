@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-rootok: PAM plugin for -rootok
+SUMMARY:pam-plugin-rootok: PAM plugin for -rootok
+RDEPENDS:pam-plugin-rootok: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-rootok: pam-plugin-rootok-suffix
+SECTION: base
+PKG:pam-plugin-rootok: pam-plugin-rootok
+FILES:pam-plugin-rootok: /lib/security/pam_rootok.so
+FILES_INFO:pam-plugin-rootok: {"/lib/security/pam_rootok.so": 6080}
+FILERDEPENDSFLIST:pam-plugin-rootok: /lib/security/pam@underscore@rootok.so
+FILERDEPENDS:/lib/security/pam@underscore@rootok.so:pam-plugin-rootok:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-rootok: 6080

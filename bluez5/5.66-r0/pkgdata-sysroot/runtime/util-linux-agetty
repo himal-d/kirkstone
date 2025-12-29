@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-agetty: util-linux agetty
+SUMMARY:util-linux-agetty: util-linux agetty
+RDEPENDS:util-linux-agetty: update-alternatives-opkg glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-agetty: util-linux-agetty
+FILES:util-linux-agetty: /sbin/agetty
+FILES_INFO:util-linux-agetty: {"/sbin/agetty": 60560}
+pkg_postinst:util-linux-agetty: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/getty getty /sbin/agetty 80\n
+pkg_prerm:util-linux-agetty: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  getty /sbin/agetty\n
+FILERPROVIDESFLIST:util-linux-agetty:  /sbin/agetty
+FILERPROVIDES:/sbin/agetty:util-linux-agetty:  /sbin/getty
+FILERDEPENDSFLIST:util-linux-agetty: /sbin/agetty
+FILERDEPENDS:/sbin/agetty:util-linux-agetty:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-agetty: 60560

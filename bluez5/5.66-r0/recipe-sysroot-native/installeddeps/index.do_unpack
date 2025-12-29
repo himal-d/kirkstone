@@ -1,0 +1,5 @@
+TaskDeps: do_fetch
+gettext-minimal-native
+libtool-native
+texinfo-dummy-native
+xz-native

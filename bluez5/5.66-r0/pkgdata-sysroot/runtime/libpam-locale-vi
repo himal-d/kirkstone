@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-vi: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the vi locale.
+SUMMARY:libpam-locale-vi: Linux-PAM (Pluggable Authentication Modules) - vi translations
+RPROVIDES:libpam-locale-vi: libpam-locale vi-translation
+RRECOMMENDS:libpam-locale-vi: virtual-locale-vi
+SECTION: base
+PKG:libpam-locale-vi: libpam-locale-vi
+FILES:libpam-locale-vi: /usr/share/locale/vi
+FILES_INFO:libpam-locale-vi: {"/usr/share/locale/vi/LC_MESSAGES/Linux-PAM.mo": 7349}
+PKGSIZE:libpam-locale-vi: 7349

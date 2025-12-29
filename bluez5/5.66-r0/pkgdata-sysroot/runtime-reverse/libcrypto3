@@ -1,0 +1,21 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+RDEPENDS:libcrypto: glibc (>= 2.35)
+RPROVIDES:libcrypto:  libcrypto (=3.0.5)
+RRECOMMENDS:libcrypto:  openssl-conf openssl-ossl-module-legacy
+SECTION: libs/network
+PKG:libcrypto: libcrypto3
+FILES:libcrypto: /usr/lib/libcrypto.so.*
+FILES_INFO:libcrypto: {"/usr/lib/libcrypto.so.3": 3540624}
+pkg_postinst:libcrypto: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libcrypto: /usr/lib/libcrypto.so.3
+FILERPROVIDES:/usr/lib/libcrypto.so.3:libcrypto:  libcrypto.so.3(OPENSSL_3.0.0)(64bit) libcrypto.so.3(OPENSSL_3.0.3)(64bit) libcrypto.so.3(OPENSSL_3.0.3)(64bit) libcrypto.so.3()(64bit)
+FILERDEPENDSFLIST:libcrypto: /usr/lib/libcrypto.so.3
+FILERDEPENDS:/usr/lib/libcrypto.so.3:libcrypto:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libcrypto: 3540624

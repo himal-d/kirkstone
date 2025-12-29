@@ -1,0 +1,20 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:ncurses-libformw: ncurses formw library
+SUMMARY:ncurses-libformw: ncurses formw library
+RDEPENDS:ncurses-libformw: glibc (>= 2.35) ncurses-libncursesw (>= 6.3+20220423) ncurses-libtinfo (>= 6.3+20220423)
+RPROVIDES:ncurses-libformw:  ncurses-libformw (=6.3+20220423)
+SECTION: libs
+PKG:ncurses-libformw: libformw5
+FILES:ncurses-libformw: /usr/lib/libformw.so.5 /usr/lib/libformw.so.5.9
+FILES_INFO:ncurses-libformw: {"/usr/lib/libformw.so.5": 15, "/usr/lib/libformw.so.5.9": 65096}
+pkg_postinst:ncurses-libformw: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:ncurses-libformw: /usr/lib/libformw.so.5.9
+FILERPROVIDES:/usr/lib/libformw.so.5.9:ncurses-libformw:  libformw.so.5()(64bit)
+FILERDEPENDSFLIST:ncurses-libformw: /usr/lib/libformw.so.5.9
+FILERDEPENDS:/usr/lib/libformw.so.5.9:ncurses-libformw:  libc.so.6(GLIBC_2.17)(64bit) libncursesw.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ncurses-libformw: 65111

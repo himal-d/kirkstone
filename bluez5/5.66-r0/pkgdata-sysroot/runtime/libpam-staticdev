@@ -1,0 +1,14 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-staticdev: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains static libraries for software development.
+SUMMARY:libpam-staticdev: Linux-PAM (Pluggable Authentication Modules) - Development files (Static Libraries)
+RDEPENDS:libpam-staticdev: libpam-dev (= 1.5.2-r0)
+SECTION:libpam-staticdev: devel
+PKG:libpam-staticdev: libpam-staticdev
+FILES:libpam-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/libpam/*.a
+FILES_INFO:libpam-staticdev: {}
+PKGSIZE:libpam-staticdev: 0

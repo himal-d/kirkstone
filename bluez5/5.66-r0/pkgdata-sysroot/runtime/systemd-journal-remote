@@ -1,0 +1,15 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:systemd-journal-remote: systemd-journal-remote is a command to receive serialized journal events and store them to journal files.
+SUMMARY:systemd-journal-remote: Receive journal messages over the network
+SECTION: base/shell
+PKG:systemd-journal-remote: systemd-journal-remote
+FILES:systemd-journal-remote: /lib/systemd/systemd-journal-remote                               /etc/systemd/journal-remote.conf                               /lib/systemd/system/systemd-journal-remote.service                               /lib/systemd/system/systemd-journal-remote.socket                              
+FILES_INFO:systemd-journal-remote: {}
+PKGSIZE:systemd-journal-remote: 0

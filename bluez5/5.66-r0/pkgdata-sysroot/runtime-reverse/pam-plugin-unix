@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-unix: PAM plugin for -unix
+SUMMARY:pam-plugin-unix: PAM plugin for -unix
+RDEPENDS:pam-plugin-unix: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2) libxcrypt (>= 4.4.33)
+RPROVIDES:pam-plugin-unix: pam-plugin-unix-suffix
+SECTION: base
+PKG:pam-plugin-unix: pam-plugin-unix
+FILES:pam-plugin-unix: /lib/security/pam_unix.so
+FILES_INFO:pam-plugin-unix: {"/lib/security/pam_unix.so": 43640}
+FILERDEPENDSFLIST:pam-plugin-unix: /lib/security/pam@underscore@unix.so
+FILERDEPENDS:/lib/security/pam@underscore@unix.so:pam-plugin-unix:  libcrypt.so.2(XCRYPT_2.0)(64bit) libcrypt.so.2(XCRYPT_4.3)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.1)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.9)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-unix: 43640

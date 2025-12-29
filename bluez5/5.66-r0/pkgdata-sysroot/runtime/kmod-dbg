@@ -1,0 +1,15 @@
+PN: kmod
+PV: 29
+PR: r0
+PKGV: 29
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:kmod-dbg: kmod is a set of tools to handle common tasks with Linux kernel modules like                insert, remove, list, check properties, resolve dependencies and aliases.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:kmod-dbg: Tools for managing Linux kernel modules - Debugging files
+RRECOMMENDS:kmod-dbg: glibc-dbg liblzma-dbg zlib-dbg
+SECTION:kmod-dbg: devel
+PKG:kmod-dbg: kmod-dbg
+ALLOW_EMPTY:kmod-dbg: 1
+FILES:kmod-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:kmod-dbg: {"/bin/.debug/kmod": 435080, "/usr/lib/.debug/libkmod.so.2.3.7": 265008}
+PKGSIZE:kmod-dbg: 700088

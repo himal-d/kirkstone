@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-cs: Password strength checker library  This package contains language translation files for the cs locale.
+SUMMARY:cracklib-locale-cs: Password strength checker library - cs translations
+RPROVIDES:cracklib-locale-cs: cracklib-locale cs-translation
+RRECOMMENDS:cracklib-locale-cs: virtual-locale-cs
+SECTION: base
+PKG:cracklib-locale-cs: cracklib-locale-cs
+FILES:cracklib-locale-cs: /usr/share/locale/cs
+FILES_INFO:cracklib-locale-cs: {"/usr/share/locale/cs/LC_MESSAGES/cracklib.mo": 1843}
+PKGSIZE:cracklib-locale-cs: 1843

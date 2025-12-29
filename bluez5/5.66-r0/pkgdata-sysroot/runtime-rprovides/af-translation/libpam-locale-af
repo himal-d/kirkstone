@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-af: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the af locale.
+SUMMARY:libpam-locale-af: Linux-PAM (Pluggable Authentication Modules) - af translations
+RPROVIDES:libpam-locale-af: libpam-locale af-translation
+RRECOMMENDS:libpam-locale-af: virtual-locale-af
+SECTION: base
+PKG:libpam-locale-af: libpam-locale-af
+FILES:libpam-locale-af: /usr/share/locale/af
+FILES_INFO:libpam-locale-af: {"/usr/share/locale/af/LC_MESSAGES/Linux-PAM.mo": 494}
+PKGSIZE:libpam-locale-af: 494

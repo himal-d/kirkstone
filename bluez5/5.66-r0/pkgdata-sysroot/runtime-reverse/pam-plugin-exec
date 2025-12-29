@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-exec: PAM plugin for -exec
+SUMMARY:pam-plugin-exec: PAM plugin for -exec
+RDEPENDS:pam-plugin-exec: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-exec: pam-plugin-exec-suffix
+SECTION: base
+PKG:pam-plugin-exec: pam-plugin-exec
+FILES:pam-plugin-exec: /lib/security/pam_exec.so
+FILES_INFO:pam-plugin-exec: {"/lib/security/pam_exec.so": 14632}
+FILERDEPENDSFLIST:pam-plugin-exec: /lib/security/pam@underscore@exec.so
+FILERDEPENDS:/lib/security/pam@underscore@exec.so:pam-plugin-exec:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.9)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-exec: 14632

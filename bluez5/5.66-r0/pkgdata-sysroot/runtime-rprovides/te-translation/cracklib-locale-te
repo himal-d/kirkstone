@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-te: Password strength checker library  This package contains language translation files for the te locale.
+SUMMARY:cracklib-locale-te: Password strength checker library - te translations
+RPROVIDES:cracklib-locale-te: cracklib-locale te-translation
+RRECOMMENDS:cracklib-locale-te: virtual-locale-te
+SECTION: base
+PKG:cracklib-locale-te: cracklib-locale-te
+FILES:cracklib-locale-te: /usr/share/locale/te
+FILES_INFO:cracklib-locale-te: {"/usr/share/locale/te/LC_MESSAGES/cracklib.mo": 2718}
+PKGSIZE:cracklib-locale-te: 2718

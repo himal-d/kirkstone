@@ -1,0 +1,20 @@
+PN: bzip2
+PV: 1.0.8
+PR: r0
+PKGV: 1.0.8
+PKGR: r0
+LICENSE:libbz2: bzip2-1.0.6
+DESCRIPTION: bzip2 compresses files using the Burrows-Wheeler block-sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of statistical compressors.
+SUMMARY: Very high-quality data compression program
+RDEPENDS:libbz2: glibc (>= 2.35)
+RPROVIDES:libbz2:  libbz2 (=1.0.8)
+SECTION: console/utils
+PKG:libbz2: libbz2-1
+FILES:libbz2: /usr/lib/lib*.so.*
+FILES_INFO:libbz2: {"/usr/lib/libbz2.so.1": 15, "/usr/lib/libbz2.so.1.0.8": 54600}
+pkg_postinst:libbz2: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libbz2: /usr/lib/libbz2.so.1.0.8
+FILERPROVIDES:/usr/lib/libbz2.so.1.0.8:libbz2:  libbz2.so.1()(64bit)
+FILERDEPENDSFLIST:libbz2: /usr/lib/libbz2.so.1.0.8
+FILERDEPENDS:/usr/lib/libbz2.so.1.0.8:libbz2:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libbz2: 54615

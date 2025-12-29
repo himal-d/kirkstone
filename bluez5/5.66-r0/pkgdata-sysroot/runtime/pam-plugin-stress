@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-stress: PAM plugin for -stress
+SUMMARY:pam-plugin-stress: PAM plugin for -stress
+RDEPENDS:pam-plugin-stress: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-stress: pam-plugin-stress-suffix
+SECTION: base
+PKG:pam-plugin-stress: pam-plugin-stress
+FILES:pam-plugin-stress: /lib/security/pam_stress.so
+FILES_INFO:pam-plugin-stress: {"/lib/security/pam_stress.so": 14344}
+FILERDEPENDSFLIST:pam-plugin-stress: /lib/security/pam@underscore@stress.so
+FILERDEPENDS:/lib/security/pam@underscore@stress.so:pam-plugin-stress:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-stress: 14344

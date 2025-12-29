@@ -1,0 +1,9 @@
+DEBUG: Executing python function do_cleansstate
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_deploy_source_date_epoch.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_package.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_package_qa.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_package_write_ipk.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_packagedata.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5::5.66:r0::10:*_populate_lic.tar.zst*
+NOTE: Removing /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/*/*/sstate:bluez5:cortexa72-rdk-linux:5.66:r0:cortexa72:10:*_populate_sysroot.tar.zst*
+DEBUG: Python function do_cleansstate finished

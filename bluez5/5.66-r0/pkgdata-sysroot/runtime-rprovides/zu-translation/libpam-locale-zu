@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-zu: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the zu locale.
+SUMMARY:libpam-locale-zu: Linux-PAM (Pluggable Authentication Modules) - zu translations
+RPROVIDES:libpam-locale-zu: libpam-locale zu-translation
+RRECOMMENDS:libpam-locale-zu: virtual-locale-zu
+SECTION: base
+PKG:libpam-locale-zu: libpam-locale-zu
+FILES:libpam-locale-zu: /usr/share/locale/zu
+FILES_INFO:libpam-locale-zu: {"/usr/share/locale/zu/LC_MESSAGES/Linux-PAM.mo": 5759}
+PKGSIZE:libpam-locale-zu: 5759

@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-ne: Tools to change and administer password and group data  This package contains language translation files for the ne locale.
+SUMMARY:shadow-locale-ne: Tools to change and administer password and group data - ne translations
+RPROVIDES:shadow-locale-ne: shadow-locale ne-translation
+RRECOMMENDS:shadow-locale-ne: virtual-locale-ne
+SECTION: base/utils
+PKG:shadow-locale-ne: shadow-locale-ne
+FILES:shadow-locale-ne: /usr/share/locale/ne
+FILES_INFO:shadow-locale-ne: {"/usr/share/locale/ne/LC_MESSAGES/shadow.mo": 28128}
+PKGSIZE:shadow-locale-ne: 28128

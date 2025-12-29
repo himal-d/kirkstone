@@ -1,0 +1,29 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.
+SUMMARY: Generate a information to build logrotate data configuration for the recipe
+RDEPENDS:bluez5-noinst-tools: dbus-lib (>= 1.14.0) glib-2.0 (>= 2.74.6) glibc (>= 2.35) libudev (>= 250.5) readline (>= 5.2)
+SECTION: libs
+PKG:bluez5-noinst-tools: bluez5-noinst-tools
+FILES:bluez5-noinst-tools: /usr/bin/gatttool\n/usr/bin/obex-client-tool\n/usr/bin/obex-server-tool\n/usr/bin/bluetooth-player\n/usr/bin/obexctl\n/usr/bin/btmgmt\n/usr/bin/bdaddr\n/usr/bin/avinfo\n/usr/bin/avtest\n/usr/bin/scotest\n/usr/bin/amptest\n/usr/bin/hwdb\n/usr/bin/hcieventmask\n/usr/bin/hcisecfilter\n/usr/bin/btinfo\n/usr/bin/btsnoop\n/usr/bin/btproxy\n/usr/bin/btiotest\n/usr/bin/bneptest\n/usr/bin/mcaptest\n/usr/bin/cltest\n/usr/bin/oobtest\n/usr/bin/advtest\n/usr/bin/seq2bseq\n/usr/bin/nokfw\n/usr/bin/create-image\n/usr/bin/eddystone\n/usr/bin/ibeacon\n/usr/bin/btgatt-client\n/usr/bin/btgatt-server\n/usr/bin/test-runner\n/usr/bin/check-selftest\n/usr/bin/gatt-service\n/usr/bin/iapd
+FILES_INFO:bluez5-noinst-tools: {"/usr/bin/advtest": 76352, "/usr/bin/bdaddr": 139704, "/usr/bin/bluetooth-player": 162016, "/usr/bin/bneptest": 218616, "/usr/bin/btmgmt": 329408, "/usr/bin/check-selftest": 6272, "/usr/bin/create-image": 10432, "/usr/bin/eddystone": 64016, "/usr/bin/gatttool": 302960, "/usr/bin/nokfw": 10392, "/usr/bin/obex-client-tool": 209288, "/usr/bin/obex-server-tool": 209184, "/usr/bin/obexctl": 147336, "/usr/bin/test-runner": 22944}
+FILERDEPENDSFLIST:bluez5-noinst-tools: /usr/bin/advtest /usr/bin/bdaddr /usr/bin/bluetooth-player /usr/bin/bneptest /usr/bin/btmgmt /usr/bin/check-selftest /usr/bin/create-image /usr/bin/eddystone /usr/bin/gatttool /usr/bin/nokfw /usr/bin/obex-client-tool /usr/bin/obex-server-tool /usr/bin/obexctl /usr/bin/test-runner
+FILERDEPENDS:/usr/bin/advtest:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/bdaddr:bluez5-noinst-tools:  libudev.so.1(LIBUDEV_183)(64bit) libudev.so.1(LIBUDEV_196)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libudev.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/bluetooth-player:bluez5-noinst-tools:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libdbus-1.so.3()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/bneptest:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/btmgmt:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/check-selftest:bluez5-noinst-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/create-image:bluez5-noinst-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/eddystone:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/gatttool:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/nokfw:bluez5-noinst-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/obex-client-tool:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/obex-server-tool:bluez5-noinst-tools:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/obexctl:bluez5-noinst-tools:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libdbus-1.so.3()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/test-runner:bluez5-noinst-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:bluez5-noinst-tools: 1908920

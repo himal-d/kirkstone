@@ -1,0 +1,11 @@
+recipe-sysroot/sysroot-providers/flex
+recipe-sysroot/usr/include/FlexLexer.h
+recipe-sysroot/usr/lib/libfl.so.2.0.0
+recipe-sysroot/usr/lib/libfl.so
+recipe-sysroot/usr/lib/libfl.so.2
+recipe-sysroot/usr/lib/libfl.a
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

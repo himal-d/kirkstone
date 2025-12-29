@@ -1,0 +1,17 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:ell-dev: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:ell-dev: Embedded Linux Library - Development files
+RDEPENDS:ell-dev: ell (= 0.50-r0)
+RPROVIDES:ell-dev:  ell-dev (=0.50)
+RRECOMMENDS:ell-dev: dbus-dev glibc-dev
+SECTION:ell-dev: devel
+PKG:ell-dev: libell-dev
+ALLOW_EMPTY:ell-dev: 1
+FILES:ell-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/ell/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:ell-dev: {"/usr/include/ell/acd.h": 2064, "/usr/include/ell/base64.h": 1145, "/usr/include/ell/cert.h": 2641, "/usr/include/ell/checksum.h": 2212, "/usr/include/ell/cipher.h": 2700, "/usr/include/ell/cleanup.h": 1009, "/usr/include/ell/dbus-client.h": 3296, "/usr/include/ell/dbus-service.h": 2760, "/usr/include/ell/dbus.h": 10027, "/usr/include/ell/dhcp.h": 6788, "/usr/include/ell/dhcp6.h": 3846, "/usr/include/ell/dir.h": 1595, "/usr/include/ell/ecc.h": 4593, "/usr/include/ell/ecdh.h": 1569, "/usr/include/ell/ell.h": 1924, "/usr/include/ell/file.h": 1064, "/usr/include/ell/genl.h": 5705, "/usr/include/ell/gpio.h": 2359, "/usr/include/ell/hashmap.h": 2828, "/usr/include/ell/hwdb.h": 1854, "/usr/include/ell/icmp6.h": 2781, "/usr/include/ell/idle.h": 1477, "/usr/include/ell/io.h": 2016, "/usr/include/ell/key.h": 3852, "/usr/include/ell/log.h": 3553, "/usr/include/ell/main.h": 1378, "/usr/include/ell/net.h": 2023, "/usr/include/ell/netconfig.h": 2474, "/usr/include/ell/netlink.h": 2215, "/usr/include/ell/path.h": 1211, "/usr/include/ell/pem.h": 1812, "/usr/include/ell/queue.h": 2730, "/usr/include/ell/random.h": 1180, "/usr/include/ell/ringbuf.h": 2173, "/usr/include/ell/rtnl.h": 9579, "/usr/include/ell/settings.h": 5529, "/usr/include/ell/signal.h": 1342, "/usr/include/ell/string.h": 1949, "/usr/include/ell/strv.h": 1851, "/usr/include/ell/test.h": 1212, "/usr/include/ell/tester.h": 3222, "/usr/include/ell/time.h": 1926, "/usr/include/ell/timeout.h": 1846, "/usr/include/ell/tls.h": 4793, "/usr/include/ell/uintset.h": 2320, "/usr/include/ell/utf8.h": 3282, "/usr/include/ell/util.h": 12770, "/usr/include/ell/uuid.h": 1884, "/usr/lib/libell.so": 15, "/usr/lib/pkgconfig/ell.pc": 178}
+PKGSIZE:ell-dev: 146552

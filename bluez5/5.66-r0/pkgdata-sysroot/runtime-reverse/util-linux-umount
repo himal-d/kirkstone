@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-umount: util-linux umount
+SUMMARY:util-linux-umount: util-linux umount
+RDEPENDS:util-linux-umount: update-alternatives-opkg glibc (>= 2.35) util-linux-libmount (>= 2.37.4)
+SECTION: base
+PKG:util-linux-umount: util-linux-umount
+FILES:util-linux-umount: /bin/umount.util-linux
+FILES_INFO:util-linux-umount: {"/bin/umount.util-linux": 31768}
+pkg_postinst:util-linux-umount: #!/bin/sh\nset -e\n\tupdate-alternatives --install /bin/umount umount /bin/umount.util-linux 80\n
+pkg_prerm:util-linux-umount: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  umount /bin/umount.util-linux\n
+FILERPROVIDESFLIST:util-linux-umount:  /bin/umount.util-linux
+FILERPROVIDES:/bin/umount.util-linux:util-linux-umount:  /bin/umount
+FILERDEPENDSFLIST:util-linux-umount: /bin/umount.util-linux
+FILERDEPENDS:/bin/umount.util-linux:util-linux-umount:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libmount.so.1(MOUNT_2.25)(64bit) libmount.so.1(MOUNT_2.30)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2_35)(64bit) libmount.so.1(MOUNT_2.23)(64bit) libmount.so.1(MOUNT_2.22)(64bit) libmount.so.1(MOUNT_2.33)(64bit) libmount.so.1(MOUNT_2_37)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-umount: 31768

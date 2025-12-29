@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-sl: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the sl locale.
+SUMMARY:util-linux-locale-sl: A suite of basic system administration utilities - sl translations
+RPROVIDES:util-linux-locale-sl: util-linux-locale sl-translation
+RRECOMMENDS:util-linux-locale-sl: virtual-locale-sl
+SECTION: base
+PKG:util-linux-locale-sl: util-linux-locale-sl
+FILES:util-linux-locale-sl: /usr/share/locale/sl
+FILES_INFO:util-linux-locale-sl: {"/usr/share/locale/sl/LC_MESSAGES/util-linux.mo": 31148}
+PKGSIZE:util-linux-locale-sl: 31148

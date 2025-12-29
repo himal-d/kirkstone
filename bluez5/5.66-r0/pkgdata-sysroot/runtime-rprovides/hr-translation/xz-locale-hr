@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-hr: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the hr locale.
+SUMMARY:xz-locale-hr: Utilities for managing LZMA compressed files - hr translations
+RPROVIDES:xz-locale-hr: xz-locale hr-translation
+RRECOMMENDS:xz-locale-hr: virtual-locale-hr
+SECTION: base
+PKG:xz-locale-hr: xz-locale-hr
+FILES:xz-locale-hr: /usr/share/locale/hr
+FILES_INFO:xz-locale-hr: {"/usr/share/locale/hr/LC_MESSAGES/xz.mo": 26302}
+PKGSIZE:xz-locale-hr: 26302

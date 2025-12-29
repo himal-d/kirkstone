@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-ga: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the ga locale.
+SUMMARY:flex-locale-ga: Flex (The Fast Lexical Analyzer) - ga translations
+RPROVIDES:flex-locale-ga: flex-locale ga-translation
+RRECOMMENDS:flex-locale-ga: virtual-locale-ga
+SECTION: devel
+PKG:flex-locale-ga: flex-locale-ga
+FILES:flex-locale-ga: /usr/share/locale/ga
+FILES_INFO:flex-locale-ga: {"/usr/share/locale/ga/LC_MESSAGES/flex.mo": 16249}
+PKGSIZE:flex-locale-ga: 16249

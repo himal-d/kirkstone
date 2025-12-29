@@ -1,0 +1,25 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users
+SUMMARY: Linux-PAM (Pluggable Authentication Modules)
+RDEPENDS:libpam: glibc (>= 2.35)
+RPROVIDES:libpam:  libpam-suffix
+RRECOMMENDS:libpam: libpam-runtime-suffix
+SECTION: base
+PKG:libpam: libpam
+FILES:libpam: /lib/lib*.so.*
+FILES_INFO:libpam: {"/lib/libpam.so.0": 16, "/lib/libpam.so.0.85.1": 51872, "/lib/libpam_misc.so.0": 21, "/lib/libpam_misc.so.0.82.1": 14552, "/lib/libpamc.so.0": 17, "/lib/libpamc.so.0.82.1": 14552}
+pkg_postinst:libpam: set -e\n         if [ -z "$D" ] && [ -e /etc/init.d/populate-volatile.sh ] ; then\n                 /etc/init.d/populate-volatile.sh update\n         fi\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libpam: /lib/libpam.so.0.85.1 /lib/libpam@underscore@misc.so.0.82.1 /lib/libpamc.so.0.82.1
+FILERPROVIDES:/lib/libpam.so.0.85.1:libpam:  libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.1)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.1)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.1.1)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.1.1)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.3)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.3)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.9)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.9)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_1.4)(64bit) libpam.so.0(LIBPAM_1.4)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.4.1)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.4.1)(64bit) libpam.so.0()(64bit)
+FILERPROVIDES:/lib/libpam@underscore@misc.so.0.82.1:libpam:  libpam_misc.so.0(LIBPAM_MISC_1.0)(64bit) libpam_misc.so.0()(64bit)
+FILERPROVIDES:/lib/libpamc.so.0.82.1:libpam:  libpamc.so.0(LIBPAMC_1.0)(64bit) libpamc.so.0()(64bit)
+FILERDEPENDSFLIST:libpam: /lib/libpam.so.0.85.1 /lib/libpam@underscore@misc.so.0.82.1 /lib/libpamc.so.0.82.1
+FILERDEPENDS:/lib/libpam.so.0.85.1:libpam:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/lib/libpam@underscore@misc.so.0.82.1:libpam:  libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/lib/libpamc.so.0.82.1:libpam:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libpam: 81030

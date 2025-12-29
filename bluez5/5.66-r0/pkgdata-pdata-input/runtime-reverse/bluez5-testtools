@@ -1,0 +1,41 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.
+SUMMARY: Generate a information to build logrotate data configuration for the recipe
+RDEPENDS:bluez5-testtools: python3-core python3-dbus
+SECTION: libs
+PKG:bluez5-testtools: bluez5-testtools
+FILES:bluez5-testtools: /usr/lib/bluez/test/*
+FILES_INFO:bluez5-testtools: {"/usr/lib/bluez/test/agent.py": 2746, "/usr/lib/bluez/test/bluezutils.py": 1605, "/usr/lib/bluez/test/dbusdef.py": 283, "/usr/lib/bluez/test/example-advertisement": 7429, "/usr/lib/bluez/test/example-gatt-client": 5913, "/usr/lib/bluez/test/example-gatt-server": 19957, "/usr/lib/bluez/test/ftp-client": 5062, "/usr/lib/bluez/test/list-devices": 1973, "/usr/lib/bluez/test/map-client": 6966, "/usr/lib/bluez/test/monitor-bluetooth": 1640, "/usr/lib/bluez/test/opp-client": 3290, "/usr/lib/bluez/test/pbap-client": 4335, "/usr/lib/bluez/test/sap_client.py": 29920, "/usr/lib/bluez/test/service-did.xml": 654, "/usr/lib/bluez/test/service-ftp.xml": 755, "/usr/lib/bluez/test/service-opp.xml": 1050, "/usr/lib/bluez/test/service-record.dtd": 1762, "/usr/lib/bluez/test/service-spp.xml": 488, "/usr/lib/bluez/test/simple-agent": 4931, "/usr/lib/bluez/test/simple-endpoint": 5165, "/usr/lib/bluez/test/simple-player": 4231, "/usr/lib/bluez/test/test-adapter": 3655, "/usr/lib/bluez/test/test-device": 5401, "/usr/lib/bluez/test/test-discovery": 4473, "/usr/lib/bluez/test/test-gatt-profile": 3525, "/usr/lib/bluez/test/test-health": 5307, "/usr/lib/bluez/test/test-health-sink": 2582, "/usr/lib/bluez/test/test-hfp": 5801, "/usr/lib/bluez/test/test-manager": 1162, "/usr/lib/bluez/test/test-mesh": 26294, "/usr/lib/bluez/test/test-nap": 1053, "/usr/lib/bluez/test/test-network": 1202, "/usr/lib/bluez/test/test-profile": 3289, "/usr/lib/bluez/test/test-sap-server": 3486}
+FILERDEPENDSFLIST:bluez5-testtools: /usr/lib/bluez/test/agent.py /usr/lib/bluez/test/example-advertisement /usr/lib/bluez/test/example-gatt-client /usr/lib/bluez/test/example-gatt-server /usr/lib/bluez/test/ftp-client /usr/lib/bluez/test/list-devices /usr/lib/bluez/test/map-client /usr/lib/bluez/test/monitor-bluetooth /usr/lib/bluez/test/opp-client /usr/lib/bluez/test/pbap-client /usr/lib/bluez/test/simple-agent /usr/lib/bluez/test/simple-endpoint /usr/lib/bluez/test/simple-player /usr/lib/bluez/test/test-adapter /usr/lib/bluez/test/test-device /usr/lib/bluez/test/test-discovery /usr/lib/bluez/test/test-gatt-profile /usr/lib/bluez/test/test-health /usr/lib/bluez/test/test-health-sink /usr/lib/bluez/test/test-hfp /usr/lib/bluez/test/test-manager /usr/lib/bluez/test/test-mesh /usr/lib/bluez/test/test-nap /usr/lib/bluez/test/test-network /usr/lib/bluez/test/test-profile /usr/lib/bluez/test/test-sap-server
+FILERDEPENDS:/usr/lib/bluez/test/agent.py:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/example-advertisement:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/example-gatt-client:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/example-gatt-server:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/ftp-client:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/list-devices:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/map-client:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/monitor-bluetooth:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/opp-client:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/pbap-client:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/simple-agent:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/simple-endpoint:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/simple-player:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-adapter:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-device:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-discovery:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-gatt-profile:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-health:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-health-sink:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-hfp:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-manager:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-mesh:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-nap:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-network:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-profile:bluez5-testtools:  /usr/bin/python3
+FILERDEPENDS:/usr/lib/bluez/test/test-sap-server:bluez5-testtools:  /usr/bin/python3
+PKGSIZE:bluez5-testtools: 177385

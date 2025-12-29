@@ -1,0 +1,18 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-netclient: Python Internet Protocol clients
+RDEPENDS:python3-netclient: python3-core python3-crypt python3-datetime python3-email python3-io python3-math python3-mime python3-stringold util-linux-libuuid (>= 2.37.4)
+SECTION: devel/python
+PKG:python3-netclient: python3-netclient
+FILES:python3-netclient:  /usr/lib/python3.10/base64.py /usr/lib/python3.10/ftplib.py /usr/lib/python3.10/hmac.py /usr/lib/python3.10/http /usr/lib/python3.10/http/__pycache__ /usr/lib/python3.10/lib-dynload/_uuid.*.so /usr/lib/python3.10/mimetypes.py /usr/lib/python3.10/nntplib.py /usr/lib/python3.10/poplib.py /usr/lib/python3.10/secrets.py /usr/lib/python3.10/smtplib.py /usr/lib/python3.10/telnetlib.py /usr/lib/python3.10/uuid.py /usr/lib/python3.10/__pycache__/base64.*.pyc /usr/lib/python3.10/__pycache__/ftplib.*.pyc /usr/lib/python3.10/__pycache__/hmac.*.pyc /usr/lib/python3.10/__pycache__/mimetypes.*.pyc /usr/lib/python3.10/__pycache__/nntplib.*.pyc /usr/lib/python3.10/__pycache__/poplib.*.pyc /usr/lib/python3.10/__pycache__/secrets.*.pyc /usr/lib/python3.10/__pycache__/smtplib.*.pyc /usr/lib/python3.10/__pycache__/telnetlib.*.pyc /usr/lib/python3.10/__pycache__/uuid.*.pyc
+FILES_INFO:python3-netclient: {"/usr/lib/python3.10/__pycache__/base64.cpython-310.pyc": 17162, "/usr/lib/python3.10/__pycache__/ftplib.cpython-310.pyc": 28979, "/usr/lib/python3.10/__pycache__/hmac.cpython-310.pyc": 6973, "/usr/lib/python3.10/__pycache__/mimetypes.cpython-310.pyc": 17619, "/usr/lib/python3.10/__pycache__/nntplib.cpython-310.pyc": 31623, "/usr/lib/python3.10/__pycache__/poplib.cpython-310.pyc": 13577, "/usr/lib/python3.10/__pycache__/secrets.cpython-310.pyc": 2175, "/usr/lib/python3.10/__pycache__/smtplib.cpython-310.pyc": 35762, "/usr/lib/python3.10/__pycache__/telnetlib.cpython-310.pyc": 18506, "/usr/lib/python3.10/__pycache__/uuid.cpython-310.pyc": 22467, "/usr/lib/python3.10/base64.py": 20847, "/usr/lib/python3.10/ftplib.py": 35496, "/usr/lib/python3.10/hmac.py": 7717, "/usr/lib/python3.10/http/__init__.py": 6733, "/usr/lib/python3.10/http/__pycache__/__init__.cpython-310.pyc": 6416, "/usr/lib/python3.10/http/__pycache__/client.cpython-310.pyc": 35123, "/usr/lib/python3.10/http/__pycache__/cookiejar.cpython-310.pyc": 53468, "/usr/lib/python3.10/http/__pycache__/cookies.cpython-310.pyc": 15338, "/usr/lib/python3.10/http/__pycache__/server.cpython-310.pyc": 34719, "/usr/lib/python3.10/http/client.py": 56718, "/usr/lib/python3.10/http/cookiejar.py": 77407, "/usr/lib/python3.10/http/cookies.py": 20482, "/usr/lib/python3.10/http/server.py": 47350, "/usr/lib/python3.10/lib-dynload/_uuid.cpython-310-aarch64-linux-gnu.so": 6312, "/usr/lib/python3.10/mimetypes.py": 22539, "/usr/lib/python3.10/nntplib.py": 41023, "/usr/lib/python3.10/poplib.py": 15198, "/usr/lib/python3.10/secrets.py": 2036, "/usr/lib/python3.10/smtplib.py": 45418, "/usr/lib/python3.10/telnetlib.py": 23254, "/usr/lib/python3.10/uuid.py": 27324}
+FILERDEPENDSFLIST:python3-netclient: /usr/lib/python3.10/base64.py /usr/lib/python3.10/lib-dynload/@underscore@uuid.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/smtplib.py
+FILERDEPENDS:/usr/lib/python3.10/base64.py:python3-netclient:  /usr/bin/env
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@uuid.cpython-310-aarch64-linux-gnu.so:python3-netclient:  libuuid.so.1(UUID_2.20)(64bit) libuuid.so.1()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/smtplib.py:python3-netclient:  /usr/bin/env
+PKGSIZE:python3-netclient: 795761

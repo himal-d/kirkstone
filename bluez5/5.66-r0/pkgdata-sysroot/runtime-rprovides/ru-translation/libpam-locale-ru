@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ru: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ru locale.
+SUMMARY:libpam-locale-ru: Linux-PAM (Pluggable Authentication Modules) - ru translations
+RPROVIDES:libpam-locale-ru: libpam-locale ru-translation
+RRECOMMENDS:libpam-locale-ru: virtual-locale-ru
+SECTION: base
+PKG:libpam-locale-ru: libpam-locale-ru
+FILES:libpam-locale-ru: /usr/share/locale/ru
+FILES_INFO:libpam-locale-ru: {"/usr/share/locale/ru/LC_MESSAGES/Linux-PAM.mo": 13398}
+PKGSIZE:libpam-locale-ru: 13398

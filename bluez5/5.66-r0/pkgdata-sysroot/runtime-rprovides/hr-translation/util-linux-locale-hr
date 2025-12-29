@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-hr: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the hr locale.
+SUMMARY:util-linux-locale-hr: A suite of basic system administration utilities - hr translations
+RPROVIDES:util-linux-locale-hr: util-linux-locale hr-translation
+RRECOMMENDS:util-linux-locale-hr: virtual-locale-hr
+SECTION: base
+PKG:util-linux-locale-hr: util-linux-locale-hr
+FILES:util-linux-locale-hr: /usr/share/locale/hr
+FILES_INFO:util-linux-locale-hr: {"/usr/share/locale/hr/LC_MESSAGES/util-linux.mo": 493326}
+PKGSIZE:util-linux-locale-hr: 493326

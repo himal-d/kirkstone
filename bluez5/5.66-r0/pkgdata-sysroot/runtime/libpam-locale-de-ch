@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-de-ch: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the de_CH locale.
+SUMMARY:libpam-locale-de-ch: Linux-PAM (Pluggable Authentication Modules) - de_CH translations
+RPROVIDES:libpam-locale-de-ch: libpam-locale de-ch-translation
+RRECOMMENDS:libpam-locale-de-ch: virtual-locale-de-ch
+SECTION: base
+PKG:libpam-locale-de-ch: libpam-locale-de-ch
+FILES:libpam-locale-de-ch: /usr/share/locale/de_CH
+FILES_INFO:libpam-locale-de-ch: {"/usr/share/locale/de_CH/LC_MESSAGES/Linux-PAM.mo": 511}
+PKGSIZE:libpam-locale-de-ch: 511

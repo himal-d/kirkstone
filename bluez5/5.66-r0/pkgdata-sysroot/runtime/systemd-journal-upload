@@ -1,0 +1,15 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:systemd-journal-upload: systemd-journal-upload uploads journal entries to a specified URL.
+SUMMARY:systemd-journal-upload: Send journal messages over the network
+SECTION: base/shell
+PKG:systemd-journal-upload: systemd-journal-upload
+FILES:systemd-journal-upload: /lib/systemd/systemd-journal-upload                               /lib/systemd/system/systemd-journal-upload.service                               /etc/systemd/journal-upload.conf                              
+FILES_INFO:systemd-journal-upload: {}
+PKGSIZE:systemd-journal-upload: 0

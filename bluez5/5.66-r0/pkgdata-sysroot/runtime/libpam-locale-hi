@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-hi: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the hi locale.
+SUMMARY:libpam-locale-hi: Linux-PAM (Pluggable Authentication Modules) - hi translations
+RPROVIDES:libpam-locale-hi: libpam-locale hi-translation
+RRECOMMENDS:libpam-locale-hi: virtual-locale-hi
+SECTION: base
+PKG:libpam-locale-hi: libpam-locale-hi
+FILES:libpam-locale-hi: /usr/share/locale/hi
+FILES_INFO:libpam-locale-hi: {"/usr/share/locale/hi/LC_MESSAGES/Linux-PAM.mo": 9833}
+PKGSIZE:libpam-locale-hi: 9833

@@ -1,0 +1,13 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-doc: Tools to change and administer password and group data  This package contains documentation.
+SUMMARY:shadow-doc: Tools to change and administer password and group data - Documentation files
+SECTION:shadow-doc: doc
+PKG:shadow-doc: shadow-doc
+FILES:shadow-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:shadow-doc: {}
+PKGSIZE:shadow-doc: 0

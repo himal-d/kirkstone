@@ -1,0 +1,15 @@
+PN: sqlite3
+PE: 3
+PV: 3.31.1
+PR: r0
+PKGE: 3
+PKGV: 3.31.1
+PKGR: r0
+LICENSE: PD
+DESCRIPTION: Embeddable SQL database engine.
+SUMMARY: Embeddable SQL database engine
+SECTION: libs
+PKG:libsqlite3-staticdev: libsqlite3-staticdev
+FILES:libsqlite3-staticdev: /usr/lib/lib*.a
+FILES_INFO:libsqlite3-staticdev: {"/usr/lib/libsqlite3.a": 5256062}
+PKGSIZE:libsqlite3-staticdev: 5256062

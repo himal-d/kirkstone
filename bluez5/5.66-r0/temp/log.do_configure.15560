@@ -1,0 +1,190 @@
+DEBUG: Executing python function extend_recipe_sysroot
+NOTE: Direct dependencies are ['/workspace/home/himal.d/MatterProtocol/meta-gplv2/recipes-core/readline/readline_5.2.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/dbus/dbus_1.14.0.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/ell/ell_0.50.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/glib-2.0/glib-2.0_2.74.6.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/glibc/glibc_2.35.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/systemd/systemd-systemctl-native.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/systemd/systemd_250.5.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/gcc/gcc-cross_11.3.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/gcc/gcc-runtime_11.3.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/json-c/json-c_0.15.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/libtool/libtool-cross_2.4.7.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/libtool/libtool-native_2.4.7.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/quilt/quilt-native_0.67.bb:do_populate_sysroot', '/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-support/libical/libical_3.0.14.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/autoconf/autoconf_2.71.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/automake/automake_1.16.5.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/patch/patch_2.7.6.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/pkgconfig/pkgconfig_git.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/pseudo/pseudo_git.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-extended/xz/xz_5.2.6.bb:do_populate_sysroot']
+NOTE: Installed into sysroot: []
+NOTE: Skipping as already exists in sysroot: ['readline', 'dbus', 'ell', 'glib-2.0', 'glibc', 'systemd-systemctl-native', 'systemd', 'gcc-cross-aarch64', 'gcc-runtime', 'json-c', 'libtool-cross', 'libtool-native', 'quilt-native', 'libical', 'autoconf-native', 'automake-native', 'patch-native', 'pkgconfig-native', 'pseudo-native', 'xz-native', 'texinfo-dummy-native', 'gnu-config-native', 'm4-native', 'gettext-minimal-native', 'libgcc', 'linux-libc-headers', 'binutils-cross-aarch64', 'zstd-native', 'flex-native', 'gmp-native', 'zlib-native', 'mpfr-native', 'libmpc-native', 'vala', 'icu', 'libxml2', 'gobject-introspection', 'expat', 'base-files', 'base-passwd', 'shadow-native', 'autoconf-archive', 'shadow', 'shadow-sysroot', 'attr-native', 'ncurses', 'opkg-utils', 'zstd', 'kmod', 'libcap', 'util-linux', 'bash-completion', 'libffi', 'libpcre2', 'zlib', 'python3', 'libxcrypt', 'attr', 'libpam', 'xz', 'util-linux-libuuid', 'libcap-ng', 'bzip2', 'gdbm', 'openssl', 'libnsl2', 'sqlite3', 'libtirpc', 'cracklib', 'flex']
+DEBUG: Python function extend_recipe_sysroot finished
+DEBUG: Executing shell function autotools_preconfigure
+Previously configured separate build directory detected, cleaning /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/build
+DEBUG: Shell function autotools_preconfigure finished
+DEBUG: Executing python function autotools_aclocals
+DEBUG: SITE files ['endian-little', 'bit-64', 'arm-common', 'arm-64', 'common-linux', 'common-glibc', 'aarch64-linux', 'common']
+DEBUG: Python function autotools_aclocals finished
+DEBUG: Executing shell function do_configure
+automake (GNU automake) 1.16.5
+Copyright (C) 2021 Free Software Foundation, Inc.
+License GPLv2+: GNU GPL version 2 or later <https://gnu.org/licenses/gpl-2.0.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Tom Tromey <tromey@redhat.com>
+       and Alexandre Duret-Lutz <adl@gnu.org>.
+AUTOV is 1.16
+NOTE: Executing ACLOCAL="aclocal --system-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/aclocal/ --automake-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal-1.16" autoreconf -Wcross --verbose --install --force --exclude=autopoint --exclude=gtkdocize -I /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal/
+autoreconf: export WARNINGS=cross,no-obsolete
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: aclocal --system-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/aclocal/ --automake-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal-1.16 -I /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal/ --force 
+autoreconf: configure.ac: tracing
+autoreconf: running: libtoolize --copy --force
+libtoolize: putting auxiliary files in '.'.
+libtoolize: copying file './ltmain.sh'
+libtoolize: Consider adding 'AC_CONFIG_MACRO_DIRS([m4])' to configure.ac,
+libtoolize: and rerunning libtoolize and aclocal.
+libtoolize: Consider adding '-I m4' to ACLOCAL_AMFLAGS in Makefile.am.
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: running: aclocal --system-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/aclocal/ --automake-acdir=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal-1.16 -I /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal/ --force 
+autoreconf: running: /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/autoconf --include=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal/ --force
+autoreconf: running: /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/autoheader --include=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/share/aclocal/ --force
+autoreconf: running: automake --add-missing --copy --force-missing
+configure.ac:21: installing './compile'
+configure.ac:5: installing './missing'
+Makefile.am: installing './depcomp'
+autoreconf: Leaving directory '.'
+NOTE: Running ../bluez-5.66/configure  --build=x86_64-linux 		  --host=aarch64-rdk-linux 		  --target=aarch64-rdk-linux 		  --prefix=/usr 		  --exec_prefix=/usr 		  --bindir=/usr/bin 		  --sbindir=/usr/sbin 		  --libexecdir=/usr/libexec 		  --datadir=/usr/share 		  --sysconfdir=/etc 		  --sharedstatedir=/com 		  --localstatedir=/var 		  --libdir=/usr/lib 		  --includedir=/usr/include 		  --oldincludedir=/usr/include 		  --infodir=/usr/share/info 		  --mandir=/usr/share/man 		  --disable-silent-rules 		  --disable-dependency-tracking 		  --with-libtool-sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot   --enable-test   --enable-datafiles   --enable-library   --without-zsh-completion-dir   --with-systemdsystemunitdir=/lib/systemd/system      --enable-datafiles     --enable-library     --enable-test     --enable-client     --enable-mesh     --enable-obex     --enable-tools     --enable-systemd     --enable-udev     --enable-experimental     --enable-shared     --libdir=/usr/lib   --enable-a2dp --enable-avrcp --disable-btpclient --disable-cups --enable-deprecated --disable-health --enable-hid --enable-hog --disable-manpages --enable-mesh --disable-midi --enable-network --disable-nfc --enable-obex --enable-client --disable-sap --disable-sixaxis --enable-systemd --disable-testing --disable-threads --enable-tools --enable-udev  --localstatedir=/opt/secure 
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/endian-little
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/arm-common
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/arm-64
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/common-linux
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/common-glibc
+configure: loading site script /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/site/common
+configure: loading site script /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/aarch64-rdk-linux_config_site.d/ncurses_config
+checking for a BSD-compatible install... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/install -c
+checking whether build environment is sane... yes
+checking for aarch64-rdk-linux-strip... aarch64-rdk-linux-strip
+checking for a race-free mkdir -p... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking how to create a pax tar archive... gnutar
+checking whether make supports nested variables... (cached) yes
+checking whether to enable maintainer-specific portions of Makefiles... no
+checking for aarch64-rdk-linux-pkg-config... no
+checking for pkg-config... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/pkg-config
+configure: WARNING: using cross tools not prefixed with host triplet
+checking pkg-config is at least version 0.9.0... yes
+checking whether make supports the include directive... yes (GNU style)
+checking for aarch64-rdk-linux-gcc... aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... yes
+checking for suffix of object files... o
+checking whether the compiler supports GNU C... yes
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -g... yes
+checking for aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot option to enable C11 features... none needed
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot understands -c and -o together... yes
+checking dependency style of aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot... none
+checking for C/C++ restrict keyword... __restrict__
+checking for aarch64-rdk-linux-gcc... (cached) aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot
+checking whether the compiler supports GNU C... (cached) yes
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -g... (cached) yes
+checking for aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot option to enable C11 features... (cached) none needed
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot understands -c and -o together... (cached) yes
+checking dependency style of aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot... (cached) none
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -fPIE... yes
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -fsanitize=address... yes
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -fsanitize=leak... yes
+checking whether aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot accepts -fsanitize=undefined... yes
+checking build system type... x86_64-pc-linux-gnu
+checking host system type... aarch64-rdk-linux-gnu
+checking how to print strings... printf
+checking for a sed that does not truncate output... (cached) sed
+checking for grep that handles long lines and -e... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/grep
+checking for egrep... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/grep -E
+checking for fgrep... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/grep -F
+checking for ld used by aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot... aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot 
+checking if the linker (aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot ) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... aarch64-rdk-linux-gcc-nm
+checking the name lister (aarch64-rdk-linux-gcc-nm) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking how to convert x86_64-pc-linux-gnu file names to aarch64-rdk-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-pc-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot  option to reload object files... -r
+checking for aarch64-rdk-linux-file... no
+checking for file... file
+checking for aarch64-rdk-linux-objdump... aarch64-rdk-linux-objdump
+checking how to recognize dependent libraries... pass_all
+checking for aarch64-rdk-linux-dlltool... no
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for aarch64-rdk-linux-ar... aarch64-rdk-linux-gcc-ar
+checking for archiver @FILE support... @
+checking for aarch64-rdk-linux-strip... (cached) aarch64-rdk-linux-strip
+checking for aarch64-rdk-linux-ranlib... aarch64-rdk-linux-gcc-ranlib
+checking command to parse aarch64-rdk-linux-gcc-nm output from aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot object... ok
+checking for sysroot... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot
+checking for a working dd... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/dd
+checking how to truncate binary pipes... /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools/dd bs=4096 count=1
+checking for aarch64-rdk-linux-mt... no
+checking for mt... no
+checking if : is a manifest tool... no
+checking for stdio.h... (cached) yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for strings.h... (cached) yes
+checking for sys/stat.h... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for dlfcn.h... yes
+checking for objdir... .libs
+checking if aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot supports -fno-rtti -fno-exceptions... no
+checking for aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot option to produce PIC... -fPIC -DPIC
+checking if aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot PIC flag -fPIC -DPIC works... yes
+checking if aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot static flag -static works... yes
+checking if aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot supports -c -o file.o... yes
+checking if aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot supports -c -o file.o... (cached) yes
+checking whether the aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot linker (aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot ) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... no
+checking for explicit_bzero... yes
+checking for getrandom... yes
+checking for rawmemchr... yes
+checking for signalfd... yes
+checking for clock_gettime in -lrt... yes
+checking for pthread_create in -lpthread... yes
+checking for dlopen in -ldl... yes
+checking for linux/types.h... yes
+checking for linux/if_alg.h... yes
+checking for linux/uinput.h... yes
+checking for linux/uhid.h... yes
+checking for sys/random.h... yes
+checking for glib-2.0 >= 2.28... yes
+checking for dbus-1 >= 1.6... yes
+checking D-Bus configuration directory... /etc
+checking D-Bus system bus services dir... /usr/share/dbus-1/system-services
+checking D-Bus session bus services dir... /usr/share/dbus-1/services
+checking for libudev >= 172... yes
+checking for udev_hwdb_new in -ludev... yes
+checking udev directory... /lib/udev
+checking for json-c >= 0.13... yes
+checking for libical... yes
+checking for readline/readline.h... yes
+checking systemd user unit dir... /usr/lib/systemd/user
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating src/bluetoothd.rst
+config.status: creating lib/bluez.pc
+config.status: creating mesh/bluetooth-meshd.rst
+config.status: creating config.h
+config.status: executing depfiles commands
+config.status: executing libtool commands
+DEBUG: Shell function do_configure finished
+DEBUG: Executing python function do_qa_configure
+NOTE: Checking autotools environment for common misconfiguration
+NOTE: Checking configure output for unrecognised options
+WARNING: QA Issue: bluez5: invalid PACKAGECONFIG: experimental [invalid-packageconfig]
+WARNING: QA Issue: bluez5: invalid PACKAGECONFIG: client [invalid-packageconfig]
+WARNING: QA Issue: bluez5: invalid PACKAGECONFIG: obex [invalid-packageconfig]
+WARNING: QA Issue: bluez5: invalid PACKAGECONFIG: experimental [invalid-packageconfig]
+DEBUG: Python function do_qa_configure finished
+DEBUG: Executing shell function autotools_postconfigure
+DEBUG: Shell function autotools_postconfigure finished

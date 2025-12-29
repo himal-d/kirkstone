@@ -1,0 +1,12 @@
+diff -Naur bluez-5.65/src/main.conf bluez-5.65_mod/src/main.conf
+--- bluez-5.65/src/main.conf	2022-07-24 21:02:15.000000000 +0000
++++ bluez-5.65_mod/src/main.conf	2023-02-16 00:26:08.938946585 +0000
+@@ -95,7 +95,7 @@
+ # discoverable, and Device Privacy Mode for scanning.
+ #
+ # Defaults to "off"
+-#Privacy = off
++Privacy = device
+ 
+ # Specify the policy to the JUST-WORKS repairing initiated by peer
+ # Possible values: "never", "confirm", "always"

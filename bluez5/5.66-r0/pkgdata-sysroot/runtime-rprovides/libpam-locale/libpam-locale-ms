@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ms: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ms locale.
+SUMMARY:libpam-locale-ms: Linux-PAM (Pluggable Authentication Modules) - ms translations
+RPROVIDES:libpam-locale-ms: libpam-locale ms-translation
+RRECOMMENDS:libpam-locale-ms: virtual-locale-ms
+SECTION: base
+PKG:libpam-locale-ms: libpam-locale-ms
+FILES:libpam-locale-ms: /usr/share/locale/ms
+FILES_INFO:libpam-locale-ms: {"/usr/share/locale/ms/LC_MESSAGES/Linux-PAM.mo": 532}
+PKGSIZE:libpam-locale-ms: 532

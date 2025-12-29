@@ -1,0 +1,4 @@
+#!/bin/sh
+echo 'ERROR: /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/libgcrypt-config should not be used, use an alternative such as pkg-config' >&2
+echo '--should-not-have-used-/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/libgcrypt-config'
+exit 1

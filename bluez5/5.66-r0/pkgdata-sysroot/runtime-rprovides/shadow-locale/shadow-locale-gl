@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-gl: Tools to change and administer password and group data  This package contains language translation files for the gl locale.
+SUMMARY:shadow-locale-gl: Tools to change and administer password and group data - gl translations
+RPROVIDES:shadow-locale-gl: shadow-locale gl-translation
+RRECOMMENDS:shadow-locale-gl: virtual-locale-gl
+SECTION: base/utils
+PKG:shadow-locale-gl: shadow-locale-gl
+FILES:shadow-locale-gl: /usr/share/locale/gl
+FILES_INFO:shadow-locale-gl: {"/usr/share/locale/gl/LC_MESSAGES/shadow.mo": 19054}
+PKGSIZE:shadow-locale-gl: 19054

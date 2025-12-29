@@ -1,0 +1,12 @@
+PN: base-passwd
+PV: 3.5.29
+PR: r0
+PKGV: 3.5.29
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:base-passwd-src: The master copies of the user database files (/etc/passwd and /etc/group).  The update-passwd tool is also provided to keep the system databases synchronized with these master files.  This package contains sources for debugging purposes.
+SUMMARY:base-passwd-src: Base system master password/group files - Source files
+SECTION:base-passwd-src: devel
+PKG:base-passwd-src: base-passwd-src
+FILES_INFO:base-passwd-src: {}
+PKGSIZE:base-passwd-src: 0

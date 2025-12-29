@@ -1,0 +1,22 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-blkid: util-linux blkid
+SUMMARY:util-linux-blkid: util-linux blkid
+RDEPENDS:util-linux-blkid: update-alternatives-opkg glibc (>= 2.35) util-linux-libblkid (>= 2.37.4)
+RREPLACES:util-linux-blkid: e2fsprogs-blkid
+RCONFLICTS:util-linux-blkid: e2fsprogs-blkid
+SECTION: base
+PKG:util-linux-blkid: util-linux-blkid
+FILES:util-linux-blkid: /sbin/blkid.util-linux
+FILES_INFO:util-linux-blkid: {"/sbin/blkid.util-linux": 114176}
+pkg_postinst:util-linux-blkid: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/blkid blkid /sbin/blkid.util-linux 80\n
+pkg_prerm:util-linux-blkid: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  blkid /sbin/blkid.util-linux\n
+FILERPROVIDESFLIST:util-linux-blkid:  /sbin/blkid.util-linux
+FILERPROVIDES:/sbin/blkid.util-linux:util-linux-blkid:  /sbin/blkid
+FILERDEPENDSFLIST:util-linux-blkid: /sbin/blkid.util-linux
+FILERDEPENDS:/sbin/blkid.util-linux:util-linux-blkid:  libblkid.so.1(BLKID_2_37)(64bit) libblkid.so.1(BLKID_2.18)(64bit) libblkid.so.1(BLKID_2.17)(64bit) libblkid.so.1(BLKID_2.20)(64bit) libblkid.so.1(BLKID_2.15)(64bit) libblkid.so.1(BLKID_1.0)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libblkid.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-blkid: 114176

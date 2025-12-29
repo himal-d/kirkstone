@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-id: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the id locale.
+SUMMARY:libpam-locale-id: Linux-PAM (Pluggable Authentication Modules) - id translations
+RPROVIDES:libpam-locale-id: libpam-locale id-translation
+RRECOMMENDS:libpam-locale-id: virtual-locale-id
+SECTION: base
+PKG:libpam-locale-id: libpam-locale-id
+FILES:libpam-locale-id: /usr/share/locale/id
+FILES_INFO:libpam-locale-id: {"/usr/share/locale/id/LC_MESSAGES/Linux-PAM.mo": 4025}
+PKGSIZE:libpam-locale-id: 4025

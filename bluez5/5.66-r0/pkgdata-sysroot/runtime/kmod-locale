@@ -1,0 +1,13 @@
+PN: kmod
+PV: 29
+PR: r0
+PKGV: 29
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: kmod is a set of tools to handle common tasks with Linux kernel modules like                insert, remove, list, check properties, resolve dependencies and aliases.
+SUMMARY: Tools for managing Linux kernel modules
+SECTION: base
+PKG:kmod-locale: kmod-locale
+FILES:kmod-locale: /usr/share/locale
+FILES_INFO:kmod-locale: {}
+PKGSIZE:kmod-locale: 0

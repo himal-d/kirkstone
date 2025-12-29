@@ -1,0 +1,25 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users
+SUMMARY: Linux-PAM (Pluggable Authentication Modules)
+RDEPENDS:libpam-runtime: libpam-suffix pam-plugin-deny-suffix pam-plugin-permit-suffix pam-plugin-unix-suffix pam-plugin-warn-suffix glibc (>= 2.35) libpam (>= 1.5.2) libxcrypt (>= 4.4.33)
+RPROVIDES:libpam-runtime:  libpam-runtime-suffix
+SECTION: base
+PKG:libpam-runtime: libpam-runtime
+FILES:libpam-runtime: /etc /usr/sbin /lib/systemd/system
+CONFFILES:libpam-runtime:  /etc/pam.d/common-session /etc/pam.d/common-auth /etc/pam.d/common-password /etc/pam.d/common-session-noninteractive /etc/pam.d/common-account /etc/security/limits.conf
+FILES_INFO:libpam-runtime: {"/etc/environment": 97, "/etc/pam.d/common-account": 1208, "/etc/pam.d/common-auth": 883, "/etc/pam.d/common-password": 1007, "/etc/pam.d/common-session": 851, "/etc/pam.d/common-session-noninteractive": 818, "/etc/pam.d/other": 816, "/etc/security/access.conf": 4564, "/etc/security/faillock.conf": 2234, "/etc/security/group.conf": 3635, "/etc/security/limits.conf": 2426, "/etc/security/namespace.conf": 1637, "/etc/security/namespace.init": 1016, "/etc/security/pam_env.conf": 2971, "/etc/security/time.conf": 2179, "/etc/tmpfiles.d/pam.conf": 35, "/lib/systemd/system/pam_namespace.service": 331, "/usr/sbin/faillock": 14312, "/usr/sbin/mkhomedir_helper": 18424, "/usr/sbin/pam_namespace_helper": 467, "/usr/sbin/pam_timestamp_check": 10224, "/usr/sbin/pwhistory_helper": 14320, "/usr/sbin/unix_chkpwd": 30696, "/usr/sbin/unix_update": 30696}
+FILERDEPENDSFLIST:libpam-runtime: /etc/security/namespace.init /usr/sbin/faillock /usr/sbin/mkhomedir@underscore@helper /usr/sbin/pam@underscore@namespace@underscore@helper /usr/sbin/pam@underscore@timestamp@underscore@check /usr/sbin/pwhistory@underscore@helper /usr/sbin/unix@underscore@chkpwd /usr/sbin/unix@underscore@update
+FILERDEPENDS:/etc/security/namespace.init:libpam-runtime:  /bin/sh
+FILERDEPENDS:/usr/sbin/faillock:libpam-runtime:  libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/mkhomedir@underscore@helper:libpam-runtime:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/pam@underscore@namespace@underscore@helper:libpam-runtime:  /bin/sh
+FILERDEPENDS:/usr/sbin/pam@underscore@timestamp@underscore@check:libpam-runtime:  libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/pwhistory@underscore@helper:libpam-runtime:  libcrypt.so.2(XCRYPT_2.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/unix@underscore@chkpwd:libpam-runtime:  libcrypt.so.2(XCRYPT_2.0)(64bit) libcrypt.so.2(XCRYPT_4.3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/unix@underscore@update:libpam-runtime:  libcrypt.so.2(XCRYPT_2.0)(64bit) libcrypt.so.2(XCRYPT_4.3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libpam-runtime: 145847

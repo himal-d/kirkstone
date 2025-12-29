@@ -1,0 +1,18 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-ctypes: Python C types support
+RDEPENDS:python3-ctypes: ldconfig python3-core python3-crypt python3-io python3-math glibc (>= 2.35) libffi (>= 3.4.2)
+SECTION: devel/python
+PKG:python3-ctypes: python3-ctypes
+FILES:python3-ctypes:  /usr/lib/python3.10/ctypes /usr/lib/python3.10/lib-dynload/_ctypes.*.so /usr/lib/python3.10/lib-dynload/_ctypes_test.*.so
+FILES_INFO:python3-ctypes: {"/usr/lib/python3.10/ctypes/__init__.py": 17988, "/usr/lib/python3.10/ctypes/__pycache__/__init__.cpython-310.pyc": 15882, "/usr/lib/python3.10/ctypes/__pycache__/_aix.cpython-310.pyc": 9870, "/usr/lib/python3.10/ctypes/__pycache__/_endian.cpython-310.pyc": 1901, "/usr/lib/python3.10/ctypes/__pycache__/util.cpython-310.pyc": 8312, "/usr/lib/python3.10/ctypes/__pycache__/wintypes.cpython-310.pyc": 4858, "/usr/lib/python3.10/ctypes/_aix.py": 12575, "/usr/lib/python3.10/ctypes/_endian.py": 2000, "/usr/lib/python3.10/ctypes/macholib/README.ctypes": 296, "/usr/lib/python3.10/ctypes/macholib/__init__.py": 154, "/usr/lib/python3.10/ctypes/macholib/__pycache__/__init__.cpython-310.pyc": 302, "/usr/lib/python3.10/ctypes/macholib/__pycache__/dyld.cpython-310.pyc": 4622, "/usr/lib/python3.10/ctypes/macholib/__pycache__/dylib.cpython-310.pyc": 1909, "/usr/lib/python3.10/ctypes/macholib/__pycache__/framework.cpython-310.pyc": 2189, "/usr/lib/python3.10/ctypes/macholib/dyld.py": 5283, "/usr/lib/python3.10/ctypes/macholib/dylib.py": 1828, "/usr/lib/python3.10/ctypes/macholib/fetch_macholib": 84, "/usr/lib/python3.10/ctypes/macholib/fetch_macholib.bat": 75, "/usr/lib/python3.10/ctypes/macholib/framework.py": 2201, "/usr/lib/python3.10/ctypes/util.py": 13879, "/usr/lib/python3.10/ctypes/wintypes.py": 5628, "/usr/lib/python3.10/lib-dynload/_ctypes.cpython-310-aarch64-linux-gnu.so": 115072, "/usr/lib/python3.10/lib-dynload/_ctypes_test.cpython-310-aarch64-linux-gnu.so": 31088}
+FILERDEPENDSFLIST:python3-ctypes: /usr/lib/python3.10/ctypes/macholib/fetch@underscore@macholib /usr/lib/python3.10/lib-dynload/@underscore@ctypes.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/@underscore@ctypes@underscore@test.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/ctypes/macholib/fetch@underscore@macholib:python3-ctypes:  /bin/sh
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@ctypes.cpython-310-aarch64-linux-gnu.so:python3-ctypes:  libffi.so.8(LIBFFI_CLOSURE_8.0)(64bit) libffi.so.8(LIBFFI_BASE_8.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libffi.so.8()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@ctypes@underscore@test.cpython-310-aarch64-linux-gnu.so:python3-ctypes:  libm.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-ctypes: 257996

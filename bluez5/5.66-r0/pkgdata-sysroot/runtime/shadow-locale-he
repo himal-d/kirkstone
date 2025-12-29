@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-he: Tools to change and administer password and group data  This package contains language translation files for the he locale.
+SUMMARY:shadow-locale-he: Tools to change and administer password and group data - he translations
+RPROVIDES:shadow-locale-he: shadow-locale he-translation
+RRECOMMENDS:shadow-locale-he: virtual-locale-he
+SECTION: base/utils
+PKG:shadow-locale-he: shadow-locale-he
+FILES:shadow-locale-he: /usr/share/locale/he
+FILES_INFO:shadow-locale-he: {"/usr/share/locale/he/LC_MESSAGES/shadow.mo": 4599}
+PKGSIZE:shadow-locale-he: 4599

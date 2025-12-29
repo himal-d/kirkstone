@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-sv: Password strength checker library  This package contains language translation files for the sv locale.
+SUMMARY:cracklib-locale-sv: Password strength checker library - sv translations
+RPROVIDES:cracklib-locale-sv: cracklib-locale sv-translation
+RRECOMMENDS:cracklib-locale-sv: virtual-locale-sv
+SECTION: base
+PKG:cracklib-locale-sv: cracklib-locale-sv
+FILES:cracklib-locale-sv: /usr/share/locale/sv
+FILES_INFO:cracklib-locale-sv: {"/usr/share/locale/sv/LC_MESSAGES/cracklib.mo": 1902}
+PKGSIZE:cracklib-locale-sv: 1902

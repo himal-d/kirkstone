@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ko: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ko locale.
+SUMMARY:libpam-locale-ko: Linux-PAM (Pluggable Authentication Modules) - ko translations
+RPROVIDES:libpam-locale-ko: libpam-locale ko-translation
+RRECOMMENDS:libpam-locale-ko: virtual-locale-ko
+SECTION: base
+PKG:libpam-locale-ko: libpam-locale-ko
+FILES:libpam-locale-ko: /usr/share/locale/ko
+FILES_INFO:libpam-locale-ko: {"/usr/share/locale/ko/LC_MESSAGES/Linux-PAM.mo": 10148}
+PKGSIZE:libpam-locale-ko: 10148

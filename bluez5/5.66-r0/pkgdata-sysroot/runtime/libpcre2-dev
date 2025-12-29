@@ -1,0 +1,18 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:libpcre2-dev: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:libpcre2-dev: Perl Compatible Regular Expressions version 2 - Development files
+RDEPENDS:libpcre2-dev: libpcre2 (= 10.40-r0) libpcre2-16 libpcre2-32
+RRECOMMENDS:libpcre2-dev: bzip2-dev zlib-dev glibc-dev libpcre2-16-dev libpcre2-32-dev
+SECTION:libpcre2-dev: devel
+PKG:libpcre2-dev: libpcre2-dev
+ALLOW_EMPTY:libpcre2-dev: 1
+FILES:libpcre2-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/libpcre2/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake /usr/bin/*-config
+FILES_INFO:libpcre2-dev: {"/usr/bin/pcre2-config": 167, "/usr/include/pcre2.h": 47257, "/usr/include/pcre2posix.h": 6677, "/usr/lib/libpcre2-16.so": 21, "/usr/lib/libpcre2-32.so": 21, "/usr/lib/libpcre2-8.so": 20, "/usr/lib/libpcre2-posix.so": 23, "/usr/lib/pkgconfig/libpcre2-16.pc": 318, "/usr/lib/pkgconfig/libpcre2-32.pc": 318, "/usr/lib/pkgconfig/libpcre2-8.pc": 315, "/usr/lib/pkgconfig/libpcre2-posix.pc": 284}
+FILERDEPENDSFLIST:libpcre2-dev: /usr/bin/pcre2-config
+FILERDEPENDS:/usr/bin/pcre2-config:libpcre2-dev:  /bin/sh
+PKGSIZE:libpcre2-dev: 55421

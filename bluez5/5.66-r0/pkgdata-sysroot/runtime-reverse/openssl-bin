@@ -1,0 +1,16 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+RDEPENDS:openssl-bin: openssl-conf glibc (>= 2.35) libcrypto (>= 3.0.5) libssl (>= 3.0.5)
+SECTION: libs/network
+PKG:openssl-bin: openssl-bin
+FILES:openssl-bin: /usr/bin/* /usr/sbin/*
+FILES_INFO:openssl-bin: {"/usr/bin/openssl": 737120}
+FILERDEPENDSFLIST:openssl-bin: /usr/bin/openssl
+FILERDEPENDS:/usr/bin/openssl:openssl-bin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libssl.so.3(OPENSSL_3.0.0)(64bit) libcrypto.so.3(OPENSSL_3.0.3)(64bit) libcrypto.so.3(OPENSSL_3.0.0)(64bit) libssl.so.3()(64bit) libcrypto.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:openssl-bin: 737120

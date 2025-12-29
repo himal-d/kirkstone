@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-nb: Password strength checker library  This package contains language translation files for the nb locale.
+SUMMARY:cracklib-locale-nb: Password strength checker library - nb translations
+RPROVIDES:cracklib-locale-nb: cracklib-locale nb-translation
+RRECOMMENDS:cracklib-locale-nb: virtual-locale-nb
+SECTION: base
+PKG:cracklib-locale-nb: cracklib-locale-nb
+FILES:cracklib-locale-nb: /usr/share/locale/nb
+FILES_INFO:cracklib-locale-nb: {"/usr/share/locale/nb/LC_MESSAGES/cracklib.mo": 1816}
+PKGSIZE:cracklib-locale-nb: 1816

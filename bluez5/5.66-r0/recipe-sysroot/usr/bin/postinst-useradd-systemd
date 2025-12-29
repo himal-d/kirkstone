@@ -1,0 +1,301 @@
+#!/bin/sh
+export AR="aarch64-rdk-linux-gcc-ar"
+export AS="aarch64-rdk-linux-as "
+export BUILD_AR="ar"
+export BUILD_AS="as "
+export BUILD_CC="gcc "
+export BUILD_CCLD="gcc "
+export BUILD_CFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export BUILD_CPP="gcc  -E"
+export BUILD_CPPFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include"
+export BUILD_CXX="g++ "
+export BUILD_CXXFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export BUILD_FC="gfortran "
+export BUILD_LD="ld "
+export BUILD_LDFLAGS="-L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,--enable-new-dtags                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-O1"
+export BUILD_NM="nm"
+export BUILD_RANLIB="ranlib -D"
+export BUILD_STRIP="strip"
+export CC="aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CCLD="aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CFLAGS=" -Os -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native= "
+export CPP="aarch64-rdk-linux-gcc -E --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot  -mcpu=cortex-a72 -march=armv8-a+crc "
+export CPPFLAGS=""
+export CXX="aarch64-rdk-linux-g++  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CXXFLAGS=" -Os -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden"
+export FC="aarch64-rdk-linux-gfortran  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export GETTEXTDATADIRS=":/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/gettext"
+export GIT_CEILING_DIRECTORIES="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0"
+export HOME="/workspace/home/himal.d"
+export LC_ALL="en_US.UTF-8"
+export LD="aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot "
+export LDFLAGS="-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0=/usr/src/debug/systemd/1_250.5-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native=   "
+export LOGNAME="himal.d"
+export MAKE="make"
+export NM="aarch64-rdk-linux-gcc-nm"
+export OBJCOPY="aarch64-rdk-linux-objcopy"
+export OBJDUMP="aarch64-rdk-linux-objdump"
+export OMP_NUM_THREADS="48"
+export PATH="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/python3-native:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/perl-native:/workspace/home/himal.d/MatterProtocol/openembedded-core/scripts:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/aarch64-rdk-linux:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/crossscripts:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/sbin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/sbin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/bin:/workspace/home/himal.d/MatterProtocol/openembedded-core/bitbake/bin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools"
+export PERL_HASH_SEED="0"
+export PKG_CONFIG_DIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig"
+export PKG_CONFIG_DISABLE_UNINSTALLED="yes"
+export PKG_CONFIG_LIBDIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig"
+export PKG_CONFIG_PATH="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/pkgconfig"
+export PKG_CONFIG_SYSROOT_DIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export PKG_CONFIG_SYSTEM_INCLUDE_PATH="/usr/include"
+export PKG_CONFIG_SYSTEM_LIBRARY_PATH="/lib:/usr/lib"
+export PSEUDO_DISABLED="1"
+export PSEUDO_UNLOAD="1"
+export PYTHON="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/python3-native/python3"
+export PYTHONHASHSEED="0"
+export PYTHONNOUSERSITE="1"
+export PYTHON_INCLUDE_DIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/include/python3.10"
+export PYTHON_LIBRARY="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/libpython3.10.so"
+export RANLIB="aarch64-rdk-linux-gcc-ranlib"
+export READELF="aarch64-rdk-linux-readelf"
+unset SHELL
+export SOURCE_DATE_EPOCH="1651167745"
+export SOURCE_DATE_EPOCH_FALLBACK="1302044400"
+export STAGING_DIR_HOST="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export STAGING_INCDIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/include"
+export STAGING_LIBDIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib"
+export STRINGS="aarch64-rdk-linux-strings"
+export STRIP="aarch64-rdk-linux-strip"
+export TZ="UTC"
+export USER="himal.d"
+export base_bindir="/bin"
+export base_libdir="/lib"
+export base_prefix=""
+export base_sbindir="/sbin"
+export bindir="/usr/bin"
+export datadir="/usr/share"
+export docdir="/usr/share/doc"
+export exec_prefix="/usr"
+export includedir="/usr/include"
+export infodir="/usr/share/info"
+export libdir="/usr/lib"
+export libexecdir="/usr/libexec"
+export localstatedir="/var"
+export mandir="/usr/share/man"
+export nonarch_base_libdir="/lib"
+export nonarch_libdir="/usr/lib"
+export oldincludedir="/usr/include"
+export prefix="/usr"
+export sbindir="/usr/sbin"
+export servicedir="/srv"
+export sharedstatedir="/com"
+export sysconfdir="/etc"
+export systemd_system_unitdir="/lib/systemd/system"
+export systemd_unitdir="/lib/systemd"
+export systemd_user_unitdir="/usr/lib/systemd/user"
+
+# line: 99, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/useradd.bbclass
+useradd_sysroot() {
+	# Pseudo may (do_prepare_recipe_sysroot) or may not (do_populate_sysroot_setscene) be running
+	# at this point so we're explicit about the environment so pseudo can load if
+	# not already present.
+	# PSEUDO_SYSROOT can contain references to the build architecture and COMPONENT_DIR
+	# so needs the STAGING_FIXME below
+	export PSEUDO="PSEUDO_PREFIX=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/sysroots-components/x86_64/pseudo-native/usr PSEUDO_LOCALSTATEDIR=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/pseudo/ PSEUDO_PASSWD=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/sysroots-components/x86_64/pseudo-native PSEUDO_NOSYMLINKEXP=1 PSEUDO_IGNORE_PATHS=/usr/,/etc/,/lib,/dev/,/run/,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/temp,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot,/workspace/home/himal.d/MatterProtocol/sstate-cache,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/stamps,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/sstate-control,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/buildstats,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/sysroots-components,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/pkgdata,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/deploy-,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/sstate-build-package_,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/sstate-install-package_,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/pkgdata-sysroot,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/deploy,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/buildhistory,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/cache,/workspace/home/himal.d/MatterProtocol/openembedded-core/scripts,/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/files/common-licenses,/workspace/home/himal.d/MatterProtocol/meta-raspberrypi/files/custom-licenses,/workspace/home/himal.d/MatterProtocol/meta-cmf/licenses,/workspace/home/himal.d/MatterProtocol/meta-rdk/licenses,/workspace/home/himal.d/MatterProtocol/meta-openembedded/meta-webserver/licenses,/workspace/home/himal.d/MatterProtocol/meta-openembedded/meta-multimedia/licenses,/workspace/home/himal.d/MatterProtocol/meta-openembedded/meta-oe/licenses,/workspace/home/himal.d/MatterProtocol/meta-openembedded/meta-networking/licenses,/workspace/home/himal.d/MatterProtocol/meta-gplv2/licenses,/workspace/home/himal.d/MatterProtocol/meta-virtualization/files/custom-licenses,/workspace/home/himal.d/MatterProtocol/meta-rdk-broadband/licenses,/workspace/home/himal.d/MatterProtocol/meta-openembedded/meta-python/licenses,/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/COPYING,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/git,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/systemd/1_250.5-r0/build PSEUDO_DISABLED=0 /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/sysroots-components/x86_64/pseudo-native/usr/bin/pseudo"
+
+	# Explicitly set $D since it isn't set to anything
+	# before do_prepare_recipe_sysroot
+	D=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot
+
+	# base-passwd's postinst may not have run yet in which case we'll get called later, just exit.
+	# Beware that in some cases we might see the fake pseudo passwd here, in which case we also must
+	# exit.
+	if [ ! -f $D/etc/passwd ] ||
+			grep -q this-is-the-pseudo-passwd $D/etc/passwd; then
+		exit 0
+	fi
+
+	# It is also possible we may be in a recipe which doesn't have useradd dependencies and hence the
+	# useradd/groupadd tools are unavailable. If there is no dependency, we assume we don't want to
+	# create users in the sysroot
+	if ! command -v useradd; then
+		bbwarn "command useradd not found!"
+		exit 0
+	fi
+
+	# Add groups and users defined for all recipe packages
+	GROUPADD_PARAM="-r systemd-journal"
+	USERADD_PARAM="; --system -d / -M --shell /sbin/nologin systemd-bus-proxy"
+	GROUPMEMS_PARAM=""
+
+	# Tell the system to use the environment vars
+	UA_SYSROOT=1
+
+	useradd_preinst
+}
+
+# line: 32, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/logging.bbclass
+bbwarn() {
+	if [ -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703 ] ; then
+		printf "%b\0" "bbwarn $*" > /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703
+	else
+		echo "WARNING: $*"
+	fi
+}
+
+# line: 16, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/useradd.bbclass
+useradd_preinst() {
+OPT=""
+SYSROOT=""
+
+if test "x$D" != "x"; then
+	# Installing into a sysroot
+	SYSROOT="$D"
+	OPT="--root $D"
+
+	# Make sure login.defs is there, this is to make debian package backend work
+	# correctly while doing rootfs.
+	# The problem here is that if /etc/login.defs is treated as a config file for
+	# shadow package, then while performing preinsts for packages that depend on
+	# shadow, there might only be /etc/login.def.dpkg-new there in root filesystem.
+	if [ ! -e $D/etc/login.defs -a -e $D/etc/login.defs.dpkg-new ]; then
+	    cp $D/etc/login.defs.dpkg-new $D/etc/login.defs
+	fi
+
+	# user/group lookups should match useradd/groupadd --root
+	export PSEUDO_PASSWD="$SYSROOT"
+fi
+
+# If we're not doing a special SSTATE/SYSROOT install
+# then set the values, otherwise use the environment
+if test "x$UA_SYSROOT" = "x"; then
+	# Installing onto a target
+	# Add groups and users defined only for this package
+	GROUPADD_PARAM="${GROUPADD_PARAM}"
+	USERADD_PARAM="${USERADD_PARAM}"
+	GROUPMEMS_PARAM="${GROUPMEMS_PARAM}"
+fi
+
+# Perform group additions first, since user additions may depend
+# on these groups existing
+if test "x`echo $GROUPADD_PARAM | tr -d '[:space:]'`" != "x"; then
+	echo "Running groupadd commands..."
+	# Invoke multiple instances of groupadd for parameter lists
+	# separated by ';'
+	opts=`echo "$GROUPADD_PARAM" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+	remaining=`echo "$GROUPADD_PARAM" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	while test "x$opts" != "x"; do
+		perform_groupadd "$SYSROOT" "$OPT $opts"
+		if test "x$opts" = "x$remaining"; then
+			break
+		fi
+		opts=`echo "$remaining" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+		remaining=`echo "$remaining" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	done
+fi
+
+if test "x`echo $USERADD_PARAM | tr -d '[:space:]'`" != "x"; then
+	echo "Running useradd commands..."
+	# Invoke multiple instances of useradd for parameter lists
+	# separated by ';'
+	opts=`echo "$USERADD_PARAM" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+	remaining=`echo "$USERADD_PARAM" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	while test "x$opts" != "x"; do
+		perform_useradd "$SYSROOT" "$OPT $opts"
+		if test "x$opts" = "x$remaining"; then
+			break
+		fi
+		opts=`echo "$remaining" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+		remaining=`echo "$remaining" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	done
+fi
+
+if test "x`echo $GROUPMEMS_PARAM | tr -d '[:space:]'`" != "x"; then
+	echo "Running groupmems commands..."
+	# Invoke multiple instances of groupmems for parameter lists
+	# separated by ';'
+	opts=`echo "$GROUPMEMS_PARAM" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+	remaining=`echo "$GROUPMEMS_PARAM" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	while test "x$opts" != "x"; do
+		perform_groupmems "$SYSROOT" "$OPT $opts"
+		if test "x$opts" = "x$remaining"; then
+			break
+		fi
+		opts=`echo "$remaining" | cut -d ';' -f 1 | sed -e 's#[ \t]*$##'`
+		remaining=`echo "$remaining" | cut -d ';' -f 2- | sed -e 's#[ \t]*$##'`
+	done
+fi
+}
+
+# line: 13, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/useradd_base.bbclass
+perform_groupadd() {
+	local rootdir="$1"
+	local opts="$2"
+	bbnote "systemd: Performing groupadd with [$opts]"
+	local groupname=`echo "$opts" | awk '{ print $NF }'`
+	local group_exists="`grep "^$groupname:" $rootdir/etc/group || true`"
+	if test "x$group_exists" = "x"; then
+		eval flock -x $rootdir/etc -c \"$PSEUDO groupadd \$opts\" || true
+		group_exists="`grep "^$groupname:" $rootdir/etc/group || true`"
+		if test "x$group_exists" = "x"; then
+			bbfatal "systemd: groupadd command did not succeed."
+		fi
+	else
+		bbnote "systemd: group $groupname already exists, not re-creating it"
+	fi
+}
+
+# line: 47, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/useradd_base.bbclass
+perform_groupmems() {
+	local rootdir="$1"
+	local opts="$2"
+	bbnote "systemd: Performing groupmems with [$opts]"
+	local groupname=`echo "$opts" | awk '{ for (i = 1; i < NF; i++) if ($i == "-g" || $i == "--group") print $(i+1) }'`
+	local username=`echo "$opts" | awk '{ for (i = 1; i < NF; i++) if ($i == "-a" || $i == "--add") print $(i+1) }'`
+	bbnote "systemd: Running groupmems command with group $groupname and user $username"
+	local mem_exists="`grep "^$groupname:[^:]*:[^:]*:\([^,]*,\)*$username\(,[^,]*\)*$" $rootdir/etc/group || true`"
+	if test "x$mem_exists" = "x"; then
+		eval flock -x $rootdir/etc -c \"$PSEUDO groupmems \$opts\" || true
+		mem_exists="`grep "^$groupname:[^:]*:[^:]*:\([^,]*,\)*$username\(,[^,]*\)*$" $rootdir/etc/group || true`"
+		if test "x$mem_exists" = "x"; then
+			bbfatal "systemd: groupmems command did not succeed."
+		fi
+	else
+		bbnote "systemd: group $groupname already contains $username, not re-adding it"
+	fi
+}
+
+# line: 30, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/useradd_base.bbclass
+perform_useradd() {
+	local rootdir="$1"
+	local opts="$2"
+	bbnote "systemd: Performing useradd with [$opts]"
+	local username=`echo "$opts" | awk '{ print $NF }'`
+	local user_exists="`grep "^$username:" $rootdir/etc/passwd || true`"
+	if test "x$user_exists" = "x"; then
+		eval flock -x $rootdir/etc -c  \"$PSEUDO useradd \$opts\" || true
+		user_exists="`grep "^$username:" $rootdir/etc/passwd || true`"
+		if test "x$user_exists" = "x"; then
+			bbfatal "systemd: useradd command did not succeed."
+		fi
+	else
+		bbnote "systemd: user $username already exists, not re-creating it"
+	fi
+}
+
+# line: 54, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/logging.bbclass
+bbfatal() {
+	if [ -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703 ] ; then
+		printf "%b\0" "bbfatal $*" > /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703
+	else
+		echo "ERROR: $*"
+	fi
+	exit 1
+}
+
+# line: 21, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/logging.bbclass
+bbnote() {
+	if [ -p /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703 ] ; then
+		printf "%b\0" "bbnote $*" > /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/temp/fifo.16703
+	else
+		echo "NOTE: $*"
+	fi
+}
+
+useradd_sysroot

@@ -1,0 +1,20 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.
+SUMMARY: International Component for Unicode libraries
+RDEPENDS:libicuuc: glibc (>= 2.35) libgcc (>= 11.3.0) libicudata (>= 70.1) libstdc++ (>= 11.3.0)
+RPROVIDES:libicuuc:  libicuuc (=70.1)
+SECTION: base
+PKG:libicuuc: libicuuc70
+FILES:libicuuc: /usr/lib/libicuuc.so.*
+FILES_INFO:libicuuc: {"/usr/lib/libicuuc.so.70": 16, "/usr/lib/libicuuc.so.70.1": 1817288}
+pkg_postinst:libicuuc: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libicuuc: /usr/lib/libicuuc.so.70.1
+FILERPROVIDES:/usr/lib/libicuuc.so.70.1:libicuuc:  libicuuc.so.70()(64bit)
+FILERDEPENDSFLIST:libicuuc: /usr/lib/libicuuc.so.70.1
+FILERDEPENDS:/usr/lib/libicuuc.so.70.1:libicuuc:  libgcc_s.so.1(GCC_3.0)(64bit) libstdc++.so.6(CXXABI_1.3.8)(64bit) libstdc++.so.6(GLIBCXX_3.4)(64bit) libstdc++.so.6(CXXABI_1.3)(64bit) libstdc++.so.6(GLIBCXX_3.4.11)(64bit) libm.so.6(GLIBC_2.27)(64bit) libm.so.6(GLIBC_2.29)(64bit) libm.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libicudata.so.70()(64bit) libpthread.so.0()(64bit) libstdc++.so.6()(64bit) libm.so.6()(64bit) libgcc_s.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libicuuc: 1817304

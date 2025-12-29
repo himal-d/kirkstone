@@ -1,0 +1,14 @@
+PN: libnsl2
+PV: 2.0.0
+PR: r0
+PKGV: 2.0.0
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION: This library contains the public client interface for NIS(YP) and NIS+               it was part of glibc and now is standalone packages. it also supports IPv6
+SUMMARY: Library containing NIS functions using TI-RPC (IPv6 enabled)
+RPROVIDES:libnsl2-locale:  libnsl2-locale (=2.0.0)
+SECTION: libs
+PKG:libnsl2-locale: libnsl-locale
+FILES:libnsl2-locale: /usr/share/locale
+FILES_INFO:libnsl2-locale: {}
+PKGSIZE:libnsl2-locale: 0

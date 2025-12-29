@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-datetime: Python calendar and time support
+RDEPENDS:python3-datetime: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-datetime: python3-datetime
+FILES:python3-datetime:  /usr/lib/python3.10/_strptime.py /usr/lib/python3.10/calendar.py /usr/lib/python3.10/datetime.py /usr/lib/python3.10/lib-dynload/_datetime.*.so /usr/lib/python3.10/__pycache__/_strptime.*.pyc /usr/lib/python3.10/__pycache__/calendar.*.pyc /usr/lib/python3.10/__pycache__/datetime.*.pyc
+FILES_INFO:python3-datetime: {"/usr/lib/python3.10/__pycache__/_strptime.cpython-310.pyc": 15951, "/usr/lib/python3.10/__pycache__/calendar.cpython-310.pyc": 26303, "/usr/lib/python3.10/__pycache__/datetime.cpython-310.pyc": 56535, "/usr/lib/python3.10/_strptime.py": 25277, "/usr/lib/python3.10/calendar.py": 24575, "/usr/lib/python3.10/datetime.py": 88059, "/usr/lib/python3.10/lib-dynload/_datetime.cpython-310-aarch64-linux-gnu.so": 84320}
+FILERDEPENDSFLIST:python3-datetime: /usr/lib/python3.10/lib-dynload/@underscore@datetime.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@datetime.cpython-310-aarch64-linux-gnu.so:python3-datetime:  libm.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-datetime: 321020

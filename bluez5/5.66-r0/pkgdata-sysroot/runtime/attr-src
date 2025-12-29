@@ -1,0 +1,12 @@
+PN: attr
+PV: 2.5.1
+PR: r0
+PKGV: 2.5.1
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & GPL-2.0-or-later
+DESCRIPTION:attr-src: Implement the ability for a user to attach name:value pairs to objects within the XFS filesystem.  This package contains sources for debugging purposes.
+SUMMARY:attr-src: Utilities for manipulating filesystem extended attributes - Source files
+SECTION:attr-src: devel
+PKG:attr-src: attr-src
+FILES_INFO:attr-src: {}
+PKGSIZE:attr-src: 0

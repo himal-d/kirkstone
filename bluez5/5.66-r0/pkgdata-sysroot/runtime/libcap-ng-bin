@@ -1,0 +1,19 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.
+SUMMARY: An alternate posix capabilities library
+RDEPENDS:libcap-ng-bin: glibc (>= 2.35) libcap-ng (>= 0.8.2)
+SECTION: base
+PKG:libcap-ng-bin: libcap-ng-bin
+FILES:libcap-ng-bin: /usr/bin/* /usr/sbin/*
+FILES_INFO:libcap-ng-bin: {"/usr/bin/captest": 10496, "/usr/bin/filecap": 10520, "/usr/bin/netcap": 14672, "/usr/bin/pscap": 10560}
+FILERDEPENDSFLIST:libcap-ng-bin: /usr/bin/captest /usr/bin/filecap /usr/bin/netcap /usr/bin/pscap
+FILERDEPENDS:/usr/bin/captest:libcap-ng-bin:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap-ng.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/filecap:libcap-ng-bin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap-ng.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/netcap:libcap-ng-bin:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap-ng.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/pscap:libcap-ng-bin:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap-ng.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libcap-ng-bin: 46248

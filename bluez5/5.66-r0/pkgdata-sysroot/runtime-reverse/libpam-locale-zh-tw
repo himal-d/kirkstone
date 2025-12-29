@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-zh-tw: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the zh_TW locale.
+SUMMARY:libpam-locale-zh-tw: Linux-PAM (Pluggable Authentication Modules) - zh_TW translations
+RPROVIDES:libpam-locale-zh-tw: libpam-locale zh-tw-translation
+RRECOMMENDS:libpam-locale-zh-tw: virtual-locale-zh-tw
+SECTION: base
+PKG:libpam-locale-zh-tw: libpam-locale-zh-tw
+FILES:libpam-locale-zh-tw: /usr/share/locale/zh_TW
+FILES_INFO:libpam-locale-zh-tw: {"/usr/share/locale/zh_TW/LC_MESSAGES/Linux-PAM.mo": 9083}
+PKGSIZE:libpam-locale-zh-tw: 9083

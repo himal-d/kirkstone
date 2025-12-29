@@ -1,0 +1,13 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:gdbm-doc: Key/value database library with extensible hashing.  This package contains documentation.
+SUMMARY:gdbm-doc: Key/value database library with extensible hashing - Documentation files
+SECTION:gdbm-doc: doc
+PKG:gdbm-doc: gdbm-doc
+FILES:gdbm-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:gdbm-doc: {"/usr/share/info/gdbm.info": 26051, "/usr/share/man/man3/gdbm.3": 14948}
+PKGSIZE:gdbm-doc: 40999

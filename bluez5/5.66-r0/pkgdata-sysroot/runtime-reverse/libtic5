@@ -1,0 +1,20 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:ncurses-libtic: ncurses tic library
+SUMMARY:ncurses-libtic: ncurses tic library
+RDEPENDS:ncurses-libtic: glibc (>= 2.35) ncurses-libtinfo (>= 6.3+20220423)
+RPROVIDES:ncurses-libtic:  ncurses-libtic (=6.3+20220423)
+SECTION: libs
+PKG:ncurses-libtic: libtic5
+FILES:ncurses-libtic: /usr/lib/libtic.so.5 /usr/lib/libtic.so.5.9
+FILES_INFO:ncurses-libtic: {"/usr/lib/libtic.so.5": 13, "/usr/lib/libtic.so.5.9": 51816}
+pkg_postinst:ncurses-libtic: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:ncurses-libtic: /usr/lib/libtic.so.5.9
+FILERPROVIDES:/usr/lib/libtic.so.5.9:ncurses-libtic:  libtic.so.5()(64bit)
+FILERDEPENDSFLIST:ncurses-libtic: /usr/lib/libtic.so.5.9
+FILERDEPENDS:/usr/lib/libtic.so.5.9:ncurses-libtic:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ncurses-libtic: 51829

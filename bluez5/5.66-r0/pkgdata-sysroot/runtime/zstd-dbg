@@ -1,0 +1,15 @@
+PN: zstd
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: BSD-3-Clause & GPL-2.0-only
+DESCRIPTION:zstd-dbg: Zstandard is a fast lossless compression algorithm, targeting real-time compression scenarios at zlib-level and better compression ratios. It's backed by a very fast entropy stage, provided by Huff0 and FSE library.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:zstd-dbg: Zstandard - Fast real-time compression algorithm - Debugging files
+RRECOMMENDS:zstd-dbg: glibc-dbg libgcc-dbg libstdc++-dbg
+SECTION:zstd-dbg: devel
+PKG:zstd-dbg: zstd-dbg
+ALLOW_EMPTY:zstd-dbg: 1
+FILES:zstd-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:zstd-dbg: {"/usr/bin/.debug/pzstd": 3562280, "/usr/bin/.debug/zstd": 3127304, "/usr/lib/.debug/libzstd.so.1.5.2": 2830512}
+PKGSIZE:zstd-dbg: 9520096

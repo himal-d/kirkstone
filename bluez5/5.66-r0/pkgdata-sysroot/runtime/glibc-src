@@ -1,0 +1,13 @@
+PN: glibc
+PV: 2.35
+PR: r0
+PKGV: 2.35
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:glibc-src: The GNU C Library is used as the system C library in most systems with the Linux kernel.  This package contains sources for debugging purposes.
+SUMMARY:glibc-src: GLIBC (GNU C Library) - Source files
+RPROVIDES:glibc-src:  glibc-src (=2.35)
+SECTION:glibc-src: devel
+PKG:glibc-src: libc6-src
+FILES_INFO:glibc-src: {}
+PKGSIZE:glibc-src: 0

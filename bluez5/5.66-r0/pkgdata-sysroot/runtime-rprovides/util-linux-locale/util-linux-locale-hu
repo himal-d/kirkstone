@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-hu: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the hu locale.
+SUMMARY:util-linux-locale-hu: A suite of basic system administration utilities - hu translations
+RPROVIDES:util-linux-locale-hu: util-linux-locale hu-translation
+RRECOMMENDS:util-linux-locale-hu: virtual-locale-hu
+SECTION: base
+PKG:util-linux-locale-hu: util-linux-locale-hu
+FILES:util-linux-locale-hu: /usr/share/locale/hu
+FILES_INFO:util-linux-locale-hu: {"/usr/share/locale/hu/LC_MESSAGES/util-linux.mo": 39725}
+PKGSIZE:util-linux-locale-hu: 39725

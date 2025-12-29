@@ -1,0 +1,15 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:libpcre2-dbg: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:libpcre2-dbg: Perl Compatible Regular Expressions version 2 - Debugging files
+RRECOMMENDS:libpcre2-dbg: glibc-dbg libpcre2-16-dbg libpcre2-32-dbg
+SECTION:libpcre2-dbg: devel
+PKG:libpcre2-dbg: libpcre2-dbg
+ALLOW_EMPTY:libpcre2-dbg: 1
+FILES:libpcre2-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:libpcre2-dbg: {"/usr/bin/.debug/pcre2grep": 81816, "/usr/bin/.debug/pcre2test": 216424, "/usr/lib/.debug/libpcre2-16.so.0.11.0": 405008, "/usr/lib/.debug/libpcre2-32.so.0.11.0": 399272, "/usr/lib/.debug/libpcre2-8.so.0.11.0": 430648, "/usr/lib/.debug/libpcre2-posix.so.3.0.2": 13320}
+PKGSIZE:libpcre2-dbg: 1546488

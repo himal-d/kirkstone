@@ -1,0 +1,12 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:bluez5-src: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.  This package contains sources for debugging purposes.
+SUMMARY:bluez5-src: Generate a information to build logrotate data configuration for the recipe - Source files
+SECTION:bluez5-src: devel
+PKG:bluez5-src: bluez5-src
+FILES_INFO:bluez5-src: {}
+PKGSIZE:bluez5-src: 0

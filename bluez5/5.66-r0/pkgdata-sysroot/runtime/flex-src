@@ -1,0 +1,12 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-src: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains sources for debugging purposes.
+SUMMARY:flex-src: Flex (The Fast Lexical Analyzer) - Source files
+SECTION:flex-src: devel
+PKG:flex-src: flex-src
+FILES_INFO:flex-src: {}
+PKGSIZE:flex-src: 0

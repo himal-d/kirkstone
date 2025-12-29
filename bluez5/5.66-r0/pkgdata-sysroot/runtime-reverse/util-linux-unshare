@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-unshare: util-linux unshare
+SUMMARY:util-linux-unshare: util-linux unshare
+RDEPENDS:util-linux-unshare: update-alternatives-opkg glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-unshare: util-linux-unshare
+FILES:util-linux-unshare: /usr/bin/unshare.util-linux
+FILES_INFO:util-linux-unshare: {"/usr/bin/unshare.util-linux": 48280}
+pkg_postinst:util-linux-unshare: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/bin/unshare unshare /usr/bin/unshare.util-linux 80\n
+pkg_prerm:util-linux-unshare: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  unshare /usr/bin/unshare.util-linux\n
+FILERPROVIDESFLIST:util-linux-unshare:  /usr/bin/unshare.util-linux
+FILERPROVIDES:/usr/bin/unshare.util-linux:util-linux-unshare:  /usr/bin/unshare
+FILERDEPENDSFLIST:util-linux-unshare: /usr/bin/unshare.util-linux
+FILERDEPENDS:/usr/bin/unshare.util-linux:util-linux-unshare:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-unshare: 48280

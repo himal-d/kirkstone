@@ -1,0 +1,13 @@
+PN: bash-completion
+PV: 2.11
+PR: r0
+PKGV: 2.11
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:bash-completion-doc: Collection of command line command completions for the Bash shell, collection of helper functions to assist in creating new completions, and set of facilities for loading completions automatically on demand, as well as installing them.  This package contains documentation.
+SUMMARY:bash-completion-doc: Programmable Completion for Bash 4 - Documentation files
+SECTION:bash-completion-doc: doc
+PKG:bash-completion-doc: bash-completion-doc
+FILES:bash-completion-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:bash-completion-doc: {}
+PKGSIZE:bash-completion-doc: 0

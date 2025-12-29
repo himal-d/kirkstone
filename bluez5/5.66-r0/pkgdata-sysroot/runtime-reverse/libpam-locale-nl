@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-nl: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the nl locale.
+SUMMARY:libpam-locale-nl: Linux-PAM (Pluggable Authentication Modules) - nl translations
+RPROVIDES:libpam-locale-nl: libpam-locale nl-translation
+RRECOMMENDS:libpam-locale-nl: virtual-locale-nl
+SECTION: base
+PKG:libpam-locale-nl: libpam-locale-nl
+FILES:libpam-locale-nl: /usr/share/locale/nl
+FILES_INFO:libpam-locale-nl: {"/usr/share/locale/nl/LC_MESSAGES/Linux-PAM.mo": 10020}
+PKGSIZE:libpam-locale-nl: 10020

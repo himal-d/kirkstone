@@ -1,0 +1,13 @@
+PN: libical
+PV: 3.0.14
+PR: r0
+PKGV: 3.0.14
+PKGR: r0
+LICENSE: LGPL-2.1-only | MPL-2.0
+DESCRIPTION: An Open Source implementation of the iCalendar protocols and protocol data units. The iCalendar specification describes how calendar clients can communicate with calendar servers so users can store their calendar data and arrange meetings with other users. 
+SUMMARY: iCal and scheduling (RFC 2445, 2446, 2447) library
+SECTION: libs
+PKG:libical-locale: libical-locale
+FILES:libical-locale: /usr/share/locale
+FILES_INFO:libical-locale: {}
+PKGSIZE:libical-locale: 0

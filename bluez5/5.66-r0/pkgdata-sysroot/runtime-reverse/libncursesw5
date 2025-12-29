@@ -1,0 +1,20 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:ncurses-libncursesw: ncurses ncursesw library
+SUMMARY:ncurses-libncursesw: ncurses ncursesw library
+RDEPENDS:ncurses-libncursesw: glibc (>= 2.35) ncurses-libtinfo (>= 6.3+20220423)
+RPROVIDES:ncurses-libncursesw:  ncurses-libncursesw (=6.3+20220423)
+SECTION: libs
+PKG:ncurses-libncursesw: libncursesw5
+FILES:ncurses-libncursesw: /lib/libncursesw.so.5 /lib/libncursesw.so.5.9
+FILES_INFO:ncurses-libncursesw: {"/lib/libncursesw.so.5": 18, "/lib/libncursesw.so.5.9": 163832}
+pkg_postinst:ncurses-libncursesw: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:ncurses-libncursesw: /lib/libncursesw.so.5.9
+FILERPROVIDES:/lib/libncursesw.so.5.9:ncurses-libncursesw:  libncursesw.so.5()(64bit)
+FILERDEPENDSFLIST:ncurses-libncursesw: /lib/libncursesw.so.5.9
+FILERDEPENDS:/lib/libncursesw.so.5.9:ncurses-libncursesw:  libc.so.6(GLIBC_2.17)(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ncurses-libncursesw: 163850

@@ -1,0 +1,13 @@
+PN: zstd
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: BSD-3-Clause & GPL-2.0-only
+DESCRIPTION:zstd-doc: Zstandard is a fast lossless compression algorithm, targeting real-time compression scenarios at zlib-level and better compression ratios. It's backed by a very fast entropy stage, provided by Huff0 and FSE library.  This package contains documentation.
+SUMMARY:zstd-doc: Zstandard - Fast real-time compression algorithm - Documentation files
+SECTION:zstd-doc: doc
+PKG:zstd-doc: zstd-doc
+FILES:zstd-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:zstd-doc: {"/usr/share/man/man1/unzstd.1": 6, "/usr/share/man/man1/zstd.1": 29535, "/usr/share/man/man1/zstdcat.1": 6, "/usr/share/man/man1/zstdgrep.1": 1116, "/usr/share/man/man1/zstdless.1": 382}
+PKGSIZE:zstd-doc: 31045

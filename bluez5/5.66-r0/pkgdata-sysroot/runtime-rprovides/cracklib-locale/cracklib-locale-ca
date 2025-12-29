@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-ca: Password strength checker library  This package contains language translation files for the ca locale.
+SUMMARY:cracklib-locale-ca: Password strength checker library - ca translations
+RPROVIDES:cracklib-locale-ca: cracklib-locale ca-translation
+RRECOMMENDS:cracklib-locale-ca: virtual-locale-ca
+SECTION: base
+PKG:cracklib-locale-ca: cracklib-locale-ca
+FILES:cracklib-locale-ca: /usr/share/locale/ca
+FILES_INFO:cracklib-locale-ca: {"/usr/share/locale/ca/LC_MESSAGES/cracklib.mo": 1899}
+PKGSIZE:cracklib-locale-ca: 1899

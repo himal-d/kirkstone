@@ -1,0 +1,15 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION:openssl-dbg: Secure Socket Layer (SSL) binary and related cryptographic tools.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:openssl-dbg: Secure Socket Layer - Debugging files
+RRECOMMENDS:openssl-dbg: glibc-dbg libcrypto-dbg libssl-dbg
+SECTION:openssl-dbg: devel
+PKG:openssl-dbg: openssl-dbg
+ALLOW_EMPTY:openssl-dbg: 1
+FILES:openssl-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:openssl-dbg: {"/usr/bin/.debug/openssl": 1549184, "/usr/lib/.debug/libcrypto.so.3": 9718808, "/usr/lib/.debug/libssl.so.3": 1913136, "/usr/lib/engines-3/.debug/afalg.so": 35064, "/usr/lib/engines-3/.debug/capi.so": 7632, "/usr/lib/engines-3/.debug/loader_attic.so": 103288, "/usr/lib/ossl-modules/.debug/legacy.so": 228080}
+PKGSIZE:openssl-dbg: 13555192

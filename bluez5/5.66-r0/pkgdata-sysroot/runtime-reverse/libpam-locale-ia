@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ia: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ia locale.
+SUMMARY:libpam-locale-ia: Linux-PAM (Pluggable Authentication Modules) - ia translations
+RPROVIDES:libpam-locale-ia: libpam-locale ia-translation
+RRECOMMENDS:libpam-locale-ia: virtual-locale-ia
+SECTION: base
+PKG:libpam-locale-ia: libpam-locale-ia
+FILES:libpam-locale-ia: /usr/share/locale/ia
+FILES_INFO:libpam-locale-ia: {"/usr/share/locale/ia/LC_MESSAGES/Linux-PAM.mo": 7077}
+PKGSIZE:libpam-locale-ia: 7077

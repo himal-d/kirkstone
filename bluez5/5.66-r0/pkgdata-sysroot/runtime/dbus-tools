@@ -1,0 +1,19 @@
+PN: dbus
+PV: 1.14.0
+PR: r0
+PKGV: 1.14.0
+PKGR: r0
+LICENSE: AFL-2.1 | GPL-2.0-or-later
+DESCRIPTION: D-Bus is a message bus system, a simple way for applications to talk to one another. In addition to interprocess communication, D-Bus helps coordinate process lifecycle; it makes it simple and reliable to code a \\"single instance\\" application or daemon, and to launch applications and daemons on demand when their services are needed.
+SUMMARY: D-Bus message bus
+RDEPENDS:dbus-tools: dbus-lib (>= 1.14.0) glibc (>= 2.35)
+SECTION: base
+PKG:dbus-tools: dbus-tools
+FILES:dbus-tools: /usr/bin/dbus-uuidgen                      /usr/bin/dbus-send                      /usr/bin/dbus-monitor                      /usr/bin/dbus-update-activation-environment 
+FILES_INFO:dbus-tools: {"/usr/bin/dbus-monitor": 23096, "/usr/bin/dbus-send": 23168, "/usr/bin/dbus-update-activation-environment": 14640, "/usr/bin/dbus-uuidgen": 10424}
+FILERDEPENDSFLIST:dbus-tools: /usr/bin/dbus-monitor /usr/bin/dbus-send /usr/bin/dbus-update-activation-environment /usr/bin/dbus-uuidgen
+FILERDEPENDS:/usr/bin/dbus-monitor:dbus-tools:  libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-send:dbus-tools:  libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-update-activation-environment:dbus-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-uuidgen:dbus-tools:  libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:dbus-tools: 71328

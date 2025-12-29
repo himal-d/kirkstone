@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-limits: PAM plugin for -limits
+SUMMARY:pam-plugin-limits: PAM plugin for -limits
+RDEPENDS:pam-plugin-limits: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-limits: pam-plugin-limits-suffix
+SECTION: base
+PKG:pam-plugin-limits: pam-plugin-limits
+FILES:pam-plugin-limits: /lib/security/pam_limits.so
+FILES_INFO:pam-plugin-limits: {"/lib/security/pam_limits.so": 18728}
+FILERDEPENDSFLIST:pam-plugin-limits: /lib/security/pam@underscore@limits.so
+FILERDEPENDS:/lib/security/pam@underscore@limits.so:pam-plugin-limits:  libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.27)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-limits: 18728

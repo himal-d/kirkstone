@@ -1,0 +1,16 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-dev: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:flex-dev: Flex (The Fast Lexical Analyzer) - Development files
+RDEPENDS:flex-dev: flex (= 2.6.4-r0) flex-libfl
+RRECOMMENDS:flex-dev: flex-libfl-dev glibc-dev m4-dev
+SECTION:flex-dev: devel
+PKG:flex-dev: flex-dev
+ALLOW_EMPTY:flex-dev: 1
+FILES:flex-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/flex/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:flex-dev: {"/usr/include/FlexLexer.h": 6893, "/usr/lib/libfl.so": 14}
+PKGSIZE:flex-dev: 6907

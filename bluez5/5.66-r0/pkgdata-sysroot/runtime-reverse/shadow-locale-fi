@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-fi: Tools to change and administer password and group data  This package contains language translation files for the fi locale.
+SUMMARY:shadow-locale-fi: Tools to change and administer password and group data - fi translations
+RPROVIDES:shadow-locale-fi: shadow-locale fi-translation
+RRECOMMENDS:shadow-locale-fi: virtual-locale-fi
+SECTION: base/utils
+PKG:shadow-locale-fi: shadow-locale-fi
+FILES:shadow-locale-fi: /usr/share/locale/fi
+FILES_INFO:shadow-locale-fi: {"/usr/share/locale/fi/LC_MESSAGES/shadow.mo": 18952}
+PKGSIZE:shadow-locale-fi: 18952

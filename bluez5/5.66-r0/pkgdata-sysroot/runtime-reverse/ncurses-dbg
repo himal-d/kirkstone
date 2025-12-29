@@ -1,0 +1,15 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:ncurses-dbg: SVr4 and XSI-Curses compatible curses library and terminfo tools including tic, infocmp, captoinfo. Supports color, multiple highlights, forms-drawing characters, and automatic recognition of keypad and function-key sequences. Extensions include resizable windows and mouse support on both xterm and Linux console using the gpm library.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:ncurses-dbg: The New Curses library - Debugging files
+RRECOMMENDS:ncurses-dbg: glibc-dbg ncurses-libncurses-dbg ncurses-libncursesw-dbg ncurses-libtic-dbg ncurses-libtinfo-dbg
+SECTION:ncurses-dbg: devel
+PKG:ncurses-dbg: ncurses-dbg
+ALLOW_EMPTY:ncurses-dbg: 1
+FILES:ncurses-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:ncurses-dbg: {"/lib/.debug/libncurses.so.5.9": 633472, "/lib/.debug/libncursesw.so.5.9": 787360, "/lib/.debug/libtinfo.so.5.9": 351240, "/usr/bin/.debug/clear.ncurses": 23984, "/usr/bin/.debug/infocmp": 94672, "/usr/bin/.debug/tabs": 35912, "/usr/bin/.debug/tic": 133440, "/usr/bin/.debug/toe": 34128, "/usr/bin/.debug/tput": 48120, "/usr/bin/.debug/tset": 47808, "/usr/lib/.debug/libform.so.5.9": 244800, "/usr/lib/.debug/libformw.so.5.9": 264064, "/usr/lib/.debug/libmenu.so.5.9": 137528, "/usr/lib/.debug/libmenuw.so.5.9": 143048, "/usr/lib/.debug/libpanel.so.5.9": 51032, "/usr/lib/.debug/libpanelw.so.5.9": 53000, "/usr/lib/.debug/libtic.so.5.9": 111352, "/usr/lib/.debug/libticw.so.5.9": 111536}
+PKGSIZE:ncurses-dbg: 3306496

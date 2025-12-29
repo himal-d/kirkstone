@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-dbg: Tools to change and administer password and group data  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:shadow-dbg: Tools to change and administer password and group data - Debugging files
+RRECOMMENDS:shadow-dbg: glibc-dbg libattr-dbg libpam-dbg libxcrypt-dbg
+SECTION:shadow-dbg: devel
+PKG:shadow-dbg: shadow-dbg
+ALLOW_EMPTY:shadow-dbg: 1
+FILES:shadow-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:shadow-dbg: {"/bin/.debug/login.shadow": 120224, "/bin/.debug/su.shadow": 92672, "/sbin/.debug/nologin.shadow": 14296, "/sbin/.debug/vipw.shadow": 142624, "/usr/bin/.debug/chage": 137952, "/usr/bin/.debug/chfn.shadow": 118872, "/usr/bin/.debug/chsh.shadow": 103376, "/usr/bin/.debug/expiry": 61272, "/usr/bin/.debug/faillog": 40680, "/usr/bin/.debug/getsubids": 19504, "/usr/bin/.debug/gpasswd": 177616, "/usr/bin/.debug/groups.shadow": 34768, "/usr/bin/.debug/lastlog": 48976, "/usr/bin/.debug/newgidmap": 122648, "/usr/bin/.debug/newgrp.shadow": 102040, "/usr/bin/.debug/newuidmap": 120528, "/usr/bin/.debug/passwd.shadow": 133248, "/usr/lib/.debug/libsubid.so.4.0.0": 416624, "/usr/sbin/.debug/chgpasswd": 135520, "/usr/sbin/.debug/chpasswd.shadow": 121936, "/usr/sbin/.debug/groupadd": 221576, "/usr/sbin/.debug/groupdel": 202488, "/usr/sbin/.debug/groupmems": 130728, "/usr/sbin/.debug/groupmod": 222384, "/usr/sbin/.debug/grpck": 129320, "/usr/sbin/.debug/grpconv": 116080, "/usr/sbin/.debug/grpunconv": 115496, "/usr/sbin/.debug/logoutd": 31920, "/usr/sbin/.debug/newusers": 243824, "/usr/sbin/.debug/pwck": 116144, "/usr/sbin/.debug/pwconv": 104488, "/usr/sbin/.debug/pwunconv": 100600, "/usr/sbin/.debug/useradd": 324800, "/usr/sbin/.debug/userdel": 234624, "/usr/sbin/.debug/usermod": 301352}
+PKGSIZE:shadow-dbg: 4861200

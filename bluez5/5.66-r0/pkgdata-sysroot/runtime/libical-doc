@@ -1,0 +1,13 @@
+PN: libical
+PV: 3.0.14
+PR: r0
+PKGV: 3.0.14
+PKGR: r0
+LICENSE: LGPL-2.1-only | MPL-2.0
+DESCRIPTION:libical-doc: An Open Source implementation of the iCalendar protocols and protocol data units. The iCalendar specification describes how calendar clients can communicate with calendar servers so users can store their calendar data and arrange meetings with other users.   This package contains documentation.
+SUMMARY:libical-doc: iCal and scheduling (RFC 2445, 2446, 2447) library - Documentation files
+SECTION:libical-doc: doc
+PKG:libical-doc: libical-doc
+FILES:libical-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:libical-doc: {}
+PKGSIZE:libical-doc: 0

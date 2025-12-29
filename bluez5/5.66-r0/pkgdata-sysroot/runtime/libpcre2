@@ -1,0 +1,21 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.
+SUMMARY: Perl Compatible Regular Expressions version 2
+RDEPENDS:libpcre2: glibc (>= 2.35)
+SECTION: devel
+PKG:libpcre2: libpcre2
+FILES:libpcre2: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libpcre2 /usr/lib/libpcre2/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libpcre2: {"/usr/lib/libpcre2-8.so.0": 20, "/usr/lib/libpcre2-8.so.0.11.0": 326176, "/usr/lib/libpcre2-posix.so.3": 23, "/usr/lib/libpcre2-posix.so.3.0.2": 10304}
+pkg_postinst:libpcre2: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libpcre2: /usr/lib/libpcre2-8.so.0.11.0 /usr/lib/libpcre2-posix.so.3.0.2
+FILERPROVIDES:/usr/lib/libpcre2-8.so.0.11.0:libpcre2:  libpcre2-8.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libpcre2-posix.so.3.0.2:libpcre2:  libpcre2-posix.so.3()(64bit)
+FILERDEPENDSFLIST:libpcre2: /usr/lib/libpcre2-8.so.0.11.0 /usr/lib/libpcre2-posix.so.3.0.2
+FILERDEPENDS:/usr/lib/libpcre2-8.so.0.11.0:libpcre2:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libpcre2-posix.so.3.0.2:libpcre2:  libc.so.6(GLIBC_2.17)(64bit) libpcre2-8.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libpcre2: 336523

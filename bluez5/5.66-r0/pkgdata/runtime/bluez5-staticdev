@@ -1,0 +1,14 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0@EXTENDPRAUTO@
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:bluez5-staticdev: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.  This package contains static libraries for software development.
+SUMMARY:bluez5-staticdev: Generate a information to build logrotate data configuration for the recipe - Development files (Static Libraries)
+RDEPENDS:bluez5-staticdev: bluez5-dev (= 5.66-r0@EXTENDPRAUTO@)
+SECTION:bluez5-staticdev: devel
+PKG:bluez5-staticdev: bluez5-staticdev
+FILES:bluez5-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/bluez5/*.a
+FILES_INFO:bluez5-staticdev: {}
+PKGSIZE:bluez5-staticdev: 0

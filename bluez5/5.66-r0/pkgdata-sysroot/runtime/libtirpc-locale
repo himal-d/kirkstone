@@ -1,0 +1,13 @@
+PN: libtirpc
+PV: 1.3.2
+PR: r0
+PKGV: 1.3.2
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: Libtirpc is a port of Suns Transport-Independent RPC library to Linux
+SUMMARY: Transport-Independent RPC library
+SECTION: libs/network
+PKG:libtirpc-locale: libtirpc-locale
+FILES:libtirpc-locale: /usr/share/locale
+FILES_INFO:libtirpc-locale: {}
+PKGSIZE:libtirpc-locale: 0

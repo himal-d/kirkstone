@@ -1,0 +1,28 @@
+PN: kmod
+PV: 29
+PR: r0
+PKGV: 29
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: kmod is a set of tools to handle common tasks with Linux kernel modules like                insert, remove, list, check properties, resolve dependencies and aliases.
+SUMMARY: Tools for managing Linux kernel modules
+RDEPENDS:kmod: update-alternatives-opkg glibc (>= 2.35) liblzma (>= 5.2.6) zlib (>= 1.2.11)
+RPROVIDES:kmod:  module-init-tools-insmod-static module-init-tools-depmod module-init-tools
+RREPLACES:kmod:  module-init-tools-insmod-static module-init-tools-depmod module-init-tools
+RCONFLICTS:kmod:  module-init-tools-insmod-static module-init-tools-depmod module-init-tools
+SECTION: base
+PKG:kmod: kmod
+FILES:kmod: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/kmod /usr/lib/kmod/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers /lib/depmod.d /lib/modprobe.d
+FILES_INFO:kmod: {"/bin/kmod": 121896, "/bin/lsmod.kmod": 4, "/lib/depmod.d/exclude.conf": 15, "/lib/depmod.d/search.conf": 71, "/sbin/depmod.kmod": 11, "/sbin/insmod.kmod": 11, "/sbin/modinfo.kmod": 11, "/sbin/modprobe.kmod": 11, "/sbin/rmmod.kmod": 11}
+pkg_postinst:kmod: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/insmod insmod /sbin/insmod.kmod 70\n\tupdate-alternatives --install /sbin/modprobe modprobe /sbin/modprobe.kmod 70\n\tupdate-alternatives --install /sbin/rmmod rmmod /sbin/rmmod.kmod 70\n\tupdate-alternatives --install /sbin/modinfo modinfo /sbin/modinfo.kmod 70\n\tupdate-alternatives --install /bin/lsmod bin-lsmod /bin/lsmod.kmod 70\n\tupdate-alternatives --install /sbin/lsmod lsmod /bin/lsmod.kmod 70\n\tupdate-alternatives --install /sbin/depmod depmod /sbin/depmod.kmod 70\n
+pkg_prerm:kmod: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  insmod /sbin/insmod.kmod\n\tupdate-alternatives --remove  modprobe /sbin/modprobe.kmod\n\tupdate-alternatives --remove  rmmod /sbin/rmmod.kmod\n\tupdate-alternatives --remove  modinfo /sbin/modinfo.kmod\n\tupdate-alternatives --remove  bin-lsmod /bin/lsmod.kmod\n\tupdate-alternatives --remove  lsmod /bin/lsmod.kmod\n\tupdate-alternatives --remove  depmod /sbin/depmod.kmod\n
+FILERPROVIDESFLIST:kmod:  /sbin/insmod.kmod /sbin/modprobe.kmod /sbin/rmmod.kmod /sbin/modinfo.kmod /bin/lsmod.kmod /sbin/depmod.kmod
+FILERPROVIDES:/bin/lsmod.kmod:kmod:  /bin/lsmod /sbin/lsmod
+FILERPROVIDES:/sbin/depmod.kmod:kmod:  /sbin/depmod
+FILERPROVIDES:/sbin/insmod.kmod:kmod:  /sbin/insmod
+FILERPROVIDES:/sbin/modinfo.kmod:kmod:  /sbin/modinfo
+FILERPROVIDES:/sbin/modprobe.kmod:kmod:  /sbin/modprobe
+FILERPROVIDES:/sbin/rmmod.kmod:kmod:  /sbin/rmmod
+FILERDEPENDSFLIST:kmod: /bin/kmod
+FILERDEPENDS:/bin/kmod:kmod:  liblzma.so.5(XZ_5.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) liblzma.so.5()(64bit) libz.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:kmod: 122041

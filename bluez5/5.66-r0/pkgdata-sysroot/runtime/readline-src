@@ -1,0 +1,13 @@
+PN: readline
+PV: 5.2
+PR: r9
+PKGV: 5.2
+PKGR: r9
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:readline-src: The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in. Both Emacs and vi editing modes are available. The Readline library includes  additional functions to maintain a list of previously-entered command lines, to recall and perhaps reedit those   lines, and perform csh-like history expansion on previous commands.  This package contains sources for debugging purposes.
+SUMMARY:readline-src: Library for editing typed command lines - Source files
+RPROVIDES:readline-src:  readline-src (=5.2)
+SECTION:readline-src: devel
+PKG:readline-src: libreadline-src
+FILES_INFO:readline-src: {}
+PKGSIZE:readline-src: 0

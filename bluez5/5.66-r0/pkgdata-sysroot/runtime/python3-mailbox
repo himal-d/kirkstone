@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-mailbox: Python mailbox format support
+RDEPENDS:python3-mailbox: python3-core python3-crypt python3-datetime python3-email python3-fcntl python3-io python3-math python3-mime python3-netclient python3-stringold
+SECTION: devel/python
+PKG:python3-mailbox: python3-mailbox
+FILES:python3-mailbox:  /usr/lib/python3.10/mailbox.py /usr/lib/python3.10/__pycache__/mailbox.*.pyc
+FILES_INFO:python3-mailbox: {"/usr/lib/python3.10/__pycache__/mailbox.cpython-310.pyc": 60089, "/usr/lib/python3.10/mailbox.py": 78794}
+PKGSIZE:python3-mailbox: 138883

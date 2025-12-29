@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-math: Python math support
+RDEPENDS:python3-math: python3-core python3-crypt glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-math: python3-math
+FILES:python3-math:  /usr/lib/python3.10/lib-dynload/_random.*.so /usr/lib/python3.10/lib-dynload/cmath.*.so /usr/lib/python3.10/random.py /usr/lib/python3.10/__pycache__/random.*.pyc
+FILES_INFO:python3-math: {"/usr/lib/python3.10/__pycache__/random.cpython-310.pyc": 22748, "/usr/lib/python3.10/lib-dynload/_random.cpython-310-aarch64-linux-gnu.so": 15016, "/usr/lib/python3.10/lib-dynload/cmath.cpython-310-aarch64-linux-gnu.so": 31976, "/usr/lib/python3.10/random.py": 33221}
+FILERDEPENDSFLIST:python3-math: /usr/lib/python3.10/lib-dynload/@underscore@random.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/cmath.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@random.cpython-310-aarch64-linux-gnu.so:python3-math:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/cmath.cpython-310-aarch64-linux-gnu.so:python3-math:  libc.so.6(GLIBC_2.17)(64bit) libm.so.6(GLIBC_2.35)(64bit) libm.so.6(GLIBC_2.29)(64bit) libm.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-math: 102961

@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-hu: Tools to change and administer password and group data  This package contains language translation files for the hu locale.
+SUMMARY:shadow-locale-hu: Tools to change and administer password and group data - hu translations
+RPROVIDES:shadow-locale-hu: shadow-locale hu-translation
+RRECOMMENDS:shadow-locale-hu: virtual-locale-hu
+SECTION: base/utils
+PKG:shadow-locale-hu: shadow-locale-hu
+FILES:shadow-locale-hu: /usr/share/locale/hu
+FILES_INFO:shadow-locale-hu: {"/usr/share/locale/hu/LC_MESSAGES/shadow.mo": 18741}
+PKGSIZE:shadow-locale-hu: 18741

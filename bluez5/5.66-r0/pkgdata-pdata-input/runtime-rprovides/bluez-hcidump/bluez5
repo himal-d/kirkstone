@@ -1,0 +1,44 @@
+PN: bluez5
+PV: 5.66
+PR: r0
+PKGV: 5.66
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: Linux Bluetooth stack V5 userland components.  These include a system configurations, daemons, tools and system libraries.
+SUMMARY: Generate a information to build logrotate data configuration for the recipe
+RDEPENDS:bluez5: bluez5-noinst-tools json-c (>= 0.15) pi-bluetooth dbus-lib (>= 1.14.0) glib-2.0 (>= 2.74.6) glibc (>= 2.35) libical (>= 3.0.14) libudev (>= 250.5) readline (>= 5.2)
+RPROVIDES:bluez5:  bluez-hcidump bluez5-systemd
+RREPLACES:bluez5:  bluez5-systemd
+RCONFLICTS:bluez5: bluez4 bluez5-systemd
+SECTION: libs
+PKG:bluez5: bluez5
+FILES:bluez5: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/bluez5 /usr/lib/bluez5/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers      /usr/lib/bluetooth/plugins/*.so     /lib/systemd/ /usr/share/dbus-1     /usr/lib/cups    /etc/*       /etc/bluetooth/main.conf     /usr/sbin/enable-hci.sh     /lib/systemd/system/bluetooth.service     /usr/lib/bluetooth/  /lib/systemd/system-preset/98-bluez5.preset /lib/systemd/system/bluetooth.service
+FILES_INFO:bluez5: {"/etc/bluetooth/input.conf": 906, "/etc/bluetooth/main.conf": 774, "/etc/bluetooth/network.conf": 122, "/etc/dbus-1/system.d/bluetooth-mesh.conf": 802, "/etc/dbus-1/system.d/bluetooth.conf": 1182, "/etc/logrotate/bluez5bluez_mem.metadata": 68, "/etc/logrotate/bluez5bluez_orig.metadata": 68, "/lib/systemd/system-preset/98-bluez5.preset": 25, "/lib/systemd/system/bluetooth-mesh.service": 355, "/lib/systemd/system/bluetooth.service": 996, "/usr/bin/bluemoon": 72232, "/usr/bin/bluetoothctl": 264968, "/usr/bin/btmon": 818688, "/usr/bin/ciptool": 174008, "/usr/bin/hciattach": 170512, "/usr/bin/hciconfig": 164184, "/usr/bin/hcidump": 295936, "/usr/bin/hcitool": 176136, "/usr/bin/hex2hcd": 14648, "/usr/bin/isotest": 147864, "/usr/bin/l2ping": 139528, "/usr/bin/l2test": 152152, "/usr/bin/mesh-cfgclient": 296760, "/usr/bin/mesh-cfgtest": 151856, "/usr/bin/meshctl": 229888, "/usr/bin/rctest": 178128, "/usr/bin/rfcomm": 144344, "/usr/bin/sdptool": 226584, "/usr/lib/bluez5/bluetooth/bluetooth-meshd": 523632, "/usr/lib/bluez5/bluetooth/obexd": 527416, "/usr/lib/libbluetooth.so.3": 22, "/usr/lib/libbluetooth.so.3.19.8": 194680, "/usr/sbin/enable-hci.sh": 203, "/usr/share/dbus-1/system-services/org.bluez.mesh.service": 105, "/usr/share/dbus-1/system-services/org.bluez.service": 95}
+pkg_postinst:bluez5: #!/bin/sh\nset -e\nif systemctl >/dev/null 2>/dev/null; then\n\tOPTS=""\n\n\tif [ -n "$D" ]; then\n\t\tOPTS="--root=$D"\n\tfi\n\n\tif [ "enable" = "enable" ]; then\n\t\tfor service in bluetooth.service; do\n\t\t\tsystemctl ${OPTS} enable "$service"\n\t\tdone\n\tfi\n\n\tif [ -z "$D" ]; then\n\t\tsystemctl daemon-reload\n\t\tsystemctl preset bluetooth.service\n\n\t\tif [ "enable" = "enable" ]; then\n\t\t\tsystemctl --no-block restart bluetooth.service\n\t\tfi\n\tfi\nfi\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+pkg_prerm:bluez5: #!/bin/sh\nset -e\nif systemctl >/dev/null 2>/dev/null; then\n\tif [ -z "$D" ]; then\n\t\tsystemctl stop bluetooth.service\n\n\t\tsystemctl disable bluetooth.service\n\tfi\nfi\n
+FILERPROVIDESFLIST:bluez5: /usr/lib/libbluetooth.so.3.19.8
+FILERPROVIDES:/usr/lib/libbluetooth.so.3.19.8:bluez5:  libbluetooth.so.3()(64bit)
+FILERDEPENDSFLIST:bluez5: /usr/bin/bluemoon /usr/bin/bluetoothctl /usr/bin/btmon /usr/bin/ciptool /usr/bin/hciattach /usr/bin/hciconfig /usr/bin/hcidump /usr/bin/hcitool /usr/bin/hex2hcd /usr/bin/isotest /usr/bin/l2ping /usr/bin/l2test /usr/bin/mesh-cfgclient /usr/bin/mesh-cfgtest /usr/bin/meshctl /usr/bin/rctest /usr/bin/rfcomm /usr/bin/sdptool /usr/lib/bluez5/bluetooth/bluetooth-meshd /usr/lib/bluez5/bluetooth/obexd /usr/lib/libbluetooth.so.3.19.8 /usr/sbin/enable-hci.sh
+FILERDEPENDS:/usr/bin/bluemoon:bluez5:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/bluetoothctl:bluez5:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libdbus-1.so.3()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/btmon:bluez5:  libudev.so.1(LIBUDEV_183)(64bit) libudev.so.1(LIBUDEV_196)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libudev.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/ciptool:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/hciattach:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/hciconfig:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/hcidump:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/hcitool:bluez5:  libudev.so.1(LIBUDEV_183)(64bit) libudev.so.1(LIBUDEV_196)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libudev.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/hex2hcd:bluez5:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/isotest:bluez5:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/l2ping:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/l2test:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/mesh-cfgclient:bluez5:  libjson-c.so.5(JSONC_0.14)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libjson-c.so.5()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/mesh-cfgtest:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/meshctl:bluez5:  libjson-c.so.5(JSONC_0.14)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libdbus-1.so.3()(64bit) libjson-c.so.5()(64bit) libreadline.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/rctest:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/rfcomm:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/sdptool:bluez5:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/bluez5/bluetooth/bluetooth-meshd:bluez5:  libjson-c.so.5(JSONC_0.14)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libjson-c.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/bluez5/bluetooth/obexd:bluez5:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.17)(64bit) libicalvcal.so.3()(64bit) libdbus-1.so.3()(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libbluetooth.so.3.19.8:bluez5:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/sbin/enable-hci.sh:bluez5:  /bin/sh
+PKGSIZE:bluez5: 5069867

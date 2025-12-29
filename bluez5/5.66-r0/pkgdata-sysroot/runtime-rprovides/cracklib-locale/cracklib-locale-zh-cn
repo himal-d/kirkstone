@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-zh-cn: Password strength checker library  This package contains language translation files for the zh_CN locale.
+SUMMARY:cracklib-locale-zh-cn: Password strength checker library - zh_CN translations
+RPROVIDES:cracklib-locale-zh-cn: cracklib-locale zh-cn-translation
+RRECOMMENDS:cracklib-locale-zh-cn: virtual-locale-zh-cn
+SECTION: base
+PKG:cracklib-locale-zh-cn: cracklib-locale-zh-cn
+FILES:cracklib-locale-zh-cn: /usr/share/locale/zh_CN
+FILES_INFO:cracklib-locale-zh-cn: {"/usr/share/locale/zh_CN/LC_MESSAGES/cracklib.mo": 1656}
+PKGSIZE:cracklib-locale-zh-cn: 1656

@@ -1,0 +1,201 @@
+#!/bin/sh
+
+__BITBAKE_LAST_LINE=0
+
+# Emit a useful diagnostic if something fails:
+bb_sh_exit_handler() {
+    ret=$?
+    if [ "$ret" != 0 ]; then
+        echo "WARNING: exit code $ret from a shell command."
+    fi
+    exit $ret
+}
+
+bb_bash_exit_handler() {
+    ret=$?
+    { set +x; } > /dev/null
+    trap "" DEBUG
+    if [ "$ret" != 0 ]; then
+        echo "WARNING: ${BASH_SOURCE[0]}:${__BITBAKE_LAST_LINE} exit $ret from '$1'"
+
+        echo "WARNING: Backtrace (BB generated script): "
+        for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
+            if [ "$i" -eq 1 ]; then
+                echo -e "	#$((i)): ${FUNCNAME[$i]}, ${BASH_SOURCE[$((i-1))]}, line ${__BITBAKE_LAST_LINE}"
+            else
+                echo -e "	#$((i)): ${FUNCNAME[$i]}, ${BASH_SOURCE[$((i-1))]}, line ${BASH_LINENO[$((i-1))]}"
+            fi
+        done
+    fi
+    exit $ret
+}
+
+bb_bash_debug_handler() {
+    local line=${BASH_LINENO[0]}
+    # For some reason the DEBUG trap trips with lineno=1 when scripts exit; ignore it
+    if [ "$line" -eq 1 ]; then
+        return
+    fi
+
+    # Track the line number of commands as they execute. This is so we can have access to the failing line number
+    # in the EXIT trap. See http://gnu-bash.2382.n7.nabble.com/trap-echo-quot-trap-exit-on-LINENO-quot-EXIT-gt-wrong-linenumber-td3666.html
+    if [ "${FUNCNAME[1]}" != "bb_bash_exit_handler" ]; then
+        __BITBAKE_LAST_LINE=$line
+    fi
+}
+
+case $BASH_VERSION in
+"") trap 'bb_sh_exit_handler' 0
+    set -e
+    ;;
+*)  trap 'bb_bash_exit_handler "$BASH_COMMAND"' 0
+    trap '{ bb_bash_debug_handler; } 2>/dev/null' DEBUG
+    set -e
+    shopt -s extdebug
+    ;;
+esac
+export AR="aarch64-rdk-linux-gcc-ar"
+export AS="aarch64-rdk-linux-as "
+export BUILD_AR="ar"
+export BUILD_AS="as "
+export BUILD_CC="gcc "
+export BUILD_CCLD="gcc "
+export BUILD_CFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export BUILD_CPP="gcc  -E"
+export BUILD_CPPFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include"
+export BUILD_CXX="g++ "
+export BUILD_CXXFLAGS="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export BUILD_FC="gfortran "
+export BUILD_LD="ld "
+export BUILD_LDFLAGS="-L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,--enable-new-dtags                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-O1"
+export BUILD_NM="nm"
+export BUILD_RANLIB="ranlib -D"
+export BUILD_STRIP="strip"
+export CC="aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CCLD="aarch64-rdk-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CC_FOR_BUILD="gcc "
+export CFLAGS=" -Os -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native= "
+export CFLAGS_FOR_BUILD="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export CPP="aarch64-rdk-linux-gcc -E --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot  -mcpu=cortex-a72 -march=armv8-a+crc "
+export CPPFLAGS=""
+export CPPFLAGS_FOR_BUILD="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include"
+export CPP_FOR_BUILD="gcc  -E"
+export CXX="aarch64-rdk-linux-g++  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export CXXFLAGS=" -Os -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden"
+export CXXFLAGS_FOR_BUILD="-isystem/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/include -O2 -pipe"
+export CXX_FOR_BUILD="g++ "
+export FC="aarch64-rdk-linux-gfortran  -mcpu=cortex-a72 -march=armv8-a+crc  --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export GIT_CEILING_DIRECTORIES="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0"
+export HOME="/workspace/home/himal.d"
+export LC_ALL="en_US.UTF-8"
+export LD="aarch64-rdk-linux-ld --sysroot=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot "
+export LDFLAGS="-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fmacro-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0=/usr/src/debug/bluez5/5.66-r0                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot=                      -fdebug-prefix-map=/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native=   "
+export LDFLAGS_FOR_BUILD="-L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -L/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,--enable-new-dtags                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath-link,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/lib                         -Wl,-rpath,/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/lib                         -Wl,-O1"
+export LD_FOR_BUILD="ld "
+export LOGNAME="himal.d"
+export MAKE="make"
+export NM="aarch64-rdk-linux-gcc-nm"
+export OBJCOPY="aarch64-rdk-linux-objcopy"
+export OBJDUMP="aarch64-rdk-linux-objdump"
+export OMP_NUM_THREADS="48"
+export PATH="/workspace/home/himal.d/MatterProtocol/openembedded-core/scripts:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin/aarch64-rdk-linux:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/bin/crossscripts:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/sbin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/usr/bin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/sbin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native/bin:/workspace/home/himal.d/MatterProtocol/openembedded-core/bitbake/bin:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools"
+export PERL_HASH_SEED="0"
+export PKG_CONFIG_DIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig"
+export PKG_CONFIG_DISABLE_UNINSTALLED="yes"
+export PKG_CONFIG_LIBDIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig"
+export PKG_CONFIG_PATH="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/lib/pkgconfig:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot/usr/share/pkgconfig"
+export PKG_CONFIG_SYSROOT_DIR="/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot"
+export PKG_CONFIG_SYSTEM_INCLUDE_PATH="/usr/include"
+export PKG_CONFIG_SYSTEM_LIBRARY_PATH="/lib:/usr/lib"
+export PSEUDO_DISABLED="1"
+export PSEUDO_UNLOAD="1"
+export PYTHONHASHSEED="0"
+export RANLIB="aarch64-rdk-linux-gcc-ranlib"
+export READELF="aarch64-rdk-linux-readelf"
+unset SHELL
+export SOURCE_DATE_EPOCH="1668112906"
+export SOURCE_DATE_EPOCH_FALLBACK="1302044400"
+export STRINGS="aarch64-rdk-linux-strings"
+export STRIP="aarch64-rdk-linux-strip"
+export TZ="UTC"
+export USER="himal.d"
+export base_bindir="/bin"
+export base_libdir="/lib"
+export base_prefix=""
+export base_sbindir="/sbin"
+export bindir="/usr/bin"
+export datadir="/usr/share"
+export docdir="/usr/share/doc"
+export exec_prefix="/usr"
+export includedir="/usr/include"
+export infodir="/usr/share/info"
+export libdir="/usr/lib"
+export libexecdir="/usr/libexec"
+export localstatedir="/var"
+export lt_cv_sys_lib_dlsearch_path_spec="/usr/lib /lib"
+export mandir="/usr/share/man"
+export nonarch_base_libdir="/lib"
+export nonarch_libdir="/usr/lib"
+export oldincludedir="/usr/include"
+export prefix="/usr"
+export sbindir="/usr/sbin"
+export servicedir="/srv"
+export sharedstatedir="/com"
+export sysconfdir="/etc"
+export systemd_system_unitdir="/lib/systemd/system"
+export systemd_unitdir="/lib/systemd"
+export systemd_user_unitdir="/usr/lib/systemd/user"
+
+# line: 833, file: /workspace/home/himal.d/MatterProtocol/openembedded-core/meta/classes/sstate.bbclass
+sstate_create_package() {
+	# Exit early if it already exists
+	if [ -e /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst ]; then
+		touch /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst 2>/dev/null || true
+		return
+	fi
+
+	mkdir --mode=0775 -p `dirname /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst`
+	TFILE=`mktemp /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst.XXXXXXXX`
+
+	OPT="-cS"
+	ZSTD="zstd -8 -T48"
+	# Use pzstd if available
+	if [ -x "$(command -v pzstd)" ]; then
+		ZSTD="pzstd -8 -p 48"
+	fi
+
+	# Need to handle empty directories
+	if [ "$(ls -A)" ]; then
+		set +e
+		tar -I "$ZSTD" $OPT -f $TFILE *
+		ret=$?
+		if [ $ret -ne 0 ] && [ $ret -ne 1 ]; then
+			exit 1
+		fi
+		set -e
+	else
+		tar -I "$ZSTD" $OPT --file=$TFILE --files-from=/dev/null
+	fi
+	chmod 0664 $TFILE
+	# Skip if it was already created by some other process
+	if [ -h /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst ] && [ ! -e /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst ]; then
+		# There is a symbolic link, but it links to nothing.
+		# Forcefully replace it with the new file.
+		ln -f $TFILE /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst || true
+	elif [ ! -e /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst ]; then
+		# Move into place using ln to attempt an atomic op.
+		# Abort if it already exists
+		ln $TFILE /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst || true
+	else
+		touch /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/../sstate-cache/dc/98/sstate:bluez5::5.66:r0::10:dc9885cfa9c1d9d24bacac17a9e6f05a1a08d22474dfa1e07e767487a0ae92b9_populate_lic.tar.zst 2>/dev/null || true
+	fi
+	rm $TFILE
+}
+
+cd '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-populate_lic/'
+sstate_create_package
+
+# cleanup
+ret=$?
+trap '' 0
+exit $ret

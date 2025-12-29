@@ -1,0 +1,13 @@
+PN: icu
+PV: 70.1
+PR: r0
+PKGV: 70.1
+PKGR: r0
+LICENSE: ICU
+DESCRIPTION:icu-doc: The International Component for Unicode (ICU) is a mature, portable set of C/C++ and Java libraries for Unicode support, software internationalization (I18N) and globalization (G11N), giving applications the same results on all platforms.  This package contains documentation.
+SUMMARY:icu-doc: International Component for Unicode libraries - Documentation files
+SECTION:icu-doc: doc
+PKG:icu-doc: icu-doc
+FILES:icu-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:icu-doc: {"/usr/share/man/man1/derb.1": 4908, "/usr/share/man/man1/genbrk.1": 2952, "/usr/share/man/man1/gencfu.1": 2460, "/usr/share/man/man1/gencnval.1": 2390, "/usr/share/man/man1/gendict.1": 3394, "/usr/share/man/man1/genrb.1": 3911, "/usr/share/man/man1/icu-config.1": 7453, "/usr/share/man/man1/icuexportdata.1": 452, "/usr/share/man/man1/makeconv.1": 3357, "/usr/share/man/man1/pkgdata.1": 7089, "/usr/share/man/man1/uconv.1": 10527, "/usr/share/man/man8/genccode.8": 2934, "/usr/share/man/man8/gencmn.8": 3327, "/usr/share/man/man8/gensprep.8": 2714, "/usr/share/man/man8/icupkg.8": 5109}
+PKGSIZE:icu-doc: 62977

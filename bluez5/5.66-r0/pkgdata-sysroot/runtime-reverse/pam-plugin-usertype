@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-usertype: PAM plugin for -usertype
+SUMMARY:pam-plugin-usertype: PAM plugin for -usertype
+RDEPENDS:pam-plugin-usertype: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-usertype: pam-plugin-usertype-suffix
+SECTION: base
+PKG:pam-plugin-usertype: pam-plugin-usertype
+FILES:pam-plugin-usertype: /lib/security/pam_usertype.so
+FILES_INFO:pam-plugin-usertype: {"/lib/security/pam_usertype.so": 10264}
+FILERDEPENDSFLIST:pam-plugin-usertype: /lib/security/pam@underscore@usertype.so
+FILERDEPENDS:/lib/security/pam@underscore@usertype.so:pam-plugin-usertype:  libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-usertype: 10264

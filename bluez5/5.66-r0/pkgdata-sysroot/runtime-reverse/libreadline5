@@ -1,0 +1,22 @@
+PN: readline
+PV: 5.2
+PR: r9
+PKGV: 5.2
+PKGR: r9
+LICENSE: GPL-2.0-or-later
+DESCRIPTION: The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in. Both Emacs and vi editing modes are available. The Readline library includes  additional functions to maintain a list of previously-entered command lines, to recall and perhaps reedit those   lines, and perform csh-like history expansion on previous commands.
+SUMMARY: Library for editing typed command lines
+RDEPENDS:readline: glibc (>= 2.35) ncurses-libtinfo (>= 6.3+20220423)
+RPROVIDES:readline:  readline (=5.2)
+SECTION: libs
+PKG:readline: libreadline5
+FILES:readline: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/readline /usr/lib/readline/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:readline: {"/usr/lib/libhistory.so.5": 17, "/usr/lib/libhistory.so.5.2": 31072, "/usr/lib/libreadline.so.5": 18, "/usr/lib/libreadline.so.5.2": 251016}
+pkg_postinst:readline: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:readline: /usr/lib/libhistory.so.5.2 /usr/lib/libreadline.so.5.2
+FILERPROVIDES:/usr/lib/libhistory.so.5.2:readline:  libhistory.so.5()(64bit)
+FILERPROVIDES:/usr/lib/libreadline.so.5.2:readline:  libreadline.so.5()(64bit)
+FILERDEPENDSFLIST:readline: /usr/lib/libhistory.so.5.2 /usr/lib/libreadline.so.5.2
+FILERDEPENDS:/usr/lib/libhistory.so.5.2:readline:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libreadline.so.5.2:readline:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:readline: 282123

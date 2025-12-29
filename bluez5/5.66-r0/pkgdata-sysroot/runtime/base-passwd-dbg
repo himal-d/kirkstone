@@ -1,0 +1,15 @@
+PN: base-passwd
+PV: 3.5.29
+PR: r0
+PKGV: 3.5.29
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:base-passwd-dbg: The master copies of the user database files (/etc/passwd and /etc/group).  The update-passwd tool is also provided to keep the system databases synchronized with these master files.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:base-passwd-dbg: Base system master password/group files - Debugging files
+RRECOMMENDS:base-passwd-dbg: glibc-dbg
+SECTION:base-passwd-dbg: devel
+PKG:base-passwd-dbg: base-passwd-dbg
+ALLOW_EMPTY:base-passwd-dbg: 1
+FILES:base-passwd-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:base-passwd-dbg: {"/usr/sbin/.debug/update-passwd": 42800}
+PKGSIZE:base-passwd-dbg: 42800

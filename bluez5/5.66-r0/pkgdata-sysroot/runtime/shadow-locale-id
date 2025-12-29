@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-id: Tools to change and administer password and group data  This package contains language translation files for the id locale.
+SUMMARY:shadow-locale-id: Tools to change and administer password and group data - id translations
+RPROVIDES:shadow-locale-id: shadow-locale id-translation
+RRECOMMENDS:shadow-locale-id: virtual-locale-id
+SECTION: base/utils
+PKG:shadow-locale-id: shadow-locale-id
+FILES:shadow-locale-id: /usr/share/locale/id
+FILES_INFO:shadow-locale-id: {"/usr/share/locale/id/LC_MESSAGES/shadow.mo": 15923}
+PKGSIZE:shadow-locale-id: 15923

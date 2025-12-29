@@ -1,0 +1,14 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-staticdev: Password strength checker library  This package contains static libraries for software development.
+SUMMARY:cracklib-staticdev: Password strength checker library - Development files (Static Libraries)
+RDEPENDS:cracklib-staticdev: cracklib-dev (= 2.9.8-r0)
+SECTION:cracklib-staticdev: devel
+PKG:cracklib-staticdev: cracklib-staticdev
+FILES:cracklib-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/cracklib/*.a
+FILES_INFO:cracklib-staticdev: {"/lib/libcrack.a": 123444}
+PKGSIZE:cracklib-staticdev: 123444

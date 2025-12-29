@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ja: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ja locale.
+SUMMARY:libpam-locale-ja: Linux-PAM (Pluggable Authentication Modules) - ja translations
+RPROVIDES:libpam-locale-ja: libpam-locale ja-translation
+RRECOMMENDS:libpam-locale-ja: virtual-locale-ja
+SECTION: base
+PKG:libpam-locale-ja: libpam-locale-ja
+FILES:libpam-locale-ja: /usr/share/locale/ja
+FILES_INFO:libpam-locale-ja: {"/usr/share/locale/ja/LC_MESSAGES/Linux-PAM.mo": 7744}
+PKGSIZE:libpam-locale-ja: 7744

@@ -1,0 +1,6 @@
+/opt/logs/bluez.log {
+size 250000
+rotate 2
+copytruncate
+missingok
+}

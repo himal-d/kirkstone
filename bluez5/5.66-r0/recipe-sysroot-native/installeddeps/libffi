@@ -1,0 +1,16 @@
+recipe-sysroot/sysroot-providers/libffi
+recipe-sysroot/usr/include/ffi-64.h
+recipe-sysroot/usr/include/ffi.h
+recipe-sysroot/usr/include/ffitarget-64.h
+recipe-sysroot/usr/include/ffitarget.h
+recipe-sysroot/usr/lib/libffi.so.8.1.0
+recipe-sysroot/usr/lib/libffi.a
+recipe-sysroot/usr/lib/libffi.so
+recipe-sysroot/usr/lib/libffi.so.8
+recipe-sysroot/usr/lib/pkgconfig/libffi.pc
+recipe-sysroot/usr/lib/pkgconfig/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

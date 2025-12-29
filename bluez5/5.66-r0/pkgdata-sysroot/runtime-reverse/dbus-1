@@ -1,0 +1,24 @@
+PN: dbus
+PV: 1.14.0
+PR: r0
+PKGV: 1.14.0
+PKGR: r0
+LICENSE: AFL-2.1 | GPL-2.0-or-later
+DESCRIPTION: D-Bus is a message bus system, a simple way for applications to talk to one another. In addition to interprocess communication, D-Bus helps coordinate process lifecycle; it makes it simple and reliable to code a \\"single instance\\" application or daemon, and to launch applications and daemons on demand when their services are needed.
+SUMMARY: D-Bus message bus
+RDEPENDS:dbus: dbus-common dbus-tools dbus-lib (>= 1.14.0) expat (>= 2.4.9) glibc (>= 2.35) libsystemd (>= 250.5)
+RPROVIDES:dbus: dbus-x11 dbus (=1.14.0)
+RREPLACES:dbus:  dbus-x11
+SECTION: base
+PKG:dbus: dbus-1
+FILES:dbus: /usr/bin/dbus-daemon*                /usr/bin/dbus-cleanup-sockets                /usr/bin/dbus-launch                /usr/bin/dbus-run-session                /usr/libexec/dbus*                /etc                /var                /lib/systemd/system                /usr/lib/systemd/user                /usr/lib/tmpfiles.d/dbus.conf 
+CONFFILES:dbus: /etc/dbus-1/system.conf /etc/dbus-1/session.conf
+FILES_INFO:dbus: {"/lib/systemd/system/dbus.service": 410, "/lib/systemd/system/dbus.target.wants/dbus.socket": 14, "/lib/systemd/system/multi-user.target.wants/dbus.service": 15, "/usr/bin/dbus-cleanup-sockets": 10512, "/usr/bin/dbus-daemon": 193744, "/usr/bin/dbus-launch": 18864, "/usr/bin/dbus-run-session": 14600, "/usr/lib/systemd/user/dbus.service": 410, "/usr/lib/tmpfiles.d/dbus.conf": 549, "/usr/libexec/dbus-daemon-launch-helper": 44088}
+pkg_postinst:dbus: set -e\n\t# If both systemd and sysvinit are enabled, mask the dbus-1 init script\n        if false; then\n\t\tif [ -n "$D" ]; then\n\t\t\tOPTS="--root=$D"\n\t\tfi\n\t\tsystemctl $OPTS mask dbus-1.service\n\tfi\n\n\tif [ -z "$D" ] && [ -e /etc/init.d/populate-volatile.sh ] ; then\n\t\t/etc/init.d/populate-volatile.sh update\n\tfi\n
+FILERDEPENDSFLIST:dbus: /usr/bin/dbus-cleanup-sockets /usr/bin/dbus-daemon /usr/bin/dbus-launch /usr/bin/dbus-run-session /usr/libexec/dbus-daemon-launch-helper
+FILERDEPENDS:/usr/bin/dbus-cleanup-sockets:dbus:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-daemon:dbus:  libsystemd.so.0(LIBSYSTEMD_209)(64bit) libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libsystemd.so.0()(64bit) libexpat.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-launch:dbus:  libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/dbus-run-session:dbus:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/libexec/dbus-daemon-launch-helper:dbus:  libsystemd.so.0(LIBSYSTEMD_209)(64bit) libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3(LIBDBUS_1_3)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libdbus-1.so.3()(64bit) libsystemd.so.0()(64bit) libexpat.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:dbus: 283206

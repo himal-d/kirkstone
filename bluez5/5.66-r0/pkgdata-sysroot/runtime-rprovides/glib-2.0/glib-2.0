@@ -1,0 +1,34 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.
+SUMMARY: A general-purpose utility library
+RDEPENDS:glib-2.0: glibc (>= 2.35) libffi (>= 3.4.2) libpcre2 (>= 10.40) util-linux-libmount (>= 2.37.4) zlib (>= 1.2.11)
+RPROVIDES:glib-2.0:  glib-2.0 (=2.74.6)
+RRECOMMENDS:glib-2.0:  shared-mime-info
+SECTION: libs
+PKG:glib-2.0: libglib-2.0
+FILES:glib-2.0: /usr/lib/lib*.so.*                /usr/lib/gio                /usr/libexec/*gio-querymodules                /usr/libexec/*gio-launch-desktop                /usr/share/glib-2.0/schemas
+FILES_INFO:glib-2.0: {"/usr/lib/libgio-2.0.so.0": 22, "/usr/lib/libgio-2.0.so.0.7400.6": 1919920, "/usr/lib/libglib-2.0.so.0": 23, "/usr/lib/libglib-2.0.so.0.7400.6": 1164784, "/usr/lib/libgmodule-2.0.so.0": 26, "/usr/lib/libgmodule-2.0.so.0.7400.6": 14600, "/usr/lib/libgobject-2.0.so.0": 26, "/usr/lib/libgobject-2.0.so.0.7400.6": 357208, "/usr/lib/libgthread-2.0.so.0": 26, "/usr/lib/libgthread-2.0.so.0.7400.6": 5928, "/usr/libexec/gio-launch-desktop": 10480, "/usr/libexec/gio-querymodules": 10616}
+pkg_postinst:glib-2.0: #!/bin/sh\nset -e\nif [ "x$D" != "x" ]; then\n    $INTERCEPT_DIR/postinst_intercept update_gio_module_cache ${PKG} \\\n            mlprefix= \\\n            binprefix= \\\n            libdir=/usr/lib \\\n            libexecdir=/usr/libexec \\\n            base_libdir=/lib \\\n            bindir=/usr/bin\nelse\n    /usr/libexec/gio-querymodules /usr/lib/gio/modules/\nfi\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+pkg_postrm:glib-2.0: #!/bin/sh\nset -e\nif [ "x$D" != "x" ]; then\n    $INTERCEPT_DIR/postinst_intercept update_gio_module_cache ${PKG} \\\n            mlprefix= \\\n            binprefix= \\\n            libdir=/usr/lib \\\n            libexecdir=/usr/libexec \\\n            base_libdir=/lib \\\n            bindir=/usr/bin\nelse\n    /usr/libexec/gio-querymodules /usr/lib/gio/modules/\nfi\n
+FILERPROVIDESFLIST:glib-2.0: /usr/lib/libgio-2.0.so.0.7400.6 /usr/lib/libglib-2.0.so.0.7400.6 /usr/lib/libgmodule-2.0.so.0.7400.6 /usr/lib/libgobject-2.0.so.0.7400.6 /usr/lib/libgthread-2.0.so.0.7400.6
+FILERPROVIDES:/usr/lib/libgio-2.0.so.0.7400.6:glib-2.0:  libgio-2.0.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libglib-2.0.so.0.7400.6:glib-2.0:  libglib-2.0.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libgmodule-2.0.so.0.7400.6:glib-2.0:  libgmodule-2.0.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libgobject-2.0.so.0.7400.6:glib-2.0:  libgobject-2.0.so.0()(64bit)
+FILERPROVIDES:/usr/lib/libgthread-2.0.so.0.7400.6:glib-2.0:  libgthread-2.0.so.0()(64bit)
+FILERDEPENDSFLIST:glib-2.0: /usr/lib/libgio-2.0.so.0.7400.6 /usr/lib/libglib-2.0.so.0.7400.6 /usr/lib/libgmodule-2.0.so.0.7400.6 /usr/lib/libgobject-2.0.so.0.7400.6 /usr/lib/libgthread-2.0.so.0.7400.6 /usr/libexec/gio-launch-desktop /usr/libexec/gio-querymodules
+FILERDEPENDS:/usr/lib/libgio-2.0.so.0.7400.6:glib-2.0:  libz.so.1(ZLIB_1.2.2)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libgobject-2.0.so.0()(64bit) libgmodule-2.0.so.0()(64bit) libz.so.1()(64bit) libmount.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libglib-2.0.so.0.7400.6:glib-2.0:  libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpcre2-8.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libgmodule-2.0.so.0.7400.6:glib-2.0:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.34)(64bit) libglib-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libgobject-2.0.so.0.7400.6:glib-2.0:  libffi.so.8(LIBFFI_BASE_8.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libglib-2.0.so.0()(64bit) libffi.so.8()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libgthread-2.0.so.0.7400.6:glib-2.0:  libglib-2.0.so.0()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/libexec/gio-launch-desktop:glib-2.0:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/libexec/gio-querymodules:glib-2.0:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libgmodule-2.0.so.0()(64bit) libglib-2.0.so.0()(64bit) libgobject-2.0.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:glib-2.0: 3483659

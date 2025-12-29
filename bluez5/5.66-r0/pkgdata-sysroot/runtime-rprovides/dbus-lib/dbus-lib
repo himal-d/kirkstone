@@ -1,0 +1,21 @@
+PN: dbus
+PV: 1.14.0
+PR: r0
+PKGV: 1.14.0
+PKGR: r0
+LICENSE: AFL-2.1 | GPL-2.0-or-later
+DESCRIPTION: D-Bus is a message bus system, a simple way for applications to talk to one another. In addition to interprocess communication, D-Bus helps coordinate process lifecycle; it makes it simple and reliable to code a \\"single instance\\" application or daemon, and to launch applications and daemons on demand when their services are needed.
+SUMMARY: D-Bus message bus
+RDEPENDS:dbus-lib: glibc (>= 2.35) libsystemd (>= 250.5)
+RPROVIDES:dbus-lib:  dbus-lib (=1.14.0)
+RRECOMMENDS:dbus-lib: dbus
+SECTION: base
+PKG:dbus-lib: libdbus-1-3
+FILES:dbus-lib: /usr/lib/lib*.so.*
+FILES_INFO:dbus-lib: {"/usr/lib/libdbus-1.so.3": 19, "/usr/lib/libdbus-1.so.3.32.0": 293032}
+pkg_postinst:dbus-lib: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:dbus-lib: /usr/lib/libdbus-1.so.3.32.0
+FILERPROVIDES:/usr/lib/libdbus-1.so.3.32.0:dbus-lib:  libdbus-1.so.3(LIBDBUS_1_3)(64bit) libdbus-1.so.3(LIBDBUS_PRIVATE_1.14.0)(64bit) libdbus-1.so.3()(64bit)
+FILERDEPENDSFLIST:dbus-lib: /usr/lib/libdbus-1.so.3.32.0
+FILERDEPENDS:/usr/lib/libdbus-1.so.3.32.0:dbus-lib:  libsystemd.so.0(LIBSYSTEMD_209)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libsystemd.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:dbus-lib: 293051

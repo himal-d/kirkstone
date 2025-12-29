@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-cs: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the cs locale.
+SUMMARY:libpam-locale-cs: Linux-PAM (Pluggable Authentication Modules) - cs translations
+RPROVIDES:libpam-locale-cs: libpam-locale cs-translation
+RRECOMMENDS:libpam-locale-cs: virtual-locale-cs
+SECTION: base
+PKG:libpam-locale-cs: libpam-locale-cs
+FILES:libpam-locale-cs: /usr/share/locale/cs
+FILES_INFO:libpam-locale-cs: {"/usr/share/locale/cs/LC_MESSAGES/Linux-PAM.mo": 9857}
+PKGSIZE:libpam-locale-cs: 9857

@@ -1,0 +1,15 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION:gdbm-dbg: Key/value database library with extensible hashing.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:gdbm-dbg: Key/value database library with extensible hashing - Debugging files
+RRECOMMENDS:gdbm-dbg: glibc-dbg
+SECTION:gdbm-dbg: devel
+PKG:gdbm-dbg: gdbm-dbg
+ALLOW_EMPTY:gdbm-dbg: 1
+FILES:gdbm-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:gdbm-dbg: {"/usr/lib/.debug/libgdbm.so.3.0.0": 69944, "/usr/lib/.debug/libgdbm_compat.so.3.0.0": 40496}
+PKGSIZE:gdbm-dbg: 110440

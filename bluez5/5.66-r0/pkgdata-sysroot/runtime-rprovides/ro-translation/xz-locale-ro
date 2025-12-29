@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-ro: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the ro locale.
+SUMMARY:xz-locale-ro: Utilities for managing LZMA compressed files - ro translations
+RPROVIDES:xz-locale-ro: xz-locale ro-translation
+RRECOMMENDS:xz-locale-ro: virtual-locale-ro
+SECTION: base
+PKG:xz-locale-ro: xz-locale-ro
+FILES:xz-locale-ro: /usr/share/locale/ro
+FILES_INFO:xz-locale-ro: {"/usr/share/locale/ro/LC_MESSAGES/xz.mo": 27767}
+PKGSIZE:xz-locale-ro: 27767

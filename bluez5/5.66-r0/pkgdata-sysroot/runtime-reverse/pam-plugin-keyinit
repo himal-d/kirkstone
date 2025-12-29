@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-keyinit: PAM plugin for -keyinit
+SUMMARY:pam-plugin-keyinit: PAM plugin for -keyinit
+RDEPENDS:pam-plugin-keyinit: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-keyinit: pam-plugin-keyinit-suffix
+SECTION: base
+PKG:pam-plugin-keyinit: pam-plugin-keyinit
+FILES:pam-plugin-keyinit: /lib/security/pam_keyinit.so
+FILES_INFO:pam-plugin-keyinit: {"/lib/security/pam_keyinit.so": 10264}
+FILERDEPENDSFLIST:pam-plugin-keyinit: /lib/security/pam@underscore@keyinit.so
+FILERDEPENDS:/lib/security/pam@underscore@keyinit.so:pam-plugin-keyinit:  libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-keyinit: 10264

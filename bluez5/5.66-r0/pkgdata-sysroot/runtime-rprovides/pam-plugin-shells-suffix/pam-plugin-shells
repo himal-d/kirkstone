@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-shells: PAM plugin for -shells
+SUMMARY:pam-plugin-shells: PAM plugin for -shells
+RDEPENDS:pam-plugin-shells: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-shells: pam-plugin-shells-suffix
+SECTION: base
+PKG:pam-plugin-shells: pam-plugin-shells
+FILES:pam-plugin-shells: /lib/security/pam_shells.so
+FILES_INFO:pam-plugin-shells: {"/lib/security/pam_shells.so": 6128}
+FILERDEPENDSFLIST:pam-plugin-shells: /lib/security/pam@underscore@shells.so
+FILERDEPENDS:/lib/security/pam@underscore@shells.so:pam-plugin-shells:  libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-shells: 6128

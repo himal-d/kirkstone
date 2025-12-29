@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-ro: Tools to change and administer password and group data  This package contains language translation files for the ro locale.
+SUMMARY:shadow-locale-ro: Tools to change and administer password and group data - ro translations
+RPROVIDES:shadow-locale-ro: shadow-locale ro-translation
+RRECOMMENDS:shadow-locale-ro: virtual-locale-ro
+SECTION: base/utils
+PKG:shadow-locale-ro: shadow-locale-ro
+FILES:shadow-locale-ro: /usr/share/locale/ro
+FILES_INFO:shadow-locale-ro: {"/usr/share/locale/ro/LC_MESSAGES/shadow.mo": 18906}
+PKGSIZE:shadow-locale-ro: 18906

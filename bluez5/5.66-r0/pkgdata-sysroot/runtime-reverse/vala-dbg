@@ -1,0 +1,15 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:vala-dbg: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:vala-dbg: C#-like programming language for easing GObject programming - Debugging files
+RRECOMMENDS:vala-dbg: glib-2.0-dbg glibc-dbg
+SECTION:vala-dbg: devel
+PKG:vala-dbg: vala-dbg
+ALLOW_EMPTY:vala-dbg: 1
+FILES:vala-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:vala-dbg: {"/usr/bin/.debug/valac-0.56": 127880, "/usr/bin/.debug/vapigen-0.56": 748720, "/usr/lib/.debug/libvala-0.56.so.0.0.0": 8098808, "/usr/lib/vala-0.56/.debug/gen-introspect-0.56": 272112, "/usr/lib/vala-0.56/.debug/libvalaccodegen.so": 6274160}
+PKGSIZE:vala-dbg: 15521680

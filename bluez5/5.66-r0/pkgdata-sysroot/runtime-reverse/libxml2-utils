@@ -1,0 +1,17 @@
+PN: libxml2
+PV: 2.9.14
+PR: r0
+PKGV: 2.9.14
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: The XML Parser Library allows for manipulation of XML files.  Libxml2 exports Push and Pull type parser interfaces for both XML and HTML.  It can do DTD validation at parse time, on a parsed document instance or with an arbitrary DTD.  Libxml2 includes complete XPath, XPointer and Xinclude implementations.  It also has a SAX like interface, which is designed to be compatible with Expat.
+SUMMARY: XML C Parser Library and Toolkit
+RDEPENDS:libxml2-utils: glibc (>= 2.35) libxml2 (>= 2.9.14)
+SECTION: libs
+PKG:libxml2-utils: libxml2-utils
+FILES:libxml2-utils: /usr/bin/*
+FILES_INFO:libxml2-utils: {"/usr/bin/xmlcatalog": 14704, "/usr/bin/xmllint": 61696}
+FILERDEPENDSFLIST:libxml2-utils: /usr/bin/xmlcatalog /usr/bin/xmllint
+FILERDEPENDS:/usr/bin/xmlcatalog:libxml2-utils:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libxml2.so.2(LIBXML2_2.4.30)(64bit) libxml2.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/xmllint:libxml2-utils:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libxml2.so.2(LIBXML2_2.9.0)(64bit) libxml2.so.2(LIBXML2_2.6.3)(64bit) libxml2.so.2(LIBXML2_2.6.18)(64bit) libxml2.so.2(LIBXML2_2.6.8)(64bit) libxml2.so.2(LIBXML2_2.5.7)(64bit) libxml2.so.2(LIBXML2_2.6.20)(64bit) libxml2.so.2(LIBXML2_2.6.21)(64bit) libxml2.so.2(LIBXML2_2.5.0)(64bit) libxml2.so.2(LIBXML2_2.6.0)(64bit) libxml2.so.2(LIBXML2_2.5.2)(64bit) libxml2.so.2(LIBXML2_2.5.8)(64bit) libxml2.so.2(LIBXML2_2.4.30)(64bit) libxml2.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libxml2-utils: 76400

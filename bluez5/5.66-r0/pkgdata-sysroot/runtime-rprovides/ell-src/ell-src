@@ -1,0 +1,13 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:ell-src: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.  This package contains sources for debugging purposes.
+SUMMARY:ell-src: Embedded Linux Library - Source files
+RPROVIDES:ell-src:  ell-src (=0.50)
+SECTION:ell-src: devel
+PKG:ell-src: libell-src
+FILES_INFO:ell-src: {}
+PKGSIZE:ell-src: 0

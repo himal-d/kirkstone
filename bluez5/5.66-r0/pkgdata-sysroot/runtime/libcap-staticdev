@@ -1,0 +1,14 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION:libcap-staticdev: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.  This package contains static libraries for software development.
+SUMMARY:libcap-staticdev: Library for getting/setting POSIX.1e capabilities - Development files (Static Libraries)
+RDEPENDS:libcap-staticdev: libcap-dev (= 2.65-r0)
+SECTION:libcap-staticdev: devel
+PKG:libcap-staticdev: libcap-staticdev
+FILES:libcap-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/libcap/*.a
+FILES_INFO:libcap-staticdev: {"/lib/libcap.a": 205304, "/usr/lib/libpsx.a": 49964}
+PKGSIZE:libcap-staticdev: 255268

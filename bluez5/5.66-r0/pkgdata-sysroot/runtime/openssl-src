@@ -1,0 +1,12 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION:openssl-src: Secure Socket Layer (SSL) binary and related cryptographic tools.  This package contains sources for debugging purposes.
+SUMMARY:openssl-src: Secure Socket Layer - Source files
+SECTION:openssl-src: devel
+PKG:openssl-src: openssl-src
+FILES_INFO:openssl-src: {}
+PKGSIZE:openssl-src: 0

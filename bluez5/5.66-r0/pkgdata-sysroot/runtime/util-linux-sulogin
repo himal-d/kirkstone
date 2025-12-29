@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-sulogin: util-linux sulogin
+SUMMARY:util-linux-sulogin: util-linux sulogin
+RDEPENDS:util-linux-sulogin: update-alternatives-opkg glibc (>= 2.35) libxcrypt (>= 4.4.33)
+SECTION: base
+PKG:util-linux-sulogin: util-linux-sulogin
+FILES:util-linux-sulogin: /sbin/sulogin.util-linux
+FILES_INFO:util-linux-sulogin: {"/sbin/sulogin.util-linux": 48128}
+pkg_postinst:util-linux-sulogin: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/sulogin sulogin /sbin/sulogin.util-linux 80\n
+pkg_prerm:util-linux-sulogin: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  sulogin /sbin/sulogin.util-linux\n
+FILERPROVIDESFLIST:util-linux-sulogin:  /sbin/sulogin.util-linux
+FILERPROVIDES:/sbin/sulogin.util-linux:util-linux-sulogin:  /sbin/sulogin
+FILERDEPENDSFLIST:util-linux-sulogin: /sbin/sulogin.util-linux
+FILERDEPENDS:/sbin/sulogin.util-linux:util-linux-sulogin:  libcrypt.so.2(XCRYPT_2.0)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-sulogin: 48128

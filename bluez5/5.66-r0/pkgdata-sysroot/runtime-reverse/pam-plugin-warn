@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-warn: PAM plugin for -warn
+SUMMARY:pam-plugin-warn: PAM plugin for -warn
+RDEPENDS:pam-plugin-warn: libpam-suffix libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-warn: pam-plugin-warn-suffix
+SECTION: base
+PKG:pam-plugin-warn: pam-plugin-warn
+FILES:pam-plugin-warn: /lib/security/pam_warn.so
+FILES_INFO:pam-plugin-warn: {"/lib/security/pam_warn.so": 6064}
+FILERDEPENDSFLIST:pam-plugin-warn: /lib/security/pam@underscore@warn.so
+FILERDEPENDS:/lib/security/pam@underscore@warn.so:pam-plugin-warn:  libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-warn: 6064

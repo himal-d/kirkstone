@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-da: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the da locale.
+SUMMARY:glib-2.0-locale-da: A general-purpose utility library - da translations
+RPROVIDES:glib-2.0-locale-da: glib-2.0-locale da-translation glib-2.0-locale-da (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-da: virtual-locale-da
+SECTION: libs
+PKG:glib-2.0-locale-da: libglib-2.0-locale-da
+FILES:glib-2.0-locale-da: /usr/share/locale/da
+FILES_INFO:glib-2.0-locale-da: {"/usr/share/locale/da/LC_MESSAGES/glib20.mo": 133616}
+PKGSIZE:glib-2.0-locale-da: 133616

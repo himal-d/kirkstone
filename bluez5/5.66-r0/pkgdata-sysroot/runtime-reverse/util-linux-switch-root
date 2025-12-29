@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-switch-root: util-linux switch-root
+SUMMARY:util-linux-switch-root: util-linux switch-root
+RDEPENDS:util-linux-switch-root: update-alternatives-opkg glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-switch-root: util-linux-switch-root
+FILES:util-linux-switch-root: /sbin/switch_root.util-linux
+FILES_INFO:util-linux-switch-root: {"/sbin/switch_root.util-linux": 14728}
+pkg_postinst:util-linux-switch-root: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/switch_root switch_root /sbin/switch_root.util-linux 80\n
+pkg_prerm:util-linux-switch-root: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  switch_root /sbin/switch_root.util-linux\n
+FILERPROVIDESFLIST:util-linux-switch-root:  /sbin/switch@underscore@root.util-linux
+FILERPROVIDES:/sbin/switch@underscore@root.util-linux:util-linux-switch-root:  /sbin/switch_root
+FILERDEPENDSFLIST:util-linux-switch-root: /sbin/switch@underscore@root.util-linux
+FILERDEPENDS:/sbin/switch@underscore@root.util-linux:util-linux-switch-root:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-switch-root: 14728

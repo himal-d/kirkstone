@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-xmlrpc: Python XML-RPC support
+RDEPENDS:python3-xmlrpc: python3-compression python3-core python3-crypt python3-datetime python3-email python3-fcntl python3-html python3-io python3-math python3-mime python3-netclient python3-netserver python3-numbers python3-pydoc python3-stringold python3-xml
+SECTION: devel/python
+PKG:python3-xmlrpc: python3-xmlrpc
+FILES:python3-xmlrpc:  /usr/lib/python3.10/xmlrpc /usr/lib/python3.10/xmlrpc/__pycache__
+FILES_INFO:python3-xmlrpc: {"/usr/lib/python3.10/xmlrpc/__init__.py": 38, "/usr/lib/python3.10/xmlrpc/__pycache__/__init__.cpython-310.pyc": 131, "/usr/lib/python3.10/xmlrpc/__pycache__/client.cpython-310.pyc": 34390, "/usr/lib/python3.10/xmlrpc/__pycache__/server.cpython-310.pyc": 29418, "/usr/lib/python3.10/xmlrpc/client.py": 49391, "/usr/lib/python3.10/xmlrpc/server.py": 36672}
+PKGSIZE:python3-xmlrpc: 150040

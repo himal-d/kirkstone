@@ -1,0 +1,13 @@
+PN: gobject-introspection
+PV: 1.72.0
+PR: r0
+PKGV: 1.72.0
+PKGR: r0
+LICENSE: LGPL-2.0-or-later & GPL-2.0-or-later & MIT
+DESCRIPTION: GObject Introspection is a project for providing machine readable introspection data of the API of C libraries. This introspection data can be used in several different use cases, for example automatic code generation for bindings, API verification and documentation generation.
+SUMMARY: Middleware layer between GObject-using C libraries and language bindings
+SECTION: libs
+PKG:gobject-introspection-locale: gobject-introspection-locale
+FILES:gobject-introspection-locale: /usr/share/locale
+FILES_INFO:gobject-introspection-locale: {}
+PKGSIZE:gobject-introspection-locale: 0

@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-yo: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the yo locale.
+SUMMARY:libpam-locale-yo: Linux-PAM (Pluggable Authentication Modules) - yo translations
+RPROVIDES:libpam-locale-yo: libpam-locale yo-translation
+RRECOMMENDS:libpam-locale-yo: virtual-locale-yo
+SECTION: base
+PKG:libpam-locale-yo: libpam-locale-yo
+FILES:libpam-locale-yo: /usr/share/locale/yo
+FILES_INFO:libpam-locale-yo: {"/usr/share/locale/yo/LC_MESSAGES/Linux-PAM.mo": 392}
+PKGSIZE:libpam-locale-yo: 392

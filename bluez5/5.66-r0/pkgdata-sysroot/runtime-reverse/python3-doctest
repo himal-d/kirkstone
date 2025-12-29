@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-doctest: Python framework for running examples in docstrings
+RDEPENDS:python3-doctest: python3-core python3-debugger python3-difflib python3-pprint python3-shell python3-stringold python3-unittest
+SECTION: devel/python
+PKG:python3-doctest: python3-doctest
+FILES:python3-doctest:  /usr/lib/python3.10/doctest.py /usr/lib/python3.10/__pycache__/doctest.*.pyc
+FILES_INFO:python3-doctest: {"/usr/lib/python3.10/__pycache__/doctest.cpython-310.pyc": 76120, "/usr/lib/python3.10/doctest.py": 104913}
+PKGSIZE:python3-doctest: 181033

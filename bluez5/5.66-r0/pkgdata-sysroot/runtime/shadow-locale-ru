@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-ru: Tools to change and administer password and group data  This package contains language translation files for the ru locale.
+SUMMARY:shadow-locale-ru: Tools to change and administer password and group data - ru translations
+RPROVIDES:shadow-locale-ru: shadow-locale ru-translation
+RRECOMMENDS:shadow-locale-ru: virtual-locale-ru
+SECTION: base/utils
+PKG:shadow-locale-ru: shadow-locale-ru
+FILES:shadow-locale-ru: /usr/share/locale/ru
+FILES_INFO:shadow-locale-ru: {"/usr/share/locale/ru/LC_MESSAGES/shadow.mo": 89319}
+PKGSIZE:shadow-locale-ru: 89319

@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-or: Password strength checker library  This package contains language translation files for the or locale.
+SUMMARY:cracklib-locale-or: Password strength checker library - or translations
+RPROVIDES:cracklib-locale-or: cracklib-locale or-translation
+RRECOMMENDS:cracklib-locale-or: virtual-locale-or
+SECTION: base
+PKG:cracklib-locale-or: cracklib-locale-or
+FILES:cracklib-locale-or: /usr/share/locale/or
+FILES_INFO:cracklib-locale-or: {"/usr/share/locale/or/LC_MESSAGES/cracklib.mo": 2777}
+PKGSIZE:cracklib-locale-or: 2777

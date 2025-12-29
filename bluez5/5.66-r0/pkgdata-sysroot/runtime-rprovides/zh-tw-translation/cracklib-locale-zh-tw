@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-zh-tw: Password strength checker library  This package contains language translation files for the zh_TW locale.
+SUMMARY:cracklib-locale-zh-tw: Password strength checker library - zh_TW translations
+RPROVIDES:cracklib-locale-zh-tw: cracklib-locale zh-tw-translation
+RRECOMMENDS:cracklib-locale-zh-tw: virtual-locale-zh-tw
+SECTION: base
+PKG:cracklib-locale-zh-tw: cracklib-locale-zh-tw
+FILES:cracklib-locale-zh-tw: /usr/share/locale/zh_TW
+FILES_INFO:cracklib-locale-zh-tw: {"/usr/share/locale/zh_TW/LC_MESSAGES/cracklib.mo": 1745}
+PKGSIZE:cracklib-locale-zh-tw: 1745

@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-fsck.cramfs: util-linux fsck.cramfs
+SUMMARY:util-linux-fsck.cramfs: util-linux fsck.cramfs
+RDEPENDS:util-linux-fsck.cramfs: glibc (>= 2.35) zlib (>= 1.2.11)
+SECTION: base
+PKG:util-linux-fsck.cramfs: util-linux-fsck.cramfs
+FILES:util-linux-fsck.cramfs: /usr/sbin/fsck.cramfs
+FILES_INFO:util-linux-fsck.cramfs: {"/usr/sbin/fsck.cramfs": 43744}
+FILERDEPENDSFLIST:util-linux-fsck.cramfs: /usr/sbin/fsck.cramfs
+FILERDEPENDS:/usr/sbin/fsck.cramfs:util-linux-fsck.cramfs:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libz.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-fsck.cramfs: 43744

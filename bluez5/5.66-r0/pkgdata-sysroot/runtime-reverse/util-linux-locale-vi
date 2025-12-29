@@ -1,0 +1,15 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-locale-vi: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains language translation files for the vi locale.
+SUMMARY:util-linux-locale-vi: A suite of basic system administration utilities - vi translations
+RPROVIDES:util-linux-locale-vi: util-linux-locale vi-translation
+RRECOMMENDS:util-linux-locale-vi: virtual-locale-vi
+SECTION: base
+PKG:util-linux-locale-vi: util-linux-locale-vi
+FILES:util-linux-locale-vi: /usr/share/locale/vi
+FILES_INFO:util-linux-locale-vi: {"/usr/share/locale/vi/LC_MESSAGES/util-linux.mo": 324070}
+PKGSIZE:util-linux-locale-vi: 324070

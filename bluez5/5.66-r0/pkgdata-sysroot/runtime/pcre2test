@@ -1,0 +1,16 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.
+SUMMARY:pcre2test: program for testing Perl-comatible regular expressions
+RDEPENDS:pcre2test: glibc (>= 2.35) libpcre2 (>= 10.40) libpcre2-16 (>= 10.40) libpcre2-32 (>= 10.40)
+SECTION: devel
+PKG:pcre2test: pcre2test
+FILES:pcre2test: /usr/bin/pcre2test
+FILES_INFO:pcre2test: {"/usr/bin/pcre2test": 130224}
+FILERDEPENDSFLIST:pcre2test: /usr/bin/pcre2test
+FILERDEPENDS:/usr/bin/pcre2test:pcre2test:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpcre2-8.so.0()(64bit) libpcre2-posix.so.3()(64bit) libpcre2-16.so.0()(64bit) libpcre2-32.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pcre2test: 130224

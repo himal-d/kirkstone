@@ -1,0 +1,17 @@
+PN: zlib
+PV: 1.2.11
+PR: r0
+PKGV: 1.2.11
+PKGR: r0
+LICENSE: Zlib
+DESCRIPTION:zlib-dev: Zlib is a general-purpose, patent-free, lossless data compression library which is used by many different programs.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:zlib-dev: Zlib Compression Library - Development files
+RDEPENDS:zlib-dev: zlib (= 1.2.11-r0)
+RPROVIDES:zlib-dev:  zlib-dev (=1.2.11)
+RRECOMMENDS:zlib-dev: glibc-dev
+SECTION:zlib-dev: devel
+PKG:zlib-dev: libz-dev
+ALLOW_EMPTY:zlib-dev: 1
+FILES:zlib-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/zlib/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:zlib-dev: {"/usr/include/zconf.h": 16262, "/usr/include/zlib.h": 96239, "/usr/lib/libz.so": 24, "/usr/lib/pkgconfig/zlib.pc": 233}
+PKGSIZE:zlib-dev: 112758

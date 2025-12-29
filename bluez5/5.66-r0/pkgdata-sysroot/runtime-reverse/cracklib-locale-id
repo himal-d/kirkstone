@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-id: Password strength checker library  This package contains language translation files for the id locale.
+SUMMARY:cracklib-locale-id: Password strength checker library - id translations
+RPROVIDES:cracklib-locale-id: cracklib-locale id-translation
+RRECOMMENDS:cracklib-locale-id: virtual-locale-id
+SECTION: base
+PKG:cracklib-locale-id: cracklib-locale-id
+FILES:cracklib-locale-id: /usr/share/locale/id
+FILES_INFO:cracklib-locale-id: {"/usr/share/locale/id/LC_MESSAGES/cracklib.mo": 1803}
+PKGSIZE:cracklib-locale-id: 1803

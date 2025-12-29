@@ -1,0 +1,12 @@
+PN: dbus
+PV: 1.14.0
+PR: r0
+PKGV: 1.14.0
+PKGR: r0
+LICENSE: AFL-2.1 | GPL-2.0-or-later
+DESCRIPTION:dbus-src: D-Bus is a message bus system, a simple way for applications to talk to one another. In addition to interprocess communication, D-Bus helps coordinate process lifecycle; it makes it simple and reliable to code a \\"single instance\\" application or daemon, and to launch applications and daemons on demand when their services are needed.  This package contains sources for debugging purposes.
+SUMMARY:dbus-src: D-Bus message bus - Source files
+SECTION:dbus-src: devel
+PKG:dbus-src: dbus-src
+FILES_INFO:dbus-src: {}
+PKGSIZE:dbus-src: 0

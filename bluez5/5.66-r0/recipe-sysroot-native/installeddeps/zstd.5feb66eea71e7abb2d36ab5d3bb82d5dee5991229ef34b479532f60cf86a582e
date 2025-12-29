@@ -1,0 +1,15 @@
+recipe-sysroot/sysroot-providers/zstd
+recipe-sysroot/usr/include/zstd_errors.h
+recipe-sysroot/usr/include/zdict.h
+recipe-sysroot/usr/include/zstd.h
+recipe-sysroot/usr/lib/libzstd.so.1
+recipe-sysroot/usr/lib/libzstd.so.1.5.2
+recipe-sysroot/usr/lib/libzstd.so
+recipe-sysroot/usr/lib/libzstd.a
+recipe-sysroot/usr/lib/pkgconfig/libzstd.pc
+recipe-sysroot/usr/lib/pkgconfig/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/share/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

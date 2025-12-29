@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-mime: Python MIME handling APIs
+RDEPENDS:python3-mime: python3-core
+SECTION: devel/python
+PKG:python3-mime: python3-mime
+FILES:python3-mime:  /usr/lib/python3.10/quopri.py /usr/lib/python3.10/uu.py /usr/lib/python3.10/__pycache__/quopri.*.pyc /usr/lib/python3.10/__pycache__/uu.*.pyc
+FILES_INFO:python3-mime: {"/usr/lib/python3.10/__pycache__/quopri.cpython-310.pyc": 5794, "/usr/lib/python3.10/__pycache__/uu.cpython-310.pyc": 3688, "/usr/lib/python3.10/quopri.py": 7268, "/usr/lib/python3.10/uu.py": 6959}
+FILERDEPENDSFLIST:python3-mime: /usr/lib/python3.10/quopri.py /usr/lib/python3.10/uu.py
+FILERDEPENDS:/usr/lib/python3.10/quopri.py:python3-mime:  /usr/bin/env
+FILERDEPENDS:/usr/lib/python3.10/uu.py:python3-mime:  /usr/bin/env
+PKGSIZE:python3-mime: 23709

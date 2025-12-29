@@ -1,0 +1,26 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: Tools to change and administer password and group data
+SUMMARY: Tools to change and administer password and group data
+RDEPENDS:shadow-base: update-alternatives-opkg glibc (>= 2.35) libpam (>= 1.5.2) libxcrypt (>= 4.4.33)
+SECTION: base/utils
+PKG:shadow-base: shadow-base
+FILES:shadow-base:     /bin/login.shadow     /bin/su.shadow     /usr/bin/sg     /usr/bin/newgrp.shadow     /usr/bin/groups.shadow     /etc/pam.d/login     /etc/pam.d/su     /etc/login.defs 
+FILES_INFO:shadow-base: {"/bin/login.shadow": 41408, "/bin/su.shadow": 37464, "/etc/login.defs": 13642, "/etc/pam.d/login": 3202, "/etc/pam.d/su": 2140, "/usr/bin/groups.shadow": 10536, "/usr/bin/newgrp.shadow": 37048, "/usr/bin/sg": 13}
+pkg_postinst:shadow-base: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/bin/newgrp newgrp /usr/bin/newgrp.shadow 200\n\tupdate-alternatives --install /usr/bin/groups groups /usr/bin/groups.shadow 200\n\tupdate-alternatives --install /bin/login login /bin/login.shadow 200\n\tupdate-alternatives --install /bin/su su /bin/su.shadow 200\n
+pkg_prerm:shadow-base: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  newgrp /usr/bin/newgrp.shadow\n\tupdate-alternatives --remove  groups /usr/bin/groups.shadow\n\tupdate-alternatives --remove  login /bin/login.shadow\n\tupdate-alternatives --remove  su /bin/su.shadow\n
+FILERPROVIDESFLIST:shadow-base:  /usr/bin/newgrp.shadow /usr/bin/groups.shadow /bin/login.shadow /bin/su.shadow
+FILERPROVIDES:/bin/login.shadow:shadow-base:  /bin/login
+FILERPROVIDES:/bin/su.shadow:shadow-base:  /bin/su
+FILERPROVIDES:/usr/bin/groups.shadow:shadow-base:  /usr/bin/groups
+FILERPROVIDES:/usr/bin/newgrp.shadow:shadow-base:  /usr/bin/newgrp
+FILERDEPENDSFLIST:shadow-base: /bin/login.shadow /bin/su.shadow /usr/bin/groups.shadow /usr/bin/newgrp.shadow
+FILERDEPENDS:/bin/login.shadow:shadow-base:  libpam_misc.so.0(LIBPAM_MISC_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libpam_misc.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/bin/su.shadow:shadow-base:  libpam_misc.so.0(LIBPAM_MISC_1.0)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0()(64bit) libpam_misc.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/groups.shadow:shadow-base:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/newgrp.shadow:shadow-base:  libcrypt.so.2(XCRYPT_2.0)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcrypt.so.2()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:shadow-base: 145453

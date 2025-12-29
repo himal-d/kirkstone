@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-bn-in: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the bn_IN locale.
+SUMMARY:libpam-locale-bn-in: Linux-PAM (Pluggable Authentication Modules) - bn_IN translations
+RPROVIDES:libpam-locale-bn-in: libpam-locale bn-in-translation
+RRECOMMENDS:libpam-locale-bn-in: virtual-locale-bn-in
+SECTION: base
+PKG:libpam-locale-bn-in: libpam-locale-bn-in
+FILES:libpam-locale-bn-in: /usr/share/locale/bn_IN
+FILES_INFO:libpam-locale-bn-in: {"/usr/share/locale/bn_IN/LC_MESSAGES/Linux-PAM.mo": 10850}
+PKGSIZE:libpam-locale-bn-in: 10850

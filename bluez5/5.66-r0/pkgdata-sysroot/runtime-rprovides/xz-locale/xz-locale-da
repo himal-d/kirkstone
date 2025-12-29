@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-da: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the da locale.
+SUMMARY:xz-locale-da: Utilities for managing LZMA compressed files - da translations
+RPROVIDES:xz-locale-da: xz-locale da-translation
+RRECOMMENDS:xz-locale-da: virtual-locale-da
+SECTION: base
+PKG:xz-locale-da: xz-locale-da
+FILES:xz-locale-da: /usr/share/locale/da
+FILES_INFO:xz-locale-da: {"/usr/share/locale/da/LC_MESSAGES/xz.mo": 14353}
+PKGSIZE:xz-locale-da: 14353

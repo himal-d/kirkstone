@@ -1,0 +1,15 @@
+PN: kmod
+PV: 29
+PR: r0
+PKGV: 29
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:kmod-doc: kmod is a set of tools to handle common tasks with Linux kernel modules like                insert, remove, list, check properties, resolve dependencies and aliases.  This package contains documentation.
+SUMMARY:kmod-doc: Tools for managing Linux kernel modules - Documentation files
+SECTION:kmod-doc: doc
+PKG:kmod-doc: kmod-doc
+FILES:kmod-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:kmod-doc: {}
+pkg_postinst:kmod-doc: set -e\n\t# only update manual page index caches when manual files are built and installed\n\tif false; then\n\t\tif test -n "$D"; then\n\t\t\tif true; then\n\t\t\t\tsed "s:\\(\\s\\)/:\\1$D/:g" $D/etc/man_db.conf | PSEUDO_UNLOAD=1 qemu-aarch64 -r 3.14  -L $D -E LD_LIBRARY_PATH=$D/usr/lib:$D/lib $D/usr/bin/mandb -C - -u -q $D/usr/share/man\n\t\t\t\tchown -R root:root $D/usr/share/man\n\n\t\t\t\tmkdir -p $D/var/cache/man\n\t\t\t\tcd $D/usr/share/man\n\t\t\t\tfind . -name index.db | while read index; do\n\t\t\t\t\tmkdir -p $D/var/cache/man/$(dirname ${index})\n\t\t\t\t\tmv ${index} $D/var/cache/man/${index}\n\t\t\t\t\tchown man:man $D/var/cache/man/${index}\n\t\t\t\tdone\n\t\t\t\tcd -\n\t\t\telse\n\t\t\t\t$INTERCEPT_DIR/postinst_intercept delay_to_first_boot ${PKG} mlprefix=\n\t\t\tfi\n\t\telse\n\t\t\tmandb -q\n\t\tfi\n\tfi\n
+pkg_postrm:kmod-doc: set -e\n\t# only update manual page index caches when manual files are built and installed\n\tif false; then\n\t\tmandb -q\n\tfi\n
+PKGSIZE:kmod-doc: 0

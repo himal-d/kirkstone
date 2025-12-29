@@ -1,0 +1,21 @@
+PN: gdbm
+PV: 1.8.3
+PR: r4
+PKGV: 1.8.3
+PKGR: r4
+LICENSE: GPL-2.0-or-later
+DESCRIPTION: Key/value database library with extensible hashing.
+SUMMARY: Key/value database library with extensible hashing
+RDEPENDS:gdbm: glibc (>= 2.35)
+SECTION: libs
+PKG:gdbm: gdbm
+FILES:gdbm: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/gdbm /usr/lib/gdbm/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:gdbm: {"/usr/lib/libgdbm.so.3": 16, "/usr/lib/libgdbm.so.3.0.0": 22832, "/usr/lib/libgdbm_compat.so.3": 23, "/usr/lib/libgdbm_compat.so.3.0.0": 10280}
+pkg_postinst:gdbm: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:gdbm: /usr/lib/libgdbm.so.3.0.0 /usr/lib/libgdbm@underscore@compat.so.3.0.0
+FILERPROVIDES:/usr/lib/libgdbm.so.3.0.0:gdbm:  libgdbm.so.3()(64bit)
+FILERPROVIDES:/usr/lib/libgdbm@underscore@compat.so.3.0.0:gdbm:  libgdbm_compat.so.3()(64bit)
+FILERDEPENDSFLIST:gdbm: /usr/lib/libgdbm.so.3.0.0 /usr/lib/libgdbm@underscore@compat.so.3.0.0
+FILERDEPENDS:/usr/lib/libgdbm.so.3.0.0:gdbm:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libgdbm@underscore@compat.so.3.0.0:gdbm:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:gdbm: 33151

@@ -1,0 +1,14 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:ell-doc: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.  This package contains documentation.
+SUMMARY:ell-doc: Embedded Linux Library - Documentation files
+RPROVIDES:ell-doc:  ell-doc (=0.50)
+SECTION:ell-doc: doc
+PKG:ell-doc: libell-doc
+FILES:ell-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:ell-doc: {}
+PKGSIZE:ell-doc: 0

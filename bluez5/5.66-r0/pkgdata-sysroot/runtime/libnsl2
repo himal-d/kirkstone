@@ -1,0 +1,20 @@
+PN: libnsl2
+PV: 2.0.0
+PR: r0
+PKGV: 2.0.0
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION: This library contains the public client interface for NIS(YP) and NIS+               it was part of glibc and now is standalone packages. it also supports IPv6
+SUMMARY: Library containing NIS functions using TI-RPC (IPv6 enabled)
+RDEPENDS:libnsl2: glibc (>= 2.35) libtirpc (>= 1.3.2)
+RPROVIDES:libnsl2:  libnsl2 (=2.0.0)
+SECTION: libs
+PKG:libnsl2: libnsl3
+FILES:libnsl2: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libnsl2 /usr/lib/libnsl2/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libnsl2: {"/usr/lib/libnsl.so.3": 15, "/usr/lib/libnsl.so.3.0.0": 27128}
+pkg_postinst:libnsl2: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libnsl2: /usr/lib/libnsl.so.3.0.0
+FILERPROVIDES:/usr/lib/libnsl.so.3.0.0:libnsl2:  libnsl.so.3(LIBNSL_2.0)(64bit) libnsl.so.3(LIBNSL_PRIVATE)(64bit) libnsl.so.3()(64bit)
+FILERDEPENDSFLIST:libnsl2: /usr/lib/libnsl.so.3.0.0
+FILERDEPENDS:/usr/lib/libnsl.so.3.0.0:libnsl2:  libtirpc.so.3(TIRPC_0.3.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtirpc.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libnsl2: 27143

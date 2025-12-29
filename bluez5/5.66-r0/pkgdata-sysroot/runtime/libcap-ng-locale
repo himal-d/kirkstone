@@ -1,0 +1,13 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.
+SUMMARY: An alternate posix capabilities library
+SECTION: base
+PKG:libcap-ng-locale: libcap-ng-locale
+FILES:libcap-ng-locale: /usr/share/locale
+FILES_INFO:libcap-ng-locale: {}
+PKGSIZE:libcap-ng-locale: 0

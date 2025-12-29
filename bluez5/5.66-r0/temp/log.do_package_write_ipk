@@ -1,0 +1,63 @@
+DEBUG: Executing python function extend_recipe_sysroot
+NOTE: Direct dependencies are ['/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/systemd/systemd-systemctl-native.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-core/update-rc.d/update-rc.d_0.8.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/opkg-utils/opkg-utils_0.5.0.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-devtools/pseudo/pseudo_git.bb:do_populate_sysroot', 'virtual:native:/workspace/home/himal.d/MatterProtocol/openembedded-core/meta/recipes-extended/xz/xz_5.2.6.bb:do_populate_sysroot']
+NOTE: Installed into sysroot: []
+NOTE: Skipping as already exists in sysroot: ['systemd-systemctl-native', 'update-rc.d-native', 'opkg-utils-native', 'pseudo-native', 'xz-native', 'libtool-native', 'gettext-minimal-native', 'perl-native', 'texinfo-dummy-native', 'gdbm-native', 'zlib-native', 'make-native']
+DEBUG: Python function extend_recipe_sysroot finished
+DEBUG: Executing python function sstate_task_prefunc
+DEBUG: Python function sstate_task_prefunc finished
+DEBUG: Executing python function do_package_write_ipk
+DEBUG: Executing python function read_subpackage_metadata
+DEBUG: Python function read_subpackage_metadata finished
+DEBUG: Executing python function do_package_ipk
+NOTE: package name mapping done: dbus-lib -> libdbus-1-3
+NOTE: package name mapping done: glib-2.0 -> libglib-2.0
+NOTE: package name mapping done: glibc -> libc6
+NOTE: package name mapping done: json-c -> libjson-c5
+NOTE: package name mapping done: libudev -> libudev1
+NOTE: package name mapping done: readline -> libreadline5
+NOTE: Not creating empty archive for bluez5-locale-5.66-r0
+NOTE: Not creating empty archive for bluez5-doc-5.66-r0
+NOTE: Not creating empty archive for bluez5-staticdev-5.66-r0
+NOTE: package name mapping done: dbus-lib -> libdbus-1-3
+NOTE: libell-dev rprovides ell-dev, not replacing the latter
+NOTE: package name mapping done: glib-2.0 -> libglib-2.0
+NOTE: libglib-2.0-dev rprovides glib-2.0-dev, not replacing the latter
+NOTE: libc6-dev rprovides glibc-dev, not replacing the latter
+NOTE: package name mapping done: glibc -> libc6
+NOTE: package name mapping done: libudev -> libudev1
+NOTE: package name mapping done: readline -> libreadline5
+NOTE: libjson-c-dev rprovides json-c-dev, not replacing the latter
+NOTE: package name mapping done: dbus-lib -> libdbus-1-3
+NOTE: package name mapping done: glib-2.0 -> libglib-2.0
+NOTE: package name mapping done: glibc -> libc6
+NOTE: package name mapping done: dbus-lib -> libdbus-1-3
+NOTE: package name mapping done: glib-2.0 -> libglib-2.0
+NOTE: package name mapping done: glibc -> libc6
+NOTE: Not creating empty archive for bluez5-src-5.66-r0
+NOTE: libglib-2.0-dbg rprovides glib-2.0-dbg, not replacing the latter
+NOTE: libc6-dbg rprovides glibc-dbg, not replacing the latter
+NOTE: libjson-c-dbg rprovides json-c-dbg, not replacing the latter
+NOTE: libreadline-dbg rprovides readline-dbg, not replacing the latter
+NOTE: libreadline-dev rprovides readline-dev, not replacing the latter
+DEBUG: Python function do_package_ipk finished
+DEBUG: Python function do_package_write_ipk finished
+DEBUG: Executing python function sstate_task_postfunc
+NOTE: Using umask 0o002 (not 22) for sstate packaging
+DEBUG: Preparing tree /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/deploy-ipks for packaging at /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-package_write_ipk/deploy-ipks
+DEBUG: Executing python function target_add_sysroot_deps
+DEBUG: Python function target_add_sysroot_deps finished
+DEBUG: Executing python function sstate_hardcode_path
+NOTE: Removing hardcoded paths from sstate package: 'find /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-package_write_ipk/ \( -name "*.la" -o -name "*-config" -o -name "*_config" -o -name "postinst-*" \) -type f | xargs grep -l -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot' -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native' -e '/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools' | tee /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/sstate-build-package_write_ipk/fixmepath | xargs --no-run-if-empty sed -i -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot-native:FIXMESTAGINGDIRHOST:g' -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/recipe-sysroot:FIXMESTAGINGDIRTARGET:g' -e 's:/workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/hosttools:FIXME_HOSTTOOLS_DIR:g''
+DEBUG: Python function sstate_hardcode_path finished
+DEBUG: Executing python function sstate_report_unihash
+DEBUG: Python function sstate_report_unihash finished
+DEBUG: Executing shell function sstate_create_package
+DEBUG: Shell function sstate_create_package finished
+DEBUG: Executing python function sstate_hardcode_path_unpack
+DEBUG: Python function sstate_hardcode_path_unpack finished
+DEBUG: Executing python function buildhistory_emit_outputsigs
+DEBUG: Python function buildhistory_emit_outputsigs finished
+DEBUG: Staging files from /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/work/cortexa72-rdk-linux/bluez5/5.66-r0/deploy-ipks to /workspace/home/himal.d/MatterProtocol/build-raspberrypi4-64-rdk-broadband/tmp/deploy/ipk
+DEBUG: Executing python function buildhistory_emit_pkghistory
+DEBUG: Python function buildhistory_emit_pkghistory finished
+DEBUG: Python function sstate_task_postfunc finished

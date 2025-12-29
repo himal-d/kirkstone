@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-tkinter: Python Tcl/Tk bindings
+RDEPENDS:python3-tkinter: python3-core
+SECTION: devel/python
+PKG:python3-tkinter: python3-tkinter
+FILES:python3-tkinter:  /usr/lib/python3.10/lib-dynload/_tkinter.*.so /usr/lib/python3.10/tkinter
+FILES_INFO:python3-tkinter: {"/usr/lib/python3.10/tkinter/__init__.py": 170514, "/usr/lib/python3.10/tkinter/__main__.py": 148, "/usr/lib/python3.10/tkinter/__pycache__/__init__.cpython-310.pyc": 169085, "/usr/lib/python3.10/tkinter/__pycache__/__main__.cpython-310.pyc": 307, "/usr/lib/python3.10/tkinter/__pycache__/colorchooser.cpython-310.pyc": 2300, "/usr/lib/python3.10/tkinter/__pycache__/commondialog.cpython-310.pyc": 1348, "/usr/lib/python3.10/tkinter/__pycache__/constants.cpython-310.pyc": 1657, "/usr/lib/python3.10/tkinter/__pycache__/dialog.cpython-310.pyc": 1510, "/usr/lib/python3.10/tkinter/__pycache__/dnd.cpython-310.pyc": 11404, "/usr/lib/python3.10/tkinter/__pycache__/filedialog.cpython-310.pyc": 12453, "/usr/lib/python3.10/tkinter/__pycache__/font.cpython-310.pyc": 6615, "/usr/lib/python3.10/tkinter/__pycache__/messagebox.cpython-310.pyc": 2926, "/usr/lib/python3.10/tkinter/__pycache__/scrolledtext.cpython-310.pyc": 2198, "/usr/lib/python3.10/tkinter/__pycache__/simpledialog.cpython-310.pyc": 10931, "/usr/lib/python3.10/tkinter/__pycache__/tix.cpython-310.pyc": 73692, "/usr/lib/python3.10/tkinter/__pycache__/ttk.cpython-310.pyc": 55677, "/usr/lib/python3.10/tkinter/colorchooser.py": 2660, "/usr/lib/python3.10/tkinter/commondialog.py": 1296, "/usr/lib/python3.10/tkinter/constants.py": 1493, "/usr/lib/python3.10/tkinter/dialog.py": 1543, "/usr/lib/python3.10/tkinter/dnd.py": 11644, "/usr/lib/python3.10/tkinter/filedialog.py": 14947, "/usr/lib/python3.10/tkinter/font.py": 7000, "/usr/lib/python3.10/tkinter/messagebox.py": 3861, "/usr/lib/python3.10/tkinter/scrolledtext.py": 1816, "/usr/lib/python3.10/tkinter/simpledialog.py": 11753, "/usr/lib/python3.10/tkinter/tix.py": 77040, "/usr/lib/python3.10/tkinter/ttk.py": 57151}
+PKGSIZE:python3-tkinter: 714969

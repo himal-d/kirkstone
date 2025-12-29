@@ -1,0 +1,12 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-src: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains sources for debugging purposes.
+SUMMARY:libpam-src: Linux-PAM (Pluggable Authentication Modules) - Source files
+SECTION:libpam-src: devel
+PKG:libpam-src: libpam-src
+FILES_INFO:libpam-src: {}
+PKGSIZE:libpam-src: 0

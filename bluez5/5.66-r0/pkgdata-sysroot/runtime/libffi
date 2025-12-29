@@ -1,0 +1,20 @@
+PN: libffi
+PV: 3.4.2
+PR: r0
+PKGV: 3.4.2
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: The `libffi' library provides a portable, high level programming interface to various calling conventions.  This allows a programmer to call any function specified by a call interface description at run time. FFI stands for Foreign Function Interface.  A foreign function interface is the popular name for the interface that allows code written in one language to call code written in another language.  The `libffi' library really only provides the lowest, machine dependent layer of a fully featured foreign function interface.  A layer must exist above `libffi' that handles type conversions for values passed between the two languages.
+SUMMARY: A portable foreign function interface library
+RDEPENDS:libffi: glibc (>= 2.35)
+RPROVIDES:libffi:  libffi (=3.4.2)
+SECTION: base
+PKG:libffi: libffi8
+FILES:libffi: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libffi /usr/lib/libffi/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libffi: {"/usr/lib/libffi.so.8": 15, "/usr/lib/libffi.so.8.1.0": 39296}
+pkg_postinst:libffi: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libffi: /usr/lib/libffi.so.8.1.0
+FILERPROVIDES:/usr/lib/libffi.so.8.1.0:libffi:  libffi.so.8(LIBFFI_BASE_8.0)(64bit) libffi.so.8(LIBFFI_COMPLEX_8.0)(64bit) libffi.so.8(LIBFFI_COMPLEX_8.0)(64bit) libffi.so.8(LIBFFI_CLOSURE_8.0)(64bit) libffi.so.8(LIBFFI_CLOSURE_8.0)(64bit) libffi.so.8(LIBFFI_GO_CLOSURE_8.0)(64bit) libffi.so.8(LIBFFI_GO_CLOSURE_8.0)(64bit) libffi.so.8()(64bit)
+FILERDEPENDSFLIST:libffi: /usr/lib/libffi.so.8.1.0
+FILERDEPENDS:/usr/lib/libffi.so.8.1.0:libffi:  libc.so.6(GLIBC_2.27)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libffi: 39311

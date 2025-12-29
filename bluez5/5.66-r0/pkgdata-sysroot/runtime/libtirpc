@@ -1,0 +1,20 @@
+PN: libtirpc
+PV: 1.3.2
+PR: r0
+PKGV: 1.3.2
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: Libtirpc is a port of Suns Transport-Independent RPC library to Linux
+SUMMARY: Transport-Independent RPC library
+RDEPENDS:libtirpc: glibc (>= 2.35)
+RPROVIDES:libtirpc:  libtirpc (=1.3.2)
+SECTION: libs/network
+PKG:libtirpc: libtirpc3
+FILES:libtirpc: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libtirpc /usr/lib/libtirpc/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:libtirpc: {"/etc/bindresvport.blacklist": 535, "/etc/netconfig": 767, "/usr/lib/libtirpc.so.3": 17, "/usr/lib/libtirpc.so.3.0.0": 143496}
+pkg_postinst:libtirpc: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libtirpc: /usr/lib/libtirpc.so.3.0.0
+FILERPROVIDES:/usr/lib/libtirpc.so.3.0.0:libtirpc:  libtirpc.so.3(TIRPC_0.3.0)(64bit) libtirpc.so.3(TIRPC_0.3.1)(64bit) libtirpc.so.3(TIRPC_0.3.1)(64bit) libtirpc.so.3(TIRPC_0.3.2)(64bit) libtirpc.so.3(TIRPC_0.3.2)(64bit) libtirpc.so.3(TIRPC_0.3.3)(64bit) libtirpc.so.3(TIRPC_0.3.3)(64bit) libtirpc.so.3(TIRPC_PRIVATE)(64bit) libtirpc.so.3()(64bit)
+FILERDEPENDSFLIST:libtirpc: /usr/lib/libtirpc.so.3.0.0
+FILERDEPENDS:/usr/lib/libtirpc.so.3.0.0:libtirpc:  libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpthread.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libtirpc: 144815

@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE:util-linux-libmount: LGPL-2.1-or-later
+DESCRIPTION:util-linux-libmount: util-linux libmount
+SUMMARY:util-linux-libmount: util-linux libmount
+RDEPENDS:util-linux-libmount: glibc (>= 2.35) util-linux-libblkid (>= 2.37.4)
+RPROVIDES:util-linux-libmount:  util-linux-libmount (=2.37.4)
+SECTION: base
+PKG:util-linux-libmount: libmount1
+FILES:util-linux-libmount: /lib/libmount.so.1 /lib/libmount.so.1.1.0
+FILES_INFO:util-linux-libmount: {"/lib/libmount.so.1": 17, "/lib/libmount.so.1.1.0": 350168}
+pkg_postinst:util-linux-libmount: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:util-linux-libmount: /lib/libmount.so.1.1.0
+FILERPROVIDES:/lib/libmount.so.1.1.0:util-linux-libmount:  libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.22)(64bit) libmount.so.1(MOUNT_2.22)(64bit) libmount.so.1(MOUNT_2.23)(64bit) libmount.so.1(MOUNT_2.23)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.25)(64bit) libmount.so.1(MOUNT_2.25)(64bit) libmount.so.1(MOUNT_2.26)(64bit) libmount.so.1(MOUNT_2.26)(64bit) libmount.so.1(MOUNT_2.28)(64bit) libmount.so.1(MOUNT_2.28)(64bit) libmount.so.1(MOUNT_2.30)(64bit) libmount.so.1(MOUNT_2.30)(64bit) libmount.so.1(MOUNT_2.33)(64bit) libmount.so.1(MOUNT_2.33)(64bit) libmount.so.1(MOUNT_2.34)(64bit) libmount.so.1(MOUNT_2.34)(64bit) libmount.so.1(MOUNT_2_35)(64bit) libmount.so.1(MOUNT_2_35)(64bit) libmount.so.1(MOUNT_2_37)(64bit) libmount.so.1(MOUNT_2_37)(64bit) libmount.so.1()(64bit)
+FILERDEPENDSFLIST:util-linux-libmount: /lib/libmount.so.1.1.0
+FILERDEPENDS:/lib/libmount.so.1.1.0:util-linux-libmount:  libblkid.so.1(BLKID_1.0)(64bit) libblkid.so.1(BLKID_2.17)(64bit) libblkid.so.1(BLKID_2.15)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libblkid.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-libmount: 350185

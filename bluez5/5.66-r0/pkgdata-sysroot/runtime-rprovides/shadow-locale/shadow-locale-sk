@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-sk: Tools to change and administer password and group data  This package contains language translation files for the sk locale.
+SUMMARY:shadow-locale-sk: Tools to change and administer password and group data - sk translations
+RPROVIDES:shadow-locale-sk: shadow-locale sk-translation
+RRECOMMENDS:shadow-locale-sk: virtual-locale-sk
+SECTION: base/utils
+PKG:shadow-locale-sk: shadow-locale-sk
+FILES:shadow-locale-sk: /usr/share/locale/sk
+FILES_INFO:shadow-locale-sk: {"/usr/share/locale/sk/LC_MESSAGES/shadow.mo": 43211}
+PKGSIZE:shadow-locale-sk: 43211

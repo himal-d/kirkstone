@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-kw-gb: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the kw_GB locale.
+SUMMARY:libpam-locale-kw-gb: Linux-PAM (Pluggable Authentication Modules) - kw_GB translations
+RPROVIDES:libpam-locale-kw-gb: libpam-locale kw-gb-translation
+RRECOMMENDS:libpam-locale-kw-gb: virtual-locale-kw-gb
+SECTION: base
+PKG:libpam-locale-kw-gb: libpam-locale-kw-gb
+FILES:libpam-locale-kw-gb: /usr/share/locale/kw_GB
+FILES_INFO:libpam-locale-kw-gb: {"/usr/share/locale/kw_GB/LC_MESSAGES/Linux-PAM.mo": 448}
+PKGSIZE:libpam-locale-kw-gb: 448

@@ -1,0 +1,13 @@
+TaskDeps: do_packagedata do_deploy_source_date_epoch do_package do_patch do_install do_write_metadata_logrotate do_unpack do_compile do_fetch do_configure do_prepare_recipe_sysroot
+gdbm-native
+gettext-minimal-native
+libtool-native
+make-native
+opkg-utils-native
+perl-native
+pseudo-native
+systemd-systemctl-native
+texinfo-dummy-native
+update-rc.d-native
+xz-native
+zlib-native

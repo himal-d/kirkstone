@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-pickle: Python serialisation/persistence support
+RDEPENDS:python3-pickle: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-pickle: python3-pickle
+FILES:python3-pickle:  /usr/lib/python3.10/_compat_pickle.py /usr/lib/python3.10/lib-dynload/_pickle.*.so /usr/lib/python3.10/pickle.py /usr/lib/python3.10/pickletools.py /usr/lib/python3.10/shelve.py /usr/lib/python3.10/__pycache__/_compat_pickle.*.pyc /usr/lib/python3.10/__pycache__/pickle.*.pyc /usr/lib/python3.10/__pycache__/pickletools.*.pyc /usr/lib/python3.10/__pycache__/shelve.*.pyc
+FILES_INFO:python3-pickle: {"/usr/lib/python3.10/__pycache__/_compat_pickle.cpython-310.pyc": 5872, "/usr/lib/python3.10/__pycache__/pickle.cpython-310.pyc": 46872, "/usr/lib/python3.10/__pycache__/pickletools.cpython-310.pyc": 67764, "/usr/lib/python3.10/__pycache__/shelve.cpython-310.pyc": 9492, "/usr/lib/python3.10/_compat_pickle.py": 8749, "/usr/lib/python3.10/lib-dynload/_pickle.cpython-310-aarch64-linux-gnu.so": 89208, "/usr/lib/python3.10/pickle.py": 64946, "/usr/lib/python3.10/pickletools.py": 93486, "/usr/lib/python3.10/shelve.py": 8560}
+FILERDEPENDSFLIST:python3-pickle: /usr/lib/python3.10/lib-dynload/@underscore@pickle.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@pickle.cpython-310-aarch64-linux-gnu.so:python3-pickle:  libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-pickle: 394949

@@ -1,0 +1,16 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION:libcap-dev: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:libcap-dev: Library for getting/setting POSIX.1e capabilities - Development files
+RDEPENDS:libcap-dev: libcap (= 2.65-r0)
+RRECOMMENDS:libcap-dev: libpam-dev glibc-dev
+SECTION:libcap-dev: devel
+PKG:libcap-dev: libcap-dev
+ALLOW_EMPTY:libcap-dev: 1
+FILES:libcap-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/libcap/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake /lib/*.so
+FILES_INFO:libcap-dev: {"/lib/libcap.so": 11, "/usr/include/sys/capability.h": 8681, "/usr/include/sys/psx_syscall.h": 3511, "/usr/lib/libpsx.so": 11, "/usr/lib/pkgconfig/libcap.pc": 209, "/usr/lib/pkgconfig/libpsx.pc": 254}
+PKGSIZE:libcap-dev: 12677

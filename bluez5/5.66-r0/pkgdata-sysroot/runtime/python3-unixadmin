@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-unixadmin: Python Unix administration support
+RDEPENDS:python3-unixadmin: python3-core python3-io glibc (>= 2.35) libnsl2 (>= 2.0.0) libtirpc (>= 1.3.2)
+SECTION: devel/python
+PKG:python3-unixadmin: python3-unixadmin
+FILES:python3-unixadmin:  /usr/lib/python3.10/getpass.py /usr/lib/python3.10/lib-dynload/nis.*.so /usr/lib/python3.10/__pycache__/getpass.*.pyc
+FILES_INFO:python3-unixadmin: {"/usr/lib/python3.10/__pycache__/getpass.cpython-310.pyc": 4210, "/usr/lib/python3.10/getpass.py": 5990, "/usr/lib/python3.10/lib-dynload/nis.cpython-310-aarch64-linux-gnu.so": 14968}
+FILERDEPENDSFLIST:python3-unixadmin: /usr/lib/python3.10/lib-dynload/nis.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/nis.cpython-310-aarch64-linux-gnu.so:python3-unixadmin:  libnsl.so.3(LIBNSL_2.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtirpc.so.3(TIRPC_0.3.0)(64bit) libnsl.so.3()(64bit) libtirpc.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-unixadmin: 25168

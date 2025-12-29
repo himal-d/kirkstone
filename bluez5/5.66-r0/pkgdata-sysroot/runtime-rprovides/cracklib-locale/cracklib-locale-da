@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-da: Password strength checker library  This package contains language translation files for the da locale.
+SUMMARY:cracklib-locale-da: Password strength checker library - da translations
+RPROVIDES:cracklib-locale-da: cracklib-locale da-translation
+RRECOMMENDS:cracklib-locale-da: virtual-locale-da
+SECTION: base
+PKG:cracklib-locale-da: cracklib-locale-da
+FILES:cracklib-locale-da: /usr/share/locale/da
+FILES_INFO:cracklib-locale-da: {"/usr/share/locale/da/LC_MESSAGES/cracklib.mo": 1782}
+PKGSIZE:cracklib-locale-da: 1782

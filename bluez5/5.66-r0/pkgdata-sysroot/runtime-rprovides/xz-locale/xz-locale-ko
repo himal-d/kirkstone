@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-ko: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the ko locale.
+SUMMARY:xz-locale-ko: Utilities for managing LZMA compressed files - ko translations
+RPROVIDES:xz-locale-ko: xz-locale ko-translation
+RRECOMMENDS:xz-locale-ko: virtual-locale-ko
+SECTION: base
+PKG:xz-locale-ko: xz-locale-ko
+FILES:xz-locale-ko: /usr/share/locale/ko
+FILES_INFO:xz-locale-ko: {"/usr/share/locale/ko/LC_MESSAGES/xz.mo": 26855}
+PKGSIZE:xz-locale-ko: 26855

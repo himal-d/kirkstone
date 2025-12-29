@@ -1,0 +1,15 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:ell-staticdev: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.  This package contains static libraries for software development.
+SUMMARY:ell-staticdev: Embedded Linux Library - Development files (Static Libraries)
+RDEPENDS:ell-staticdev: ell-dev (= 0.50-r0)
+RPROVIDES:ell-staticdev:  ell-staticdev (=0.50)
+SECTION:ell-staticdev: devel
+PKG:ell-staticdev: libell-staticdev
+FILES:ell-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/ell/*.a
+FILES_INFO:ell-staticdev: {}
+PKGSIZE:ell-staticdev: 0

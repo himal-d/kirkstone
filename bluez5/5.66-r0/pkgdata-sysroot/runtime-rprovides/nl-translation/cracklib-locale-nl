@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-nl: Password strength checker library  This package contains language translation files for the nl locale.
+SUMMARY:cracklib-locale-nl: Password strength checker library - nl translations
+RPROVIDES:cracklib-locale-nl: cracklib-locale nl-translation
+RRECOMMENDS:cracklib-locale-nl: virtual-locale-nl
+SECTION: base
+PKG:cracklib-locale-nl: cracklib-locale-nl
+FILES:cracklib-locale-nl: /usr/share/locale/nl
+FILES_INFO:cracklib-locale-nl: {"/usr/share/locale/nl/LC_MESSAGES/cracklib.mo": 1886}
+PKGSIZE:cracklib-locale-nl: 1886

@@ -1,0 +1,20 @@
+PN: ell
+PV: 0.50
+PR: r0
+PKGV: 0.50
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION: The Embedded Linux Library (ELL) provides core, low-level functionality for system daemons. It typically has no dependencies other than the Linux kernel, C standard library, and libdl (for dynamic linking). While ELL is designed to be efficient and compact enough for use on embedded Linux platforms, it is not limited to resource-constrained systems.
+SUMMARY: Embedded Linux Library
+RDEPENDS:ell: glibc (>= 2.35)
+RPROVIDES:ell:  ell (=0.50)
+SECTION: libs
+PKG:ell: libell0
+FILES:ell: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/ell /usr/lib/ell/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:ell: {"/usr/lib/libell.so.0": 15, "/usr/lib/libell.so.0.0.2": 422240}
+pkg_postinst:ell: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:ell: /usr/lib/libell.so.0.0.2
+FILERPROVIDES:/usr/lib/libell.so.0.0.2:ell:  libell.so.0(ELL_0.10)(64bit) libell.so.0()(64bit)
+FILERDEPENDSFLIST:ell: /usr/lib/libell.so.0.0.2
+FILERDEPENDS:/usr/lib/libell.so.0.0.2:ell:  libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ell: 422255

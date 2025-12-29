@@ -1,0 +1,16 @@
+PN: bash-completion
+PV: 2.11
+PR: r0
+PKGV: 2.11
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:bash-completion-dev: Collection of command line command completions for the Bash shell, collection of helper functions to assist in creating new completions, and set of facilities for loading completions automatically on demand, as well as installing them.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:bash-completion-dev: Programmable Completion for Bash 4 - Development files
+RDEPENDS:bash-completion-dev: bash-completion (= 2.11-r0)
+RRECOMMENDS:bash-completion-dev: bash-dev
+SECTION:bash-completion-dev: devel
+PKG:bash-completion-dev: bash-completion-dev
+ALLOW_EMPTY:bash-completion-dev: 1
+FILES:bash-completion-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/bash-completion/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:bash-completion-dev: {"/usr/share/cmake/bash-completion/bash-completion-config-version.cmake": 252, "/usr/share/cmake/bash-completion/bash-completion-config.cmake": 393, "/usr/share/pkgconfig/bash-completion.pc": 328}
+PKGSIZE:bash-completion-dev: 973

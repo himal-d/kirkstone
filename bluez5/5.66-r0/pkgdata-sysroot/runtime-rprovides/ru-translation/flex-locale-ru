@@ -1,0 +1,15 @@
+PN: flex
+PV: 2.6.4
+PR: r0
+PKGV: 2.6.4
+PKGR: r0
+LICENSE: BSD-3-Clause & LGPL-2.0-or-later
+DESCRIPTION:flex-locale-ru: Flex is a fast lexical analyser generator.  Flex is a tool for generating programs that recognize lexical patterns in text.  This package contains language translation files for the ru locale.
+SUMMARY:flex-locale-ru: Flex (The Fast Lexical Analyzer) - ru translations
+RPROVIDES:flex-locale-ru: flex-locale ru-translation
+RRECOMMENDS:flex-locale-ru: virtual-locale-ru
+SECTION: devel
+PKG:flex-locale-ru: flex-locale-ru
+FILES:flex-locale-ru: /usr/share/locale/ru
+FILES_INFO:flex-locale-ru: {"/usr/share/locale/ru/LC_MESSAGES/flex.mo": 20884}
+PKGSIZE:flex-locale-ru: 20884

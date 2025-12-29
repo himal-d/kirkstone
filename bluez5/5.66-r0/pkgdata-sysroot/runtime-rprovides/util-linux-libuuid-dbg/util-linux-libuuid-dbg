@@ -1,0 +1,16 @@
+PN: util-linux-libuuid
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:util-linux-libuuid-dbg: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:util-linux-libuuid-dbg: A suite of basic system administration utilities - Debugging files
+RPROVIDES:util-linux-libuuid-dbg:  util-linux-libuuid-dbg (=2.37.4)
+RRECOMMENDS:util-linux-libuuid-dbg: glibc-dbg
+SECTION:util-linux-libuuid-dbg: devel
+PKG:util-linux-libuuid-dbg: libuuid-dbg
+ALLOW_EMPTY:util-linux-libuuid-dbg: 1
+FILES:util-linux-libuuid-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:util-linux-libuuid-dbg: {"/usr/lib/.debug/libuuid.so.1.3.0": 54280}
+PKGSIZE:util-linux-libuuid-dbg: 54280

@@ -1,0 +1,14 @@
+PN: libxml2
+PV: 2.9.14
+PR: r0
+PKGV: 2.9.14
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:libxml2-staticdev: The XML Parser Library allows for manipulation of XML files.  Libxml2 exports Push and Pull type parser interfaces for both XML and HTML.  It can do DTD validation at parse time, on a parsed document instance or with an arbitrary DTD.  Libxml2 includes complete XPath, XPointer and Xinclude implementations.  It also has a SAX like interface, which is designed to be compatible with Expat.  This package contains static libraries for software development.
+SUMMARY:libxml2-staticdev: XML C Parser Library and Toolkit - Development files (Static Libraries)
+RDEPENDS:libxml2-staticdev: libxml2-dev (= 2.9.14-r0)
+SECTION:libxml2-staticdev: devel
+PKG:libxml2-staticdev: libxml2-staticdev
+FILES:libxml2-staticdev: /usr/lib/*.a /lib/*.a /usr/lib/libxml2/*.a /usr/lib/python3.10/site-packages/*.a
+FILES_INFO:libxml2-staticdev: {"/usr/lib/libxml2.a": 8052806, "/usr/lib/python3.10/site-packages/libxml2mod.a": 1844608}
+PKGSIZE:libxml2-staticdev: 9897414

@@ -1,0 +1,17 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:pam-plugin-mkhomedir: PAM plugin for -mkhomedir
+SUMMARY:pam-plugin-mkhomedir: PAM plugin for -mkhomedir
+RDEPENDS:pam-plugin-mkhomedir: libpam-suffix glibc (>= 2.35) libpam (>= 1.5.2)
+RPROVIDES:pam-plugin-mkhomedir: pam-plugin-mkhomedir-suffix
+SECTION: base
+PKG:pam-plugin-mkhomedir: pam-plugin-mkhomedir
+FILES:pam-plugin-mkhomedir: /lib/security/pam_mkhomedir.so
+FILES_INFO:pam-plugin-mkhomedir: {"/lib/security/pam_mkhomedir.so": 10320}
+FILERDEPENDSFLIST:pam-plugin-mkhomedir: /lib/security/pam@underscore@mkhomedir.so
+FILERDEPENDS:/lib/security/pam@underscore@mkhomedir.so:pam-plugin-mkhomedir:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.3.2)(64bit) libpam.so.0(LIBPAM_1.0)(64bit) libpam.so.0(LIBPAM_EXTENSION_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.0)(64bit) libpam.so.0(LIBPAM_MODUTIL_1.1.9)(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:pam-plugin-mkhomedir: 10320

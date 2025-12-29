@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-he: Password strength checker library  This package contains language translation files for the he locale.
+SUMMARY:cracklib-locale-he: Password strength checker library - he translations
+RPROVIDES:cracklib-locale-he: cracklib-locale he-translation
+RRECOMMENDS:cracklib-locale-he: virtual-locale-he
+SECTION: base
+PKG:cracklib-locale-he: cracklib-locale-he
+FILES:cracklib-locale-he: /usr/share/locale/he
+FILES_INFO:cracklib-locale-he: {"/usr/share/locale/he/LC_MESSAGES/cracklib.mo": 2000}
+PKGSIZE:cracklib-locale-he: 2000

@@ -1,0 +1,13 @@
+recipe-sysroot/sysroot-providers/util-linux-libuuid
+recipe-sysroot/usr/include/uuid/uuid.h
+recipe-sysroot/usr/lib/libuuid.so.1.3.0
+recipe-sysroot/usr/lib/libuuid.so.1
+recipe-sysroot/usr/lib/libuuid.a
+recipe-sysroot/usr/lib/libuuid.so
+recipe-sysroot/usr/lib/pkgconfig/uuid.pc
+recipe-sysroot/usr/lib/pkgconfig/
+recipe-sysroot/sysroot-providers/
+recipe-sysroot/usr/include/uuid/
+recipe-sysroot/usr/include/
+recipe-sysroot/usr/lib/
+recipe-sysroot/usr/

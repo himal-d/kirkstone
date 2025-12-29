@@ -1,0 +1,18 @@
+PN: libxml2
+PV: 2.9.14
+PR: r0
+PKGV: 2.9.14
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: The XML Parser Library allows for manipulation of XML files.  Libxml2 exports Push and Pull type parser interfaces for both XML and HTML.  It can do DTD validation at parse time, on a parsed document instance or with an arbitrary DTD.  Libxml2 includes complete XPath, XPointer and Xinclude implementations.  It also has a SAX like interface, which is designed to be compatible with Expat.
+SUMMARY: XML C Parser Library and Toolkit
+RDEPENDS:libxml2-python: python3-core glibc (>= 2.35) libxcrypt (>= 4.4.33) libxml2 (>= 2.9.14) zlib (>= 1.2.11)
+SECTION: libs
+PKG:libxml2-python: libxml2-python
+FILES:libxml2-python: /usr/lib/python3.10/site-packages
+FILES_INFO:libxml2-python: {"/usr/lib/python3.10/site-packages/drv_libxml2.py": 15252, "/usr/lib/python3.10/site-packages/libxml2.py": 346308, "/usr/lib/python3.10/site-packages/libxml2mod.so": 382856}
+FILERPROVIDESFLIST:libxml2-python: /usr/lib/python3.10/site-packages/libxml2mod.so
+FILERPROVIDES:/usr/lib/python3.10/site-packages/libxml2mod.so:libxml2-python:  libxml2mod.so()(64bit)
+FILERDEPENDSFLIST:libxml2-python: /usr/lib/python3.10/site-packages/libxml2mod.so
+FILERDEPENDS:/usr/lib/python3.10/site-packages/libxml2mod.so:libxml2-python:  libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.17)(64bit) libxml2.so.2(LIBXML2_2.6.25)(64bit) libxml2.so.2(LIBXML2_2.9.1)(64bit) libxml2.so.2(LIBXML2_2.7.0)(64bit) libxml2.so.2(LIBXML2_2.6.28)(64bit) libxml2.so.2(LIBXML2_2.6.10)(64bit) libxml2.so.2(LIBXML2_2.6.21)(64bit) libxml2.so.2(LIBXML2_2.6.27)(64bit) libxml2.so.2(LIBXML2_2.6.6)(64bit) libxml2.so.2(LIBXML2_2.5.6)(64bit) libxml2.so.2(LIBXML2_2.6.2)(64bit) libxml2.so.2(LIBXML2_2.6.23)(64bit) libxml2.so.2(LIBXML2_2.6.12)(64bit) libxml2.so.2(LIBXML2_2.9.0)(64bit) libxml2.so.2(LIBXML2_2.6.17)(64bit) libxml2.so.2(LIBXML2_2.6.16)(64bit) libxml2.so.2(LIBXML2_2.7.3)(64bit) libxml2.so.2(LIBXML2_2.6.8)(64bit) libxml2.so.2(LIBXML2_2.6.14)(64bit) libxml2.so.2(LIBXML2_2.9.11)(64bit) libxml2.so.2(LIBXML2_2.5.9)(64bit) libxml2.so.2(LIBXML2_2.6.1)(64bit) libxml2.so.2(LIBXML2_2.6.20)(64bit) libxml2.so.2(LIBXML2_2.6.18)(64bit) libxml2.so.2(LIBXML2_2.5.4)(64bit) libxml2.so.2(LIBXML2_2.8.0)(64bit) libxml2.so.2(LIBXML2_2.6.15)(64bit) libxml2.so.2(LIBXML2_2.6.5)(64bit) libxml2.so.2(LIBXML2_2.6.0)(64bit) libxml2.so.2(LIBXML2_2.5.2)(64bit) libxml2.so.2(LIBXML2_2.5.0)(64bit) libxml2.so.2(LIBXML2_2.5.7)(64bit) libxml2.so.2(LIBXML2_2.5.8)(64bit) libxml2.so.2(LIBXML2_2.4.30)(64bit) libxml2.so.2(LIBXML2_2.6.3)(64bit) libxml2.so.2(LIBXML2_2.6.11)(64bit) libxml2.so.2()(64bit) libz.so.1()(64bit) libcrypt.so.2()(64bit) libpthread.so.0()(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libxml2-python: 744416

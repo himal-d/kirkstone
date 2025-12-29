@@ -1,0 +1,15 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-locale-sq: Password strength checker library  This package contains language translation files for the sq locale.
+SUMMARY:cracklib-locale-sq: Password strength checker library - sq translations
+RPROVIDES:cracklib-locale-sq: cracklib-locale sq-translation
+RRECOMMENDS:cracklib-locale-sq: virtual-locale-sq
+SECTION: base
+PKG:cracklib-locale-sq: cracklib-locale-sq
+FILES:cracklib-locale-sq: /usr/share/locale/sq
+FILES_INFO:cracklib-locale-sq: {"/usr/share/locale/sq/LC_MESSAGES/cracklib.mo": 1984}
+PKGSIZE:cracklib-locale-sq: 1984

@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-da: Tools to change and administer password and group data  This package contains language translation files for the da locale.
+SUMMARY:shadow-locale-da: Tools to change and administer password and group data - da translations
+RPROVIDES:shadow-locale-da: shadow-locale da-translation
+RRECOMMENDS:shadow-locale-da: virtual-locale-da
+SECTION: base/utils
+PKG:shadow-locale-da: shadow-locale-da
+FILES:shadow-locale-da: /usr/share/locale/da
+FILES_INFO:shadow-locale-da: {"/usr/share/locale/da/LC_MESSAGES/shadow.mo": 61894}
+PKGSIZE:shadow-locale-da: 61894

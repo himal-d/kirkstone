@@ -1,0 +1,12 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:libcap-ng-src: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.  This package contains sources for debugging purposes.
+SUMMARY:libcap-ng-src: An alternate posix capabilities library - Source files
+SECTION:libcap-ng-src: devel
+PKG:libcap-ng-src: libcap-ng-src
+FILES_INFO:libcap-ng-src: {}
+PKGSIZE:libcap-ng-src: 0

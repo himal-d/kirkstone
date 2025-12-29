@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION:glib-2.0-locale-sr: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.  This package contains language translation files for the sr locale.
+SUMMARY:glib-2.0-locale-sr: A general-purpose utility library - sr translations
+RPROVIDES:glib-2.0-locale-sr: glib-2.0-locale sr-translation glib-2.0-locale-sr (=2.74.6)
+RRECOMMENDS:glib-2.0-locale-sr: virtual-locale-sr
+SECTION: libs
+PKG:glib-2.0-locale-sr: libglib-2.0-locale-sr
+FILES:glib-2.0-locale-sr: /usr/share/locale/sr
+FILES_INFO:glib-2.0-locale-sr: {"/usr/share/locale/sr/LC_MESSAGES/glib20.mo": 174641}
+PKGSIZE:glib-2.0-locale-sr: 174641

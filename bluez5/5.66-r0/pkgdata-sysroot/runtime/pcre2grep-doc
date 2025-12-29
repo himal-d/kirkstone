@@ -1,0 +1,13 @@
+PN: libpcre2
+PV: 10.40
+PR: r0
+PKGV: 10.40
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION: There are two major versions of the PCRE library. The newest version is PCRE2, which is a re-working of the original PCRE library to provide an entirely new API. The original, very widely deployed PCRE library's API and feature are stable, future releases  will be for bugfixes only. All new future features will be to PCRE2, not the original PCRE 8.x series.
+SUMMARY:pcre2grep-doc: grep utility that uses perl 5 compatible regexes - docs
+SECTION: devel
+PKG:pcre2grep-doc: pcre2grep-doc
+FILES:pcre2grep-doc: /usr/share/man/man1/pcre2grep.1
+FILES_INFO:pcre2grep-doc: {"/usr/share/man/man1/pcre2grep.1": 49635}
+PKGSIZE:pcre2grep-doc: 49635

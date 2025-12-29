@@ -1,0 +1,22 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.
+SUMMARY: Library for getting/setting POSIX.1e capabilities
+RDEPENDS:libcap: glibc (>= 2.35) libpam (>= 1.5.2)
+SECTION: base
+PKG:libcap: libcap
+FILES:libcap: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/libcap /usr/lib/libcap/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers /lib/security/*.so
+FILES_INFO:libcap: {"/lib/libcap.so.2": 14, "/lib/libcap.so.2.65": 43712, "/lib/security/pam_cap.so": 14568, "/usr/lib/libpsx.so.2": 14, "/usr/lib/libpsx.so.2.65": 14672}
+pkg_postinst:libcap: #!/bin/sh\nset -e\nif [ x"$D" = "x" ]; then\n\tif [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi\nfi\n
+FILERPROVIDESFLIST:libcap: /lib/libcap.so.2.65 /usr/lib/libpsx.so.2.65
+FILERPROVIDES:/lib/libcap.so.2.65:libcap:  libcap.so.2()(64bit)
+FILERPROVIDES:/usr/lib/libpsx.so.2.65:libcap:  libpsx.so.2()(64bit)
+FILERDEPENDSFLIST:libcap: /lib/libcap.so.2.65 /lib/security/pam@underscore@cap.so /usr/lib/libpsx.so.2.65
+FILERDEPENDS:/lib/libcap.so.2.65:libcap:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/lib/security/pam@underscore@cap.so:libcap:  libpam.so.0(LIBPAM_1.0)(64bit) libc.so.6(GLIBC_2.17)(64bit) libcap.so.2()(64bit) libpam.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/libpsx.so.2.65:libcap:  libc.so.6(GLIBC_2.32)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:libcap: 72980

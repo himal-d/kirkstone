@@ -1,0 +1,14 @@
+PN: util-linux-libuuid
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:util-linux-libuuid-doc: Util-linux includes a suite of basic system administration utilities commonly found on most Linux systems.  Some of the more important utilities include disk partitioning, kernel message management, filesystem creation, and system login.  This package contains documentation.
+SUMMARY:util-linux-libuuid-doc: A suite of basic system administration utilities - Documentation files
+RPROVIDES:util-linux-libuuid-doc:  util-linux-libuuid-doc (=2.37.4)
+SECTION:util-linux-libuuid-doc: doc
+PKG:util-linux-libuuid-doc: libuuid-doc
+FILES:util-linux-libuuid-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:util-linux-libuuid-doc: {}
+PKGSIZE:util-linux-libuuid-doc: 0

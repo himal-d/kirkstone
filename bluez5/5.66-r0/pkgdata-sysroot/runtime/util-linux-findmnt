@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-findmnt: util-linux findmnt
+SUMMARY:util-linux-findmnt: util-linux findmnt
+RDEPENDS:util-linux-findmnt: glibc (>= 2.35) util-linux-libblkid (>= 2.37.4) util-linux-libmount (>= 2.37.4) util-linux-libsmartcols (>= 2.37.4)
+SECTION: base
+PKG:util-linux-findmnt: util-linux-findmnt
+FILES:util-linux-findmnt: /usr/bin/findmnt
+FILES_INFO:util-linux-findmnt: {"/usr/bin/findmnt": 66048}
+FILERDEPENDSFLIST:util-linux-findmnt: /usr/bin/findmnt
+FILERDEPENDS:/usr/bin/findmnt:util-linux-findmnt:  libblkid.so.1(BLKID_1.0)(64bit) libsmartcols.so.1(SMARTCOLS_2.28)(64bit) libsmartcols.so.1(SMARTCOLS_2.27)(64bit) libsmartcols.so.1(SMARTCOLS_2.25)(64bit) libsmartcols.so.1(SMARTCOLS_2.33)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libmount.so.1(MOUNT_2.34)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.22)(64bit) libmount.so.1(MOUNT_2.23)(64bit) libmount.so.1(MOUNT_2.25)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2_37)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1()(64bit) libblkid.so.1()(64bit) libsmartcols.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-findmnt: 66048

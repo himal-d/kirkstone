@@ -1,0 +1,17 @@
+PN: expat
+PV: 2.4.9
+PR: r0
+PKGV: 2.4.9
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION:expat-dev: Expat is an XML parser library written in C. It is a stream-oriented parser in which an application registers handlers for things the parser might find in the XML document (like start tags)  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:expat-dev: A stream-oriented XML parser library - Development files
+RDEPENDS:expat-dev: expat (= 2.4.9-r0)
+RPROVIDES:expat-dev:  expat-dev (=2.4.9)
+RRECOMMENDS:expat-dev: glibc-dev
+SECTION:expat-dev: devel
+PKG:expat-dev: libexpat-dev
+ALLOW_EMPTY:expat-dev: 1
+FILES:expat-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/expat/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:expat-dev: {"/usr/include/expat.h": 43535, "/usr/include/expat_config.h": 3185, "/usr/include/expat_external.h": 6029, "/usr/lib/cmake/expat-2.4.9/expat-config-version.cmake": 2878, "/usr/lib/cmake/expat-2.4.9/expat-config.cmake": 4009, "/usr/lib/cmake/expat-2.4.9/expat-noconfig.cmake": 830, "/usr/lib/cmake/expat-2.4.9/expat.cmake": 3774, "/usr/lib/libexpat.so": 13, "/usr/lib/pkgconfig/expat.pc": 248}
+PKGSIZE:expat-dev: 64501

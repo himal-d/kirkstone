@@ -1,0 +1,15 @@
+PN: xz
+PV: 5.2.6
+PR: r0
+PKGV: 5.2.6
+PKGR: r0
+LICENSE: GPL-2.0-or-later & GPL-3.0-with-autoconf-exception & LGPL-2.1-or-later & PD
+DESCRIPTION:xz-locale-fi: XZ Utils is free general-purpose data compression software with a high compression ratio. XZ Utils were written for POSIX-like systems, but also work on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.  This package contains language translation files for the fi locale.
+SUMMARY:xz-locale-fi: Utilities for managing LZMA compressed files - fi translations
+RPROVIDES:xz-locale-fi: xz-locale fi-translation
+RRECOMMENDS:xz-locale-fi: virtual-locale-fi
+SECTION: base
+PKG:xz-locale-fi: xz-locale-fi
+FILES:xz-locale-fi: /usr/share/locale/fi
+FILES_INFO:xz-locale-fi: {"/usr/share/locale/fi/LC_MESSAGES/xz.mo": 25641}
+PKGSIZE:xz-locale-fi: 25641

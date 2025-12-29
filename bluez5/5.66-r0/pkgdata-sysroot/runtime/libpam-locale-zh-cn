@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-zh-cn: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the zh_CN locale.
+SUMMARY:libpam-locale-zh-cn: Linux-PAM (Pluggable Authentication Modules) - zh_CN translations
+RPROVIDES:libpam-locale-zh-cn: libpam-locale zh-cn-translation
+RRECOMMENDS:libpam-locale-zh-cn: virtual-locale-zh-cn
+SECTION: base
+PKG:libpam-locale-zh-cn: libpam-locale-zh-cn
+FILES:libpam-locale-zh-cn: /usr/share/locale/zh_CN
+FILES_INFO:libpam-locale-zh-cn: {"/usr/share/locale/zh_CN/LC_MESSAGES/Linux-PAM.mo": 9086}
+PKGSIZE:libpam-locale-zh-cn: 9086

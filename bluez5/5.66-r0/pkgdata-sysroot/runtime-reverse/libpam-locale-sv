@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-sv: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the sv locale.
+SUMMARY:libpam-locale-sv: Linux-PAM (Pluggable Authentication Modules) - sv translations
+RPROVIDES:libpam-locale-sv: libpam-locale sv-translation
+RRECOMMENDS:libpam-locale-sv: virtual-locale-sv
+SECTION: base
+PKG:libpam-locale-sv: libpam-locale-sv
+FILES:libpam-locale-sv: /usr/share/locale/sv
+FILES_INFO:libpam-locale-sv: {"/usr/share/locale/sv/LC_MESSAGES/Linux-PAM.mo": 9864}
+PKGSIZE:libpam-locale-sv: 9864

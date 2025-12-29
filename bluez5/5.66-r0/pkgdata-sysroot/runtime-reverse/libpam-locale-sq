@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-sq: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the sq locale.
+SUMMARY:libpam-locale-sq: Linux-PAM (Pluggable Authentication Modules) - sq translations
+RPROVIDES:libpam-locale-sq: libpam-locale sq-translation
+RRECOMMENDS:libpam-locale-sq: virtual-locale-sq
+SECTION: base
+PKG:libpam-locale-sq: libpam-locale-sq
+FILES:libpam-locale-sq: /usr/share/locale/sq
+FILES_INFO:libpam-locale-sq: {"/usr/share/locale/sq/LC_MESSAGES/Linux-PAM.mo": 493}
+PKGSIZE:libpam-locale-sq: 493

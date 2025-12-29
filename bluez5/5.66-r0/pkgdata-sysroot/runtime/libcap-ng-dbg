@@ -1,0 +1,15 @@
+PN: libcap-ng
+PV: 0.8.2
+PR: r0
+PKGV: 0.8.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later
+DESCRIPTION:libcap-ng-dbg: The libcap-ng library is intended to make programming with POSIX capabilities much easier than the traditional libcap library.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:libcap-ng-dbg: An alternate posix capabilities library - Debugging files
+RRECOMMENDS:libcap-ng-dbg: glibc-dbg
+SECTION:libcap-ng-dbg: devel
+PKG:libcap-ng-dbg: libcap-ng-dbg
+ALLOW_EMPTY:libcap-ng-dbg: 1
+FILES:libcap-ng-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:libcap-ng-dbg: {"/lib/.debug/libcap-ng.so.0.0.0": 42352, "/usr/bin/.debug/captest": 20952, "/usr/bin/.debug/filecap": 23376, "/usr/bin/.debug/netcap": 32504, "/usr/bin/.debug/pscap": 23056, "/usr/lib/.debug/libdrop_ambient.so.0.0.0": 6992}
+PKGSIZE:libcap-ng-dbg: 149232

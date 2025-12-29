@@ -1,0 +1,13 @@
+PN: cracklib
+PV: 2.9.8
+PR: r0
+PKGV: 2.9.8
+PKGR: r0
+LICENSE: LGPL-2.1-or-later
+DESCRIPTION:cracklib-doc: Password strength checker library  This package contains documentation.
+SUMMARY:cracklib-doc: Password strength checker library - Documentation files
+SECTION:cracklib-doc: doc
+PKG:cracklib-doc: cracklib-doc
+FILES:cracklib-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:cracklib-doc: {}
+PKGSIZE:cracklib-doc: 0

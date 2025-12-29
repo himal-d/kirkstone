@@ -1,0 +1,17 @@
+PN: systemd
+PE: 1
+PV: 250.5
+PR: r0
+PKGE: 1
+PKGV: 250.5
+PKGR: r0
+LICENSE: GPL-2.0-only & LGPL-2.1-only
+DESCRIPTION:systemd-locale-fi: systemd is a system and service manager for Linux, compatible with SysV and LSB init scripts. systemd provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux cgroups, supports snapshotting and restoring of the system state, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic. It can work as a drop-in replacement for sysvinit.  This package contains language translation files for the fi locale.
+SUMMARY:systemd-locale-fi: A System and service manager - fi translations
+RPROVIDES:systemd-locale-fi: systemd-locale fi-translation
+RRECOMMENDS:systemd-locale-fi: virtual-locale-fi
+SECTION: base/shell
+PKG:systemd-locale-fi: systemd-locale-fi
+FILES:systemd-locale-fi: /usr/share/locale/fi
+FILES_INFO:systemd-locale-fi: {"/usr/share/locale/fi/LC_MESSAGES/systemd.mo": 25769}
+PKGSIZE:systemd-locale-fi: 25769

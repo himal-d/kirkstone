@@ -1,0 +1,20 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-fsck: util-linux fsck
+SUMMARY:util-linux-fsck: util-linux fsck
+RDEPENDS:util-linux-fsck: update-alternatives-opkg glibc (>= 2.35) util-linux-libblkid (>= 2.37.4) util-linux-libmount (>= 2.37.4)
+SECTION: base
+PKG:util-linux-fsck: util-linux-fsck
+FILES:util-linux-fsck: /sbin/fsck.util-linux
+FILES_INFO:util-linux-fsck: {"/sbin/fsck.util-linux": 52344}
+pkg_postinst:util-linux-fsck: #!/bin/sh\nset -e\n\tupdate-alternatives --install /sbin/fsck fsck /sbin/fsck.util-linux 80\n
+pkg_prerm:util-linux-fsck: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  fsck /sbin/fsck.util-linux\n
+FILERPROVIDESFLIST:util-linux-fsck:  /sbin/fsck.util-linux
+FILERPROVIDES:/sbin/fsck.util-linux:util-linux-fsck:  /sbin/fsck
+FILERDEPENDSFLIST:util-linux-fsck: /sbin/fsck.util-linux
+FILERDEPENDS:/sbin/fsck.util-linux:util-linux-fsck:  libblkid.so.1(BLKID_1.0)(64bit) libblkid.so.1(BLKID_2.17)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libmount.so.1(MOUNT_2.20)(64bit) libmount.so.1(MOUNT_2.21)(64bit) libmount.so.1(MOUNT_2.24)(64bit) libmount.so.1(MOUNT_2.19)(64bit) libmount.so.1()(64bit) libblkid.so.1()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-fsck: 52344

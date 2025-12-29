@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-setarch: util-linux setarch
+SUMMARY:util-linux-setarch: util-linux setarch
+RDEPENDS:util-linux-setarch: glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-setarch: util-linux-setarch
+FILES:util-linux-setarch: /usr/bin/setarch /usr/bin/linux32 /usr/bin/linux64 /usr/bin/uname26
+FILES_INFO:util-linux-setarch: {"/usr/bin/linux32": 7, "/usr/bin/linux64": 7, "/usr/bin/setarch": 14888, "/usr/bin/uname26": 7}
+FILERDEPENDSFLIST:util-linux-setarch: /usr/bin/setarch
+FILERDEPENDS:/usr/bin/setarch:util-linux-setarch:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-setarch: 14909

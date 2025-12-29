@@ -1,0 +1,17 @@
+PN: sqlite3
+PE: 3
+PV: 3.31.1
+PR: r0
+PKGE: 3
+PKGV: 3.31.1
+PKGR: r0
+LICENSE: PD
+DESCRIPTION: Embeddable SQL database engine.
+SUMMARY: Embeddable SQL database engine
+RDEPENDS:libsqlite3-dev: libsqlite3
+RRECOMMENDS:libsqlite3-dev: glibc-dev
+SECTION: libs
+PKG:libsqlite3-dev: libsqlite3-dev
+FILES:libsqlite3-dev: /usr/lib/*.la /usr/lib/*.so                        /usr/lib/pkgconfig /usr/include
+FILES_INFO:libsqlite3-dev: {"/usr/include/sqlite3.h": 576161, "/usr/include/sqlite3ext.h": 34802, "/usr/lib/libsqlite3.so": 19, "/usr/lib/pkgconfig/sqlite3.pc": 237}
+PKGSIZE:libsqlite3-dev: 611219

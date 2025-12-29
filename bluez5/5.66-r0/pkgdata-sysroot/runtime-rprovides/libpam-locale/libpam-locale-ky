@@ -1,0 +1,15 @@
+PN: libpam
+PV: 1.5.2
+PR: r0
+PKGV: 1.5.2
+PKGR: r0
+LICENSE: GPL-2.0-or-later | BSD-3-Clause
+DESCRIPTION:libpam-locale-ky: Linux-PAM (Pluggable Authentication Modules for Linux), a flexible mechanism for authenticating users  This package contains language translation files for the ky locale.
+SUMMARY:libpam-locale-ky: Linux-PAM (Pluggable Authentication Modules) - ky translations
+RPROVIDES:libpam-locale-ky: libpam-locale ky-translation
+RRECOMMENDS:libpam-locale-ky: virtual-locale-ky
+SECTION: base
+PKG:libpam-locale-ky: libpam-locale-ky
+FILES:libpam-locale-ky: /usr/share/locale/ky
+FILES_INFO:libpam-locale-ky: {"/usr/share/locale/ky/LC_MESSAGES/Linux-PAM.mo": 484}
+PKGSIZE:libpam-locale-ky: 484

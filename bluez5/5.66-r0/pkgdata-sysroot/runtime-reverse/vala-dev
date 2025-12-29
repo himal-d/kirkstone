@@ -1,0 +1,16 @@
+PN: vala
+PV: 0.56.3
+PR: r0
+PKGV: 0.56.3
+PKGR: r0
+LICENSE: LGPL-2.1-only
+DESCRIPTION:vala-dev: Vala is a C#-like language dedicated to ease GObject programming. Vala compiles to plain C and has no runtime environment nor penalities whatsoever.  This package contains symbolic links, header files, and related items necessary for software development.
+SUMMARY:vala-dev: C#-like programming language for easing GObject programming - Development files
+RDEPENDS:vala-dev: vala (= 0.56.3-r0) glib-2.0-dev
+RRECOMMENDS:vala-dev: glib-2.0-dev glibc-dev
+SECTION:vala-dev: devel
+PKG:vala-dev: vala-dev
+ALLOW_EMPTY:vala-dev: 1
+FILES:vala-dev: /usr/include /lib/lib*.so /usr/lib/lib*.so /usr/lib/*.la                 /usr/lib/*.o /usr/lib/pkgconfig /usr/share/pkgconfig                 /usr/share/aclocal /lib/*.o                 /usr/lib/vala/*.la /lib/*.la                 /usr/lib/cmake /usr/share/cmake
+FILES_INFO:vala-dev: {"/usr/include/vala-0.56/vala.h": 406682, "/usr/include/vala-0.56/valagee.h": 23657, "/usr/lib/libvala-0.56.so": 21, "/usr/lib/pkgconfig/libvala-0.56.pc": 558, "/usr/lib/pkgconfig/vapigen-0.56.pc": 300, "/usr/lib/pkgconfig/vapigen.pc": 15, "/usr/share/aclocal/vala.m4": 4566, "/usr/share/aclocal/vapigen.m4": 3483}
+PKGSIZE:vala-dev: 439282

@@ -1,0 +1,14 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-shell: Python shell-like functionality
+RDEPENDS:python3-shell: python3-core python3-stringold
+SECTION: devel/python
+PKG:python3-shell: python3-shell
+FILES:python3-shell:  /usr/lib/python3.10/cmd.py /usr/lib/python3.10/glob.py /usr/lib/python3.10/shlex.py /usr/lib/python3.10/__pycache__/cmd.*.pyc /usr/lib/python3.10/__pycache__/glob.*.pyc /usr/lib/python3.10/__pycache__/shlex.*.pyc
+FILES_INFO:python3-shell: {"/usr/lib/python3.10/__pycache__/cmd.cpython-310.pyc": 12707, "/usr/lib/python3.10/__pycache__/glob.cpython-310.pyc": 5852, "/usr/lib/python3.10/__pycache__/shlex.cpython-310.pyc": 7790, "/usr/lib/python3.10/cmd.py": 14860, "/usr/lib/python3.10/glob.py": 7888, "/usr/lib/python3.10/shlex.py": 13501}
+PKGSIZE:python3-shell: 62598

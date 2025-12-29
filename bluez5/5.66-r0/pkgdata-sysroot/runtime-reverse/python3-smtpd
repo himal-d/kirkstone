@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-smtpd: Python Simple Mail Transport Daemon
+RDEPENDS:python3-smtpd: python3-core python3-crypt python3-datetime python3-email python3-io python3-math python3-mime python3-netclient python3-stringold
+SECTION: devel/python
+PKG:python3-smtpd: python3-smtpd
+FILES:python3-smtpd:  /usr/bin/smtpd.py /usr/lib/python3.10/asynchat.py /usr/lib/python3.10/asyncore.py /usr/lib/python3.10/smtpd.py /usr/lib/python3.10/__pycache__/asynchat.*.pyc /usr/lib/python3.10/__pycache__/asyncore.*.pyc /usr/lib/python3.10/__pycache__/smtpd.*.pyc
+FILES_INFO:python3-smtpd: {"/usr/lib/python3.10/__pycache__/asynchat.cpython-310.pyc": 7025, "/usr/lib/python3.10/__pycache__/asyncore.cpython-310.pyc": 16010, "/usr/lib/python3.10/__pycache__/smtpd.cpython-310.pyc": 26147, "/usr/lib/python3.10/asynchat.py": 11520, "/usr/lib/python3.10/asyncore.py": 20268, "/usr/lib/python3.10/smtpd.py": 35165}
+FILERDEPENDSFLIST:python3-smtpd: /usr/lib/python3.10/smtpd.py
+FILERDEPENDS:/usr/lib/python3.10/smtpd.py:python3-smtpd:  /usr/bin/env
+PKGSIZE:python3-smtpd: 116135

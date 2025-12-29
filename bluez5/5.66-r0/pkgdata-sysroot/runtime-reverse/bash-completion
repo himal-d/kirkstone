@@ -1,0 +1,14 @@
+PN: bash-completion
+PV: 2.11
+PR: r0
+PKGV: 2.11
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION: Collection of command line command completions for the Bash shell, collection of helper functions to assist in creating new completions, and set of facilities for loading completions automatically on demand, as well as installing them.
+SUMMARY: Programmable Completion for Bash 4
+RDEPENDS:bash-completion: bash
+SECTION: console/utils
+PKG:bash-completion: bash-completion
+FILES:bash-completion: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/bash-completion /usr/lib/bash-completion/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:bash-completion: {"/etc/bash_completion": 45, "/etc/profile.d/bash_completion.sh": 726, "/usr/share/bash-completion/bash_completion": 76332}
+PKGSIZE:bash-completion: 77103

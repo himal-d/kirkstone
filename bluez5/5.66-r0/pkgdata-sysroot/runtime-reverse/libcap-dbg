@@ -1,0 +1,15 @@
+PN: libcap
+PV: 2.65
+PR: r0
+PKGV: 2.65
+PKGR: r0
+LICENSE: BSD-3-Clause | GPL-2.0-only
+DESCRIPTION:libcap-dbg: A library providing the API to access POSIX capabilities. These allow giving various kinds of specific privileges to individual users, without giving them full root permissions.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:libcap-dbg: Library for getting/setting POSIX.1e capabilities - Debugging files
+RRECOMMENDS:libcap-dbg: glibc-dbg libpam-dbg
+SECTION:libcap-dbg: devel
+PKG:libcap-dbg: libcap-dbg
+ALLOW_EMPTY:libcap-dbg: 1
+FILES:libcap-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug
+FILES_INFO:libcap-dbg: {"/lib/.debug/libcap.so.2.65": 88320, "/lib/security/.debug/pam_cap.so": 22208, "/usr/lib/.debug/libpsx.so.2.65": 36168, "/usr/sbin/.debug/capsh": 57440, "/usr/sbin/.debug/getcap": 19808, "/usr/sbin/.debug/getpcaps": 18768, "/usr/sbin/.debug/setcap": 22032}
+PKGSIZE:libcap-dbg: 264744

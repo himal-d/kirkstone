@@ -1,0 +1,13 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION:python3-doc: Python is a programming language that lets you work more quickly and integrate your systems more effectively.  This package contains documentation.
+SUMMARY:python3-doc: The Python Programming Language - Documentation files
+SECTION:python3-doc: doc
+PKG:python3-doc: python3-doc
+FILES:python3-doc: /usr/share/doc /usr/share/man /usr/share/info /usr/share/gtk-doc             /usr/share/gnome/help
+FILES_INFO:python3-doc: {"/usr/share/man/man1/python3.1": 12, "/usr/share/man/man1/python3.10.1": 18354}
+PKGSIZE:python3-doc: 18366

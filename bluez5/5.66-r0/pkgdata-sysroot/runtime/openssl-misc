@@ -1,0 +1,18 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+RDEPENDS:openssl-misc: perl
+SECTION: libs/network
+PKG:openssl-misc: openssl-misc
+FILES:openssl-misc: /usr/lib/ssl-3/misc /usr/bin/c_rehash
+FILES_INFO:openssl-misc: {"/usr/bin/c_rehash": 4181, "/usr/lib/ssl-3/misc/CA.pl": 8079, "/usr/lib/ssl-3/misc/tsget": 8, "/usr/lib/ssl-3/misc/tsget.pl": 6746}
+FILERDEPENDSFLIST:openssl-misc: /usr/bin/c@underscore@rehash /usr/lib/ssl-3/misc/CA.pl /usr/lib/ssl-3/misc/tsget.pl
+FILERDEPENDS:/usr/bin/c@underscore@rehash:openssl-misc:  /bin/sh
+FILERDEPENDS:/usr/lib/ssl-3/misc/CA.pl:openssl-misc:  /usr/bin/env
+FILERDEPENDS:/usr/lib/ssl-3/misc/tsget.pl:openssl-misc:  /usr/bin/env
+PKGSIZE:openssl-misc: 19014

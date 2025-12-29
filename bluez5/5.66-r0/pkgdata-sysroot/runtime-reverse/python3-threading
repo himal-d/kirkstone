@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-threading: Python threading & synchronization support
+RDEPENDS:python3-threading: python3-core
+SECTION: devel/python
+PKG:python3-threading: python3-threading
+FILES:python3-threading:  /usr/lib/python3.10/_threading_local.py /usr/lib/python3.10/lib-dynload/_queue.*.so /usr/lib/python3.10/queue.py /usr/lib/python3.10/__pycache__/_threading_local.*.pyc /usr/lib/python3.10/__pycache__/queue.*.pyc
+FILES_INFO:python3-threading: {"/usr/lib/python3.10/__pycache__/_threading_local.cpython-310.pyc": 6539, "/usr/lib/python3.10/__pycache__/queue.cpython-310.pyc": 10779, "/usr/lib/python3.10/_threading_local.py": 7220, "/usr/lib/python3.10/lib-dynload/_queue.cpython-310-aarch64-linux-gnu.so": 15344, "/usr/lib/python3.10/queue.py": 11483}
+FILERDEPENDSFLIST:python3-threading: /usr/lib/python3.10/lib-dynload/@underscore@queue.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@queue.cpython-310-aarch64-linux-gnu.so:python3-threading:  rtld(GNU_HASH)
+PKGSIZE:python3-threading: 51365

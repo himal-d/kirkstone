@@ -1,0 +1,15 @@
+PN: shadow
+PV: 4.11.1
+PR: r0
+PKGV: 4.11.1
+PKGR: r0
+LICENSE: BSD-3-Clause
+DESCRIPTION:shadow-locale-pt: Tools to change and administer password and group data  This package contains language translation files for the pt locale.
+SUMMARY:shadow-locale-pt: Tools to change and administer password and group data - pt translations
+RPROVIDES:shadow-locale-pt: shadow-locale pt-translation
+RRECOMMENDS:shadow-locale-pt: virtual-locale-pt
+SECTION: base/utils
+PKG:shadow-locale-pt: shadow-locale-pt
+FILES:shadow-locale-pt: /usr/share/locale/pt
+FILES_INFO:shadow-locale-pt: {"/usr/share/locale/pt/LC_MESSAGES/shadow.mo": 65794}
+PKGSIZE:shadow-locale-pt: 65794

@@ -1,0 +1,15 @@
+PN: base-passwd
+PV: 3.5.29
+PR: r0
+PKGV: 3.5.29
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION: The master copies of the user database files (/etc/passwd and /etc/group).  The update-passwd tool is also provided to keep the system databases synchronized with these master files.
+SUMMARY: Base system master password/group files
+SECTION: base
+PKG:base-passwd: base-passwd
+ALLOW_EMPTY:base-passwd: 1
+FILES:base-passwd: /usr/bin/* /usr/sbin/* /usr/libexec/* /usr/lib/lib*.so.*             /etc /com /var             /bin/* /sbin/*             /lib/*.so.*             /lib/udev /usr/lib/udev             /lib/udev /usr/lib/udev             /usr/share/base-passwd /usr/lib/base-passwd/*             /usr/share/pixmaps /usr/share/applications             /usr/share/idl /usr/share/omf /usr/share/sounds             /usr/lib/bonobo/servers
+FILES_INFO:base-passwd: {}
+pkg_preinst:base-passwd: #!/bin/sh\nset -e\nmkdir -p $D/etc\nif [ ! -e $D/etc/passwd ]; then\n\tcat << 'EOF' > $D/etc/passwd\nroot::0:0:root:/home/root:/bin/sh\ndaemon:*:1:1:daemon:/usr/sbin:/sbin/nologin\nbin:*:2:2:bin:/bin:/sbin/nologin\nsys:*:3:3:sys:/dev:/sbin/nologin\nsync:*:4:65534:sync:/bin:/bin/sync\ngames:*:5:60:games:/usr/games:/sbin/nologin\nman:*:6:12:man:/var/cache/man:/sbin/nologin\nlp:*:7:7:lp:/var/spool/lpd:/sbin/nologin\nmail:*:8:8:mail:/var/mail:/sbin/nologin\nnews:*:9:9:news:/var/spool/news:/sbin/nologin\nuucp:*:10:10:uucp:/var/spool/uucp:/sbin/nologin\nproxy:*:13:13:proxy:/bin:/sbin/nologin\nwww-data:*:33:33:www-data:/var/www:/sbin/nologin\nbackup:*:34:34:backup:/var/backups:/sbin/nologin\nlist:*:38:38:Mailing List Manager:/var/list:/sbin/nologin\nirc:*:39:39:ircd:/var/run/ircd:/sbin/nologin\ngnats:*:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/sbin/nologin\nnobody:*:65534:65534:nobody:/nonexistent:/sbin/nologin\nEOF\nfi\nif [ ! -e $D/etc/group ]; then\n\tcat << 'EOF' > $D/etc/group\nroot:*:0:\ndaemon:*:1:\nbin:*:2:\nsys:*:3:\nadm:*:4:\ntty:*:5:\ndisk:*:6:\nlp:*:7:\nmail:*:8:\nnews:*:9:\nuucp:*:10:\nman:*:12:\nproxy:*:13:\nkmem:*:15:\ninput:*:19:\ndialout:*:20:\nfax:*:21:\nvoice:*:22:\ncdrom:*:24:\nfloppy:*:25:\ntape:*:26:\nsudo:*:27:\naudio:*:29:\ndip:*:30:\nwww-data:*:33:\nbackup:*:34:\noperator:*:37:\nlist:*:38:\nirc:*:39:\nsrc:*:40:\ngnats:*:41:\nshadow:*:42:\nutmp:*:43:\nvideo:*:44:\nsasl:*:45:\nplugdev:*:46:\nkvm:*:47:\nstaff:*:50:\ngames:*:60:\nshutdown:*:70:\nusers:*:100:\nnogroup:*:65534:\nEOF\nfi\n
+PKGSIZE:base-passwd: 0

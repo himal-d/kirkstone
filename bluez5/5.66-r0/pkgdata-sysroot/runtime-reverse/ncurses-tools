@@ -1,0 +1,25 @@
+PN: ncurses
+PV: 6.3+20220423
+PR: r0
+PKGV: 6.3+20220423
+PKGR: r0
+LICENSE: MIT
+DESCRIPTION: SVr4 and XSI-Curses compatible curses library and terminfo tools including tic, infocmp, captoinfo. Supports color, multiple highlights, forms-drawing characters, and automatic recognition of keypad and function-key sequences. Extensions include resizable windows and mouse support on both xterm and Linux console using the gpm library.
+SUMMARY: The New Curses library
+RDEPENDS:ncurses-tools: ncurses ncurses-terminfo-base update-alternatives-opkg glibc (>= 2.35) ncurses-libtic (>= 6.3+20220423) ncurses-libtinfo (>= 6.3+20220423)
+SECTION: libs
+PKG:ncurses-tools: ncurses-tools
+FILES:ncurses-tools:   /usr/bin/tic   /usr/bin/toe   /usr/bin/infotocap   /usr/bin/captoinfo   /usr/bin/infocmp   /usr/bin/clear.ncurses   /usr/bin/reset.ncurses   /usr/bin/tack   /usr/bin/tabs 
+FILES_INFO:ncurses-tools: {"/usr/bin/captoinfo": 3, "/usr/bin/clear.ncurses": 10496, "/usr/bin/infocmp": 51768, "/usr/bin/infotocap": 3, "/usr/bin/reset.ncurses": 4, "/usr/bin/tabs": 14680, "/usr/bin/tic": 72528, "/usr/bin/toe": 14712}
+pkg_postinst:ncurses-tools: #!/bin/sh\nset -e\n\tupdate-alternatives --install /usr/bin/clear clear /usr/bin/clear.ncurses 100\n\tupdate-alternatives --install /usr/bin/reset reset /usr/bin/reset.ncurses 100\n
+pkg_prerm:ncurses-tools: #!/bin/sh\nset -e\n\tupdate-alternatives --remove  clear /usr/bin/clear.ncurses\n\tupdate-alternatives --remove  reset /usr/bin/reset.ncurses\n
+FILERPROVIDESFLIST:ncurses-tools:  /usr/bin/clear.ncurses /usr/bin/reset.ncurses
+FILERPROVIDES:/usr/bin/clear.ncurses:ncurses-tools:  /usr/bin/clear
+FILERPROVIDES:/usr/bin/reset.ncurses:ncurses-tools:  /usr/bin/reset
+FILERDEPENDSFLIST:ncurses-tools: /usr/bin/clear.ncurses /usr/bin/infocmp /usr/bin/tabs /usr/bin/tic /usr/bin/toe
+FILERDEPENDS:/usr/bin/clear.ncurses:ncurses-tools:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/infocmp:ncurses-tools:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtic.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/tabs:ncurses-tools:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/tic:ncurses-tools:  libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtic.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/bin/toe:ncurses-tools:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libtic.so.5()(64bit) libtinfo.so.5()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:ncurses-tools: 164194

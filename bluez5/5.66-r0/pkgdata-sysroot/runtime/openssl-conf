@@ -1,0 +1,14 @@
+PN: openssl
+PV: 3.0.5
+PR: r0
+PKGV: 3.0.5
+PKGR: r0
+LICENSE: Apache-2.0
+DESCRIPTION: Secure Socket Layer (SSL) binary and related cryptographic tools.
+SUMMARY: Secure Socket Layer
+SECTION: libs/network
+PKG:openssl-conf: openssl-conf
+FILES:openssl-conf: /etc/ssl/openssl.cnf                       /usr/lib/ssl-3/openssl.cnf*                       
+CONFFILES:openssl-conf: /etc/ssl/openssl.cnf
+FILES_INFO:openssl-conf: {"/etc/ssl/openssl.cnf": 12292, "/usr/lib/ssl-3/openssl.cnf": 28, "/usr/lib/ssl-3/openssl.cnf.dist": 12292}
+PKGSIZE:openssl-conf: 24612

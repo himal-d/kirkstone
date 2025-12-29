@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-pydoc: Python interactive help support
+RDEPENDS:python3-pydoc: python3-core python3-io
+SECTION: devel/python
+PKG:python3-pydoc: python3-pydoc
+FILES:python3-pydoc:  /usr/bin/pydoc* /usr/lib/python3.10/pydoc.py /usr/lib/python3.10/pydoc_data /usr/lib/python3.10/__pycache__/pydoc.*.pyc
+FILES_INFO:python3-pydoc: {"/usr/bin/pydoc3": 9, "/usr/bin/pydoc3.10": 79, "/usr/lib/python3.10/__pycache__/pydoc.cpython-310.pyc": 85392, "/usr/lib/python3.10/pydoc.py": 109589, "/usr/lib/python3.10/pydoc_data/__init__.py": 0, "/usr/lib/python3.10/pydoc_data/__pycache__/__init__.cpython-310.pyc": 135, "/usr/lib/python3.10/pydoc_data/__pycache__/topics.cpython-310.pyc": 472962, "/usr/lib/python3.10/pydoc_data/_pydoc.css": 96, "/usr/lib/python3.10/pydoc_data/topics.py": 745004}
+FILERDEPENDSFLIST:python3-pydoc: /usr/bin/pydoc3.10 /usr/lib/python3.10/pydoc.py
+FILERDEPENDS:/usr/bin/pydoc3.10:python3-pydoc:  /usr/bin/python3.10
+FILERDEPENDS:/usr/lib/python3.10/pydoc.py:python3-pydoc:  /usr/bin/env
+PKGSIZE:python3-pydoc: 1413266

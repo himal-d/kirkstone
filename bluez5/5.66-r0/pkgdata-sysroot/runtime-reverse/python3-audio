@@ -1,0 +1,17 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-audio: Python Audio Handling
+RDEPENDS:python3-audio: python3-core glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-audio: python3-audio
+FILES:python3-audio:  /usr/lib/python3.10/chunk.py /usr/lib/python3.10/lib-dynload/audioop.*.so /usr/lib/python3.10/lib-dynload/ossaudiodev.*.so /usr/lib/python3.10/sndhdr.py /usr/lib/python3.10/sunau.py /usr/lib/python3.10/wave.py /usr/lib/python3.10/__pycache__/chunk.*.pyc /usr/lib/python3.10/__pycache__/sndhdr.*.pyc /usr/lib/python3.10/__pycache__/sunau.*.pyc /usr/lib/python3.10/__pycache__/wave.*.pyc
+FILES_INFO:python3-audio: {"/usr/lib/python3.10/__pycache__/chunk.cpython-310.pyc": 4860, "/usr/lib/python3.10/__pycache__/sndhdr.cpython-310.pyc": 6962, "/usr/lib/python3.10/__pycache__/sunau.cpython-310.pyc": 16486, "/usr/lib/python3.10/__pycache__/wave.cpython-310.pyc": 17594, "/usr/lib/python3.10/chunk.py": 5435, "/usr/lib/python3.10/lib-dynload/audioop.cpython-310-aarch64-linux-gnu.so": 36016, "/usr/lib/python3.10/lib-dynload/ossaudiodev.cpython-310-aarch64-linux-gnu.so": 29256, "/usr/lib/python3.10/sndhdr.py": 7099, "/usr/lib/python3.10/sunau.py": 18158, "/usr/lib/python3.10/wave.py": 18004}
+FILERDEPENDSFLIST:python3-audio: /usr/lib/python3.10/lib-dynload/audioop.cpython-310-aarch64-linux-gnu.so /usr/lib/python3.10/lib-dynload/ossaudiodev.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/audioop.cpython-310-aarch64-linux-gnu.so:python3-audio:  libm.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.17)(64bit) libm.so.6()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/ossaudiodev.cpython-310-aarch64-linux-gnu.so:python3-audio:  libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-audio: 159870

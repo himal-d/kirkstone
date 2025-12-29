@@ -1,0 +1,12 @@
+PN: bash-completion
+PV: 2.11
+PR: r0
+PKGV: 2.11
+PKGR: r0
+LICENSE: GPL-2.0-only
+DESCRIPTION:bash-completion-src: Collection of command line command completions for the Bash shell, collection of helper functions to assist in creating new completions, and set of facilities for loading completions automatically on demand, as well as installing them.  This package contains sources for debugging purposes.
+SUMMARY:bash-completion-src: Programmable Completion for Bash 4 - Source files
+SECTION:bash-completion-src: devel
+PKG:bash-completion-src: bash-completion-src
+FILES_INFO:bash-completion-src: {}
+PKGSIZE:bash-completion-src: 0

@@ -1,0 +1,16 @@
+PN: util-linux
+PV: 2.37.4
+PR: r0
+PKGV: 2.37.4
+PKGR: r0
+LICENSE: GPL-2.0-or-later & LGPL-2.1-or-later & BSD-3-Clause & BSD-4-Clause
+DESCRIPTION:util-linux-mkfs: util-linux mkfs
+SUMMARY:util-linux-mkfs: util-linux mkfs
+RDEPENDS:util-linux-mkfs: glibc (>= 2.35)
+SECTION: base
+PKG:util-linux-mkfs: util-linux-mkfs
+FILES:util-linux-mkfs: /usr/sbin/mkfs
+FILES_INFO:util-linux-mkfs: {"/usr/sbin/mkfs": 10504}
+FILERDEPENDSFLIST:util-linux-mkfs: /usr/sbin/mkfs
+FILERDEPENDS:/usr/sbin/mkfs:util-linux-mkfs:  libc.so.6(GLIBC_2.34)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:util-linux-mkfs: 10504

@@ -1,0 +1,15 @@
+PN: gobject-introspection
+PV: 1.72.0
+PR: r0
+PKGV: 1.72.0
+PKGR: r0
+LICENSE: LGPL-2.0-or-later & GPL-2.0-or-later & MIT
+DESCRIPTION:gobject-introspection-dbg: GObject Introspection is a project for providing machine readable introspection data of the API of C libraries. This introspection data can be used in several different use cases, for example automatic code generation for bindings, API verification and documentation generation.  This package contains ELF symbols and related sources for debugging purposes.
+SUMMARY:gobject-introspection-dbg: Middleware layer between GObject-using C libraries and language bindings - Debugging files
+RRECOMMENDS:gobject-introspection-dbg: glib-2.0-dbg glibc-dbg libffi-dbg
+SECTION:gobject-introspection-dbg: devel
+PKG:gobject-introspection-dbg: gobject-introspection-dbg
+ALLOW_EMPTY:gobject-introspection-dbg: 1
+FILES:gobject-introspection-dbg: /usr/lib/debug /usr/lib/debug-static /usr/src/debug /usr/lib/gobject-introspection/giscanner/.debug/
+FILES_INFO:gobject-introspection-dbg: {"/usr/bin/.debug/g-ir-compiler": 501848, "/usr/bin/.debug/g-ir-generate": 77272, "/usr/bin/.debug/g-ir-inspect": 18992, "/usr/lib/.debug/libgirepository-1.0.so.1.0.0": 660080, "/usr/lib/gobject-introspection/giscanner/.debug/_giscanner.cpython-310-x86_64-linux-gnu.so": 128344}
+PKGSIZE:gobject-introspection-dbg: 1386536

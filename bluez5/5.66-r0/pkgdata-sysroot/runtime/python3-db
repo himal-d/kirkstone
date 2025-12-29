@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-db: Python file-based database support
+RDEPENDS:python3-db: python3-core gdbm (>= 1.8.3) glibc (>= 2.35)
+SECTION: devel/python
+PKG:python3-db: python3-db
+FILES:python3-db:  /usr/lib/python3.10/dbm /usr/lib/python3.10/lib-dynload/_dbm.*.so
+FILES_INFO:python3-db: {"/usr/lib/python3.10/dbm/__init__.py": 5839, "/usr/lib/python3.10/dbm/__pycache__/__init__.cpython-310.pyc": 4240, "/usr/lib/python3.10/dbm/__pycache__/dumb.cpython-310.pyc": 7850, "/usr/lib/python3.10/dbm/__pycache__/gnu.cpython-310.pyc": 206, "/usr/lib/python3.10/dbm/__pycache__/ndbm.cpython-310.pyc": 205, "/usr/lib/python3.10/dbm/dumb.py": 11536, "/usr/lib/python3.10/dbm/gnu.py": 72, "/usr/lib/python3.10/dbm/ndbm.py": 70, "/usr/lib/python3.10/lib-dynload/_dbm.cpython-310-aarch64-linux-gnu.so": 15440}
+FILERDEPENDSFLIST:python3-db: /usr/lib/python3.10/lib-dynload/@underscore@dbm.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@dbm.cpython-310-aarch64-linux-gnu.so:python3-db:  libc.so.6(GLIBC_2.17)(64bit) libgdbm_compat.so.3()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-db: 45458

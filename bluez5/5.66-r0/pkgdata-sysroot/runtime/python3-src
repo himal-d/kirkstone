@@ -1,0 +1,12 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION:python3-src: Python is a programming language that lets you work more quickly and integrate your systems more effectively.  This package contains sources for debugging purposes.
+SUMMARY:python3-src: The Python Programming Language - Source files
+SECTION:python3-src: devel
+PKG:python3-src: python3-src
+FILES_INFO:python3-src: {}
+PKGSIZE:python3-src: 0

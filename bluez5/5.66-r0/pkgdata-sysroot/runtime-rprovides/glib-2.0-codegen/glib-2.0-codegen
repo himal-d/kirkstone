@@ -1,0 +1,19 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.
+SUMMARY: A general-purpose utility library
+RDEPENDS:glib-2.0-codegen: python3 python3-distutils python3-xml
+RPROVIDES:glib-2.0-codegen:  glib-2.0-codegen (=2.74.6)
+SECTION: libs
+PKG:glib-2.0-codegen: libglib-2.0-codegen
+FILES:glib-2.0-codegen: /usr/share/glib-2.0/codegen/*.py                        /usr/bin/gdbus-codegen
+FILES_INFO:glib-2.0-codegen: {"/usr/bin/gdbus-codegen": 2042, "/usr/share/glib-2.0/codegen/__init__.py": 998, "/usr/share/glib-2.0/codegen/codegen.py": 230292, "/usr/share/glib-2.0/codegen/codegen_docbook.py": 18780, "/usr/share/glib-2.0/codegen/codegen_main.py": 16683, "/usr/share/glib-2.0/codegen/codegen_rst.py": 10454, "/usr/share/glib-2.0/codegen/config.py": 856, "/usr/share/glib-2.0/codegen/dbustypes.py": 20417, "/usr/share/glib-2.0/codegen/parser.py": 12943, "/usr/share/glib-2.0/codegen/utils.py": 4038}
+FILERDEPENDSFLIST:glib-2.0-codegen: /usr/bin/gdbus-codegen
+FILERDEPENDS:/usr/bin/gdbus-codegen:glib-2.0-codegen:  /usr/bin/env
+PKGSIZE:glib-2.0-codegen: 317503

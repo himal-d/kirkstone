@@ -1,0 +1,16 @@
+PN: python3
+PV: 3.10.4
+PR: r0
+PKGV: 3.10.4
+PKGR: r0
+LICENSE: PSF-2.0
+DESCRIPTION: Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+SUMMARY:python3-sqlite3: Python Sqlite3 database support
+RDEPENDS:python3-sqlite3: python3-core python3-datetime glibc (>= 2.35) libsqlite3 (>= 3.31.1)
+SECTION: devel/python
+PKG:python3-sqlite3: python3-sqlite3
+FILES:python3-sqlite3:  /usr/lib/python3.10/lib-dynload/_sqlite3.*.so /usr/lib/python3.10/sqlite3
+FILES_INFO:python3-sqlite3: {"/usr/lib/python3.10/lib-dynload/_sqlite3.cpython-310-aarch64-linux-gnu.so": 81752, "/usr/lib/python3.10/sqlite3/__init__.py": 2536, "/usr/lib/python3.10/sqlite3/__pycache__/__init__.cpython-310.pyc": 1646, "/usr/lib/python3.10/sqlite3/__pycache__/dbapi2.cpython-310.pyc": 2974, "/usr/lib/python3.10/sqlite3/__pycache__/dump.cpython-310.pyc": 1936, "/usr/lib/python3.10/sqlite3/dbapi2.py": 3323, "/usr/lib/python3.10/sqlite3/dump.py": 2825}
+FILERDEPENDSFLIST:python3-sqlite3: /usr/lib/python3.10/lib-dynload/@underscore@sqlite3.cpython-310-aarch64-linux-gnu.so
+FILERDEPENDS:/usr/lib/python3.10/lib-dynload/@underscore@sqlite3.cpython-310-aarch64-linux-gnu.so:python3-sqlite3:  libc.so.6(GLIBC_2.17)(64bit) libsqlite3.so.0()(64bit) libc.so.6()(64bit) rtld(GNU_HASH)
+PKGSIZE:python3-sqlite3: 96992

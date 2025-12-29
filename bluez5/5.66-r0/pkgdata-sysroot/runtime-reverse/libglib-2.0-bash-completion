@@ -1,0 +1,17 @@
+PN: glib-2.0
+PE: 1
+PV: 2.74.6
+PR: r0
+PKGE: 1
+PKGV: 2.74.6
+PKGR: r0
+LICENSE: LGPL-2.1-or-later & BSD-3-Clause & PD
+DESCRIPTION: GLib is a general-purpose utility library, which provides many useful data types, macros, type conversions, string utilities, file utilities, a main loop abstraction, and so on.
+SUMMARY: A general-purpose utility library
+RDEPENDS:glib-2.0-bash-completion: bash-completion
+RPROVIDES:glib-2.0-bash-completion:  glib-2.0-bash-completion (=2.74.6)
+SECTION: libs
+PKG:glib-2.0-bash-completion: libglib-2.0-bash-completion
+FILES:glib-2.0-bash-completion: /usr/share/bash-completion /etc/bash_completion.d
+FILES_INFO:glib-2.0-bash-completion: {"/usr/share/bash-completion/completions/gapplication": 1389, "/usr/share/bash-completion/completions/gdbus": 935, "/usr/share/bash-completion/completions/gio": 3830, "/usr/share/bash-completion/completions/gresource": 1356, "/usr/share/bash-completion/completions/gsettings": 2829}
+PKGSIZE:glib-2.0-bash-completion: 10339
