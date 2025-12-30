@@ -1,7 +1,11 @@
 [Unit]
 Description=Chip Tool for Matter IoT (Manual Commissioning Tool)
-After=network-online.target avahi-daemon.service ot-br-posix.service
+After=network-online.target avahi-daemon.service ot-br-posix.service bluetooth.service
 Wants=network-online.target
+Requires=bluetooth.service
+# Phase 1 Runtime Fix: Wait for BlueZ to be fully ready before Matter apps start
+ExecStartPre=/bin/bash -c 'while ! bluetoothctl show 2>/dev/null | grep -q "Powered: yes"; do sleep 0.5; done'
+ExecStartPre=/bin/sleep 2
 
 [Service]
 Type=oneshot

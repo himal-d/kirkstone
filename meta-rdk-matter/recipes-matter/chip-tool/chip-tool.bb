@@ -8,6 +8,7 @@ IMX_MATTER_SRC ?= "gitsm://github.com/NXP/matter.git;protocol=https"
 SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
 SRC_URI += "file://chip-tool.service"
 SRC_URI += "file://matter-commission.sh"
+SRC_URI += "file://verify-ble-ready.sh"
 MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
 
 inherit systemd
@@ -105,6 +106,7 @@ do_install() {
     # Install commissioning helper script
     install -d -m 755 ${D}${bindir}
     install -m 755 ${WORKDIR}/matter-commission.sh ${D}${bindir}/matter-commission
+    install -m 755 ${WORKDIR}/verify-ble-ready.sh ${D}${bindir}/verify-ble-ready
 }
 
 INSANE_SKIP_${PN} = "ldflags"

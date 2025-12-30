@@ -1,0 +1,15 @@
+[Unit]
+Description=Configure BLE Adapter Parameters for Matter
+After=bluetooth.service
+Requires=bluetooth.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/configure-ble-params
+# Retry if adapter not ready
+ExecStart=/bin/bash -c 'for i in 1 2 3; do /usr/bin/configure-ble-params && exit 0; sleep 2; done; exit 1'
+
+[Install]
+WantedBy=multi-user.target
+

@@ -32,16 +32,20 @@ SRC_URI += " \
     file://default-bluetooth.conf \
     file://enable-hci.sh \
     file://bluetooth.service \
+    file://configure-ble-params.sh \
+    file://ble-params.service \
 "
 
 # Systemd integration
-SYSTEMD_SERVICE:${PN} = "bluetooth.service"
+SYSTEMD_SERVICE:${PN} = "bluetooth.service ble-params.service"
 SYSTEMD_AUTO_ENABLE = "enable"
 
 do_install:append() {
     install -Dm644 ${WORKDIR}/default-bluetooth.conf ${D}${sysconfdir}/bluetooth/main.conf
     install -Dm755 ${WORKDIR}/enable-hci.sh ${D}${sbindir}/enable-hci.sh
     install -Dm644 ${WORKDIR}/bluetooth.service ${D}${systemd_system_unitdir}/bluetooth.service
+    install -Dm755 ${WORKDIR}/configure-ble-params.sh ${D}${bindir}/configure-ble-params
+    install -Dm644 ${WORKDIR}/ble-params.service ${D}${systemd_system_unitdir}/ble-params.service
 }
 
 # Include plugin paths — plugins get built into ${libdir}/bluetooth/
@@ -49,6 +53,8 @@ FILES:${PN} += " \
     ${sysconfdir}/bluetooth/main.conf \
     ${sbindir}/enable-hci.sh \
     ${systemd_system_unitdir}/bluetooth.service \
+    ${systemd_system_unitdir}/ble-params.service \
+    ${bindir}/configure-ble-params \
     ${libdir}/bluetooth/ \
 "
 
