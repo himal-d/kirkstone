@@ -1,0 +1,73 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matter SDK BlueZ Fix <fix@matter>
+Date: Mon, 1 Jan 2024 00:00:00 +0000
+Subject: [PATCH 2/3] BLE: Enhanced retry logic with BlueZ device state reset
+
+Enhance ConnectDeviceImpl retry logic to reset BlueZ device state between
+retry attempts. This includes disconnecting and removing the device from
+BlueZ cache before retry to clear stale connection state.
+
+This addresses error 36 (le-connection-abort-by-local) that persists when
+BlueZ has stale state from previous connection attempts.
+
+Issue: Error 36 persists across SDK internal retries
+Root cause: BlueZ retains stale device/connection state between retries
+Solution: Reset BlueZ device state before each retry attempt
+
+---
+ src/platform/Linux/bluez/BluezEndpoint.cpp | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/src/platform/Linux/bluez/BluezEndpoint.cpp b/src/platform/Linux/bluez/BluezEndpoint.cpp
+index 1111111..2222222 100644
+--- a/src/platform/Linux/bluez/BluezEndpoint.cpp
++++ b/src/platform/Linux/bluez/BluezEndpoint.cpp
+@@ -598,6 +598,7 @@ CHIP_ERROR BluezEndpoint::ConnectDevice(BluezDevice1 & aDevice)
+ 
+ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
+ {
++    constexpr uint32_t kRetryDelayMs = 500;
+     // Due to radio interferences or Wi-Fi coexistence, sometimes the BLE connection may not be
+     // established (e.g. Connection Indication Packet is missed by BLE peripheral). In such case,
+     // BlueZ returns "Software caused connection abort error", and we should make a connection retry.
+@@ -614,12 +615,35 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
+ 
+         ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s (%d)", error->message, error->code);
+         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_DBUS_ERROR))
+         {
++            // Check if this is error 36 (le-connection-abort-by-local)
++            const char * errorMsg = error->message;
++            if (errorMsg != nullptr && 
++                (strstr(errorMsg, "le-connection-abort-by-local") != nullptr ||
++                 strstr(errorMsg, "connection abort") != nullptr ||
++                 strstr(errorMsg, "(36)") != nullptr))
++            {
++                ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s", errorMsg);
++                // Continue retry loop for error 36
++            }
++            else
++            {
++                // Non-retryable error, break
++                break;
++            }
++        }
++
++        if (i > 0)
++        {
++            // Reset BlueZ device state before retry
++            // Disconnect and remove device from cache to clear stale state
++            bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
++            const char * devicePath = g_dbus_proxy_get_object_path(reinterpret_cast<GDBusProxy *>(&aDevice));
++            if (devicePath != nullptr && mAdapter != nullptr)
++            {
++                bluez_adapter1_call_remove_device_sync(mAdapter.get(), devicePath, nullptr, nullptr);
++            }
++            // Delay before retry
++            usleep(kRetryDelayMs * 1000);
++        }
++
+         ChipLogProgress(DeviceLayer, "ConnectDevice retry: %u out of %u", i + 1, kMaxConnectRetries);
+         bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
+     }
+-- 
+2.34.1

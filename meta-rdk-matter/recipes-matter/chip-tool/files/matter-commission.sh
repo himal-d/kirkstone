@@ -31,10 +31,82 @@ case "$TYPE" in
             exit 1
         fi
         
-        DATASET=$(ot-ctl dataset active -x 2>/dev/null | grep -v "Done" | tr -d '\n' | tr -d ' ')
+        # Check Thread network state first
+        THREAD_STATE=$(ot-ctl state 2>/dev/null | grep -v "Done" | head -n 1 | tr -d '\r\n')
+        if [ -z "$THREAD_STATE" ] || [ "$THREAD_STATE" = "disabled" ] || [ "$THREAD_STATE" = "detached" ]; then
+            echo "Error: Thread network not started (state: ${THREAD_STATE:-unknown})"
+            echo "Please start Thread network first:"
+            echo "  ot-ctl ifconfig up"
+            echo "  ot-ctl thread start"
+            exit 1
+        fi
+        echo "✓ Thread network active (state: $THREAD_STATE)"
         
+        # Get operational dataset with proper error handling
+        # Try get-thread-dataset first if available (more reliable)
+        DATASET=""
+        DATASET_OUTPUT=""
+        
+        if command -v get-thread-dataset &> /dev/null; then
+            # get-thread-dataset outputs the dataset after "Operational Dataset (hex):"
+            DATASET_OUTPUT=$(get-thread-dataset 2>&1)
+            DATASET=$(echo "$DATASET_OUTPUT" | grep -A 1 "Operational Dataset (hex):" | tail -n 1 | tr -d '\n\r' | tr -d ' ' | grep -oE '[0-9a-fA-F]+')
+            if [ -n "$DATASET" ] && [ ${#DATASET} -ge 20 ]; then
+                echo "✓ Thread operational dataset retrieved via get-thread-dataset (${#DATASET} hex chars)"
+            else
+                DATASET=""
+            fi
+        fi
+        
+        # Fall back to ot-ctl if get-thread-dataset didn't work
         if [ -z "$DATASET" ]; then
-            echo "Error: Thread network not started. Run: ot-ctl thread start"
+            DATASET_OUTPUT=$(ot-ctl dataset active -x 2>&1)
+            DATASET_EXIT_CODE=$?
+            
+            if [ $DATASET_EXIT_CODE -ne 0 ]; then
+                echo "Error: Failed to retrieve Thread operational dataset (exit code: $DATASET_EXIT_CODE)"
+                echo "Output: $DATASET_OUTPUT"
+                echo ""
+                echo "Please ensure Thread network is fully started:"
+                echo "  ot-ctl ifconfig up"
+                echo "  ot-ctl thread start"
+                echo "  ot-ctl state  # Should show 'leader' or 'router'"
+                exit 1
+            fi
+            
+            # Extract dataset hex string (remove "Done" and whitespace)
+            DATASET=$(echo "$DATASET_OUTPUT" | grep -v "Done" | tr -d '\n\r' | tr -d ' ' | grep -oE '[0-9a-fA-F]+')
+            
+            if [ -n "$DATASET" ] && [ ${#DATASET} -ge 20 ]; then
+                echo "✓ Thread operational dataset retrieved via ot-ctl (${#DATASET} hex chars)"
+            fi
+        fi
+        
+        # Validate dataset format (should be hex string, typically 52+ characters for full dataset)
+        if [ -z "$DATASET" ]; then
+            echo "Error: Thread operational dataset is empty"
+            if [ -n "$DATASET_OUTPUT" ]; then
+                echo "Raw output: $DATASET_OUTPUT"
+            fi
+            echo ""
+            echo "Please ensure Thread network is fully started:"
+            echo "  ot-ctl ifconfig up"
+            echo "  ot-ctl thread start"
+            echo "  ot-ctl state  # Should show 'leader' or 'router'"
+            echo ""
+            echo "You can also try manually:"
+            echo "  get-thread-dataset  # or: ot-ctl dataset active -x"
+            exit 1
+        fi
+        
+        if [ ${#DATASET} -lt 20 ]; then
+            echo "Error: Thread operational dataset appears invalid (too short: ${#DATASET} chars)"
+            echo "Dataset: $DATASET"
+            echo ""
+            echo "Please ensure Thread network is fully started:"
+            echo "  ot-ctl ifconfig up"
+            echo "  ot-ctl thread start"
+            echo "  ot-ctl state  # Should show 'leader' or 'router'"
             exit 1
         fi
         
@@ -64,10 +136,12 @@ case "$TYPE" in
             echo ""
         fi
         
+        echo ""
         echo "Commissioning Thread device (BLE-Thread)..."
         echo "Node ID: $NODE_ID"
         echo "PIN: $PIN_CODE"
         echo "Discriminator: $DISCRIMINATOR"
+        echo "Dataset: ${DATASET:0:20}...${DATASET: -20} (${#DATASET} chars)"
         echo ""
         
         # Phase 1 Runtime Fix: Enhanced retry logic with BlueZ state reset
@@ -120,8 +194,15 @@ case "$TYPE" in
             echo ""
             echo "Attempt $attempt: Commissioning..."
             
+            # Safety check: ensure dataset is still valid
+            if [ -z "$DATASET" ] || [ ${#DATASET} -lt 20 ]; then
+                echo "Error: Dataset became invalid before commissioning attempt $attempt"
+                echo "Dataset length: ${#DATASET}"
+                exit 1
+            fi
+            
             # Attempt commissioning
-            if chip-tool pairing ble-thread $NODE_ID hex:$DATASET $PIN_CODE $DISCRIMINATOR $BYPASS_ATTESTATION 2>&1; then
+            if chip-tool pairing ble-thread "$NODE_ID" "hex:$DATASET" "$PIN_CODE" "$DISCRIMINATOR" $BYPASS_ATTESTATION 2>&1; then
                 COMMISSION_SUCCESS=true
                 echo ""
                 echo "✓ Commissioning succeeded on attempt $attempt!"
