@@ -635,7 +635,7 @@ CHIP_ERROR BluezEndpoint::VerifyAdapterReadiness()
 
 CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
 {
-    constexpr uint32_t kRetryDelayMs = 500;
+    constexpr uint32_t kRetryDelayMs = 1000;  // Increased delay for better stability
 	
     // Due to radio interferences or Wi-Fi coexistence, sometimes the BLE connection may not be
     // established (e.g. Connection Indication Packet is missed by BLE peripheral). In such case,
@@ -661,11 +661,38 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
         }
 
         ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s (%d)", error->message, error->code);
+        
+        // Check if this is error 36 (le-connection-abort-by-local) specifically
+        bool isError36 = false;
+        if (error->message != nullptr)
+        {
+            const char * errorMsg = error->message;
+            isError36 = (strstr(errorMsg, "le-connection-abort-by-local") != nullptr ||
+                        strstr(errorMsg, "connection abort") != nullptr ||
+                        strstr(errorMsg, "(36)") != nullptr);
+        }
+        
+        // Check if device object became invalid (UnknownObject error)
+        bool isUnknownObject = g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_OBJECT);
+        
+        if (isUnknownObject)
+        {
+            ChipLogError(DeviceLayer, "Device object invalidated, cannot retry");
+            break;
+        }
+        
         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_DBUS_ERROR))
         {
-	    break;
+            // Non-DBUS error, break
+            break;
         }
 
+        ChipLogProgress(DeviceLayer, "ConnectDevice retry: %u out of %u", i + 1, kMaxConnectRetries);
+        
+        // Ensure device is disconnected before retry attempt
+        // This clears any stale connection state
+        bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
+        
         if (i > 0)
         {
             // Re-verify adapter readiness before retry
@@ -676,20 +703,12 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
                 // Continue retry loop, may succeed on next attempt
             }
 		
-            // Reset BlueZ device state before retry to clear stale connection state
-            // This is critical for error 36 (le-connection-abort-by-local) recovery 
-            bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
-            const char * devicePath = g_dbus_proxy_get_object_path(reinterpret_cast<GDBusProxy *>(&aDevice));
-            if (devicePath != nullptr && mAdapter != nullptr)
-            {
-                bluez_adapter1_call_remove_device_sync(mAdapter.get(), devicePath, nullptr, nullptr);
-            }
-            // Delay before retry to allow BlueZ to stabilize
-            usleep(kRetryDelayMs * 1000);		
+            // For error 36, use longer delay to allow BlueZ to fully stabilize
+            // This is critical for error 36 (le-connection-abort-by-local) recovery
+            uint32_t delayMs = isError36 ? (kRetryDelayMs * 2) : kRetryDelayMs;
+            ChipLogDetail(DeviceLayer, "Waiting %u ms before retry to allow BlueZ to stabilize", delayMs);
+            usleep(delayMs * 1000);		
         }
-
-        ChipLogProgress(DeviceLayer, "ConnectDevice retry: %u out of %u", i + 1, kMaxConnectRetries);
-        bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
     }
 
     BLEManagerImpl::HandleConnectFailed(CHIP_ERROR_INTERNAL);
@@ -701,7 +720,8 @@ CHIP_ERROR BluezEndpoint::ConnectDevice(BluezDevice1 & aDevice)
     // Add delay after device discovery to allow BlueZ to stabilize
     // This mitigates error 36 (le-connection-abort-by-local) that occurs
     // when connecting immediately after device discovery
-    constexpr uint32_t kPostDiscoveryConnectDelayMs = 200;
+    constexpr uint32_t kPostDiscoveryConnectDelayMs = 300;  // Increased from 200ms for better stability
+    ChipLogDetail(DeviceLayer, "Waiting %u ms after device discovery before connecting", kPostDiscoveryConnectDelayMs);
     usleep(kPostDiscoveryConnectDelayMs * 1000);
 	
     auto params = std::make_pair(this, &aDevice);
