@@ -74,6 +74,7 @@
 
 #include "BluezConnection.h"
 #include "Types.h"
+#include <unistd.h>
 
 #if !GLIB_CHECK_VERSION(2, 68, 0)
 #define g_memdup2(mem, size) g_memdup(mem, static_cast<unsigned int>(size))
@@ -593,15 +594,63 @@ void BluezEndpoint::Shutdown()
     mIsInitialized = false;
 }
 
+CHIP_ERROR BluezEndpoint::VerifyAdapterReadiness()
+{
+    VerifyOrReturnError(mAdapter != nullptr, CHIP_ERROR_INTERNAL);
+
+    // Check if adapter is powered
+    gboolean powered = bluez_adapter1_get_powered(mAdapter.get());    
+
+    // Adapter is ready if powered
+    if (powered)	    
+    {
+        ChipLogDetail(DeviceLayer, "Adapter is ready (powered: %d)", powered);	    
+        return CHIP_NO_ERROR;
+    }
+
+    // Wait for adapter to become ready (with timeout)
+    constexpr uint32_t kAdapterReadinessTimeoutMs = 2000;
+    constexpr uint32_t kAdapterReadinessPollMs    = 100;
+    uint32_t waitTime                             = 0;
+
+    while (waitTime < kAdapterReadinessTimeoutMs)
+    {
+        usleep(kAdapterReadinessPollMs * 1000);
+        waitTime += kAdapterReadinessPollMs;
+
+        // Re-check adapter state
+        powered = bluez_adapter1_get_powered(mAdapter.get());
+
+        if (powered)
+        {
+            ChipLogDetail(DeviceLayer, "Adapter is ready after %u ms (powered: %d)", waitTime, powered);
+            return CHIP_NO_ERROR;
+        }
+    }
+    ChipLogError(DeviceLayer, "Adapter readiness timeout: powered=%d", powered);
+    return CHIP_ERROR_TIMEOUT;
+}
+
 // ConnectDevice callbacks
 
 CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
 {
+    constexpr uint32_t kRetryDelayMs = 500;
+	
     // Due to radio interferences or Wi-Fi coexistence, sometimes the BLE connection may not be
     // established (e.g. Connection Indication Packet is missed by BLE peripheral). In such case,
     // BlueZ returns "Software caused connection abort error", and we should make a connection retry.
     // It's important to make sure that the connection is correctly ceased, by calling `Disconnect()`
     // D-Bus method, or else `Connect()` returns immediately without any effect.
+
+    // Verify adapter readiness before connection attempt
+    CHIP_ERROR err = VerifyAdapterReadiness();
+    if (err != CHIP_NO_ERROR)
+    {
+        ChipLogError(DeviceLayer, "Adapter not ready: %" CHIP_ERROR_FORMAT, err.Format());
+        return err;
+    }
+
     for (uint16_t i = 0; i < kMaxConnectRetries; i++)
     {
         GAutoPtr<GError> error;
@@ -614,7 +663,29 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
         ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s (%d)", error->message, error->code);
         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_DBUS_ERROR))
         {
-            break;
+	    break;
+        }
+
+        if (i > 0)
+        {
+            // Re-verify adapter readiness before retry
+            err = VerifyAdapterReadiness();
+            if (err != CHIP_NO_ERROR)
+            {
+                ChipLogError(DeviceLayer, "Adapter not ready before retry: %" CHIP_ERROR_FORMAT, err.Format());
+                // Continue retry loop, may succeed on next attempt
+            }
+		
+            // Reset BlueZ device state before retry to clear stale connection state
+            // This is critical for error 36 (le-connection-abort-by-local) recovery 
+            bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
+            const char * devicePath = g_dbus_proxy_get_object_path(reinterpret_cast<GDBusProxy *>(&aDevice));
+            if (devicePath != nullptr && mAdapter != nullptr)
+            {
+                bluez_adapter1_call_remove_device_sync(mAdapter.get(), devicePath, nullptr, nullptr);
+            }
+            // Delay before retry to allow BlueZ to stabilize
+            usleep(kRetryDelayMs * 1000);		
         }
 
         ChipLogProgress(DeviceLayer, "ConnectDevice retry: %u out of %u", i + 1, kMaxConnectRetries);
@@ -627,6 +698,12 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
 
 CHIP_ERROR BluezEndpoint::ConnectDevice(BluezDevice1 & aDevice)
 {
+    // Add delay after device discovery to allow BlueZ to stabilize
+    // This mitigates error 36 (le-connection-abort-by-local) that occurs
+    // when connecting immediately after device discovery
+    constexpr uint32_t kPostDiscoveryConnectDelayMs = 200;
+    usleep(kPostDiscoveryConnectDelayMs * 1000);
+	
     auto params = std::make_pair(this, &aDevice);
     mConnectCancellable.reset(g_cancellable_new());
     return PlatformMgrImpl().GLibMatterContextInvokeSync(

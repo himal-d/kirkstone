@@ -109,6 +109,8 @@ private:
     void RegisterGattApplicationDone(GObject * aObject, GAsyncResult * aResult);
     CHIP_ERROR RegisterGattApplicationImpl();
 
+    CHIP_ERROR VerifyAdapterReadiness();
+    
     CHIP_ERROR ConnectDeviceImpl(BluezDevice1 & aDevice);
 
     BluezObjectManager & mObjectManager;

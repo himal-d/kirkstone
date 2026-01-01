@@ -15,8 +15,8 @@ Root cause: BlueZ retains stale device/connection state between retries
 Solution: Reset BlueZ device state before each retry attempt
 
 ---
- src/platform/Linux/bluez/BluezEndpoint.cpp | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ src/platform/Linux/bluez/BluezEndpoint.cpp | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/src/platform/Linux/bluez/BluezEndpoint.cpp b/src/platform/Linux/bluez/BluezEndpoint.cpp
 index 1111111..2222222 100644
@@ -30,39 +30,25 @@ index 1111111..2222222 100644
      // Due to radio interferences or Wi-Fi coexistence, sometimes the BLE connection may not be
      // established (e.g. Connection Indication Packet is missed by BLE peripheral). In such case,
      // BlueZ returns "Software caused connection abort error", and we should make a connection retry.
-@@ -614,12 +615,35 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
+@@ -614,12 +615,29 @@ CHIP_ERROR BluezEndpoint::ConnectDeviceImpl(BluezDevice1 & aDevice)
  
          ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s (%d)", error->message, error->code);
          if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_DBUS_ERROR))
          {
-+            // Check if this is error 36 (le-connection-abort-by-local)
-+            const char * errorMsg = error->message;
-+            if (errorMsg != nullptr && 
-+                (strstr(errorMsg, "le-connection-abort-by-local") != nullptr ||
-+                 strstr(errorMsg, "connection abort") != nullptr ||
-+                 strstr(errorMsg, "(36)") != nullptr))
-+            {
-+                ChipLogError(DeviceLayer, "FAIL: ConnectDevice: %s", errorMsg);
-+                // Continue retry loop for error 36
-+            }
-+            else
-+            {
-+                // Non-retryable error, break
-+                break;
-+            }
-+        }
-+
+             break;
+         }
+ 
 +        if (i > 0)
 +        {
-+            // Reset BlueZ device state before retry
-+            // Disconnect and remove device from cache to clear stale state
++            // Reset BlueZ device state before retry to clear stale connection state
++            // This is critical for error 36 (le-connection-abort-by-local) recovery
 +            bluez_device1_call_disconnect_sync(&aDevice, nullptr, nullptr);
 +            const char * devicePath = g_dbus_proxy_get_object_path(reinterpret_cast<GDBusProxy *>(&aDevice));
 +            if (devicePath != nullptr && mAdapter != nullptr)
 +            {
 +                bluez_adapter1_call_remove_device_sync(mAdapter.get(), devicePath, nullptr, nullptr);
 +            }
-+            // Delay before retry
++            // Delay before retry to allow BlueZ to stabilize
 +            usleep(kRetryDelayMs * 1000);
 +        }
 +
