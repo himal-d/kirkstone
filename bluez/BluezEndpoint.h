@@ -111,6 +111,12 @@ private:
 
     CHIP_ERROR VerifyAdapterReadiness();
     
+    // Helper to safely remove and rediscover device after invalidation
+    // Uses non-blocking event processing to wait for device re-discovery
+    // Returns a new device object reference if found, nullptr otherwise
+    // Caller is responsible for unreffing the returned object
+    BluezDevice1 * RediscoverDeviceByAddress(const char * deviceAddress);
+    
     CHIP_ERROR ConnectDeviceImpl(BluezDevice1 & aDevice);
 
     BluezObjectManager & mObjectManager;
