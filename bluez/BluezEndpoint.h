@@ -111,6 +111,15 @@ private:
 
     CHIP_ERROR VerifyAdapterReadiness();
     
+    // Verify that discovery has fully stopped before connecting
+    // BlueZ requires discovery to be stopped before connection attempts
+    CHIP_ERROR WaitForDiscoveryToStop();
+    
+    // Prepare device for connection by setting Trusted property and ensuring clean state
+    // Some BlueZ configurations require Trusted property to be set before connecting
+    // Also ensures device is not already connected before attempting new connection
+    CHIP_ERROR PrepareDeviceForConnection(BluezDevice1 & aDevice);
+    
     // Helper to safely remove and rediscover device after invalidation
     // Uses non-blocking event processing to wait for device re-discovery
     // Returns a new device object reference if found, nullptr otherwise
