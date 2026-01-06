@@ -4,24 +4,35 @@ set -e
 # ==========================
 # Configuration
 # ==========================
-# Detect RCP device with fallback
+# Option B2: Detect RCP device with preference for external RCP
+# This eliminates Thread/BLE contention on Pi 4
 detect_rcp_device() {
-    # Check common paths
-    for dev in /dev/ttyACM0 /dev/ttyUSB0 /dev/ttyACM1; do
-        if [ -e "$dev" ]; then
-            # Verify it's a character device
-            if [ -c "$dev" ]; then
+    # Priority 1: Check for /dev/ot-rcp symlink (created by udev rules for external RCP)
+    if [ -e /dev/ot-rcp ]; then
+        echo "/dev/ot-rcp"
+        return 0
+    fi
+    
+    # Priority 2: Check common external RCP devices
+    # nRF52840, ESP32-H2, EFR32MG24 typically appear as ttyACM0 or ttyACM1
+    for dev in /dev/ttyACM1 /dev/ttyACM0 /dev/ttyUSB0; do
+        if [ -e "$dev" ] && [ -c "$dev" ]; then
+            # Verify it's not onboard BLE (Broadcom)
+            local vendor=$(udevadm info --query=property --name="$dev" 2>/dev/null | grep "ID_VENDOR_ID" | cut -d'=' -f2)
+            if [ "$vendor" != "0a5c" ]; then  # 0a5c is Broadcom (Pi 4 onboard)
                 echo "$dev"
                 return 0
             fi
         fi
     done
+    
     # Use environment variable if set
     if [ -n "$RCP_DEVICE" ]; then
         echo "$RCP_DEVICE"
         return 0
     fi
-    # Default fallback
+    
+    # Fallback: Use default (may be onboard, but better than nothing)
     echo "/dev/ttyACM0"
 }
 
@@ -48,7 +59,7 @@ detect_bridge_interface() {
     echo "br0"
 }
 
-RCP_DEVICE=$(detect_rcp_device)
+RCP_DEVICE=${RCP_DEVICE:-$(detect_rcp_device)}
 WPAN_IF="wpan0"
 BR_IF=$(detect_bridge_interface)
 OTBR_AGENT_BIN="/usr/sbin/otbr-agent"

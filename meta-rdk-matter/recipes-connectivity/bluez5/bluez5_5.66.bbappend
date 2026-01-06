@@ -34,6 +34,8 @@ SRC_URI += " \
     file://bluetooth.service \
     file://configure-ble-params.sh \
     file://ble-params.service \
+    file://99-ble-external.rules \
+    file://select-ble-adapter.sh \
 "
 
 # Systemd integration
@@ -46,6 +48,11 @@ do_install:append() {
     install -Dm644 ${WORKDIR}/bluetooth.service ${D}${systemd_system_unitdir}/bluetooth.service
     install -Dm755 ${WORKDIR}/configure-ble-params.sh ${D}${bindir}/configure-ble-params
     install -Dm644 ${WORKDIR}/ble-params.service ${D}${systemd_system_unitdir}/ble-params.service
+    
+    # Install external BLE adapter support (Option B3)
+    install -d ${D}${sysconfdir}/udev/rules.d
+    install -Dm644 ${WORKDIR}/99-ble-external.rules ${D}${sysconfdir}/udev/rules.d/
+    install -Dm755 ${WORKDIR}/select-ble-adapter.sh ${D}${bindir}/select-ble-adapter
 }
 
 # Include plugin paths — plugins get built into ${libdir}/bluetooth/
@@ -55,6 +62,8 @@ FILES:${PN} += " \
     ${systemd_system_unitdir}/bluetooth.service \
     ${systemd_system_unitdir}/ble-params.service \
     ${bindir}/configure-ble-params \
+    ${sysconfdir}/udev/rules.d/99-ble-external.rules \
+    ${bindir}/select-ble-adapter \
     ${libdir}/bluetooth/ \
 "
 

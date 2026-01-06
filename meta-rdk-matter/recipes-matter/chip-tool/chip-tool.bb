@@ -9,6 +9,7 @@ SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
 SRC_URI += "file://chip-tool.service"
 SRC_URI += "file://matter-commission.sh"
 SRC_URI += "file://verify-ble-ready.sh"
+SRC_URI += "file://wifi-ble-coexistence.sh"
 MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
 
 inherit systemd
@@ -107,6 +108,7 @@ do_install() {
     install -d -m 755 ${D}${bindir}
     install -m 755 ${WORKDIR}/matter-commission.sh ${D}${bindir}/matter-commission
     install -m 755 ${WORKDIR}/verify-ble-ready.sh ${D}${bindir}/verify-ble-ready
+    install -m 755 ${WORKDIR}/wifi-ble-coexistence.sh ${D}${bindir}/wifi-ble-coexistence
 }
 
 INSANE_SKIP_${PN} = "ldflags"

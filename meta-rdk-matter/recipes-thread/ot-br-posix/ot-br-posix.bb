@@ -9,6 +9,7 @@ SRC_URI = "gitsm://github.com/openthread/ot-br-posix.git;branch=main;protocol=ht
 	   file://get-thread-dataset.sh \
 	   file://otbr-diagnose.sh \
 	   file://check-wpan0.sh \
+	   file://99-ot-rcp.rules \
           "
 SRCREV = "9537b07470dc1cd98ee6c5e3e4486c7ba2223966"
 
@@ -34,7 +35,7 @@ EXTRA_OECMAKE = "\
 SYSTEMD_SERVICE:${PN} = "ot-br-posix.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
-FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset ${bindir}/otbr-diagnose ${bindir}/check-wpan0"
+FILES:${PN} += "${systemd_system_unitdir}/ot-br-posix.service ${sysconfdir}/default/otbr-agent /usr/local/bin/otbr-agent-wrapper.sh ${bindir}/get-thread-dataset ${bindir}/otbr-diagnose ${bindir}/check-wpan0 ${sysconfdir}/udev/rules.d/99-ot-rcp.rules"
 
 do_install:append() {
     install -d ${D}/usr/local/bin
@@ -52,4 +53,8 @@ do_install:append() {
     
     # Install wpan0 check script
     install -m 755 ${WORKDIR}/check-wpan0.sh ${D}${bindir}/check-wpan0
+    
+    # Install udev rules for external RCP (Option B2)
+    install -d ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${WORKDIR}/99-ot-rcp.rules ${D}${sysconfdir}/udev/rules.d/
 }

@@ -25,6 +25,20 @@ case "$TYPE" in
             echo "⚠️  WARNING: Attestation verification bypassed (POC only!)"
         fi
         
+        # Option B1: Disable Wi-Fi during BLE commissioning (Pi 4 workaround)
+        if [ -f /usr/bin/wifi-ble-coexistence ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Option B1: Disabling Wi-Fi for BLE commissioning"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            /usr/bin/wifi-ble-coexistence disable || {
+                echo "Warning: Failed to disable Wi-Fi, continuing anyway..."
+            }
+            
+            # Set trap to restore Wi-Fi on exit (failure-safe)
+            trap '/usr/bin/wifi-ble-coexistence enable || true' EXIT INT TERM
+        fi
+        
         # Get operational dataset
         if ! command -v ot-ctl &> /dev/null; then
             echo "Error: ot-ctl not found"
@@ -219,6 +233,19 @@ case "$TYPE" in
                 fi
             fi
         done
+        
+        # Option B1: Restore Wi-Fi after commissioning (success or failure)
+        if [ -f /usr/bin/wifi-ble-coexistence ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Option B1: Restoring Wi-Fi"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            /usr/bin/wifi-ble-coexistence enable || {
+                echo "Warning: Failed to restore Wi-Fi. Run manually: wifi-ble-coexistence enable"
+            }
+            # Clear trap since we've restored Wi-Fi
+            trap - EXIT INT TERM
+        fi
         
         if [ "$COMMISSION_SUCCESS" = "false" ]; then
             echo ""
