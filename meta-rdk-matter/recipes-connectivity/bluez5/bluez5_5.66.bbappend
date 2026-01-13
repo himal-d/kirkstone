@@ -4,7 +4,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # Dependencies required for feature detection
 DEPENDS += "json-c ell readline"
-RDEPENDS:${PN} += "json-c"
+RDEPENDS:${PN} += "json-c bash"
 
 inherit autotools pkgconfig systemd
 

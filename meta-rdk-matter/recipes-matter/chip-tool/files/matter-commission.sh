@@ -13,13 +13,13 @@ DISCRIMINATOR=${4:-}
 case "$TYPE" in
     thread-ble)
         if [ -z "$PIN_CODE" ] || [ -z "$DISCRIMINATOR" ]; then
-            echo "Usage: matter-commission.sh thread-ble <node_id> <pin_code> <discriminator> [--no-bypass-attestation]"
+            echo "Usage: matter-commission.sh thread-ble <node_id> <pin_code> <discriminator> [--bypass-attestation]"
             echo "Example: matter-commission.sh thread-ble 1 12345678 3840"
-            echo "Example: matter-commission.sh thread-ble 1 12345678 3840 --no-bypass-attestation  # Enable strict attestation"
+            echo "Example: matter-commission.sh thread-ble 1 12345678 3840 --bypass-attestation"
             echo ""
             echo "Note: By default, attestation verification is bypassed (matches chip-tool behavior)"
             echo ""
-            echo "Note: Order matches chip-tool: <node_id> <dataset> <pin_code> <discriminator>"
+            echo "Note: Order matches chip-tool: <node_id> <dataset> <pin_code> <discriminator>"	    
             exit 1
         fi
         
@@ -33,7 +33,7 @@ case "$TYPE" in
             BYPASS_ATTESTATION=""
             echo "⚠️  NOTE: Attestation verification enabled (strict mode)"
         elif [ "$5" = "--bypass-attestation" ] || [ "$5" = "--bypass" ]; then
-            # Explicitly set (already default, but keep for compatibility)
+            # Explicitly set (already default, but keep for compatibility)	    
             echo "⚠️  WARNING: Attestation verification bypassed (POC only!)"
         fi
         
@@ -228,7 +228,7 @@ case "$TYPE" in
             fi
             
             # Attempt commissioning
-            # chip-tool expects: pairing ble-thread <NODE_ID> <DATASET> <PIN_CODE> <DISCRIMINATOR> [options]
+            # chip-tool expects: pairing ble-thread <NODE_ID> <DATASET> <PIN_CODE> <DISCRIMINATOR> [options]	    
             if chip-tool pairing ble-thread "$NODE_ID" "hex:$DATASET" "$PIN_CODE" "$DISCRIMINATOR" $BYPASS_ATTESTATION 2>&1; then
                 COMMISSION_SUCCESS=true
                 echo ""

@@ -12,6 +12,8 @@ SRC_URI += "file://verify-ble-ready.sh"
 SRC_URI += "file://wifi-ble-coexistence.sh"
 MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
 
+require recipes-matter/matter-common/matter-common-sdk-patches.inc
+
 inherit systemd
 
 SYSTEMD_SERVICE:${PN} = "chip-tool.service"
