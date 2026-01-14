@@ -23,6 +23,7 @@ RDEPENDS_packagegroup-rdk-oss-broadband_append = " \
     chip-ota-provider-app \
     chip-ota-requestor-app \
     chip-tool-web \
+    matter-controller-daemon \
     imx-chip-bridge-app \
     nxp-thermostat-app \
     thermostat-app \

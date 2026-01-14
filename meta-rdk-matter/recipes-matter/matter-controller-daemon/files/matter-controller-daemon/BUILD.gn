@@ -1,0 +1,61 @@
+# Matter Controller Daemon - BUILD.gn
+# Persistent Matter Controller with BLE Commissioning and Multi-Admin Support
+
+import("//build_overrides/pigweed_environment.gni")
+import("${build_root}/core.gni")
+
+# Matter Controller Daemon executable
+executable("matter-controller-daemon") {
+  sources = [
+    "main.cpp",
+    "MatterController.cpp",
+  ]
+
+  public_deps = [
+    "//src/app:app-common",
+    "//src/app/server:server",
+    "//src/controller:controller",
+    "//src/controller:lib",
+    "//src/credentials:credentials",
+    "//src/lib:lib",
+    "//src/platform:platform",
+    "//src/setup_payload:setup_payload",
+    "//src/ble:ble",
+  ]
+
+  deps = [
+    "//src/lib/core:core",
+    "//src/lib/support:support",
+    "//src/platform:platform",
+    "//src/platform/Linux:linux",
+    "//src/system:system",
+    "//src/transport:transport",
+    "//src/credentials:credentials",
+    "//src/app:app-common",
+    "//src/app/server:server",
+    "//src/controller:controller",
+    "//src/controller:lib",
+    "//src/ble:ble",
+    "//src/setup_payload:setup_payload",
+  ]
+
+  cflags = [
+    "-DCHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME=\"wlan0\"",
+    "-DCHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD=\"udhcpc -b -i %s\"",
+    "-DCHIP_DEVICE_CONFIG_THREAD_INTERFACE_NAME=\"wpan0\"",
+    "-DCHIP_DEVICE_CONFIG_ENABLE_WIFI=1",
+    "-DCHIP_DEVICE_CONFIG_ENABLE_THREAD=1",
+    "-DCHIP_DEVICE_CONFIG_ENABLE_BLE=1",
+  ]
+
+  cflags_cc = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+  ]
+
+  ldflags = [
+    "-pthread",
+  ]
+}
+
