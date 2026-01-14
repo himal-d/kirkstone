@@ -5,8 +5,15 @@
 set -e
 
 CONTROLLER_SERVICE="matter-controller"
-CONTROLLER_PID_FILE="/var/run/matter-controller.pid"
+CONTROLLER_PID_FILE="/run/matter-controller.pid"
 STORAGE_DIR="/var/lib/matter-controller"
+
+# Determine if running as root (for sudo usage)
+if [ "$EUID" -eq 0 ]; then
+    SUDO_CMD=""
+else
+    SUDO_CMD="sudo"
+fi
 
 case "$1" in
     start)
@@ -114,8 +121,11 @@ case "$1" in
                     echo ""
                     echo "To verify commissioned devices, try:"
                     echo "  - Read device attributes: chip-tool onoff read on-off 1 1"
-                    echo "  - Read basic info: chip-tool basic read vendor-name 1 1"
+                    echo "  - Read basic info: chip-tool basicinformation read vendor-name 1 1"
                     echo "  - Check storage files: ls -lh $STORAGE_DIR/"
+                    echo ""
+                    echo "Note: chip-tool is a temporary commissioner - it creates its own controller"
+                    echo "      instance for each command and shuts down after completion."
                 else
                     echo "  File is empty (no devices commissioned yet)"
                 fi
@@ -143,9 +153,9 @@ case "$1" in
     
     setup-storage)
         echo "Setting up Matter Controller storage..."
-        sudo mkdir -p "$STORAGE_DIR"
-        sudo chown root:root "$STORAGE_DIR"
-        sudo chmod 755 "$STORAGE_DIR"
+        $SUDO_CMD mkdir -p "$STORAGE_DIR"
+        $SUDO_CMD chown root:root "$STORAGE_DIR"
+        $SUDO_CMD chmod 755 "$STORAGE_DIR"
         echo "✓ Storage directory created: $STORAGE_DIR"
         echo ""
         echo "Note: Storage permissions will be managed by systemd service"

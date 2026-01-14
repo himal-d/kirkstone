@@ -10,6 +10,7 @@ SRC_URI += "file://chip-all-clusters-app.service"
 SRC_URI += "file://matter-controller.service"
 SRC_URI += "file://matter-controller-ctl.sh"
 SRC_URI += "file://verify-matter-controller.sh"
+SRC_URI += "file://matter-controller.conf"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
@@ -118,6 +119,10 @@ do_install() {
     install -d -m 755 ${D}${bindir}
     install -m 755 ${WORKDIR}/matter-controller-ctl.sh ${D}${bindir}/matter-controller-ctl
     install -m 755 ${WORKDIR}/verify-matter-controller.sh ${D}${bindir}/verify-matter-controller
+    
+    # Install tmpfiles.d configuration to ensure storage directory exists
+    install -d ${D}${sysconfdir}/tmpfiles.d
+    install -m 644 ${WORKDIR}/matter-controller.conf ${D}${sysconfdir}/tmpfiles.d/matter-controller.conf
 }
 
 INSANE_SKIP_${PN} = "ldflags"

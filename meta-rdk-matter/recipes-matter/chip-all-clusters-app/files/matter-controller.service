@@ -5,6 +5,16 @@ After=network-online.target avahi-daemon.service dbus.service ot-br-posix.servic
 Wants=network-online.target
 Requires=avahi-daemon.service bluetooth.service
 
+[Service]
+Type=simple
+User=root
+Group=root
+
+# Create storage directory before starting
+ExecStartPre=/bin/mkdir -p /var/lib/matter-controller
+ExecStartPre=/bin/chown root:root /var/lib/matter-controller
+ExecStartPre=/bin/chmod 755 /var/lib/matter-controller
+
 # Wait for BlueZ to be fully ready (Pi 4 workaround)
 ExecStartPre=/bin/bash -c 'while ! bluetoothctl show 2>/dev/null | grep -q "Powered: yes"; do sleep 0.5; done'
 ExecStartPre=/bin/sleep 2
@@ -12,30 +22,25 @@ ExecStartPre=/bin/sleep 2
 # Wait for Thread interface
 ExecStartPre=/bin/sh -c 'while ! ip link show wpan0 >/dev/null 2>&1; do sleep 1; done'
 
-[Service]
-Type=simple
-User=root
-Group=root
-
-# Main executable - chip-all-clusters-app in controller mode
-# ⚠️ CRITICAL: Verify these arguments work with your chip-all-clusters-app build!
-# Check available options with: chip-all-clusters-app --help
-# 
-# Common arguments (adjust based on your build):
-# --ble                                    Enable BLE
-# --commissioning-window-timeout <sec>     Commissioning window timeout
-# --commissioning-window-discriminator <n> Discriminator for BLE advertising
-# --commissioning-window-pin <pin>         Setup PIN code
+# Main executable - chip-all-clusters-app
+# ⚠️ NOTE: chip-all-clusters-app is a Matter DEVICE endpoint, not a controller
+# It can act as a controller but with limited functionality
+# For full controller features, consider using chip-tool or a custom controller app
 #
-# If your build doesn't support these, you may need to:
-# 1. Rebuild with controller features enabled
-# 2. Use a different Matter Controller application
-# 3. Implement custom commissioning window management
+# Available arguments (from --help):
+# --ble-device <number>          BLE device number (e.g., 0 for hci0)
+# --discriminator <n>             Discriminator for commissioning
+# --passcode <code>               Passcode for commissioning
+# --capabilities <mask>           Discovery capabilities (BLE = 1 << 1)
+# --thread                        Enable Thread management
+# --KVS <filepath>                Key Value Store file path
 ExecStart=/usr/bin/chip-all-clusters-app \
-    --ble \
-    --commissioning-window-timeout 300 \
-    --commissioning-window-discriminator 3840 \
-    --commissioning-window-pin 12345678
+    --ble-device 0 \
+    --discriminator 3840 \
+    --passcode 12345678 \
+    --capabilities 2 \
+    --thread \
+    --KVS /var/lib/matter-controller/chip_kvs
 
 # Restart policy
 Restart=on-failure
@@ -55,7 +60,9 @@ Environment="CHIP_CONFIG_PATH=/var/lib/matter-controller/chip_config.ini"
 # Security and resource limits
 NoNewPrivileges=false
 PrivateTmp=yes
-ReadWritePaths=/var/lib/matter-controller
+# Note: ReadWritePaths requires directory to exist before namespace creation
+# Directory is created in ExecStartPre, so we can't use ReadWritePaths here
+# Instead, ensure directory exists before service starts (via tmpfiles.d or manual creation)
 LimitNOFILE=65536
 
 # Logging
@@ -64,7 +71,7 @@ StandardError=journal
 SyslogIdentifier=matter-controller
 
 # PID file
-PIDFile=/var/run/matter-controller.pid
+PIDFile=/run/matter-controller.pid
 
 [Install]
 WantedBy=multi-user.target
