@@ -107,14 +107,25 @@ case "$1" in
             echo "Storage directory: $STORAGE_DIR"
             echo ""
             if [ -f "$STORAGE_DIR/chip_kvs" ]; then
-                echo "Fabric storage file exists"
-                # Note: Actual fabric listing requires Matter SDK tools
-                echo "Use 'chip-tool pairing list' to see commissioned devices"
+                echo "✓ Fabric storage file exists"
+                FILE_SIZE=$(stat -c%s "$STORAGE_DIR/chip_kvs" 2>/dev/null || echo "0")
+                if [ "$FILE_SIZE" -gt 0 ]; then
+                    echo "  File size: $FILE_SIZE bytes (contains fabric data)"
+                    echo ""
+                    echo "To verify commissioned devices, try:"
+                    echo "  - Read device attributes: chip-tool onoff read on-off 1 1"
+                    echo "  - Read basic info: chip-tool basic read vendor-name 1 1"
+                    echo "  - Check storage files: ls -lh $STORAGE_DIR/"
+                else
+                    echo "  File is empty (no devices commissioned yet)"
+                fi
             else
-                echo "No fabric storage found"
+                echo "✗ No fabric storage found"
+                echo "  No devices have been commissioned yet"
             fi
         else
-            echo "Storage directory not found: $STORAGE_DIR"
+            echo "✗ Storage directory not found: $STORAGE_DIR"
+            echo "  Run: matter-controller-ctl setup-storage"
         fi
         ;;
     

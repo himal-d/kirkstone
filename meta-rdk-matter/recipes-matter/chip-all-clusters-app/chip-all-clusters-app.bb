@@ -7,11 +7,20 @@ SRCBRANCH = "v1.4-branch-nxp_imx_2025_q1"
 IMX_MATTER_SRC ?= "gitsm://github.com/NXP/matter.git;protocol=https"
 SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
 SRC_URI += "file://chip-all-clusters-app.service"
+SRC_URI += "file://matter-controller.service"
+SRC_URI += "file://matter-controller-ctl.sh"
+SRC_URI += "file://verify-matter-controller.sh"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
 MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
+
+# Include SDK patches (BLE fixes, QR code commissioning, etc.)
+require recipes-matter/matter-common/matter-common-sdk-patches.inc
 
 inherit systemd
 
-SYSTEMD_SERVICE:${PN} = "chip-all-clusters-app.service"
+SYSTEMD_SERVICE:${PN} = "chip-all-clusters-app.service matter-controller.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "disable"
 
 APP_PATH = "examples/all-clusters-app/linux"
@@ -23,7 +32,7 @@ SRCREV = "${AUTOREV}"
 TARGET_CC_ARCH += "${LDFLAGS}"
 
 DEPENDS += " gn-native ninja-native openssl avahi dbus-glib-native pkgconfig-native boost python3-native python3-pip-native python3-packaging-native python3-click "
-RDEPENDS_${PN} += " libavahi-client boost boost-staticdev "
+RDEPENDS_${PN} += " libavahi-client boost boost-staticdev bash "
 FILES:${PN} += "usr/share"
 
 INSANE_SKIP:${PN} += "dev-so debug-deps strip"
@@ -103,6 +112,12 @@ do_install() {
 
     install -d ${D}/lib/systemd/system/
     install -m 644 ${WORKDIR}/chip-all-clusters-app.service ${D}/lib/systemd/system/
+    
+    # Install Matter Controller service and management script
+    install -m 644 ${WORKDIR}/matter-controller.service ${D}/lib/systemd/system/
+    install -d -m 755 ${D}${bindir}
+    install -m 755 ${WORKDIR}/matter-controller-ctl.sh ${D}${bindir}/matter-controller-ctl
+    install -m 755 ${WORKDIR}/verify-matter-controller.sh ${D}${bindir}/verify-matter-controller
 }
 
 INSANE_SKIP_${PN} = "ldflags"

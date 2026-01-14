@@ -9,6 +9,9 @@ SRC_URI = "${IMX_MATTER_SRC};branch=${SRCBRANCH}"
 SRC_URI += "file://chip-lighting-app.service"
 MATTER_PY_PATH ?= "${STAGING_BINDIR_NATIVE}/python3-native/python3"
 
+# Include SDK patches (BLE fixes, QR code commissioning, etc.)
+require recipes-matter/matter-common/matter-common-sdk-patches.inc
+
 inherit systemd
 
 SYSTEMD_SERVICE:${PN} = "chip-lighting-app.service"
